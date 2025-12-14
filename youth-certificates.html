@@ -143,8 +143,11 @@
                 </svg>
                 <div>
                   <p class="text-sm text-blue-800 font-semibold mb-1">Complete Satisfaction Survey to Get Certificate</p>
-                  <p class="text-sm text-blue-700">
-                    After completing a project, you must fill out a satisfaction survey before you can download your Certificate of Participation. Your feedback helps improve future volunteer opportunities!
+                  <p class="text-sm text-blue-700 mb-2">
+                    Only completed projects where you were marked as "attended" by SK officials will appear here. You must fill out a satisfaction survey before you can download your Certificate of Participation.
+                  </p>
+                  <p class="text-xs text-blue-600 italic">
+                    <i class="fas fa-check-circle mr-1"></i> Your feedback helps improve future volunteer opportunities!
                   </p>
                 </div>
               </div>
@@ -179,14 +182,14 @@
                 1. How satisfied were you with this volunteer experience overall?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q1" min="1" max="5" value="5"
+                <input type="range" id="q1" min="1" max="4" value="4"
                        oninput="document.getElementById('q1Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q1Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">5</span>
+                <span id="q1Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">4</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - Very Unsatisfied</span>
-                <span>5 - Very Satisfied</span>
+                <span>4 - Very Satisfied</span>
               </div>
             </div>
 
@@ -196,14 +199,14 @@
                 2. Did you learn new skills or gain valuable experience?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q2" min="1" max="5" value="5"
+                <input type="range" id="q2" min="1" max="4" value="4"
                        oninput="document.getElementById('q2Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q2Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">5</span>
+                <span id="q2Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">4</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - No Learning</span>
-                <span>5 - Learned a Lot</span>
+                <span>4 - Learned a Lot</span>
               </div>
             </div>
 
@@ -213,14 +216,14 @@
                 3. How well did you work with other volunteers and project leaders?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q3" min="1" max="5" value="5"
+                <input type="range" id="q3" min="1" max="4" value="4"
                        oninput="document.getElementById('q3Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q3Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">5</span>
+                <span id="q3Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">4</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - Poor Teamwork</span>
-                <span>5 - Excellent Teamwork</span>
+                <span>4 - Excellent Teamwork</span>
               </div>
             </div>
 
@@ -230,14 +233,14 @@
                 4. Do you feel this project made a positive impact on the community?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q4" min="1" max="5" value="5"
+                <input type="range" id="q4" min="1" max="4" value="4"
                        oninput="document.getElementById('q4Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q4Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">5</span>
+                <span id="q4Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">4</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - No Impact</span>
-                <span>5 - Major Impact</span>
+                <span>4 - Major Impact</span>
               </div>
             </div>
 
@@ -247,14 +250,14 @@
                 5. Would you recommend this volunteer opportunity to others?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q5" min="1" max="5" value="5"
+                <input type="range" id="q5" min="1" max="4" value="4"
                        oninput="document.getElementById('q5Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q5Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">5</span>
+                <span id="q5Value" class="text-2xl font-bold text-emerald-600 w-8 text-center">4</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - Definitely Not</span>
-                <span>5 - Definitely Yes</span>
+                <span>4 - Definitely Yes</span>
               </div>
             </div>
 
@@ -262,7 +265,7 @@
             <div class="bg-emerald-50 border-2 border-emerald-300 rounded-lg p-4">
               <div class="flex items-center justify-between">
                 <span class="text-sm font-semibold text-emerald-900">Your Average Score:</span>
-                <span id="avgScore" class="text-3xl font-black text-emerald-600">5.0</span>
+                <span id="avgScore" class="text-3xl font-black text-emerald-600">4.0</span>
               </div>
               <div class="mt-2 h-3 bg-emerald-200 rounded-full overflow-hidden">
                 <div id="avgBar" class="h-full bg-emerald-600 rounded-full transition-all duration-300" style="width: 100%"></div>
@@ -423,27 +426,32 @@
         name: "Juan Dela Cruz",
       };
 
+      // Note: In production, this would fetch from the server based on logged-in user
+      // Only includes projects where the volunteer was marked as "attended"
       const completedProjects = [
         {
           id: 1,
           title: "Community Clean-Up Drive 2025",
           completedDate: "2025-11-20",
           surveyCompleted: false,
-          satisfactionScore: null
+          satisfactionScore: null,
+          attended: true // Volunteer was marked as attended by SK official
         },
         {
           id: 2,
           title: "Youth Sports Festival",
           completedDate: "2025-10-15",
           surveyCompleted: true,
-          satisfactionScore: 4.8
+          satisfactionScore: 3.8,
+          attended: true
         },
         {
           id: 3,
           title: "Tree Planting Initiative",
           completedDate: "2025-09-05",
           surveyCompleted: true,
-          satisfactionScore: 4.6
+          satisfactionScore: 3.6,
+          attended: true
         }
       ];
 
@@ -475,10 +483,10 @@
                 <div class="mb-4 p-3 bg-emerald-50 rounded-lg">
                   <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-semibold text-emerald-800">Your Satisfaction Score</span>
-                    <span class="text-2xl font-bold text-emerald-600">${project.satisfactionScore}/5</span>
+                    <span class="text-2xl font-bold text-emerald-600">${project.satisfactionScore}/4</span>
                   </div>
                   <div class="h-2 bg-emerald-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-emerald-600 rounded-full" style="width: ${(project.satisfactionScore/5)*100}%"></div>
+                    <div class="h-full bg-emerald-600 rounded-full" style="width: ${(project.satisfactionScore/4)*100}%"></div>
                   </div>
                 </div>
                 <button onclick="viewCertificate(${project.id})"
@@ -528,7 +536,7 @@
 
         const avg = ((q1 + q2 + q3 + q4 + q5) / 5).toFixed(1);
         document.getElementById('avgScore').textContent = avg;
-        document.getElementById('avgBar').style.width = `${(avg / 5) * 100}%`;
+        document.getElementById('avgBar').style.width = `${(avg / 4) * 100}%`;
       }
 
       function submitSurvey() {

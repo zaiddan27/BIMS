@@ -1107,7 +1107,7 @@
               <h3 class="text-lg font-bold text-gray-800 mb-4">
                 1. Budget Efficiency (25%)
               </h3>
-              <div class="grid grid-cols-2 gap-4">
+              <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
                   <label class="block text-sm font-semibold text-gray-700 mb-2">Planned Budget (₱)</label>
                   <input type="number" id="budgetPlanned" placeholder="e.g. 50000"
@@ -1122,8 +1122,48 @@
                 <div>
                   <label class="block text-sm font-semibold text-gray-700 mb-2">Actual Spent (₱)</label>
                   <input type="number" id="budgetActual" placeholder="e.g. 48000"
-                         oninput="calculateSuccessRate()"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" />
+                         oninput="calculateSuccessRate(); updateActualTotalFromBreakdown()"
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed focus:ring-2 focus:ring-purple-500"
+                         readonly />
+                  <p class="text-xs text-gray-500 mt-1">
+                    <i class="fas fa-calculator mr-1"></i>
+                    Auto-calculated from breakdown below
+                  </p>
+                </div>
+              </div>
+
+              <!-- Budget Breakdown with Receipts -->
+              <div class="border-t pt-4">
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-md font-bold text-gray-800">Budget Breakdown & Receipts</h4>
+                  <button type="button" onclick="addActualBreakdownRow()" class="text-sm px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition">
+                    <i class="fas fa-plus mr-1"></i> Add Item
+                  </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full text-sm">
+                    <thead class="bg-gray-50 border-b-2 border-gray-200">
+                      <tr>
+                        <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700">Description</th>
+                        <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700 w-32">Planned (₱)</th>
+                        <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700 w-32">Actual (₱)</th>
+                        <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700 w-48">Receipt</th>
+                        <th class="px-3 py-2 text-center text-xs font-semibold text-gray-700 w-20">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="actualBudgetBreakdownTable">
+                      <!-- Rows will be populated here -->
+                    </tbody>
+                    <tfoot class="bg-gray-50 border-t-2 border-gray-300">
+                      <tr class="font-bold">
+                        <td class="px-3 py-3 text-gray-800">TOTAL</td>
+                        <td class="px-3 py-3 text-gray-800" id="plannedBreakdownTotal">₱0</td>
+                        <td class="px-3 py-3 text-emerald-700" id="actualBreakdownTotal">₱0</td>
+                        <td colspan="2"></td>
+                      </tr>
+                    </tfoot>
+                  </table>
                 </div>
               </div>
             </div>
@@ -1531,6 +1571,7 @@
           preferredRole: "Documentation Team",
           parentalConsent: "parental_consent_maria_santos.pdf",
           status: "approved",
+          attended: true,
           appliedDate: "2025-01-18",
         },
         {
@@ -1827,17 +1868,10 @@
               View Details & Applications
             </button>
 
-            <!-- Download Report Button (for completed projects) -->
+            <!-- Archive Button (for completed projects) -->
             ${
               project.status === "Completed"
                 ? `
-              <button onclick="openDownloadReportModal(${project.id})"
-                      class="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium mb-3 transition flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                Download Report
-              </button>
               <button onclick="archiveProject(${project.id})"
                       class="w-full px-4 py-2.5 bg-gray-700 text-white rounded-lg hover:bg-gray-800 font-medium mb-3 transition flex items-center justify-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2014,17 +2048,25 @@
 
           card.innerHTML = `
           <div class="flex items-center justify-between">
-            <div>
+            <div class="flex-1">
               <h4 class="font-semibold">${app.fullName}</h4>
-              <p class="text-sm text-gray-600">${app.preferredRole} • Age ${
-            app.age
-          }</p>
+              <p class="text-sm text-gray-600">${app.preferredRole} • Age ${app.age}</p>
             </div>
-            <span class="px-3 py-1 ${
-              statusColors[app.status]
-            } text-xs rounded-full font-medium">
-              ${app.status}
-            </span>
+            <div class="flex items-center gap-3">
+              ${project.status === 'Completed' && app.status === 'approved' ? `
+                <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded" onclick="event.stopPropagation()">
+                  <input type="checkbox" ${app.attended ? 'checked' : ''}
+                         onchange="toggleAttendance(${project.id}, ${app.id}, this.checked)"
+                         class="w-4 h-4 text-emerald-600 rounded focus:ring-2 focus:ring-emerald-500" />
+                  <span class="text-sm font-medium ${app.attended ? 'text-emerald-700' : 'text-gray-600'}">
+                    ${app.attended ? 'Attended' : 'Mark Attended'}
+                  </span>
+                </label>
+              ` : ''}
+              <span class="px-3 py-1 ${statusColors[app.status]} text-xs rounded-full font-medium">
+                ${app.status}
+              </span>
+            </div>
           </div>
         `;
 
@@ -2042,6 +2084,25 @@
       function filterApplicants() {
         const project = projects.find((p) => p.id === currentProjectId);
         if (project) loadApplicants(project);
+      }
+
+      // Toggle attendance for approved volunteers
+      function toggleAttendance(projectId, applicantId, attended) {
+        const project = projects.find(p => p.id === projectId);
+        if (!project) return;
+
+        const applicant = project.applications.find(a => a.id === applicantId);
+        if (!applicant) return;
+
+        applicant.attended = attended;
+
+        // Reload the applicants list to reflect the change
+        loadApplicants(project);
+
+        showToast(attended ?
+          `${applicant.fullName} marked as attended` :
+          `${applicant.fullName} attendance removed`
+        );
       }
 
       // Load inquiries
@@ -2965,6 +3026,9 @@
         document.getElementById('volunteersTarget').value = project.expectedVolunteers || '';
         document.getElementById('beneficiariesTarget').value = project.targetBeneficiaries || '';
 
+        // Load actual budget breakdown (auto-fills from planned, user can edit)
+        loadActualBreakdownFromPlanned(projectId);
+
         // Reset actual values
         document.getElementById('budgetActual').value = '';
         document.getElementById('volunteersActual').value = '';
@@ -2978,7 +3042,7 @@
           ? (volunteersWithFeedback.reduce((sum, v) => sum + v.satisfactionScore, 0) / volunteersWithFeedback.length).toFixed(1)
           : '-';
 
-        document.getElementById('autoFeedbackScore').textContent = avgSatisfaction !== '-' ? `${avgSatisfaction}/5` : '-';
+        document.getElementById('autoFeedbackScore').textContent = avgSatisfaction !== '-' ? `${avgSatisfaction}/4` : '-';
         document.getElementById('surveyCount').textContent = volunteersWithFeedback.length;
         document.getElementById('totalVolunteers').textContent = approvedVolunteers.length;
 
@@ -3146,6 +3210,175 @@
         }
       });
 
+      // ========== ACTUAL BUDGET BREAKDOWN WITH RECEIPTS ==========
+
+      let actualBreakdownItems = [];
+
+      function loadActualBreakdownFromPlanned(projectId) {
+        const project = projects.find(p => p.id === projectId);
+        if (!project || !project.budgetBreakdown) {
+          actualBreakdownItems = [];
+          return;
+        }
+
+        // Auto-fill from planned budget breakdown
+        actualBreakdownItems = project.budgetBreakdown.map(item => ({
+          id: item.id,
+          description: item.description,
+          plannedCost: item.cost,
+          actualCost: item.cost, // Pre-fill with planned cost (user can edit)
+          receipt: null,
+          receiptPreview: null
+        }));
+
+        // Load saved actual breakdown if exists
+        if (project.actualBreakdown) {
+          project.actualBreakdown.forEach(savedItem => {
+            const item = actualBreakdownItems.find(i => i.id === savedItem.id);
+            if (item) {
+              item.actualCost = savedItem.actualCost;
+              item.receipt = savedItem.receipt;
+              item.receiptPreview = savedItem.receiptPreview;
+            }
+          });
+        }
+
+        renderActualBreakdownTable();
+      }
+
+      function renderActualBreakdownTable() {
+        const tableBody = document.getElementById('actualBudgetBreakdownTable');
+        tableBody.innerHTML = '';
+
+        actualBreakdownItems.forEach((item, index) => {
+          const row = document.createElement('tr');
+          row.className = 'border-b border-gray-200 hover:bg-gray-50';
+          row.innerHTML = `
+            <td class="px-3 py-3">
+              <input type="text" value="${item.description}" onchange="updateActualBreakdownDescription(${index}, this.value)"
+                     class="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-emerald-500 text-sm" />
+            </td>
+            <td class="px-3 py-3 text-gray-600">₱${item.plannedCost.toLocaleString()}</td>
+            <td class="px-3 py-3">
+              <input type="number" value="${item.actualCost}" onchange="updateActualBreakdownCost(${index}, this.value)"
+                     class="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-emerald-500 text-sm" min="0" />
+            </td>
+            <td class="px-3 py-3">
+              <div class="flex items-center gap-2">
+                ${item.receiptPreview ? `
+                  <img src="${item.receiptPreview}" class="w-10 h-10 object-cover rounded border cursor-pointer" onclick="viewReceiptImage(${index})" title="Click to view" />
+                  <button onclick="removeReceipt(${index})" class="text-red-600 hover:text-red-800 text-xs">
+                    <i class="fas fa-times"></i>
+                  </button>
+                ` : `
+                  <label class="cursor-pointer text-emerald-600 hover:text-emerald-700 text-xs flex items-center gap-1">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                    <input type="file" accept="image/*" onchange="uploadReceipt(${index}, event)" class="hidden" />
+                  </label>
+                `}
+              </div>
+            </td>
+            <td class="px-3 py-3 text-center">
+              <button onclick="deleteActualBreakdownRow(${index})" class="text-red-600 hover:text-red-800">
+                <i class="fas fa-trash text-sm"></i>
+              </button>
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+
+        updateActualBreakdownTotals();
+      }
+
+      function addActualBreakdownRow() {
+        const newItem = {
+          id: Date.now(),
+          description: '',
+          plannedCost: 0,
+          actualCost: 0,
+          receipt: null,
+          receiptPreview: null
+        };
+        actualBreakdownItems.push(newItem);
+        renderActualBreakdownTable();
+      }
+
+      function updateActualBreakdownDescription(index, value) {
+        actualBreakdownItems[index].description = value;
+      }
+
+      function updateActualBreakdownCost(index, value) {
+        actualBreakdownItems[index].actualCost = parseFloat(value) || 0;
+        updateActualBreakdownTotals();
+      }
+
+      function deleteActualBreakdownRow(index) {
+        if (confirm('Remove this budget item?')) {
+          actualBreakdownItems.splice(index, 1);
+          renderActualBreakdownTable();
+        }
+      }
+
+      function uploadReceipt(index, event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+          alert('Please upload an image file');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          actualBreakdownItems[index].receipt = file.name;
+          actualBreakdownItems[index].receiptPreview = e.target.result;
+          renderActualBreakdownTable();
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function removeReceipt(index) {
+        actualBreakdownItems[index].receipt = null;
+        actualBreakdownItems[index].receiptPreview = null;
+        renderActualBreakdownTable();
+      }
+
+      function viewReceiptImage(index) {
+        const receipt = actualBreakdownItems[index];
+        if (!receipt.receiptPreview) return;
+
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4';
+        modal.onclick = () => modal.remove();
+        modal.innerHTML = `
+          <div class="max-w-4xl max-h-[90vh] relative">
+            <button onclick="this.closest('.fixed').remove()" class="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-gray-100">
+              <i class="fas fa-times"></i>
+            </button>
+            <img src="${receipt.receiptPreview}" class="max-w-full max-h-[90vh] rounded shadow-2xl" />
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
+      function updateActualBreakdownTotals() {
+        const plannedTotal = actualBreakdownItems.reduce((sum, item) => sum + item.plannedCost, 0);
+        const actualTotal = actualBreakdownItems.reduce((sum, item) => sum + item.actualCost, 0);
+
+        document.getElementById('plannedBreakdownTotal').textContent = '₱' + plannedTotal.toLocaleString();
+        document.getElementById('actualBreakdownTotal').textContent = '₱' + actualTotal.toLocaleString();
+
+        // Auto-update the main Actual Spent field
+        document.getElementById('budgetActual').value = actualTotal;
+        calculateSuccessRate();
+      }
+
+      function updateActualTotalFromBreakdown() {
+        // This is called when manual edit is attempted - ignore it since we auto-calculate
+        return;
+      }
+
       // ========== SUCCESS RATE CALCULATION ==========
 
       function calculateSuccessRate() {
@@ -3188,7 +3421,7 @@
         // Calculate Volunteer Feedback (15%) - Auto-calculated from volunteer surveys
         const feedbackText = document.getElementById('autoFeedbackScore').textContent;
         const feedbackRating = feedbackText !== '-' ? parseFloat(feedbackText.split('/')[0]) : 0;
-        const feedbackScore = (feedbackRating / 5) * 100;
+        const feedbackScore = (feedbackRating / 4) * 100;
 
         // Weighted calculation
         const successRate = Math.round(
@@ -3249,6 +3482,16 @@
             completedDate: new Date().toISOString()
           };
           project.achievements = [...projectAchievements];
+
+          // Save actual budget breakdown with receipts
+          project.actualBreakdown = actualBreakdownItems.map(item => ({
+            id: item.id,
+            description: item.description,
+            plannedCost: item.plannedCost,
+            actualCost: item.actualCost,
+            receipt: item.receipt,
+            receiptPreview: item.receiptPreview
+          }));
 
           renderProjects(projects);
           showToast(`Project marked as complete with ${successRate}% success rate!`);
