@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BIMS - Youth Browse Calendar</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FullCalendar -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+    <style>
+      .fc .fc-toolbar-title {
+        font-weight: 700;
+      }
+      .fc-event {
+        cursor: pointer;
+      }
+      .modal-open {
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+      <!-- SIDEBAR -->
+      <aside
+        class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col"
+      >
+        <div class="p-6 flex-1 flex flex-col">
+          <div class="flex items-center space-x-3 mb-8">
+            <div
+              class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center"
+            >
+              <svg
+                class="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"
+                />
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-lg font-bold text-gray-800">BIMS</h1>
+              <p class="text-xs text-gray-500">SK Malanday</p>
+            </div>
+          </div>
+
+          <nav class="space-y-2">
+            <a
+              href="youtbDashboard.html"
+              class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
+                />
+              </svg>
+              <span>Dashboard</span>
+            </a>
+
+            <a
+              href="youtfiles.html"
+              class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586"
+                ></path>
+              </svg>
+              <span>Files</span>
+            </a>
+
+            <a
+              href="youthproject.html"
+              class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                ></path>
+              </svg>
+              <span>Projects</span>
+            </a>
+
+            <a
+              href="youthcal.html"
+              class="flex items-center space-x-3 px-4 py-3 bg-emerald-50 text-emerald-700 rounded-lg font-medium"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span>Calendar</span>
+            </a>
+
+            <a
+              href="youth-certificates.html"
+              class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                ></path>
+              </svg>
+              <span>Certificates</span>
+            </a>
+          </nav>
+
+          <div class="flex-1"></div>
+
+          <div class="mt-8 pt-8 border-t border-gray-200">
+            <button
+              class="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7"
+                ></path>
+              </svg>
+              <span class="font-medium">Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div class="flex-1 overflow-auto">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-emerald-50 to-white border-b border-gray-200 sticky top-0 z-20">
+          <div class="px-8 py-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-emerald-600 font-semibold mb-1" id="currentDate">Sunday, December 14, 2025</p>
+                <h1 class="text-2xl font-bold text-gray-800">Calendar</h1>
+                <p class="text-sm text-gray-600 mt-1">View project deadlines and schedules</p>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div class="relative">
+                  <button onclick="toggleNotificationModal()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">5</span>
+                  </button>
+                </div>
+                <div class="flex items-center space-x-3">
+                  <div class="text-right">
+                    <p class="text-sm font-medium text-gray-700">Juan Dela Cruz</p>
+                    <p class="text-xs text-gray-500">Youth Volunteer</p>
+                  </div>
+                  <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-semibold">JV</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-6 py-6">
+          <!-- Calendar + side -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Calendar main -->
+            <div class="lg:col-span-2 bg-white rounded-xl p-4 shadow-sm">
+              <div id="calendar"></div>
+            </div>
+
+            <!-- Sidebar quick list -->
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+              <h4 class="font-bold text-gray-800 mb-3">
+                Upcoming (next 30 days)
+              </h4>
+              <ul
+                id="upcomingList"
+                class="space-y-3 text-sm text-gray-700"
+              ></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div
+      id="notificationModal"
+      class="hidden fixed top-20 right-6 w-96 bg-white rounded-xl shadow-2xl z-50 border border-gray-200"
+    >
+      <div
+        class="p-4 border-b border-gray-200 flex items-center justify-between"
+      >
+        <h3 class="font-bold text-gray-800">Notifications</h3>
+        <button
+          onclick="markAllAsRead()"
+          class="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+        >
+          Mark all as read
+        </button>
+      </div>
+
+      <div id="notificationList" class="max-h-96 overflow-y-auto">
+        <!-- Notifications will be dynamically inserted here -->
+      </div>
+    </div>
+
+    <!-- View Event Modal -->
+    <div
+      id="viewModal"
+      class="hidden fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-40 p-6"
+    >
+      <div
+        class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+      >
+        <div class="p-6 border-b flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <h3 id="viewTitle" class="text-2xl font-bold text-gray-800">
+              Event Title
+            </h3>
+            <p id="viewRange" class="text-sm text-gray-500 mt-1">
+              Date range / time
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span
+              id="viewTypeBadge"
+              class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 hidden"
+              >Type</span
+            >
+            <button
+              onclick="closeViewModal()"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="md:col-span-2 space-y-3">
+            <div
+              id="viewBannerWrap"
+              class="w-full rounded-lg overflow-hidden h-44 bg-gray-100 flex items-center justify-center"
+            ></div>
+            <p id="viewDesc" class="text-gray-700"></p>
+
+            <div class="flex items-center gap-4 text-sm text-gray-600">
+              <div><strong>Head:</strong> <span id="viewHead"></span></div>
+              <div>
+                <strong>Status:</strong>
+                <span id="viewStatus" class="font-medium"></span>
+              </div>
+            </div>
+
+            <div class="mt-4 flex gap-2">
+              <button
+                id="sendInquiryBtn"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Send Inquiry
+              </button>
+              <button
+                id="applyProjectBtn"
+                class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+              >
+                Apply to Project
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <p class="text-xs text-gray-500">Start</p>
+              <p id="viewStart" class="font-medium text-gray-800"></p>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <p class="text-xs text-gray-500">End</p>
+              <p id="viewEnd" class="font-medium text-gray-800"></p>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <p class="text-xs text-gray-500">Location</p>
+              <p id="viewLocation" class="font-medium text-gray-800">—</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 flex justify-end border-t">
+          <button
+            onclick="closeViewModal()"
+            class="px-4 py-2 border border-gray-200 rounded-lg"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div
+      id="toast"
+      class="hidden fixed top-6 right-6 z-[70] bg-emerald-600 text-white px-5 py-3 rounded-lg shadow-lg"
+    >
+      <span id="toastMessage"></span>
+    </div>
+
+    <script>
+      /***********************
+       * Demo data & helpers *
+       ***********************/
+      const UPLOADED_BANNER = "/mnt/data/Screenshot 2025-11-20 205421.png";
+
+      // Projects from the Projects Module (SK Admin) - ONLY projects created in Projects module appear here
+      const sampleProjects = [
+        {
+          id: 1,
+          title: "Community Clean-Up Drive 2025",
+          start: "2025-11-20T08:00:00",
+          end: "2025-11-20T12:00:00",
+          extendedProps: {
+            type: "project",
+            head: "Juan Dela Cruz",
+            status: "Completed",
+            location: "Barangay Plaza",
+            volunteers: 25,
+            targetVolunteers: 30,
+            banner: UPLOADED_BANNER,
+            description: "Join us in keeping our barangay clean and green! We will conduct a massive clean-up drive covering all major streets and public areas.",
+          },
+        },
+        {
+          id: 2,
+          title: "Youth Sports Festival 2025",
+          start: "2025-11-25T09:00:00",
+          end: "2025-11-25T17:00:00",
+          extendedProps: {
+            type: "project",
+            head: "Kyleen Nicdao",
+            status: "Completed",
+            location: "Covered Court",
+            volunteers: 45,
+            targetVolunteers: 50,
+            banner: UPLOADED_BANNER,
+            description: "Annual sports festival featuring basketball, volleyball, and other games. Open to all youth members of the barangay.",
+          },
+        },
+        {
+          id: 3,
+          title: "Beach Clean-Up Initiative",
+          start: "2025-12-01T06:00:00",
+          end: "2025-12-01T10:00:00",
+          extendedProps: {
+            type: "project",
+            head: "Andrea Pelias",
+            status: "Ongoing",
+            location: "Malanday Beach",
+            volunteers: 12,
+            targetVolunteers: 40,
+            banner: UPLOADED_BANNER,
+            description: "Help us protect our marine ecosystem by participating in our coastal cleanup initiative.",
+          },
+        },
+      ];
+
+      let calendar;
+      let projectsStore = {};
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const calendarEl = document.getElementById("calendar");
+
+        sampleProjects.forEach(
+          (ev) => (projectsStore[ev.id] = JSON.parse(JSON.stringify(ev)))
+        );
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+          height: "auto",
+          headerToolbar: {
+            left: "prev,next",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
+          },
+          events: sampleProjects.map(mapToFcEvent),
+          eventClick: handleEventClick,
+        });
+
+        calendar.render();
+        refreshUpcoming();
+        attachControls();
+
+        // Show notification badge
+        document.getElementById("notifBadge").classList.remove("hidden");
+      });
+
+      function mapToFcEvent(ev) {
+        return {
+          id: ev.id,
+          title: ev.title,
+          start: ev.start,
+          end: ev.end,
+          allDay: !!ev.allDay,
+          extendedProps: ev.extendedProps,
+        };
+      }
+
+      function handleEventClick(arg) {
+        const ev = projectsStore[arg.event.id];
+        if (!ev) return;
+        openViewModal(ev);
+      }
+
+      function openViewModal(ev) {
+        showElement("viewModal");
+        document.getElementById("viewTitle").textContent = ev.title;
+        document.getElementById("viewRange").textContent = `${formatReadable(
+          ev.start
+        )} — ${formatReadable(ev.end)}`;
+        document.getElementById("viewDesc").textContent =
+          ev.extendedProps.description || "";
+        document.getElementById("viewHead").textContent =
+          ev.extendedProps.head || "—";
+        document.getElementById("viewStatus").textContent =
+          ev.extendedProps.status || "—";
+        document.getElementById("viewStart").textContent = formatReadable(
+          ev.start
+        );
+        document.getElementById("viewEnd").textContent = formatReadable(ev.end);
+        document.getElementById("viewLocation").textContent =
+          ev.extendedProps.location || "—";
+
+        const typeBadge = document.getElementById("viewTypeBadge");
+        typeBadge.textContent = (ev.extendedProps.type || "").toUpperCase();
+        if (ev.extendedProps.type) typeBadge.classList.remove("hidden");
+        else typeBadge.classList.add("hidden");
+
+        const wrap = document.getElementById("viewBannerWrap");
+        wrap.innerHTML = "";
+        if (ev.extendedProps.banner) {
+          const img = document.createElement("img");
+          img.src = ev.extendedProps.banner;
+          img.alt = "banner";
+          img.className = "w-full h-full object-cover";
+          wrap.appendChild(img);
+        } else {
+          wrap.innerHTML = '<div class="text-sm text-gray-400">No banner</div>';
+        }
+
+        document.getElementById("sendInquiryBtn").onclick = () => {
+          showToast("Opening inquiry form...");
+          // Would open inquiry modal in real implementation
+        };
+        document.getElementById("applyProjectBtn").onclick = () => {
+          showToast("Opening application form...");
+          // Would open apply modal in real implementation
+        };
+      }
+
+      function closeViewModal() {
+        hideElement("viewModal");
+      }
+
+      function attachControls() {
+        // Controls attached if needed
+      }
+
+      function refreshUpcoming() {
+        const listEl = document.getElementById("upcomingList");
+        listEl.innerHTML = "";
+        const now = new Date();
+        const in30 = new Date();
+        in30.setDate(now.getDate() + 30);
+        const upcoming = Object.values(projectsStore)
+          .filter(
+            (ev) => new Date(ev.start) >= now && new Date(ev.start) <= in30
+          )
+          .sort((a, b) => new Date(a.start) - new Date(b.start))
+          .slice(0, 6);
+        if (!upcoming.length) {
+          listEl.innerHTML =
+            '<li class="text-sm text-gray-500">No upcoming events in the next 30 days.</li>';
+        } else {
+          upcoming.forEach((ev) => {
+            const li = document.createElement("li");
+            li.innerHTML = `<div class="flex items-center justify-between gap-2">
+                         <div>
+                           <div class="text-sm font-semibold text-gray-800">${
+                             ev.title
+                           }</div>
+                           <div class="text-xs text-gray-500">${formatShort(
+                             ev.start
+                           )} • ${ev.extendedProps.head || "—"}</div>
+                         </div>
+                        </div>`;
+            listEl.appendChild(li);
+          });
+        }
+      }
+
+      function showMyApplications() {
+        showToast("Navigating to My Applications...");
+      }
+
+      // Notification System
+      let notifications = [
+        {
+          id: 1,
+          type: "announcement",
+          title: "New Announcement: Youth Sports Festival 2025",
+          message: "A new announcement has been posted",
+          timestamp: "2 hours ago",
+          read: false,
+          referenceId: 1,
+        },
+        {
+          id: 2,
+          type: "inquiry_update",
+          title: "Inquiry Update: Community Clean-Up Drive 2025",
+          message: "Andrea Pelias replied to your inquiry",
+          timestamp: "5 hours ago",
+          read: false,
+          referenceId: 101,
+          projectId: 1,
+          projectName:
+            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
+        },
+        {
+          id: 3,
+          type: "project_posted",
+          title: "New Project: Youth Sports Festival 2025",
+          message: "SK Officers posted a new volunteer project",
+          timestamp: "1 day ago",
+          read: false,
+          referenceId: 2,
+        },
+        {
+          id: 4,
+          type: "application_approved",
+          title: "Application Approved: Community Clean-Up Drive 2025",
+          message: "Your application has been approved",
+          timestamp: "30 minutes ago",
+          read: false,
+          projectId: 1,
+          projectName:
+            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
+        },
+        {
+          id: 5,
+          type: "application_pending",
+          title: "Application Pending: Youth Sports Festival 2025",
+          message: "Your application is pending review",
+          timestamp: "1 hour ago",
+          read: false,
+          projectId: 2,
+          projectName: "Youth Sports Festival 2025",
+        },
+      ];
+
+      function updateNotificationCount() {
+        const unreadCount = notifications.filter((n) => !n.read).length;
+        const countBadge = document.getElementById("notificationCount");
+
+        if (countBadge) {
+          if (unreadCount > 0) {
+            countBadge.textContent = unreadCount;
+            countBadge.classList.remove("hidden");
+          } else {
+            countBadge.classList.add("hidden");
+          }
+        }
+      }
+
+      function renderNotifications() {
+        const notificationList = document.getElementById("notificationList");
+
+        if (notifications.length === 0) {
+          notificationList.innerHTML = `
+        <div class="p-8 text-center text-gray-500">
+          <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1"></path>
+          </svg>
+          <p class="text-sm">No notifications</p>
+        </div>
+      `;
+          return;
+        }
+
+        notificationList.innerHTML = notifications
+          .map((notif) => {
+            const unreadClass = !notif.read ? "bg-emerald-50" : "bg-white";
+            const unreadDot = !notif.read
+              ? '<span class="w-2 h-2 bg-emerald-600 rounded-full"></span>'
+              : "";
+
+            let icon = "";
+            if (notif.type === "announcement") {
+              icon = `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+            </svg>
+          </div>`;
+            } else if (notif.type === "inquiry_update") {
+              icon = `<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+            </svg>
+          </div>`;
+            } else if (notif.type === "project_posted") {
+              icon = `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+          </div>`;
+            } else if (notif.type === "application_approved") {
+              icon = `<div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>`;
+            } else if (notif.type === "application_pending") {
+              icon = `<div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>`;
+            }
+
+            return `
+        <div onclick="handleNotificationClick(${notif.id})" class="${unreadClass} p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+          <div class="flex items-start space-x-3">
+            ${icon}
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between">
+                <p class="text-sm font-semibold text-gray-800 truncate">${notif.title}</p>
+                ${unreadDot}
+              </div>
+              <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
+              <p class="text-xs text-gray-400 mt-2">${notif.timestamp}</p>
+            </div>
+          </div>
+        </div>
+      `;
+          })
+          .join("");
+      }
+
+      function toggleNotificationModal() {
+        const modal = document.getElementById("notificationModal");
+        modal.classList.toggle("hidden");
+
+        if (!modal.classList.contains("hidden")) {
+          renderNotifications();
+        }
+      }
+
+      function closeNotificationModal() {
+        document.getElementById("notificationModal").classList.add("hidden");
+      }
+
+      function handleNotificationClick(notifId) {
+        const notif = notifications.find((n) => n.id === notifId);
+        if (!notif) return;
+
+        notif.read = true;
+        updateNotificationCount();
+        closeNotificationModal();
+
+        if (notif.type === "announcement") {
+          window.location.href = `youtbDashboard.html`;
+        } else if (notif.type === "inquiry_update") {
+          window.location.href = `youthproject.html?projectId=${notif.projectId}&tab=inquiries`;
+        } else if (notif.type === "project_posted") {
+          window.location.href = `youthproject.html?projectId=${notif.referenceId}`;
+        }
+      }
+
+      function markAllAsRead() {
+        notifications.forEach((n) => (n.read = true));
+        updateNotificationCount();
+        renderNotifications();
+      }
+
+      // Initialize notification count on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        updateNotificationCount();
+      });
+
+      function formatReadable(dateStr) {
+        if (!dateStr) return "—";
+        const d = new Date(dateStr);
+        return d.toLocaleString();
+      }
+      function formatShort(dateStr) {
+        if (!dateStr) return "—";
+        const d = new Date(dateStr);
+        return d.toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+        });
+      }
+      function showElement(id) {
+        document.getElementById(id).classList.remove("hidden");
+      }
+      function hideElement(id) {
+        document.getElementById(id).classList.add("hidden");
+      }
+
+      function showToast(msg) {
+        let t = document.getElementById("toast");
+        t.querySelector("#toastMessage").textContent = msg;
+        t.classList.remove("hidden");
+        setTimeout(() => t.classList.add("hidden"), 2000);
+      }
+
+      // Update current date
+      function updateCurrentDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const currentDate = new Date().toLocaleDateString('en-US', options);
+        const dateElement = document.getElementById('currentDate');
+        if (dateElement) {
+          dateElement.textContent = currentDate;
+        }
+      }
+      updateCurrentDate();
+    </script>
+  </body>
+</html>

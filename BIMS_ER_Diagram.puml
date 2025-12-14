@@ -1,0 +1,119 @@
+@startuml BIMS_ER_Diagram
+
+' Entities
+entity "User" as user {
+  * userID : INTEGER <<PK>>
+  --
+  * username : VARCHAR(50)
+  * password : VARCHAR(255)
+  * email : VARCHAR(100)
+  * firstName : VARCHAR(50)
+  * lastName : VARCHAR(50)
+  middleName : VARCHAR(50)
+  * role : ENUM('admin', 'youth_volunteer')
+  birthday : DATE
+  contactNumber : VARCHAR(20)
+  address : TEXT
+  imagePathURL : VARCHAR(500) ' Profile picture
+  * termsConditions : BOOLEAN ' User agreed to terms
+  * accountStatus : ENUM('active', 'inactive', 'deleted')
+}
+
+entity "Project" as project {
+  * projectID : INTEGER <<PK>>
+  --
+  userID : INTEGER <<FK>> ' Admin who created the project
+  * title : VARCHAR(200)
+  * description : TEXT
+  * category : VARCHAR(50)
+  * status : ENUM('Upcoming', 'Ongoing', 'Completed')
+  * startDate : DATE
+  * endDate : DATE
+  * location : VARCHAR(200)
+  imagePathURL : VARCHAR(500) ' Project banner/cover image
+}
+
+entity "Project_Head" as project_head {
+  * projectID : INTEGER <<PK,FK>>
+  * userID : INTEGER <<PK,FK>>
+}
+
+entity "Application" as application {
+  * applicationID : INTEGER <<PK>>
+  --
+  * userID : INTEGER <<FK>>
+  * projectID : INTEGER <<FK>>
+  * preferredRole : VARCHAR(100)
+  parentConsentFile : VARCHAR(255)
+  * applicationStatus : ENUM('pending', 'approved', 'rejected')
+  * appliedDate : DATE
+}
+
+entity "Inquiry" as inquiry {
+  * inquiryID : INTEGER <<PK>>
+  --
+  * projectID : INTEGER <<FK>>
+  * userID : INTEGER <<FK>>
+  * message : TEXT
+  * isReplied : BOOLEAN
+}
+
+entity "Reply" as reply {
+  * replyID : INTEGER <<PK>>
+  --
+  * inquiryID : INTEGER <<FK>>
+  * userID : INTEGER <<FK>>
+  * message : TEXT
+}
+
+entity "Announcement" as announcement {
+  * announcementID : INTEGER <<PK>>
+  --
+  * userID : INTEGER <<FK>>
+  * title : VARCHAR(200)
+  * category : VARCHAR(50)
+  * description : TEXT
+  imagePathURL : VARCHAR(500)
+  * publishedDate : DATE
+}
+
+entity "File" as file {
+  * fileID : INTEGER <<PK>>
+  --
+  * userID : INTEGER <<FK>>
+  * fileName : VARCHAR(255)
+  * fileType : VARCHAR(50)
+  * filePath : VARCHAR(500)
+  fileCategory : VARCHAR(50)
+}
+
+entity "OTP" as otp {
+  * otpID : INTEGER <<PK>>
+  --
+  * userID : INTEGER <<FK>>
+  * otpCode : VARCHAR(6)
+  * email : VARCHAR(100)
+  * expiresAt : DATETIME
+  * isUsed : BOOLEAN
+}
+
+' Relationships
+user ||--o{ project : "creates"
+user ||--o{ project_head : "assigned_as_head"
+user ||--o{ application : "submits"
+user ||--o{ inquiry : "sends"
+user ||--o{ reply : "writes"
+user ||--o{ otp : "receives"
+user ||--o{ announcement : "creates"
+user ||--o{ file : "uploads"
+
+project ||--o{ project_head : "has"
+project ||--o{ application : "receives"
+project ||--o{ inquiry : "has"
+
+inquiry ||--o{ reply : "has"
+
+application }o--|| user : "applicant"
+application }o--|| project : "applies_to"
+
+@enduml

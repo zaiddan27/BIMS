@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Captain Dashboard - BIMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-lg flex-shrink-0">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-2xl font-bold text-emerald-600">Captain Dashboard</h2>
+                <p class="text-sm text-gray-500 mt-1">Barangay Malanday</p>
+            </div>
+
+            <nav class="p-4 space-y-2">
+                <a href="captain-dashboard.html" class="flex items-center space-x-3 px-4 py-3 bg-emerald-50 text-emerald-600 rounded-lg transition">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Overview</span>
+                </a>
+            </nav>
+
+            <div class="absolute bottom-0 w-64 p-4 border-t border-gray-200">
+                <a href="index.html" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-gradient-to-r from-emerald-50 to-white border-b border-gray-200 sticky top-0 z-10">
+                <div class="px-8 py-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-emerald-600 font-semibold mb-1" id="currentDate">Sunday, December 14, 2025</p>
+                            <h1 class="text-2xl font-bold text-gray-800">Barangay Captain Dashboard</h1>
+                            <p class="text-sm text-gray-600 mt-1">Project approval and oversight system for barangay projects</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                <button onclick="toggleNotificationModal()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                    </svg>
+                                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">5</span>
+                                </button>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-700">Hon. Barangay Captain</p>
+                                    <p class="text-xs text-gray-500">Administrator</p>
+                                </div>
+                                <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                    BC
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="p-8">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Pending Approval</p>
+                                <p class="text-3xl font-bold text-orange-600 mt-2">5</p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-orange-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Approved</p>
+                                <p class="text-3xl font-bold text-green-600 mt-2">42</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Rejected</p>
+                                <p class="text-3xl font-bold text-red-600 mt-2">3</p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-times-circle text-red-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Total Budget</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">₱1.5M</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-peso-sign text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Approval Workflow Tabs -->
+                <div class="bg-white rounded-xl shadow-sm mb-6">
+                    <div class="border-b border-gray-200">
+                        <nav class="flex -mb-px">
+                            <button onclick="switchTab('pending')" class="approval-tab active px-8 py-4 text-sm font-medium text-emerald-600 border-b-2 border-emerald-600 transition">
+                                Pending Approval
+                                <span class="ml-2 px-2 py-1 text-xs bg-orange-100 text-orange-600 rounded-full">5</span>
+                            </button>
+                            <button onclick="switchTab('approved')" class="approval-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-emerald-600 hover:border-emerald-600 border-b-2 border-transparent transition">
+                                Approved
+                                <span class="ml-2 px-2 py-1 text-xs bg-gray-100 rounded-full">42</span>
+                            </button>
+                            <button onclick="switchTab('rejected')" class="approval-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-emerald-600 hover:border-emerald-600 border-b-2 border-transparent transition">
+                                Rejected
+                                <span class="ml-2 px-2 py-1 text-xs bg-gray-100 rounded-full">3</span>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Pending Approvals Section -->
+                <div id="pendingSection" class="space-y-4">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">Projects Awaiting Your Approval</h2>
+                    <!-- Pending projects will be rendered here -->
+                </div>
+
+                <!-- Approved Section -->
+                <div id="approvedSection" class="hidden space-y-4">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">Approved Projects</h2>
+                    <!-- Approved projects will be rendered here -->
+                </div>
+
+                <!-- Rejected Section -->
+                <div id="rejectedSection" class="hidden space-y-4">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">Rejected Projects</h2>
+                    <!-- Rejected projects will be rendered here -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Approval Modal -->
+    <div id="approvalModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="sticky top-0 bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-4 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white" id="modalProjectName"></h2>
+                    <p class="text-emerald-100 text-sm mt-1">Project Review & Approval</p>
+                </div>
+                <button onclick="closeModal()" class="text-white/80 hover:text-white transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6">
+                <!-- Project Information Card -->
+                <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-5 mb-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-emerald-600 mr-2"></i>
+                        Project Information
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-3 border border-gray-100">
+                            <p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">Submitted By</p>
+                            <p class="font-semibold text-gray-800" id="modalSubmittedBy"></p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-gray-100">
+                            <p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">Submission Date</p>
+                            <p class="font-semibold text-gray-800" id="modalSubmissionDate"></p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-gray-100">
+                            <p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">Proposed Budget</p>
+                            <p class="font-semibold text-emerald-700" id="modalBudget"></p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-gray-100">
+                            <p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">Expected Volunteers</p>
+                            <p class="font-semibold text-gray-800" id="modalVolunteers"></p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-gray-100">
+                            <p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">Start Date</p>
+                            <p class="font-semibold text-gray-800" id="modalStartDate"></p>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-gray-100">
+                            <p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">End Date</p>
+                            <p class="font-semibold text-gray-800" id="modalEndDate"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Target Beneficiaries -->
+                <div class="mb-6 bg-white rounded-xl border border-gray-200 p-5">
+                    <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-users text-emerald-600 mr-2"></i>
+                        Target Beneficiaries
+                    </h3>
+                    <p class="text-gray-600 leading-relaxed" id="modalBeneficiaries"></p>
+                </div>
+
+                <!-- Project Description -->
+                <div class="mb-6 bg-white rounded-xl border border-gray-200 p-5">
+                    <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-file-alt text-emerald-600 mr-2"></i>
+                        Project Description
+                    </h3>
+                    <p class="text-gray-600 leading-relaxed whitespace-pre-wrap" id="modalDescription"></p>
+                </div>
+
+                <!-- Approval Actions -->
+                <div id="approvalActions" class="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-5">
+                    <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-gavel text-emerald-600 mr-2"></i>
+                        Approval Decision
+                    </h3>
+
+                    <div class="mb-5">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Comments/Notes</label>
+                        <textarea id="approvalNotes" rows="4"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                            placeholder="Add any comments, requirements, or feedback for this project proposal..."></textarea>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="rejectProject()" class="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium shadow-sm hover:shadow-md">
+                            <i class="fas fa-times-circle mr-2"></i> Reject Project
+                        </button>
+                        <button onclick="requestRevision()" class="flex-1 px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition font-medium shadow-sm hover:shadow-md">
+                            <i class="fas fa-edit mr-2"></i> Request Revision
+                        </button>
+                        <button onclick="approveProject()" class="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium shadow-sm hover:shadow-md">
+                            <i class="fas fa-check-circle mr-2"></i> Approve Project
+                        </button>
+                    </div>
+                </div>
+
+                <!-- View Only Actions (for approved/rejected) -->
+                <div id="viewActions" class="hidden">
+                    <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-200 p-5 mb-4">
+                        <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-sticky-note text-blue-600 mr-2"></i>
+                            Decision Notes
+                        </h3>
+                        <div class="bg-white rounded-lg p-4 border border-blue-100">
+                            <p class="text-gray-600 leading-relaxed" id="viewNotes"></p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                        <button onclick="closeModal()" class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium">
+                            <i class="fas fa-times mr-2"></i> Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        <p id="toastMessage"></p>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-end p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mt-16 mr-4 max-h-[80vh] flex flex-col">
+            <!-- Header -->
+            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="font-bold text-gray-800 text-lg">Notifications</h3>
+                <button onclick="closeNotificationModal()" class="text-gray-400 hover:text-gray-600 transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Notification List -->
+            <div id="notificationList" class="flex-1 overflow-y-auto">
+                <!-- Notifications will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample project data
+        const projects = [
+            {
+                id: 1, name: "New Year Community Festival 2026", status: "pending",
+                submittedBy: "SK Chairman", submissionDate: "Dec 10, 2025",
+                budget: 55000, volunteers: 60, startDate: "Dec 30, 2025", endDate: "Jan 1, 2026",
+                description: "A grand community festival to celebrate the New Year with cultural performances, games, and food stalls.",
+                objectives: ["Promote community unity", "Showcase local talents", "Provide entertainment for all ages"],
+                outcomes: ["500+ attendees expected", "15+ performers lined up", "Strengthen barangay relationships"],
+                notes: ""
+            },
+            {
+                id: 2, name: "Youth Skills Training Program", status: "pending",
+                submittedBy: "SK Treasurer", submissionDate: "Dec 11, 2025",
+                budget: 42000, volunteers: 35, startDate: "Jan 10, 2026", endDate: "Jan 25, 2026",
+                description: "Comprehensive skills training program covering digital literacy, entrepreneurship, and basic trades.",
+                objectives: ["Equip youth with marketable skills", "Reduce unemployment", "Foster entrepreneurship"],
+                outcomes: ["60 trainees enrolled", "5 skill modules completed", "Job placement assistance"],
+                notes: ""
+            },
+            {
+                id: 3, name: "Clean Water Access Project", status: "pending",
+                submittedBy: "SK Secretary", submissionDate: "Dec 12, 2025",
+                budget: 85000, volunteers: 40, startDate: "Jan 15, 2026", endDate: "Feb 15, 2026",
+                description: "Installation of water filtration systems in 10 households without access to clean drinking water.",
+                objectives: ["Provide clean water access", "Improve public health", "Reduce waterborne diseases"],
+                outcomes: ["10 households served", "Health improvements monitored", "Community education on water safety"],
+                notes: ""
+            },
+            {
+                id: 4, name: "Senior Citizens Health Check-up", status: "pending",
+                submittedBy: "SK Vice Chairman", submissionDate: "Dec 12, 2025",
+                budget: 28000, volunteers: 25, startDate: "Jan 20, 2026", endDate: "Jan 21, 2026",
+                description: "Free health screening and check-up services for senior citizens in the barangay.",
+                objectives: ["Monitor senior health", "Provide preventive care", "Health awareness"],
+                outcomes: ["80+ seniors screened", "Free medication for common ailments", "Health records updated"],
+                notes: ""
+            },
+            {
+                id: 5, name: "Scholarship Program Q1 2026", status: "pending",
+                submittedBy: "SK Chairman", submissionDate: "Dec 13, 2025",
+                budget: 120000, volunteers: 15, startDate: "Jan 5, 2026", endDate: "Mar 31, 2026",
+                description: "Educational assistance program for 20 deserving students from low-income families.",
+                objectives: ["Support education", "Reduce dropout rates", "Invest in youth future"],
+                outcomes: ["20 scholars selected", "Full semester support", "Academic monitoring system"],
+                notes: ""
+            },
+            // Approved projects
+            {
+                id: 6, name: "Christmas Gift Giving 2025", status: "approved",
+                submittedBy: "SK Chairman", submissionDate: "Nov 15, 2025",
+                budget: 50000, volunteers: 52, startDate: "Dec 18, 2025", endDate: "Dec 18, 2025",
+                description: "Annual Christmas outreach program for underprivileged children.",
+                objectives: ["Spread Christmas joy", "Support underprivileged families"],
+                outcomes: ["200 gift packs distributed", "Successful community event"],
+                notes: "Approved. Excellent initiative for the holiday season."
+            },
+            {
+                id: 7, name: "Sports Fest 2025", status: "approved",
+                submittedBy: "SK Treasurer", submissionDate: "Oct 20, 2025",
+                budget: 35000, volunteers: 38, startDate: "Nov 5, 2025", endDate: "Nov 7, 2025",
+                description: "Annual barangay sports festival promoting health and wellness.",
+                objectives: ["Promote health and fitness", "Community engagement"],
+                outcomes: ["8 sports categories", "120 participants"],
+                notes: "Approved. Great for community health and engagement."
+            },
+            // Rejected projects
+            {
+                id: 8, name: "International Youth Exchange", status: "rejected",
+                submittedBy: "SK Secretary", submissionDate: "Nov 1, 2025",
+                budget: 250000, volunteers: 10, startDate: "Dec 1, 2025", endDate: "Dec 15, 2025",
+                description: "Youth exchange program with sister barangay in another country.",
+                objectives: ["Cultural exchange", "Global exposure for youth"],
+                outcomes: ["10 youth participants", "Cultural learning"],
+                notes: "Rejected. Budget too high and not aligned with current barangay priorities. Consider local alternatives."
+            }
+        ];
+
+        let currentProject = null;
+        let currentTab = 'pending';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProjects();
+        });
+
+        function renderProjects() {
+            const pendingProjects = projects.filter(p => p.status === 'pending');
+            const approvedProjects = projects.filter(p => p.status === 'approved');
+            const rejectedProjects = projects.filter(p => p.status === 'rejected');
+
+            // Render pending
+            const pendingSection = document.getElementById('pendingSection');
+            if (pendingProjects.length === 0) {
+                pendingSection.innerHTML += '<div class="bg-white rounded-xl shadow-sm p-12 text-center"><i class="fas fa-check-circle text-green-300 text-6xl mb-4"></i><h3 class="text-lg font-semibold text-gray-700 mb-2">All Caught Up!</h3><p class="text-gray-500">No pending approvals at the moment</p></div>';
+            } else {
+                pendingSection.innerHTML = '<h2 class="text-lg font-bold text-gray-800 mb-4">Projects Awaiting Your Approval</h2>' +
+                    pendingProjects.map(project => renderProjectCard(project)).join('');
+            }
+
+            // Render approved
+            const approvedSection = document.getElementById('approvedSection');
+            approvedSection.innerHTML = '<h2 class="text-lg font-bold text-gray-800 mb-4">Approved Projects</h2>' +
+                approvedProjects.map(project => renderProjectCard(project)).join('');
+
+            // Render rejected
+            const rejectedSection = document.getElementById('rejectedSection');
+            rejectedSection.innerHTML = '<h2 class="text-lg font-bold text-gray-800 mb-4">Rejected Projects</h2>' +
+                rejectedProjects.map(project => renderProjectCard(project)).join('');
+        }
+
+        function renderProjectCard(project) {
+            const statusColors = {
+                pending: 'bg-orange-100 text-orange-700',
+                approved: 'bg-green-100 text-green-700',
+                rejected: 'bg-red-100 text-red-700'
+            };
+
+            const statusIcons = {
+                pending: 'clock',
+                approved: 'check-circle',
+                rejected: 'times-circle'
+            };
+
+            return `
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-6 border border-gray-100">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <h3 class="text-lg font-bold text-gray-800">${project.name}</h3>
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusColors[project.status]}">
+                                    <i class="fas fa-${statusIcons[project.status]} mr-1"></i>
+                                    ${project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                                </span>
+                            </div>
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <span><i class="fas fa-user mr-1"></i> ${project.submittedBy}</span>
+                                <span><i class="far fa-calendar mr-1"></i> ${project.submissionDate}</span>
+                            </div>
+                        </div>
+                        <button onclick="viewProjectDetails(${project.id})" class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition">
+                            <i class="fas fa-eye mr-1"></i> Review
+                        </button>
+                    </div>
+
+                    <p class="text-gray-600 text-sm mb-4">${project.description}</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Budget</p>
+                            <p class="font-semibold text-gray-800">₱${project.budget.toLocaleString()}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Volunteers</p>
+                            <p class="font-semibold text-gray-800">${project.volunteers}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Start Date</p>
+                            <p class="font-semibold text-gray-800">${project.startDate}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Duration</p>
+                            <p class="font-semibold text-gray-800">${calculateDuration(project.startDate, project.endDate)}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function calculateDuration(start, end) {
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+            const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            return days === 1 ? '1 day' : `${days} days`;
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // Update tab styles
+            document.querySelectorAll('.approval-tab').forEach(t => {
+                t.classList.remove('active', 'text-emerald-600', 'border-emerald-600');
+                t.classList.add('text-gray-500', 'border-transparent');
+            });
+            event.target.classList.add('active', 'text-emerald-600', 'border-emerald-600');
+            event.target.classList.remove('text-gray-500', 'border-transparent');
+
+            // Show/hide sections
+            document.getElementById('pendingSection').classList.toggle('hidden', tab !== 'pending');
+            document.getElementById('approvedSection').classList.toggle('hidden', tab !== 'approved');
+            document.getElementById('rejectedSection').classList.toggle('hidden', tab !== 'rejected');
+        }
+
+        function viewProjectDetails(id) {
+            currentProject = projects.find(p => p.id === id);
+            if (!currentProject) return;
+
+            // Populate modal
+            document.getElementById('modalProjectName').textContent = currentProject.name;
+            document.getElementById('modalSubmittedBy').textContent = currentProject.submittedBy;
+            document.getElementById('modalSubmissionDate').textContent = currentProject.submissionDate;
+            document.getElementById('modalBudget').textContent = '₱' + currentProject.budget.toLocaleString();
+            document.getElementById('modalVolunteers').textContent = currentProject.volunteers;
+            document.getElementById('modalStartDate').textContent = currentProject.startDate;
+            document.getElementById('modalEndDate').textContent = currentProject.endDate;
+            document.getElementById('modalBeneficiaries').textContent = currentProject.beneficiaries || 'Not specified';
+
+            // Display description as one unified block
+            document.getElementById('modalDescription').textContent = currentProject.description || 'No description provided';
+
+            // Show appropriate actions
+            if (currentProject.status === 'pending') {
+                document.getElementById('approvalActions').classList.remove('hidden');
+                document.getElementById('viewActions').classList.add('hidden');
+                document.getElementById('approvalNotes').value = '';
+            } else {
+                document.getElementById('approvalActions').classList.add('hidden');
+                document.getElementById('viewActions').classList.remove('hidden');
+                document.getElementById('viewNotes').textContent = currentProject.notes || 'No notes available.';
+            }
+
+            // Show modal
+            document.getElementById('approvalModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('approvalModal').classList.add('hidden');
+            currentProject = null;
+        }
+
+        function approveProject() {
+            const notes = document.getElementById('approvalNotes').value;
+
+            if (confirm(`Are you sure you want to APPROVE "${currentProject.name}"?`)) {
+                currentProject.status = 'approved';
+                currentProject.approvalStatus = 'approved';
+                currentProject.notes = notes || 'Approved by Barangay Captain.';
+                currentProject.approvedBy = 'Hon. Barangay Captain';
+                currentProject.approvalDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+                closeModal();
+                renderProjects();
+
+                // Remove notification for this project
+                notifications = notifications.filter(n => n.projectId !== currentProject.id);
+                updateNotificationCount();
+
+                showToast(`✓ Project "${currentProject.name}" has been approved and is now posted!`, 'success');
+            }
+        }
+
+        function rejectProject() {
+            const notes = document.getElementById('approvalNotes').value;
+
+            if (!notes.trim()) {
+                alert('Please provide a reason for rejection in the comments field.');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to REJECT "${currentProject.name}"?`)) {
+                currentProject.status = 'rejected';
+                currentProject.approvalStatus = 'rejected';
+                currentProject.notes = notes;
+                currentProject.rejectedBy = 'Hon. Barangay Captain';
+                currentProject.rejectionDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+                closeModal();
+                renderProjects();
+
+                // Remove notification for this project
+                notifications = notifications.filter(n => n.projectId !== currentProject.id);
+                updateNotificationCount();
+
+                showToast(`✗ Project "${currentProject.name}" has been rejected.`, 'error');
+            }
+        }
+
+        function requestRevision() {
+            const notes = document.getElementById('approvalNotes').value;
+
+            if (!notes.trim()) {
+                alert('Please specify what revisions are needed in the comments field.');
+                return;
+            }
+
+            if (confirm(`Send revision request for "${currentProject.name}"?`)) {
+                currentProject.status = 'revision-requested';
+                currentProject.approvalStatus = 'revision-requested';
+                currentProject.notes = notes;
+                currentProject.revisionRequestedBy = 'Hon. Barangay Captain';
+                currentProject.revisionRequestDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+                closeModal();
+                renderProjects();
+
+                // Remove notification for this project
+                notifications = notifications.filter(n => n.projectId !== currentProject.id);
+                updateNotificationCount();
+
+                showToast(`✎ Revision request sent for "${currentProject.name}".`, 'info');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Notification System - Generate from pending projects
+        function generateNotifications() {
+            const notifications = [];
+            let notifId = 1;
+
+            // Get pending projects and create notifications for them
+            const pendingProjects = projects.filter(p => p.status === 'pending');
+
+            pendingProjects.forEach((project, index) => {
+                const timeOptions = ['Just now', '5 minutes ago', '15 minutes ago', '30 minutes ago', '1 hour ago'];
+                notifications.push({
+                    id: notifId++,
+                    type: "pending_approval",
+                    title: "Project Awaiting Approval",
+                    message: `${project.name} submitted by ${project.submittedBy}`,
+                    time: timeOptions[index] || `${index} hours ago`,
+                    read: false,
+                    projectId: project.id,
+                });
+            });
+
+
+            return notifications;
+        }
+
+        let notifications = generateNotifications();
+
+        function toggleNotificationModal() {
+            const modal = document.getElementById('notificationModal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                renderNotifications();
+            }
+        }
+
+        function closeNotificationModal() {
+            document.getElementById('notificationModal').classList.add('hidden');
+        }
+
+        function updateNotificationCount() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            const badge = document.getElementById('notificationBadge');
+
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function getNotificationIcon(type) {
+            // Only pending_approval for Captain
+            return `<div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>`;
+        }
+
+        function getNotificationBgColor(type) {
+            // Only pending_approval for Captain
+            return "bg-orange-50";
+        }
+
+        function renderNotifications() {
+            const notificationList = document.getElementById('notificationList');
+
+            if (notifications.length === 0) {
+                notificationList.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                        <p class="font-medium">No notifications</p>
+                        <p class="text-sm mt-1">You're all caught up!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            notificationList.innerHTML = notifications.map(notif => `
+                <div onclick="handleNotificationClick(${notif.id})"
+                     class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${notif.read ? '' : getNotificationBgColor(notif.type)}">
+                    <div class="flex items-start space-x-3">
+                        ${getNotificationIcon(notif.type)}
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-gray-800 ${notif.read ? '' : 'font-bold'}">${notif.title}</p>
+                            <p class="text-sm text-gray-600 mt-1">${notif.message}</p>
+                            <p class="text-xs text-gray-400 mt-2">${notif.time}</p>
+                        </div>
+                        ${!notif.read ? '<div class="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full mt-2"></div>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleNotificationClick(notifId) {
+            const notif = notifications.find(n => n.id === notifId);
+            if (!notif) return;
+
+            // Mark as read
+            notif.read = true;
+            updateNotificationCount();
+
+            // Handle pending approval notifications
+            if (notif.type === 'pending_approval' && notif.projectId) {
+                closeNotificationModal();
+                viewProjectDetails(notif.projectId);
+            }
+        }
+
+        // Initialize notification count on page load
+        updateNotificationCount();
+
+        // Update current date
+        function updateCurrentDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const currentDate = new Date().toLocaleDateString('en-US', options);
+            const dateElement = document.getElementById('currentDate');
+            if (dateElement) {
+                dateElement.textContent = currentDate;
+            }
+        }
+        updateCurrentDate();
+    </script>
+</body>
+</html>
