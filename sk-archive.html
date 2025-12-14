@@ -111,11 +111,11 @@
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="relative">
-                                <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                                <button onclick="toggleNotificationModal()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                                     </svg>
-                                    <span class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">5</span>
+                                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">5</span>
                                 </button>
                             </div>
                             <button onclick="openProfileModal()" class="flex items-center space-x-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
@@ -805,68 +805,22 @@
                 ]
             },
             {
-                id: 2, name: "Youth Leadership Summit", quarter: "Q4", year: 2025,
-                period: "Oct 20-22, 2025", budget: 45000, spent: 42000, volunteers: 60,
-                successRate: 92, budgetScore: 93, participationScore: 95, timelineScore: 90, impactScore: 88, feedbackScore: 94,
+                id: 2,
+                name: "Youth Leadership Summit",
+                quarter: "Q4",
+                year: 2025,
+                period: "Oct 20-22, 2025",
+                budget: 45000,
+                spent: 42000,
+                volunteers: 60,
+                successRate: 92,
+                budgetScore: 93,
+                participationScore: 95,
+                timelineScore: 90,
+                impactScore: 88,
+                feedbackScore: 94,
                 description: "Three-day leadership training for SK officers and youth leaders.",
                 achievements: ["Trained 60 youth leaders", "5 expert speakers", "Leadership certification", "92% completion rate"]
-            },
-            {
-                id: 3, name: "Sports Fest 2025", quarter: "Q4", year: 2025,
-                period: "Nov 5-7, 2025", budget: 35000, spent: 34200, volunteers: 38,
-                successRate: 88, budgetScore: 97, participationScore: 76, timelineScore: 90, impactScore: 85, feedbackScore: 92,
-                description: "Annual barangay sports festival promoting health and wellness among youth.",
-                achievements: ["8 sports categories", "120 participants", "Zero injuries", "Community engagement"]
-            },
-            {
-                id: 4, name: "Christmas Gift Giving", quarter: "Q4", year: 2025,
-                period: "Dec 18, 2025", budget: 50000, spent: 49500, volunteers: 52,
-                successRate: 96, budgetScore: 99, participationScore: 95, timelineScore: 100, impactScore: 95, feedbackScore: 91,
-                description: "Annual Christmas outreach program for underprivileged children.",
-                achievements: ["200 gift packs distributed", "50+ volunteers", "Full community coverage", "Heartwarming testimonials"]
-            },
-            {
-                id: 5, name: "Environmental Awareness Campaign", quarter: "Q4", year: 2025,
-                period: "Nov 12-15, 2025", budget: 28000, spent: 27800, volunteers: 42,
-                successRate: 90, budgetScore: 99, participationScore: 84, timelineScore: 90, impactScore: 88, feedbackScore: 89,
-                description: "Educational campaign on environmental conservation and sustainability.",
-                achievements: ["Reached 300 residents", "Planted 50 trees", "Distributed eco-bags", "School partnerships"]
-            },
-            {
-                id: 6, name: "Digital Literacy Workshop", quarter: "Q4", year: 2025,
-                period: "Dec 5-8, 2025", budget: 32000, spent: 31500, volunteers: 35,
-                successRate: 87, budgetScore: 98, participationScore: 70, timelineScore: 85, impactScore: 90, feedbackScore: 92,
-                description: "Computer and internet training for youth and senior citizens.",
-                achievements: ["Trained 80 participants", "Basic to intermediate skills", "Free certificates", "Follow-up sessions planned"]
-            },
-            {
-                id: 7, name: "Mental Health Awareness Day", quarter: "Q4", year: 2025,
-                period: "Nov 28, 2025", budget: 22000, spent: 21200, volunteers: 28,
-                successRate: 93, budgetScore: 96, participationScore: 93, timelineScore: 95, impactScore: 92, feedbackScore: 89,
-                description: "Mental health seminar and counseling services for barangay youth.",
-                achievements: ["2 mental health professionals", "60 participants", "Free counseling sessions", "Mental health resources distributed"]
-            },
-            {
-                id: 8, name: "Year-End Festival & Concert", quarter: "Q4", year: 2025,
-                period: "Dec 28-29, 2025", budget: 48000, spent: 47500, volunteers: 55,
-                successRate: 91, budgetScore: 98, participationScore: 88, timelineScore: 90, impactScore: 89, feedbackScore: 90,
-                description: "Community celebration featuring local talents and cultural performances.",
-                achievements: ["500+ attendees", "10 local performers", "Cultural showcase", "Community unity strengthened"]
-            },
-            // Q3 Projects
-            {
-                id: 9, name: "Summer Reading Program", quarter: "Q3", year: 2025,
-                period: "Jul 1-31, 2025", budget: 18000, spent: 17500, volunteers: 25,
-                successRate: 89, budgetScore: 97, participationScore: 80, timelineScore: 90, impactScore: 88, feedbackScore: 90,
-                description: "Monthly reading program for children during summer break.",
-                achievements: ["40 children enrolled", "100 books read", "Reading certificates", "Literacy improved"]
-            },
-            {
-                id: 10, name: "Livelihood Skills Training", quarter: "Q3", year: 2025,
-                period: "Aug 10-20, 2025", budget: 38000, spent: 37200, volunteers: 32,
-                successRate: 92, budgetScore: 97, participationScore: 90, timelineScore: 90, impactScore: 93, feedbackScore: 92,
-                description: "Skills training for unemployed youth in various crafts and trades.",
-                achievements: ["50 trainees completed", "5 skill modules", "Startup kits provided", "3 trainees started businesses"]
             }
         ];
 
@@ -2386,6 +2340,251 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadArchivedFiles();
         });
+
+        // Notification System
+        let notifications = [
+          {
+            id: 1,
+            type: "project_approved",
+            title: "Project Approved: Community Clean-Up Drive 2025",
+            message: "Your project has been approved by the Barangay Captain and is now Ongoing",
+            time: "2 hours ago",
+            read: false,
+            projectId: 1,
+            status: "approved",
+          },
+          {
+            id: 2,
+            type: "project_rejected",
+            title: "Project Rejected: International Youth Exchange Program",
+            message: "Your project has been rejected. Click to view captain's feedback and edit your proposal",
+            time: "1 day ago",
+            read: false,
+            projectId: 4,
+            status: "rejected",
+          },
+          {
+            id: 3,
+            type: "project_revision",
+            title: "Revision Requested: Scholarship Program Deadline",
+            message: "The Barangay Captain requested revisions. Click to view feedback and edit your project",
+            time: "3 hours ago",
+            read: false,
+            projectId: 3,
+            status: "revision",
+          },
+          {
+            id: 4,
+            type: "new_inquiry",
+            title: "New Inquiry: Community Clean-Up Drive 2025",
+            message: "Juan Dela Cruz posted a new inquiry on your project",
+            time: "5 minutes ago",
+            read: false,
+            projectId: 1,
+          },
+          {
+            id: 5,
+            type: "inquiry_reply",
+            title: "Inquiry Reply: Youth Sports Festival",
+            message: "Maria Santos replied to an inquiry thread",
+            time: "1 hour ago",
+            read: false,
+            projectId: 2,
+          },
+          {
+            id: 6,
+            type: "new_announcement",
+            title: "New Announcement Posted",
+            message: "Kyleen Nicdao posted a new announcement",
+            time: "2 hours ago",
+            read: false,
+            referenceId: 1,
+          },
+          {
+            id: 7,
+            type: "new_project",
+            title: "New Project: Beach Clean-Up Initiative",
+            message: "Andrea Pelias created a new project",
+            time: "3 hours ago",
+            read: false,
+            referenceId: 3,
+          },
+          {
+            id: 8,
+            type: "project_application",
+            title: "New Application: Community Clean-Up Drive 2025",
+            message: "Juan Dela Cruz applied to your project",
+            time: "30 minutes ago",
+            read: false,
+            projectId: 1,
+            applicantId: 1,
+          },
+        ];
+
+        function toggleNotificationModal() {
+          const modal = document.getElementById("notificationModal");
+          modal.classList.toggle("hidden");
+          if (!modal.classList.contains("hidden")) {
+            renderNotifications();
+          }
+        }
+
+        function closeNotificationModal() {
+          document.getElementById("notificationModal").classList.add("hidden");
+        }
+
+        function updateNotificationCount() {
+          const unreadCount = notifications.filter((n) => !n.read).length;
+          const badge = document.getElementById("notificationBadge");
+
+          if (unreadCount > 0) {
+            badge.textContent = unreadCount > 9 ? "9+" : unreadCount;
+            badge.classList.remove("hidden");
+          } else {
+            badge.classList.add("hidden");
+          }
+        }
+
+        function getNotificationIcon(type) {
+          switch (type) {
+            case "new_inquiry":
+              return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>`;
+            case "inquiry_reply":
+              return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+              </svg>`;
+            case "new_announcement":
+              return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+              </svg>`;
+            case "new_project":
+              return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>`;
+            case "project_application":
+              return `<svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>`;
+            default:
+              return "";
+          }
+        }
+
+        function getNotificationBgColor(type) {
+          switch (type) {
+            case "new_inquiry":
+              return "bg-yellow-50";
+            case "inquiry_reply":
+              return "bg-yellow-50";
+            case "new_announcement":
+              return "bg-blue-50";
+            case "new_project":
+              return "bg-blue-50";
+            case "project_application":
+              return "bg-emerald-50";
+            default:
+              return "bg-gray-50";
+          }
+        }
+
+        function renderNotifications() {
+          const notificationList = document.getElementById("notificationList");
+
+          if (notifications.length === 0) {
+            notificationList.innerHTML = `
+              <div class="p-8 text-center text-gray-500">
+                <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+                <p class="font-medium">No notifications</p>
+                <p class="text-sm mt-1">You're all caught up!</p>
+              </div>
+            `;
+            return;
+          }
+
+          notificationList.innerHTML = notifications
+            .map(
+              (notif) => `
+            <div
+              onclick="handleNotificationClick(${notif.id})"
+              class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
+                !notif.read ? getNotificationBgColor(notif.type) : ""
+              }"
+            >
+              <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                  ${getNotificationIcon(notif.type)}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between">
+                    <p class="text-sm font-semibold text-gray-800 truncate ${
+                      !notif.read ? "font-bold" : ""
+                    }">
+                      ${notif.title}
+                    </p>
+                    ${
+                      !notif.read
+                        ? '<span class="w-2 h-2 bg-emerald-600 rounded-full flex-shrink-0 ml-2 mt-1"></span>'
+                        : ""
+                    }
+                  </div>
+                  <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
+                  <p class="text-xs text-gray-400 mt-2">${notif.time}</p>
+                </div>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        }
+
+        function handleNotificationClick(notifId) {
+          const notif = notifications.find((n) => n.id === notifId);
+          if (!notif) return;
+
+          notif.read = true;
+          updateNotificationCount();
+          closeNotificationModal();
+
+          // Route to appropriate page based on notification type
+          if (notif.type === "new_inquiry" || notif.type === "inquiry_reply") {
+            window.location.href = `skproject.html?projectId=${notif.projectId}&tab=inquiries`;
+          } else if (notif.type === "new_announcement") {
+            window.location.href = `dashb.html`;
+          } else if (notif.type === "new_project") {
+            window.location.href = `skproject.html?projectId=${notif.referenceId}`;
+          } else if (notif.type === "project_application") {
+            window.location.href = `skproject.html?projectId=${notif.projectId}&tab=applications&applicantId=${notif.applicantId}`;
+          }
+        }
+
+        function markAllAsRead() {
+          notifications.forEach((n) => (n.read = true));
+          updateNotificationCount();
+          renderNotifications();
+        }
+
+        // Close notification modal when clicking outside
+        document.addEventListener("click", function (event) {
+          const modal = document.getElementById("notificationModal");
+          const notificationButton = event.target.closest(
+            'button[onclick="toggleNotificationModal()"]'
+          );
+
+          if (
+            !modal.contains(event.target) &&
+            !notificationButton &&
+            !modal.classList.contains("hidden")
+          ) {
+            closeNotificationModal();
+          }
+        });
+
+        // Initialize notification count on page load
+        updateNotificationCount();
     </script>
 
     <!-- Profile Modal -->
@@ -2514,6 +2713,27 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div
+      id="notificationModal"
+      class="hidden fixed top-20 right-6 w-96 bg-white rounded-xl shadow-2xl z-50 border border-gray-200"
+    >
+      <div
+        class="p-4 border-b border-gray-200 flex items-center justify-between"
+      >
+        <h3 class="font-bold text-gray-800">Notifications</h3>
+        <button
+          onclick="markAllAsRead()"
+          class="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+        >
+          Mark all as read
+        </button>
+      </div>
+      <div id="notificationList" class="max-h-96 overflow-y-auto">
+        <!-- Notifications will be dynamically inserted here -->
+      </div>
     </div>
 </body>
 </html>
