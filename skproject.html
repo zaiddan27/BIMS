@@ -7,6 +7,10 @@
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script>
       tailwind.config = {
         theme: {
@@ -547,6 +551,40 @@
 
               <div id="applicantsList" class="space-y-3">
                 <!-- Applicant cards will be inserted here -->
+              </div>
+
+              <!-- Attendance Generator Section -->
+              <div class="mt-6 pt-6 border-t border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 class="text-lg font-bold text-gray-800">Generate Attendance Sheet</h3>
+                    <p class="text-sm text-gray-600 mt-1">Download PDF attendance sheet for approved volunteers</p>
+                  </div>
+                  <button
+                    onclick="generateAttendancePDF()"
+                    class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition flex items-center gap-2"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Download PDF</span>
+                  </button>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div class="flex gap-3">
+                    <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="text-sm text-blue-800">
+                      <p class="font-semibold mb-1">Attendance Sheet Info:</p>
+                      <ul class="list-disc list-inside space-y-1 text-blue-700">
+                        <li>Only <strong>approved applicants</strong> will be included</li>
+                        <li>Sheet includes columns for: Name, Role, Signature, Time In, Time Out</li>
+                        <li>PDF will be formatted for easy printing</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1521,8 +1559,17 @@
           <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white p-6 rounded-t-2xl">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-2xl">
-                  AP
+                <div class="relative group">
+                  <div id="profilePicturePreview" class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-2xl overflow-hidden">
+                    <span id="profileInitials">AP</span>
+                  </div>
+                  <label for="profilePictureInput" class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                  </label>
+                  <input type="file" id="profilePictureInput" accept="image/*" onchange="handleProfilePictureChange(event)" class="hidden" />
                 </div>
                 <div>
                   <h2 class="text-2xl font-bold">My Profile</h2>
@@ -1666,7 +1713,8 @@
         address: "",
         contact: "",
         gender: "",
-        birthday: ""
+        birthday: "",
+        profilePicture: null // Stores base64 image data
       };
 
       // Profile Modal Functions
@@ -1682,11 +1730,69 @@
         document.getElementById('profileGender').value = userProfile.gender;
         document.getElementById('profileBirthday').value = userProfile.birthday;
 
+        // Load profile picture if exists
+        const previewDiv = document.getElementById('profilePicturePreview');
+        if (userProfile.profilePicture) {
+          previewDiv.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
+        } else {
+          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
+          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
+          previewDiv.innerHTML = `<span id="profileInitials" class="text-white font-bold text-2xl">${firstInitial}${lastInitial}</span>`;
+        }
+
         document.getElementById('profileModal').classList.remove('hidden');
       }
 
       function closeProfileModal() {
         document.getElementById('profileModal').classList.add('hidden');
+      }
+
+      function handleProfilePictureChange(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          alert('Please upload an image file');
+          return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          alert('Image size should be less than 5MB');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imageData = e.target.result;
+
+          // Store in profile
+          userProfile.profilePicture = imageData;
+
+          // Update modal preview
+          const previewDiv = document.getElementById('profilePicturePreview');
+          previewDiv.innerHTML = `<img src="${imageData}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
+
+          // Update header avatar
+          updateHeaderAvatar();
+
+          showToast('Profile picture uploaded successfully!');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function updateHeaderAvatar() {
+        const headerAvatar = document.querySelector('header .w-10.h-10.bg-emerald-600');
+        if (!headerAvatar) return;
+
+        if (userProfile.profilePicture) {
+          headerAvatar.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
+        } else {
+          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
+          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
+          headerAvatar.innerHTML = `<span class="text-white font-bold">${firstInitial}${lastInitial}</span>`;
+        }
       }
 
       function saveProfile() {
@@ -1713,8 +1819,158 @@
         const fullName = `${userProfile.firstName}${middleInitial} ${userProfile.lastName}`;
         document.querySelector('header .text-sm.font-medium').textContent = fullName;
 
+        // Update header avatar
+        updateHeaderAvatar();
+
         showToast('Profile updated successfully!');
         closeProfileModal();
+      }
+
+      // Generate Attendance PDF
+      function generateAttendancePDF() {
+        if (!currentProjectId) {
+          alert('No project selected');
+          return;
+        }
+
+        // Get the current project
+        const project = projects.find(p => p.id === currentProjectId);
+        if (!project) {
+          alert('Project not found');
+          return;
+        }
+
+        // Get approved applicants for the current project
+        const approvedApplicants = applications.filter(app =>
+          app.projectId === currentProjectId && app.status === 'approved'
+        );
+
+        if (approvedApplicants.length === 0) {
+          alert('No approved applicants found for this project. Please approve applicants first.');
+          return;
+        }
+
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Page settings
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 15;
+        let yPosition = margin;
+
+        // Header
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'bold');
+        doc.text('BARANGAY INFORMATION MANAGEMENT SYSTEM', pageWidth / 2, yPosition, { align: 'center' });
+        yPosition += 7;
+
+        doc.setFontSize(14);
+        doc.text('SK Malanday - Volunteer Attendance Sheet', pageWidth / 2, yPosition, { align: 'center' });
+        yPosition += 10;
+
+        // Project Information
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Project: ${project.title}`, margin, yPosition);
+        yPosition += 6;
+        doc.text(`Date: ${project.startDate}`, margin, yPosition);
+        yPosition += 6;
+        doc.text(`Location: ${project.location}`, margin, yPosition);
+        yPosition += 10;
+
+        // Table Header
+        doc.setFillColor(5, 150, 105); // Emerald color
+        doc.rect(margin, yPosition, pageWidth - 2 * margin, 8, 'F');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFont(undefined, 'bold');
+        doc.setFontSize(9);
+
+        const colWidths = {
+          no: 10,
+          name: 50,
+          role: 35,
+          signature: 30,
+          timeIn: 25,
+          timeOut: 25
+        };
+
+        let xPos = margin + 2;
+        doc.text('No.', xPos, yPosition + 5);
+        xPos += colWidths.no;
+        doc.text('Name', xPos, yPosition + 5);
+        xPos += colWidths.name;
+        doc.text('Role', xPos, yPosition + 5);
+        xPos += colWidths.role;
+        doc.text('Signature', xPos, yPosition + 5);
+        xPos += colWidths.signature;
+        doc.text('Time In', xPos, yPosition + 5);
+        xPos += colWidths.timeIn;
+        doc.text('Time Out', xPos, yPosition + 5);
+
+        yPosition += 8;
+        doc.setTextColor(0, 0, 0);
+        doc.setFont(undefined, 'normal');
+
+        // Table Rows
+        approvedApplicants.forEach((applicant, index) => {
+          // Check if we need a new page
+          if (yPosition > pageHeight - 30) {
+            doc.addPage();
+            yPosition = margin;
+          }
+
+          // Alternating row colors
+          if (index % 2 === 0) {
+            doc.setFillColor(249, 250, 251);
+            doc.rect(margin, yPosition, pageWidth - 2 * margin, 10, 'F');
+          }
+
+          xPos = margin + 2;
+
+          // Number
+          doc.text(String(index + 1), xPos, yPosition + 6);
+          xPos += colWidths.no;
+
+          // Name
+          doc.text(applicant.fullName, xPos, yPosition + 6);
+          xPos += colWidths.name;
+
+          // Role
+          const role = applicant.preferredRole || 'Volunteer';
+          doc.text(role.substring(0, 25), xPos, yPosition + 6);
+          xPos += colWidths.role;
+
+          // Signature line
+          doc.setDrawColor(200, 200, 200);
+          doc.line(xPos, yPosition + 7, xPos + colWidths.signature - 5, yPosition + 7);
+          xPos += colWidths.signature;
+
+          // Time In line
+          doc.line(xPos, yPosition + 7, xPos + colWidths.timeIn - 5, yPosition + 7);
+          xPos += colWidths.timeIn;
+
+          // Time Out line
+          doc.line(xPos, yPosition + 7, xPos + colWidths.timeOut - 5, yPosition + 7);
+
+          yPosition += 10;
+        });
+
+        // Footer
+        yPosition += 10;
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Total Approved Volunteers: ${approvedApplicants.length}`, margin, yPosition);
+        yPosition += 5;
+        doc.text(`Generated on: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, margin, yPosition);
+
+        // Save the PDF
+        const fileName = `Attendance_${project.title.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+        doc.save(fileName);
+
+        showToast('Attendance sheet generated successfully!');
       }
 
       // SK Officials list
