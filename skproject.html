@@ -518,6 +518,28 @@
                   class="text-gray-900 whitespace-pre-wrap bg-gray-50 p-4 rounded-lg"
                 ></div>
               </div>
+
+              <!-- Captain's Decision Section -->
+              <div id="captainDecisionSection" class="hidden mt-6">
+                <div class="border-t border-gray-200 pt-6">
+                  <h3 class="text-sm font-semibold text-gray-600 mb-3">
+                    Barangay Captain's Decision
+                  </h3>
+                  <div id="decisionContent" class="bg-gray-50 rounded-lg p-5 border-l-4">
+                    <div class="flex items-center gap-3 mb-3">
+                      <div id="decisionIcon" class="w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold"></div>
+                      <div>
+                        <p id="decisionStatus" class="font-bold text-lg"></p>
+                        <p id="decisionDate" class="text-sm text-gray-600"></p>
+                      </div>
+                    </div>
+                    <div class="mt-4">
+                      <p class="text-xs font-semibold text-gray-600 mb-2">Comments:</p>
+                      <p id="decisionComments" class="text-gray-800 whitespace-pre-wrap"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Applicants Tab -->
@@ -675,8 +697,9 @@
                   <option>Pending Approval</option>
                   <option>Ongoing</option>
                   <option>Upcoming</option>
+                  <option>Pending for Revision</option>
+                  <option>Rejected</option>
                   <option>Completed</option>
-                  <option>Cancelled</option>
                 </select>
                 <p class="text-xs text-gray-500 mt-1">
                   <i class="fas fa-info-circle mr-1"></i>
@@ -867,36 +890,19 @@
               </p>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2"
-                  >Target Beneficiaries (Description)</label
-                >
-                <input
-                  id="projBeneficiaries"
-                  type="text"
-                  placeholder="e.g., Youth ages 15-30, Families"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                />
-                <p class="text-xs text-gray-500 mt-1">
-                  Who will benefit from this project?
-                </p>
-              </div>
-              <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2"
-                  >Expected Beneficiaries Count</label
-                >
-                <input
-                  id="projBeneficiariesCount"
-                  type="number"
-                  placeholder="e.g., 200"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                  min="1"
-                />
-                <p class="text-xs text-gray-500 mt-1">
-                  Number of people expected to benefit
-                </p>
-              </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2"
+                >Target Beneficiaries</label
+              >
+              <input
+                id="projBeneficiaries"
+                type="text"
+                placeholder="e.g., 200 Youth ages 15-30, 150 Families"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+              />
+              <p class="text-xs text-gray-500 mt-1">
+                Who and how many people will benefit from this project? (Include count and description)
+              </p>
             </div>
 
             <div>
@@ -1211,7 +1217,8 @@
               <h3 class="text-lg font-bold text-gray-800 mb-4">
                 2. Volunteer Participation (20%)
               </h3>
-              <div class="grid grid-cols-2 gap-4">
+
+              <div class="grid grid-cols-2 gap-4 mb-4">
                 <div>
                   <label class="block text-sm font-semibold text-gray-700 mb-2">Target Volunteers</label>
                   <input type="number" id="volunteersTarget" placeholder="e.g. 50"
@@ -1228,7 +1235,30 @@
                   <input type="number" id="volunteersActual" placeholder="e.g. 62"
                          oninput="calculateSuccessRate()"
                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500" />
+                  <p class="text-xs text-gray-500 mt-1">
+                    Enter the actual number of volunteers who participated
+                  </p>
                 </div>
+              </div>
+
+              <!-- Upload Attendance PDF -->
+              <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  <i class="fas fa-file-pdf mr-1"></i>
+                  Upload Attendance Sheet (PDF)
+                </label>
+                <div class="flex items-center gap-3">
+                  <label class="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition text-sm font-medium flex items-center gap-2">
+                    <i class="fas fa-upload"></i>
+                    <span>Choose PDF</span>
+                    <input type="file" id="attendancePdfUpload" accept=".pdf" onchange="uploadAttendancePDF(event)" class="hidden" />
+                  </label>
+                  <span id="attendancePdfName" class="text-sm text-gray-600 italic">No file selected</span>
+                </div>
+                <p class="text-xs text-gray-600 mt-2">
+                  <i class="fas fa-info-circle mr-1"></i>
+                  Upload the attendance PDF for documentation
+                </p>
               </div>
             </div>
 
@@ -1876,8 +1906,6 @@
         doc.text(`Project: ${project.title}`, margin, yPosition);
         yPosition += 6;
         doc.text(`Date: ${project.startDate}`, margin, yPosition);
-        yPosition += 6;
-        doc.text(`Location: ${project.location}`, margin, yPosition);
         yPosition += 10;
 
         // Table Header
@@ -1889,12 +1917,10 @@
         doc.setFontSize(9);
 
         const colWidths = {
-          no: 10,
-          name: 50,
-          role: 35,
-          signature: 30,
-          timeIn: 25,
-          timeOut: 25
+          no: 15,
+          name: 80,
+          time: 40,
+          signature: 45
         };
 
         let xPos = margin + 2;
@@ -1902,13 +1928,9 @@
         xPos += colWidths.no;
         doc.text('Name', xPos, yPosition + 5);
         xPos += colWidths.name;
-        doc.text('Role', xPos, yPosition + 5);
-        xPos += colWidths.role;
+        doc.text('Time', xPos, yPosition + 5);
+        xPos += colWidths.time;
         doc.text('Signature', xPos, yPosition + 5);
-        xPos += colWidths.signature;
-        doc.text('Time In', xPos, yPosition + 5);
-        xPos += colWidths.timeIn;
-        doc.text('Time Out', xPos, yPosition + 5);
 
         yPosition += 8;
         doc.setTextColor(0, 0, 0);
@@ -1938,22 +1960,13 @@
           doc.text(applicant.fullName, xPos, yPosition + 6);
           xPos += colWidths.name;
 
-          // Role
-          const role = applicant.preferredRole || 'Volunteer';
-          doc.text(role.substring(0, 25), xPos, yPosition + 6);
-          xPos += colWidths.role;
+          // Time line
+          doc.setDrawColor(200, 200, 200);
+          doc.line(xPos, yPosition + 7, xPos + colWidths.time - 5, yPosition + 7);
+          xPos += colWidths.time;
 
           // Signature line
-          doc.setDrawColor(200, 200, 200);
           doc.line(xPos, yPosition + 7, xPos + colWidths.signature - 5, yPosition + 7);
-          xPos += colWidths.signature;
-
-          // Time In line
-          doc.line(xPos, yPosition + 7, xPos + colWidths.timeIn - 5, yPosition + 7);
-          xPos += colWidths.timeIn;
-
-          // Time Out line
-          doc.line(xPos, yPosition + 7, xPos + colWidths.timeOut - 5, yPosition + 7);
 
           yPosition += 10;
         });
@@ -2054,8 +2067,7 @@
           banner: "",
           budget: 35000,
           expectedVolunteers: 40,
-          beneficiaries: "Community residents, families near Malanday River",
-          targetBeneficiaries: 250,
+          beneficiaries: "250 Community residents, families near Malanday River",
           budgetBreakdown: [
             { id: 1, description: "Cleaning supplies and equipment", cost: 8000 },
             { id: 2, description: "Trash bags and waste bins", cost: 3500 },
@@ -2067,6 +2079,10 @@
             { id: 8, description: "Documentation (photos/videos)", cost: 2000 }
           ],
           applications: applications.filter((a) => a.projectId === 1),
+          approvalStatus: "approved",
+          notes: "Great initiative! The project proposal is well-structured and the budget is reasonable. Approved for implementation. Please ensure all safety protocols are followed during the event.",
+          approvedBy: "Hon. Barangay Captain",
+          approvalDate: "Dec 10, 2025",
           inquiries: [
             {
               id: 101,
@@ -2125,7 +2141,7 @@
           id: 3,
           title: "Scholarship Program Deadline",
           category: "Education",
-          status: "Open",
+          status: "Pending for Revision",
           heads: ["Andrea Pelias"],
           startDate: "2025-12-15",
           endDate: "2025-12-15",
@@ -2137,6 +2153,30 @@
           banner: "",
           applications: [],
           inquiries: [],
+          approvalStatus: "revision-requested",
+          notes: "The scholarship program needs more details:\n\n1. Provide specific eligibility criteria\n2. Include budget breakdown for scholarship amounts\n3. Add selection process timeline\n4. Specify number of scholarship slots available\n\nPlease revise and resubmit within 5 working days.",
+          revisionRequestedBy: "Hon. Barangay Captain",
+          revisionRequestDate: "Dec 12, 2025",
+        },
+        {
+          id: 4,
+          title: "International Youth Exchange Program",
+          category: "Education",
+          status: "Rejected",
+          heads: ["Andrea Pelias"],
+          startDate: "2026-03-01",
+          endDate: "2026-03-15",
+          startTime: "08:00",
+          endTime: "18:00",
+          location: "Various International Venues",
+          description: "Youth exchange program with sister barangay in another country to promote cultural exchange and global exposure.",
+          banner: "",
+          applications: [],
+          inquiries: [],
+          approvalStatus: "rejected",
+          notes: "After careful review, this project cannot be approved due to:\n\n1. Budget of ₱250,000 exceeds our Q1 allocation\n2. Not aligned with current barangay priorities\n3. Limited direct benefit to the community\n4. High costs for small participant pool\n\nWe suggest focusing on local programs that can benefit more residents. You may consider a local cultural exchange with nearby barangays instead, which would be more cost-effective and accessible.",
+          rejectedBy: "Hon. Barangay Captain",
+          rejectionDate: "Dec 11, 2025",
         },
       ];
 
@@ -2232,8 +2272,9 @@
             "Pending Approval": "bg-orange-100 text-orange-700",
             Ongoing: "bg-emerald-100 text-emerald-700",
             Upcoming: "bg-blue-100 text-blue-700",
+            "Pending for Revision": "bg-yellow-100 text-yellow-700",
+            Rejected: "bg-red-100 text-red-700",
             Completed: "bg-emerald-100 text-emerald-700",
-            Cancelled: "bg-red-100 text-red-700",
           };
 
           card.innerHTML = `
@@ -2313,9 +2354,9 @@
               View Details & Applications
             </button>
 
-            <!-- Archive Button (for completed projects) -->
+            <!-- Archive Button (for completed, rejected, or revision-needed projects) -->
             ${
-              project.status === "Completed"
+              project.status === "Completed" || project.status === "Rejected" || project.status === "Pending for Revision"
                 ? `
               <button onclick="archiveProject(${project.id})"
                       class="w-full px-4 py-2.5 bg-gray-700 text-white rounded-lg hover:bg-gray-800 font-medium mb-3 transition flex items-center justify-center gap-2">
@@ -2386,8 +2427,9 @@
           "Pending Approval": "bg-orange-100 text-orange-700",
           Ongoing: "bg-emerald-100 text-emerald-700",
           Upcoming: "bg-blue-100 text-blue-700",
+          "Pending for Revision": "bg-yellow-100 text-yellow-700",
+          Rejected: "bg-red-100 text-red-700",
           Completed: "bg-emerald-100 text-emerald-700",
-          Cancelled: "bg-red-100 text-red-700",
         };
         statusEl.textContent = project.status;
         statusEl.className = `inline-block px-3 py-1 rounded-full text-sm font-medium ${
@@ -2409,6 +2451,9 @@
         ).textContent = `${startDateTime} - ${endDateTime}`;
         document.getElementById("detailsLocation").textContent =
           project.location;
+
+        // Display captain's decision if available
+        displayCaptainDecision(project);
         document.getElementById("detailsHeads").textContent =
           project.heads.join(", ");
         document.getElementById("detailsDescription").textContent =
@@ -2765,7 +2810,6 @@
         document.getElementById("projLocation").value = project.location;
         document.getElementById("projDesc").value = project.description;
         document.getElementById("projBeneficiaries").value = project.beneficiaries || "";
-        document.getElementById("projBeneficiariesCount").value = project.targetBeneficiaries || "";
 
         selectedHeads = [...project.heads];
         renderHeadsPills();
@@ -2791,7 +2835,6 @@
           document.getElementById("projLocation").value = "";
           document.getElementById("projDesc").value = "";
           document.getElementById("projBeneficiaries").value = "";
-          document.getElementById("projBeneficiariesCount").value = "";
           document.getElementById("projBanner").value = "";
 
           clearBudgetBreakdown();
@@ -3010,7 +3053,6 @@
           const budget = parseFloat(document.getElementById("projBudget").value) || 0;
           const volunteers = parseInt(document.getElementById("projVolunteers").value) || 0;
           const beneficiaries = document.getElementById("projBeneficiaries").value.trim();
-          const beneficiariesCount = parseInt(document.getElementById("projBeneficiariesCount").value) || 0;
 
           if (
             !title ||
@@ -3057,7 +3099,6 @@
               budget,
               expectedVolunteers: volunteers,
               beneficiaries,
-              targetBeneficiaries: beneficiariesCount,
               heads: [...selectedHeads],
               budgetBreakdown: budgetBreakdownItems.map(item => ({ ...item })),
             });
@@ -3077,7 +3118,6 @@
               budget,
               expectedVolunteers: volunteers,
               beneficiaries,
-              targetBeneficiaries: beneficiariesCount,
               heads: [...selectedHeads],
               budgetBreakdown: budgetBreakdownItems.map(item => ({ ...item })),
               banner: "",
@@ -3167,6 +3207,58 @@
         document.getElementById("toastMessage").textContent = message;
         toast.classList.remove("hidden");
         setTimeout(() => toast.classList.add("hidden"), 3000);
+      }
+
+      // Display captain's decision in project details
+      function displayCaptainDecision(project) {
+        const section = document.getElementById('captainDecisionSection');
+        const content = document.getElementById('decisionContent');
+        const icon = document.getElementById('decisionIcon');
+        const statusEl = document.getElementById('decisionStatus');
+        const dateEl = document.getElementById('decisionDate');
+        const commentsEl = document.getElementById('decisionComments');
+
+        // Check if project has approval status and notes from captain
+        if (project.approvalStatus && project.notes) {
+          section.classList.remove('hidden');
+
+          let iconText = '';
+          let iconBg = '';
+          let borderColor = '';
+          let statusText = '';
+          let dateText = '';
+
+          if (project.approvalStatus === 'approved') {
+            iconText = '✓';
+            iconBg = 'bg-green-100 text-green-600';
+            borderColor = 'border-green-500';
+            statusText = 'Project Approved';
+            dateText = project.approvalDate ? `Approved on ${project.approvalDate}` : 'Recently approved';
+          } else if (project.approvalStatus === 'rejected') {
+            iconText = '✗';
+            iconBg = 'bg-red-100 text-red-600';
+            borderColor = 'border-red-500';
+            statusText = 'Project Rejected';
+            dateText = project.rejectionDate ? `Rejected on ${project.rejectionDate}` : 'Recently rejected';
+          } else if (project.approvalStatus === 'revision-requested') {
+            iconText = '✎';
+            iconBg = 'bg-yellow-100 text-yellow-600';
+            borderColor = 'border-yellow-500';
+            statusText = 'Revision Requested';
+            dateText = project.revisionRequestDate ? `Requested on ${project.revisionRequestDate}` : 'Recently requested';
+          }
+
+          icon.className = `w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold ${iconBg}`;
+          icon.textContent = iconText;
+
+          statusEl.textContent = statusText;
+          dateEl.textContent = dateText;
+          commentsEl.textContent = project.notes || 'No comments provided.';
+
+          content.className = `bg-gray-50 rounded-lg p-5 border-l-4 ${borderColor}`;
+        } else {
+          section.classList.add('hidden');
+        }
       }
 
       // Close dropdowns on outside click
@@ -3725,8 +3817,8 @@
               </div>
             </td>
             <td class="px-3 py-3 text-center">
-              <button onclick="deleteActualBreakdownRow(${index})" class="text-red-600 hover:text-red-800">
-                <i class="fas fa-trash text-sm"></i>
+              <button onclick="deleteActualBreakdownRow(${index})" class="text-red-600 hover:text-red-800" title="Remove item">
+                <i class="fas fa-times text-sm"></i>
               </button>
             </td>
           `;
@@ -3950,13 +4042,15 @@
         const project = projects.find(p => p.id === projectId);
         if (!project) return;
 
-        if (project.status !== 'Completed') {
-          alert('Only completed projects can be archived.');
+        const archivableStatuses = ['Completed', 'Rejected', 'Pending for Revision'];
+        if (!archivableStatuses.includes(project.status)) {
+          alert('Only completed, rejected, or projects pending revision can be archived.');
           return;
         }
 
         const confirmArchive = confirm(
           `Are you sure you want to archive "${project.title}"?\n\n` +
+          `Status: ${project.status}\n` +
           `This will move the project to the Archive section.`
         );
 
@@ -4060,6 +4154,25 @@
             closeDownloadReportModal();
           }, 1000);
         }
+      }
+
+      // ========== ATTENDANCE PDF UPLOAD ==========
+
+      let uploadedAttendancePDF = null;
+
+      function uploadAttendancePDF(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.type !== 'application/pdf') {
+          alert('Please upload a PDF file');
+          return;
+        }
+
+        uploadedAttendancePDF = file;
+        document.getElementById('attendancePdfName').textContent = file.name;
+        document.getElementById('attendancePdfName').classList.remove('italic', 'text-gray-600');
+        document.getElementById('attendancePdfName').classList.add('text-emerald-600', 'font-medium');
       }
 
       // Initialize notification count on page load
