@@ -206,6 +206,9 @@
                 <p class="text-sm text-gray-600 mt-1">Overview of barangay activities, projects, and volunteer engagement</p>
               </div>
               <div class="flex items-center space-x-4">
+                <button onclick="resetDemoNotifications()" class="px-3 py-1.5 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition font-medium" title="Reset Demo Notifications">
+                  Reset Demo
+                </button>
                 <div class="relative">
                   <button onclick="toggleNotificationModal()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -674,6 +677,120 @@
                 </div>
               </div>
             </div>
+
+            <!-- Transparency & Budget Reports Section -->
+            <div class="mt-8">
+              <h2 class="text-2xl font-bold text-gray-800 mb-2">Transparency & Budget Reports</h2>
+              <p class="text-gray-600 mb-6">Full transparency on how your barangay funds are utilized</p>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 2025 Budget Allocation -->
+                <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-sm p-6 border border-blue-100">
+                  <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-800" id="budgetYearTitle">2025 Budget Allocation</h3>
+                    <div class="flex space-x-2">
+                      <button onclick="editBudgetAllocation()" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Edit Budget">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                      </button>
+                      <button onclick="viewBudgetHistory()" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="View History">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="space-y-4">
+                    <!-- Youth Development Programs -->
+                    <div>
+                      <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-700 font-medium">Youth Development Programs</span>
+                        <span class="text-gray-900 font-semibold" id="youthBudget">₱450,000</span>
+                      </div>
+                      <div class="w-full bg-blue-100 rounded-full h-2">
+                        <div id="youthBudgetBar" class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+                      </div>
+                    </div>
+
+                    <!-- Community Events -->
+                    <div>
+                      <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-700 font-medium">Community Events</span>
+                        <span class="text-gray-900 font-semibold" id="eventsBudget">₱300,000</span>
+                      </div>
+                      <div class="w-full bg-blue-100 rounded-full h-2">
+                        <div id="eventsBudgetBar" class="bg-blue-600 h-2 rounded-full" style="width: 30%"></div>
+                      </div>
+                    </div>
+
+                    <!-- Infrastructure Projects -->
+                    <div>
+                      <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-700 font-medium">Infrastructure Projects</span>
+                        <span class="text-gray-900 font-semibold" id="infraBudget">₱250,000</span>
+                      </div>
+                      <div class="w-full bg-blue-100 rounded-full h-2">
+                        <div id="infraBudgetBar" class="bg-blue-600 h-2 rounded-full" style="width: 25%"></div>
+                      </div>
+                    </div>
+
+                    <!-- Total Budget -->
+                    <div class="pt-4 border-t border-blue-200 flex justify-between">
+                      <span class="text-gray-800 font-bold">Total Budget</span>
+                      <span class="text-2xl font-bold text-blue-600" id="totalBudget">₱1,000,000</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Project Success Metrics -->
+                <div class="bg-gradient-to-br from-emerald-50 to-white rounded-xl shadow-sm p-6 border border-emerald-100">
+                  <div class="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 class="text-lg font-bold text-gray-800">Project Success Metrics</h3>
+                      <p class="text-sm text-gray-600">Based on 5-factor evaluation system</p>
+                    </div>
+                    <div class="p-3 bg-emerald-100 rounded-lg">
+                      <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="text-center p-4 bg-white rounded-lg border border-emerald-100">
+                      <p class="text-3xl font-bold text-emerald-600" id="totalProjects">42</p>
+                      <p class="text-sm text-gray-600 mt-1">Total Projects</p>
+                      <p class="text-xs text-gray-400 mt-1" id="projectsYear">2025</p>
+                    </div>
+                    <div class="text-center p-4 bg-white rounded-lg border border-emerald-100">
+                      <p class="text-3xl font-bold text-emerald-600" id="completedProjects">38</p>
+                      <p class="text-sm text-gray-600 mt-1">Completed</p>
+                    </div>
+                    <div class="text-center p-4 bg-white rounded-lg border border-emerald-100">
+                      <p class="text-3xl font-bold text-yellow-600" id="ongoingProjects">4</p>
+                      <p class="text-sm text-gray-600 mt-1">Ongoing</p>
+                    </div>
+                    <div class="text-center p-4 bg-white rounded-lg border border-emerald-100">
+                      <p class="text-3xl font-bold text-emerald-600" id="successRate">89%</p>
+                      <p class="text-sm text-gray-600 mt-1">Avg Success Rate</p>
+                    </div>
+                  </div>
+
+                  <div class="bg-white rounded-lg border border-emerald-100 p-4">
+                    <p class="text-xs font-semibold text-gray-700 mb-2">Success Rate Calculation:</p>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                      <div>• Budget Efficiency (25%)</div>
+                      <div>• Timeline Adherence (20%)</div>
+                      <div>• Volunteer Participation (20%)</div>
+                      <div>• Volunteer Feedback (15%)</div>
+                      <div>• Community Impact (20%)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1055,6 +1172,83 @@
       </div>
     </div>
 
+    <!-- Budget Edit Modal -->
+    <div id="budgetEditModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <h3 class="text-2xl font-bold text-gray-800">Edit Budget Allocation</h3>
+            <button onclick="closeBudgetEditModal()" class="text-gray-400 hover:text-gray-600 transition">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="p-6">
+          <!-- Instructions -->
+          <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div class="flex items-start">
+              <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <div>
+                <p class="text-sm font-semibold text-blue-900 mb-1">Important Information</p>
+                <p class="text-xs text-blue-800">This budget allocation will be displayed on the <strong>Dashboard homepage</strong> in the "Transparency & Budget Reports" section. You can add or remove budget categories, and the breakdown will be shown to all visitors for full transparency on how barangay funds are utilized throughout the year.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Year Selection -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Budget Year</label>
+              <input
+                type="number"
+                id="editBudgetYear"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                min="2020"
+                max="2030"
+              />
+            </div>
+
+            <!-- Budget Categories Container -->
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <label class="block text-sm font-medium text-gray-700">Budget Categories</label>
+                <button onclick="addBudgetCategory()" type="button" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  Add Category
+                </button>
+              </div>
+
+              <div id="budgetCategoriesContainer" class="space-y-3">
+                <!-- Categories will be dynamically rendered here -->
+              </div>
+            </div>
+
+            <!-- Total Budget Display -->
+            <div class="pt-4 border-t border-gray-200 flex justify-between items-center">
+              <span class="text-lg font-bold text-gray-800">Total Budget</span>
+              <span class="text-2xl font-bold text-blue-600" id="editTotalBudget">₱0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+          <button onclick="closeBudgetEditModal()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">
+            Cancel
+          </button>
+          <button onclick="saveBudgetAllocation()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition font-medium">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       let currentAnnouncementId = null;
 
@@ -1363,6 +1557,12 @@
             return "application";
           if (t === "pending_approval")
             return "pending_approval";
+          if (t === "project_approved")
+            return "project_approved";
+          if (t === "project_rejected")
+            return "project_rejected";
+          if (t === "project_revision-requested")
+            return "project_revision";
           return "default";
         }
 
@@ -1379,6 +1579,12 @@
             return `<div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n              </svg>\n            </div>`;
           case "pending_approval":
             return `<div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n              </svg>\n            </div>`;
+          case "project_approved":
+            return `<div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n              </svg>\n            </div>`;
+          case "project_rejected":
+            return `<div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n              </svg>\n            </div>`;
+          case "project_revision":
+            return `<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>\n              </svg>\n            </div>`;
           default:
             return `<div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659"></path>\n              </svg>\n            </div>`;
         }
@@ -1480,7 +1686,76 @@
           window.location.href = `skproject.html?projectId=${notif.referenceId}`;
         } else if (notif.type === "project_application") {
           window.location.href = `skproject.html?projectId=${notif.projectId}&tab=applications&applicantId=${notif.applicantId}`;
+        } else if (notif.type === "project_approved" || notif.type === "project_rejected" || notif.type === "project_revision-requested") {
+          // Show modal with captain's decision and comments
+          showDecisionModal(notif);
         }
+      }
+
+      // Show modal for project decision notifications
+      function showDecisionModal(notif) {
+        const decision = notif.decision;
+        const comments = notif.comments || 'No comments provided.';
+
+        let icon = '';
+        let iconBg = '';
+        let title = '';
+
+        if (decision === 'approved') {
+          icon = '✓';
+          iconBg = 'bg-green-100 text-green-600';
+          title = 'Project Approved';
+        } else if (decision === 'rejected') {
+          icon = '✗';
+          iconBg = 'bg-red-100 text-red-600';
+          title = 'Project Rejected';
+        } else if (decision === 'revision-requested') {
+          icon = '✎';
+          iconBg = 'bg-yellow-100 text-yellow-600';
+          title = 'Revision Requested';
+        }
+
+        const modalHTML = `
+          <div id="decisionModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onclick="closeDecisionModal()">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full" onclick="event.stopPropagation()">
+              <div class="p-6">
+                <div class="flex items-center justify-center mb-4">
+                  <div class="w-16 h-16 ${iconBg} rounded-full flex items-center justify-center text-3xl font-bold">
+                    ${icon}
+                  </div>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 text-center mb-2">${title}</h2>
+                <p class="text-center text-gray-600 mb-4">${notif.projectName}</p>
+
+                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                  <h3 class="text-sm font-semibold text-gray-700 mb-2">Barangay Captain's Comments:</h3>
+                  <p class="text-gray-700 whitespace-pre-wrap">${comments}</p>
+                </div>
+
+                <div class="flex gap-3">
+                  <button onclick="closeDecisionModal()" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
+                    Close
+                  </button>
+                  <button onclick="closeDecisionModal(); window.location.href='skproject.html'" class="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium">
+                    View Projects
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Remove existing modal if any
+        const existingModal = document.getElementById('decisionModal');
+        if (existingModal) existingModal.remove();
+
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      function closeDecisionModal() {
+        const modal = document.getElementById('decisionModal');
+        if (modal) modal.remove();
       }
 
       function markAllAsRead() {
@@ -1505,7 +1780,105 @@
         }
       });
 
+      // Load SK notifications from localStorage
+      function loadSKNotifications() {
+        const skNotifications = JSON.parse(localStorage.getItem('skNotifications') || '[]');
+
+        // Add SK notifications to the notifications array
+        skNotifications.forEach(skNotif => {
+          // Check if notification already exists
+          const exists = notifications.find(n => n.id === skNotif.id);
+          if (!exists) {
+            notifications.unshift(skNotif);
+          }
+        });
+      }
+
+      // Initialize demo notifications (run once)
+      function initializeDemoNotifications() {
+        // Check if demo already initialized
+        if (localStorage.getItem('demoNotificationsInitialized')) {
+          return;
+        }
+
+        // Create demo notifications
+        const demoNotifications = [
+          {
+            id: Date.now() - 3000,
+            projectId: 1,
+            projectName: "New Year Community Festival 2026",
+            type: "project_approved",
+            decision: "approved",
+            comments: "Great initiative! The project proposal is well-structured and the budget is reasonable. Approved for implementation. Please ensure all safety protocols are followed during the event.",
+            timestamp: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
+            timeAgo: "2 hours ago",
+            read: false,
+            title: "Project Approved: New Year Community Festival 2026",
+            message: "Your project has been approved by the Barangay Captain"
+          },
+          {
+            id: Date.now() - 2000,
+            projectId: 2,
+            projectName: "Youth Skills Training Program",
+            type: "project_revision-requested",
+            decision: "revision-requested",
+            comments: "The project concept is good, but please revise the following:\n\n1. Reduce the budget from ₱42,000 to ₱35,000\n2. Add more details on the training modules and instructors\n3. Include a monitoring and evaluation plan\n4. Provide certificates sample design\n\nPlease resubmit within 5 working days.",
+            timestamp: new Date(Date.now() - 1800000).toISOString(), // 30 minutes ago
+            timeAgo: "30 minutes ago",
+            read: false,
+            title: "Revision Requested: Youth Skills Training Program",
+            message: "The Barangay Captain has requested revisions to your project"
+          },
+          {
+            id: Date.now() - 1000,
+            projectId: 8,
+            projectName: "International Youth Exchange Program",
+            type: "project_rejected",
+            decision: "rejected",
+            comments: "After careful review, this project cannot be approved due to:\n\n1. Budget of ₱250,000 exceeds our Q1 allocation\n2. Not aligned with current barangay priorities\n3. Limited direct benefit to the community\n\nWe suggest focusing on local programs that can benefit more residents. You may consider a local cultural exchange with nearby barangays instead.",
+            timestamp: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
+            timeAgo: "1 hour ago",
+            read: false,
+            title: "Project Rejected: International Youth Exchange Program",
+            message: "Your project has been rejected by the Barangay Captain"
+          }
+        ];
+
+        // Save to localStorage
+        localStorage.setItem('skNotifications', JSON.stringify(demoNotifications));
+        localStorage.setItem('demoNotificationsInitialized', 'true');
+
+        console.log('Demo notifications initialized');
+      }
+
+      // Reset demo notifications function
+      function resetDemoNotifications() {
+        if (confirm('This will reset all demo notifications. Continue?')) {
+          localStorage.removeItem('demoNotificationsInitialized');
+          localStorage.removeItem('skNotifications');
+
+          // Clear current notifications
+          notifications = notifications.filter(n =>
+            !n.type.startsWith('project_approved') &&
+            !n.type.startsWith('project_rejected') &&
+            !n.type.startsWith('project_revision')
+          );
+
+          // Reinitialize demo
+          initializeDemoNotifications();
+          loadSKNotifications();
+          updateNotificationCount();
+          renderNotifications();
+
+          alert('Demo notifications reset! You should now see 3 new notifications.');
+        }
+      }
+
+      // Initialize demo notifications
+      initializeDemoNotifications();
+
       // Initialize notification count on page load
+      loadSKNotifications();
       updateNotificationCount();
 
       // Update current date
@@ -1518,6 +1891,222 @@
         }
       }
       updateCurrentDate();
+
+      // ===========================
+      // BUDGET & METRICS MANAGEMENT
+      // ===========================
+
+      // Budget data structure (now with dynamic categories)
+      let budgetData = {
+        year: 2025,
+        categories: [
+          { id: 1, name: 'Youth Development Programs', amount: 450000 },
+          { id: 2, name: 'Community Events', amount: 300000 },
+          { id: 3, name: 'Infrastructure Projects', amount: 250000 }
+        ],
+        history: []
+      };
+
+      // Project metrics data
+      let projectMetrics = {
+        year: 2025,
+        total: 42,
+        completed: 38,
+        ongoing: 4,
+        successRate: 89
+      };
+
+      // Load budget data from localStorage
+      function loadBudgetData() {
+        const saved = localStorage.getItem('budgetData');
+        if (saved) {
+          budgetData = JSON.parse(saved);
+          updateBudgetDisplay();
+        }
+      }
+
+      // Load project metrics from localStorage
+      function loadProjectMetrics() {
+        const saved = localStorage.getItem('projectMetrics');
+        if (saved) {
+          projectMetrics = JSON.parse(saved);
+          updateMetricsDisplay();
+        }
+      }
+
+      // Update budget display
+      function updateBudgetDisplay() {
+        const budgetContainer = document.querySelector('.bg-gradient-to-br.from-blue-50 .space-y-4');
+        if (!budgetContainer) return;
+
+        const total = budgetData.categories.reduce((sum, cat) => sum + cat.amount, 0);
+
+        document.getElementById('budgetYearTitle').textContent = `${budgetData.year} Budget Allocation`;
+        document.getElementById('totalBudget').textContent = `₱${total.toLocaleString()}`;
+
+        // Clear existing category displays
+        const categoriesHTML = budgetData.categories.map(category => {
+          const percent = total > 0 ? (category.amount / total * 100).toFixed(0) : 0;
+          return `
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-gray-700 font-medium">${category.name}</span>
+                <span class="text-gray-900 font-semibold">₱${category.amount.toLocaleString()}</span>
+              </div>
+              <div class="w-full bg-blue-100 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" style="width: ${percent}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Find the container and update it (preserve the total budget section)
+        const totalSection = budgetContainer.querySelector('.pt-4.border-t');
+        budgetContainer.innerHTML = categoriesHTML;
+        if (totalSection) {
+          budgetContainer.appendChild(totalSection);
+        }
+      }
+
+      // Update metrics display
+      function updateMetricsDisplay() {
+        document.getElementById('totalProjects').textContent = projectMetrics.total;
+        document.getElementById('completedProjects').textContent = projectMetrics.completed;
+        document.getElementById('ongoingProjects').textContent = projectMetrics.ongoing;
+        document.getElementById('successRate').textContent = `${projectMetrics.successRate}%`;
+        document.getElementById('projectsYear').textContent = projectMetrics.year;
+      }
+
+      // Render budget categories in edit modal
+      function renderBudgetCategoriesEdit() {
+        const container = document.getElementById('budgetCategoriesContainer');
+        container.innerHTML = '';
+
+        budgetData.categories.forEach((category, index) => {
+          const categoryDiv = document.createElement('div');
+          categoryDiv.className = 'flex gap-2';
+          categoryDiv.innerHTML = `
+            <div class="flex-1">
+              <input
+                type="text"
+                value="${category.name}"
+                onchange="updateCategoryName(${category.id}, this.value)"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                placeholder="Category name"
+              />
+            </div>
+            <div class="flex-1">
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">₱</span>
+                <input
+                  type="number"
+                  value="${category.amount}"
+                  onchange="updateCategoryAmount(${category.id}, this.value)"
+                  oninput="updateEditBudgetTotal()"
+                  class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                  min="0"
+                  step="1000"
+                  placeholder="Amount"
+                />
+              </div>
+            </div>
+            <button
+              onclick="removeBudgetCategory(${category.id})"
+              class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+              title="Remove category"
+              ${budgetData.categories.length <= 1 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          `;
+          container.appendChild(categoryDiv);
+        });
+
+        updateEditBudgetTotal();
+      }
+
+      // Add new budget category
+      function addBudgetCategory() {
+        const newId = Math.max(...budgetData.categories.map(c => c.id), 0) + 1;
+        budgetData.categories.push({
+          id: newId,
+          name: '',
+          amount: 0
+        });
+        renderBudgetCategoriesEdit();
+      }
+
+      // Remove budget category
+      function removeBudgetCategory(id) {
+        if (budgetData.categories.length <= 1) {
+          alert('You must have at least one budget category.');
+          return;
+        }
+        budgetData.categories = budgetData.categories.filter(c => c.id !== id);
+        renderBudgetCategoriesEdit();
+      }
+
+      // Update category name
+      function updateCategoryName(id, name) {
+        const category = budgetData.categories.find(c => c.id === id);
+        if (category) {
+          category.name = name;
+        }
+      }
+
+      // Update category amount
+      function updateCategoryAmount(id, amount) {
+        const category = budgetData.categories.find(c => c.id === id);
+        if (category) {
+          category.amount = parseInt(amount) || 0;
+        }
+        updateEditBudgetTotal();
+      }
+
+      // Edit budget allocation
+      function editBudgetAllocation() {
+        const modal = document.getElementById('budgetEditModal');
+        document.getElementById('editBudgetYear').value = budgetData.year;
+        renderBudgetCategoriesEdit();
+        modal.classList.remove('hidden');
+      }
+
+      function closeBudgetEditModal() {
+        document.getElementById('budgetEditModal').classList.add('hidden');
+      }
+
+      function updateEditBudgetTotal() {
+        const total = budgetData.categories.reduce((sum, cat) => sum + cat.amount, 0);
+        document.getElementById('editTotalBudget').textContent = `₱${total.toLocaleString()}`;
+      }
+
+      function saveBudgetAllocation() {
+        // Validate that all categories have names
+        const emptyNames = budgetData.categories.filter(c => !c.name.trim());
+        if (emptyNames.length > 0) {
+          alert('Please provide names for all budget categories.');
+          return;
+        }
+
+        budgetData.year = parseInt(document.getElementById('editBudgetYear').value);
+
+        localStorage.setItem('budgetData', JSON.stringify(budgetData));
+        updateBudgetDisplay();
+        closeBudgetEditModal();
+
+        // Show success message
+        alert('Budget allocation updated successfully!');
+      }
+
+      function viewBudgetHistory() {
+        alert('Budget history feature coming soon!');
+      }
+
+      // Initialize on page load
+      loadBudgetData();
+      loadProjectMetrics();
     </script>
   </body>
 </html>

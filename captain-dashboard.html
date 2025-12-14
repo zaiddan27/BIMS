@@ -217,6 +217,17 @@
                     <p class="text-gray-600 leading-relaxed" id="modalBeneficiaries"></p>
                 </div>
 
+                <!-- Budget Breakdown -->
+                <div class="mb-6 bg-white rounded-xl border border-gray-200 p-5">
+                    <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-calculator text-emerald-600 mr-2"></i>
+                        Budget Breakdown
+                    </h3>
+                    <div id="modalBudgetBreakdown">
+                        <!-- Budget breakdown table will be rendered here -->
+                    </div>
+                </div>
+
                 <!-- Project Description -->
                 <div class="mb-6 bg-white rounded-xl border border-gray-200 p-5">
                     <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center">
@@ -305,8 +316,16 @@
                 submittedBy: "SK Chairman", submissionDate: "Dec 10, 2025",
                 budget: 55000, volunteers: 60, startDate: "Dec 30, 2025", endDate: "Jan 1, 2026",
                 description: "A grand community festival to celebrate the New Year with cultural performances, games, and food stalls.",
+                beneficiaries: "500 Community members of all ages, 15 Local performers",
                 objectives: ["Promote community unity", "Showcase local talents", "Provide entertainment for all ages"],
                 outcomes: ["500+ attendees expected", "15+ performers lined up", "Strengthen barangay relationships"],
+                budgetBreakdown: [
+                    { description: "Stage rental and setup", cost: 15000 },
+                    { description: "Sound system and lighting", cost: 12000 },
+                    { description: "Food and refreshments", cost: 18000 },
+                    { description: "Decorations and banners", cost: 5000 },
+                    { description: "Entertainment and performers", cost: 5000 }
+                ],
                 notes: ""
             },
             {
@@ -314,8 +333,15 @@
                 submittedBy: "SK Treasurer", submissionDate: "Dec 11, 2025",
                 budget: 42000, volunteers: 35, startDate: "Jan 10, 2026", endDate: "Jan 25, 2026",
                 description: "Comprehensive skills training program covering digital literacy, entrepreneurship, and basic trades.",
+                beneficiaries: "60 Youth ages 18-30, 15 Out-of-school youth",
                 objectives: ["Equip youth with marketable skills", "Reduce unemployment", "Foster entrepreneurship"],
                 outcomes: ["60 trainees enrolled", "5 skill modules completed", "Job placement assistance"],
+                budgetBreakdown: [
+                    { description: "Training materials and supplies", cost: 15000 },
+                    { description: "Professional trainers fees", cost: 18000 },
+                    { description: "Certificates and completion kits", cost: 4000 },
+                    { description: "Meals and snacks for participants", cost: 5000 }
+                ],
                 notes: ""
             },
             {
@@ -323,8 +349,15 @@
                 submittedBy: "SK Secretary", submissionDate: "Dec 12, 2025",
                 budget: 85000, volunteers: 40, startDate: "Jan 15, 2026", endDate: "Feb 15, 2026",
                 description: "Installation of water filtration systems in 10 households without access to clean drinking water.",
+                beneficiaries: "10 Households (approximately 50 family members)",
                 objectives: ["Provide clean water access", "Improve public health", "Reduce waterborne diseases"],
                 outcomes: ["10 households served", "Health improvements monitored", "Community education on water safety"],
+                budgetBreakdown: [
+                    { description: "Water filtration systems (10 units)", cost: 60000 },
+                    { description: "Installation labor and materials", cost: 15000 },
+                    { description: "Water quality testing kits", cost: 5000 },
+                    { description: "Educational materials and signage", cost: 5000 }
+                ],
                 notes: ""
             },
             {
@@ -508,6 +541,9 @@
             // Display description as one unified block
             document.getElementById('modalDescription').textContent = currentProject.description || 'No description provided';
 
+            // Render Budget Breakdown
+            renderBudgetBreakdown(currentProject.budgetBreakdown);
+
             // Show appropriate actions
             if (currentProject.status === 'pending') {
                 document.getElementById('approvalActions').classList.remove('hidden');
@@ -521,6 +557,44 @@
 
             // Show modal
             document.getElementById('approvalModal').classList.remove('hidden');
+        }
+
+        function renderBudgetBreakdown(budgetBreakdown) {
+            const container = document.getElementById('modalBudgetBreakdown');
+
+            if (!budgetBreakdown || budgetBreakdown.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm">No budget breakdown provided</p>';
+                return;
+            }
+
+            const total = budgetBreakdown.reduce((sum, item) => sum + parseFloat(item.cost || 0), 0);
+
+            container.innerHTML = `
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-2 px-3 text-sm font-semibold text-gray-700">Expense Item</th>
+                                <th class="text-right py-2 px-3 text-sm font-semibold text-gray-700">Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${budgetBreakdown.map(item => `
+                                <tr class="border-b border-gray-100">
+                                    <td class="py-2 px-3 text-sm text-gray-700">${item.description || 'N/A'}</td>
+                                    <td class="py-2 px-3 text-sm text-gray-700 text-right">₱${parseFloat(item.cost || 0).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr class="border-t-2 border-gray-300">
+                                <td class="py-2 px-3 text-sm font-bold text-gray-800">Total</td>
+                                <td class="py-2 px-3 text-sm font-bold text-emerald-700 text-right">₱${total.toLocaleString()}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
         }
 
         function closeModal() {
@@ -537,6 +611,9 @@
                 currentProject.notes = notes || 'Approved by Barangay Captain.';
                 currentProject.approvedBy = 'Hon. Barangay Captain';
                 currentProject.approvalDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+                // Create notification for SK
+                createSKNotification(currentProject, 'approved', currentProject.notes);
 
                 closeModal();
                 renderProjects();
@@ -564,6 +641,9 @@
                 currentProject.rejectedBy = 'Hon. Barangay Captain';
                 currentProject.rejectionDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
+                // Create notification for SK
+                createSKNotification(currentProject, 'rejected', notes);
+
                 closeModal();
                 renderProjects();
 
@@ -589,6 +669,9 @@
                 currentProject.notes = notes;
                 currentProject.revisionRequestedBy = 'Hon. Barangay Captain';
                 currentProject.revisionRequestDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+                // Create notification for SK
+                createSKNotification(currentProject, 'revision-requested', notes);
 
                 closeModal();
                 renderProjects();
@@ -738,6 +821,45 @@
             }
         }
         updateCurrentDate();
+
+        // Create notification for SK when captain makes a decision
+        function createSKNotification(project, decision, comments) {
+            // Get existing SK notifications from localStorage
+            let skNotifications = JSON.parse(localStorage.getItem('skNotifications') || '[]');
+
+            // Generate notification based on decision type
+            let notification = {
+                id: Date.now(),
+                projectId: project.id,
+                projectName: project.name,
+                type: `project_${decision}`,
+                decision: decision,
+                comments: comments,
+                timestamp: new Date().toISOString(),
+                timeAgo: 'Just now',
+                read: false
+            };
+
+            // Set title and message based on decision
+            if (decision === 'approved') {
+                notification.title = `Project Approved: ${project.name}`;
+                notification.message = 'Your project has been approved by the Barangay Captain';
+            } else if (decision === 'rejected') {
+                notification.title = `Project Rejected: ${project.name}`;
+                notification.message = 'Your project has been rejected by the Barangay Captain';
+            } else if (decision === 'revision-requested') {
+                notification.title = `Revision Requested: ${project.name}`;
+                notification.message = 'The Barangay Captain has requested revisions to your project';
+            }
+
+            // Add to beginning of array
+            skNotifications.unshift(notification);
+
+            // Save to localStorage
+            localStorage.setItem('skNotifications', JSON.stringify(skNotifications));
+
+            console.log('SK Notification created:', notification);
+        }
     </script>
 </body>
 </html>

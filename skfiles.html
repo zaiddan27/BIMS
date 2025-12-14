@@ -544,6 +544,54 @@
       </div>
     </div>
 
+    <!-- Archive File Confirmation Modal -->
+    <div
+      id="archiveFileModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+        <div class="p-6">
+          <div
+            class="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-full mx-auto mb-4"
+          >
+            <svg
+              class="w-6 h-6 text-yellow-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">
+            Archive File?
+          </h3>
+          <p id="archiveFileName" class="text-gray-600 text-center mb-6">
+            You can restore it from the Archive page.
+          </p>
+          <div class="flex space-x-3">
+            <button
+              onclick="closeArchiveFileModal()"
+              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              id="confirmArchiveFileBtn"
+              class="flex-1 px-4 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition font-medium"
+            >
+              Archive
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast -->
     <div
       id="fileToast"
@@ -594,6 +642,7 @@
           name: "Budget_Report_2023.pdf",
           type: "pdf",
           uploaded: "Jan 20, 2023",
+          uploadedDate: new Date("2023-01-20"),
           category: "general",
           url: "",
         },
@@ -602,6 +651,7 @@
           name: "Budget_Report_2024.pdf",
           type: "pdf",
           uploaded: "Jan 15, 2024",
+          uploadedDate: new Date("2024-01-15"),
           category: "general",
           url: "",
         },
@@ -610,6 +660,7 @@
           name: "Budget_Report_2025.pdf",
           type: "pdf",
           uploaded: "Jan 10, 2025",
+          uploadedDate: new Date("2025-01-10"),
           category: "general",
           url: "",
         },
@@ -618,6 +669,7 @@
           name: "Youth_Database_2025.xlsx",
           type: "xlsx",
           uploaded: "Nov 25, 2025",
+          uploadedDate: new Date("2025-11-25"),
           category: "general",
           url: "",
         },
@@ -626,6 +678,7 @@
           name: "SK_Guidelines_2025.pdf",
           type: "pdf",
           uploaded: "Nov 20, 2025",
+          uploadedDate: new Date("2025-11-20"),
           category: "general",
           url: "",
         },
@@ -634,6 +687,7 @@
           name: "Annual_Event_Schedule_2025.pdf",
           type: "pdf",
           uploaded: "Nov 18, 2025",
+          uploadedDate: new Date("2025-11-18"),
           category: "general",
           url: "",
         },
@@ -642,6 +696,7 @@
           name: "Meeting_Minutes_November.pdf",
           type: "pdf",
           uploaded: "Nov 15, 2025",
+          uploadedDate: new Date("2025-11-15"),
           category: "general",
           url: "",
         },
@@ -650,6 +705,7 @@
           name: "Barangay_Youth_Profile.xlsx",
           type: "xlsx",
           uploaded: "Nov 12, 2025",
+          uploadedDate: new Date("2025-11-12"),
           category: "general",
           url: "",
         },
@@ -658,10 +714,69 @@
           name: "Community_Clean-Up_Project_Proposal.pdf",
           type: "pdf",
           uploaded: "Nov 10, 2025",
+          uploadedDate: new Date("2025-11-10"),
           category: "project",
           url: "",
         },
       ];
+
+      // Archived files store
+      let archivedFiles = [];
+
+      // Auto-archive files older than 1 year
+      function autoArchiveOldFiles() {
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+        const filesToArchive = fileStore.filter(file => {
+          return file.uploadedDate && file.uploadedDate < oneYearAgo;
+        });
+
+        filesToArchive.forEach(file => {
+          file.archivedDate = new Date().toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+          archivedFiles.push(file);
+        });
+
+        fileStore = fileStore.filter(file => {
+          return !file.uploadedDate || file.uploadedDate >= oneYearAgo;
+        });
+
+        // Save to localStorage
+        localStorage.setItem('archivedFiles', JSON.stringify(archivedFiles));
+        localStorage.setItem('fileStore', JSON.stringify(fileStore));
+
+        if (filesToArchive.length > 0) {
+          console.log(`Auto-archived ${filesToArchive.length} file(s) older than 1 year.`);
+        }
+      }
+
+      // Load archived files from localStorage
+      function loadArchivedFiles() {
+        const saved = localStorage.getItem('archivedFiles');
+        if (saved) {
+          archivedFiles = JSON.parse(saved);
+        }
+      }
+
+      // Load files from localStorage
+      function loadFileStore() {
+        const saved = localStorage.getItem('fileStore');
+        if (saved) {
+          fileStore = JSON.parse(saved).map(file => ({
+            ...file,
+            uploadedDate: file.uploadedDate ? new Date(file.uploadedDate) : null
+          }));
+        }
+      }
+
+      // Initialize on page load
+      loadFileStore();
+      loadArchivedFiles();
+      autoArchiveOldFiles();
 
       const filesGrid = document.getElementById("filesGrid");
       const searchInput = document.getElementById("fileSearch");
@@ -707,17 +822,13 @@
                             }</p>
                         </div>
                     </div>
-                    <div class="flex justify-between mt-4">
-                        <div>
-                            <button class="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" onclick="viewFile(${
-                              file.id
-                            })">View</button>
-                        </div>
-                        <div>
-                            <button class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition" onclick="promptDeleteFile(${
-                              file.id
-                            })">Delete</button>
-                        </div>
+                    <div class="flex justify-between mt-4 gap-2">
+                        <button class="flex-1 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition text-sm font-medium" onclick="viewFile(${
+                          file.id
+                        })">View</button>
+                        <button class="flex-1 px-4 py-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition text-sm font-medium" onclick="archiveFile(${
+                          file.id
+                        })">Archive</button>
                     </div>
                 `;
           filesGrid.appendChild(card);
@@ -802,20 +913,23 @@
 
           // Create new file entry
           const ext = selectedFile.name.split(".").pop().toLowerCase();
+          const uploadDate = new Date();
           const newItem = {
             id: Date.now(),
             name: fileName,
             type: ext,
-            uploaded: new Date().toLocaleDateString("en-US", {
+            uploaded: uploadDate.toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
               year: "numeric",
             }),
+            uploadedDate: uploadDate,
             category: category,
             url: "", // in a real app you'd upload and set URL
           };
 
           fileStore.unshift(newItem);
+          localStorage.setItem('fileStore', JSON.stringify(fileStore));
           showFileToast("File uploaded successfully!");
           renderFiles(fileStore);
           closeUploadModal();
@@ -866,11 +980,56 @@
         .addEventListener("click", () => {
           if (!deleteTargetId) return;
           fileStore = fileStore.filter((f) => f.id !== deleteTargetId);
+          localStorage.setItem('fileStore', JSON.stringify(fileStore));
           deleteTargetId = null;
           closeDeleteFileModal();
           renderFiles(fileStore);
           showFileToast("File deleted.");
         });
+
+      // Archive file function
+      let archiveTargetId = null;
+
+      function archiveFile(id) {
+        const file = fileStore.find((f) => f.id === id);
+        if (!file) return;
+
+        archiveTargetId = id;
+        document.getElementById('archiveFileName').textContent = `Archive "${file.name}"? You can restore it from the Archive page.`;
+        document.getElementById('archiveFileModal').classList.remove('hidden');
+      }
+
+      function closeArchiveFileModal() {
+        archiveTargetId = null;
+        document.getElementById('archiveFileModal').classList.add('hidden');
+      }
+
+      document.getElementById('confirmArchiveFileBtn').addEventListener('click', () => {
+        if (!archiveTargetId) return;
+
+        const file = fileStore.find((f) => f.id === archiveTargetId);
+        if (!file) return;
+
+        // Add archived date
+        file.archivedDate = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        // Move to archived files
+        archivedFiles.push(file);
+        fileStore = fileStore.filter((f) => f.id !== archiveTargetId);
+
+        // Save to localStorage
+        localStorage.setItem('archivedFiles', JSON.stringify(archivedFiles));
+        localStorage.setItem('fileStore', JSON.stringify(fileStore));
+
+        archiveTargetId = null;
+        closeArchiveFileModal();
+        renderFiles(fileStore);
+        showFileToast("File archived successfully!");
+      });
 
       // Toast
       function showFileToast(msg) {
