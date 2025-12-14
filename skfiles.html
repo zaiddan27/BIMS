@@ -1051,39 +1051,42 @@
       let notifications = [
         {
           id: 1,
+          type: "project_approved",
+          title: "Project Approved: Community Clean-Up Drive 2025",
+          message: "Your project has been approved by the Barangay Captain and is now Ongoing",
+          time: "2 hours ago",
+          read: false,
+          projectId: 1,
+          status: "approved",
+        },
+        {
+          id: 2,
+          type: "project_rejected",
+          title: "Project Rejected: International Youth Exchange Program",
+          message: "Your project has been rejected. Click to view captain's feedback and edit your proposal",
+          time: "1 day ago",
+          read: false,
+          projectId: 4,
+          status: "rejected",
+        },
+        {
+          id: 3,
+          type: "project_revision",
+          title: "Revision Requested: Scholarship Program Deadline",
+          message: "The Barangay Captain requested revisions. Click to view feedback and edit your project",
+          time: "3 hours ago",
+          read: false,
+          projectId: 3,
+          status: "revision",
+        },
+        {
+          id: 4,
           type: "new_inquiry",
           title: "New Inquiry: Community Clean-Up Drive 2025",
           message: "Juan Dela Cruz posted a new inquiry on your project",
           time: "5 minutes ago",
           read: false,
           projectId: 1,
-        },
-        {
-          id: 2,
-          type: "inquiry_reply",
-          title: "Inquiry Reply: Youth Sports Festival",
-          message: "Maria Santos replied to an inquiry thread",
-          time: "1 hour ago",
-          read: false,
-          projectId: 2,
-        },
-        {
-          id: 3,
-          type: "new_announcement",
-          title: "New Announcement Posted",
-          message: "Kyleen Nicdao posted a new announcement",
-          time: "2 hours ago",
-          read: false,
-          referenceId: 1,
-        },
-        {
-          id: 4,
-          type: "new_project",
-          title: "New Project: Beach Clean-Up Initiative",
-          message: "Andrea Pelias created a new project",
-          time: "3 hours ago",
-          read: false,
-          referenceId: 3,
         },
         {
           id: 5,
@@ -1123,16 +1126,28 @@
 
       function getNotificationIcon(type) {
         switch (type) {
-          case "new_inquiry":
+          case "project_approved":
+            return `<svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>`;
+          case "project_rejected":
+            return `<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>`;
+          case "project_revision":
             return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>`;
+          case "new_inquiry":
+            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>`;
           case "inquiry_reply":
-            return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
                     </svg>`;
           case "new_announcement":
-            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            return `<svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
                     </svg>`;
           case "new_project":
@@ -1150,12 +1165,18 @@
 
       function getNotificationBgColor(type) {
         switch (type) {
+          case "project_approved":
+            return "bg-emerald-50";
+          case "project_rejected":
+            return "bg-red-50";
+          case "project_revision":
+            return "bg-yellow-50";
           case "new_inquiry":
-            return "bg-yellow-50";
-          case "inquiry_reply":
-            return "bg-yellow-50";
-          case "new_announcement":
             return "bg-blue-50";
+          case "inquiry_reply":
+            return "bg-blue-50";
+          case "new_announcement":
+            return "bg-purple-50";
           case "new_project":
             return "bg-blue-50";
           case "project_application":
@@ -1230,7 +1251,13 @@
         closeNotificationModal();
 
         // Route to appropriate page based on notification type
-        if (notif.type === "volunteer_application") {
+        if (notif.type === "project_approved") {
+          // For approved projects (now Ongoing), view project details
+          window.location.href = `skproject.html?projectId=${notif.projectId}`;
+        } else if (notif.type === "project_rejected" || notif.type === "project_revision") {
+          // For rejected or revision-needed projects, go to project page to edit
+          window.location.href = `skproject.html`;
+        } else if (notif.type === "volunteer_application") {
           showFileToast("Opening volunteer application details...");
         } else if (
           notif.type === "inquiry" ||
