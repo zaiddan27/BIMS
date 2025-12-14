@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Projects Display</title>
+</head>
+<body>
+  <h1>Debug Test</h1>
+  <div id="output"></div>
+  <div id="projectsGrid"></div>
+
+  <script>
+    // Copy your projects array here
+    let projects = [
+      {
+        id: 1,
+        title: "Community Clean-Up Drive 2025",
+        category: "Environment",
+        status: "Ongoing",
+        heads: ["Andrea Pelias", "Kyleen Nicdao"],
+        startDate: "2025-12-02",
+        description: "Test project",
+        applications: [],
+        inquiries: []
+      }
+    ];
+
+    console.log("Projects array:", projects);
+    console.log("Projects length:", projects.length);
+
+    const grid = document.getElementById("projectsGrid");
+    console.log("Grid element:", grid);
+
+    document.getElementById("output").innerHTML = `
+      <p>Projects found: ${projects.length}</p>
+      <p>Grid element found: ${grid ? 'Yes' : 'No'}</p>
+    `;
+
+    // Try rendering
+    if (projects.length > 0) {
+      const card = document.createElement("div");
+      card.innerHTML = `<h3>${projects[0].title}</h3>`;
+      grid.appendChild(card);
+      console.log("Card appended successfully");
+    }
+  </script>
+</body>
+</html>

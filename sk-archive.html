@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Archives - SK Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#059669",
+              secondary: "#10b981",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col">
+            <div class="p-6 flex-1 flex flex-col">
+                <!-- Logo -->
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="w-14 h-14 bg-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black text-gray-800">BIMS</h1>
+                        <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="space-y-2">
+                    <a href="dashb.html" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"></path>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="skfiles.html" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Manage Files</span>
+                    </a>
+                    <a href="skproject.html" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        <span>Project Monitoring</span>
+                    </a>
+                    <a href="skcalendar.html" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>Manage Calendar</span>
+                    </a>
+                    <a href="sk-testimonies.html" class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <span>Testimonies</span>
+                    </a>
+                    <a href="sk-archive.html" class="flex items-center space-x-3 px-4 py-3 bg-emerald-50 text-emerald-700 rounded-lg font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                        <span>Archive</span>
+                    </a>
+                </nav>
+
+                <div class="flex-1"></div>
+
+                <!-- Logout -->
+                <div class="mt-8 pt-8 border-t border-gray-200">
+                    <button class="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path>
+                        </svg>
+                        <span class="font-medium">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-gradient-to-r from-emerald-50 to-white border-b border-gray-200 sticky top-0 z-10">
+                <div class="px-8 py-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-emerald-600 font-semibold mb-1" id="currentDate">Sunday, December 14, 2025</p>
+                            <h1 class="text-2xl font-bold text-gray-800">Project Archives</h1>
+                            <p class="text-sm text-gray-600 mt-1">Historical project records and comprehensive reports</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                    </svg>
+                                    <span class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">5</span>
+                                </button>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-700">Andrea Pelias</p>
+                                    <p class="text-xs text-gray-500">SK Chairman</p>
+                                </div>
+                                <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                    AP
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="p-8">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Total Reports</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2" id="totalReportsCount">156</p>
+                                <p class="text-xs text-gray-400 mt-1">Generated this year</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-file-alt text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Archived Projects</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">38</p>
+                            </div>
+                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-archive text-emerald-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Total Budget</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">₱1.2M</p>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-peso-sign text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Volunteers</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">287</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-users text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Avg Success Rate</p>
+                                <p class="text-3xl font-bold text-gray-800 mt-2">89%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search and Filter Bar -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Search Projects</label>
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="searchInput" placeholder="Search by project name..."
+                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                            <select id="yearFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                <option value="all">All Years</option>
+                                <option value="2025" selected>2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quarter</label>
+                            <select id="quarterFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                <option value="all">All Quarters</option>
+                                <option value="Q1">Q1 (Jan-Mar)</option>
+                                <option value="Q2">Q2 (Apr-Jun)</option>
+                                <option value="Q3">Q3 (Jul-Sep)</option>
+                                <option value="Q4">Q4 (Oct-Dec)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end mt-4 pt-4 border-t border-gray-200">
+                        <button onclick="resetFilters()" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
+                            <i class="fas fa-redo mr-1"></i> Reset Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bulk Report Download Section -->
+                <div class="bg-gradient-to-r from-emerald-50 to-white rounded-xl shadow-sm p-6 mb-6 border border-emerald-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-1">
+                                <i class="fas fa-download text-emerald-600 mr-2"></i>
+                                Generate Bulk Reports
+                            </h3>
+                            <p class="text-sm text-gray-600">Download comprehensive reports for selected projects in PDF format</p>
+                        </div>
+                        <button onclick="generateBulkReports()" class="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium shadow-sm hover:shadow-md">
+                            <i class="fas fa-file-download mr-2"></i>
+                            Download Selected Reports
+                        </button>
+                    </div>
+
+                    <!-- Selection Info -->
+                    <div class="mt-4 pt-4 border-t border-emerald-200">
+                        <div class="flex items-center justify-between text-sm">
+                            <div class="flex items-center space-x-6">
+                                <span class="text-gray-600">
+                                    <i class="fas fa-check-square text-emerald-600 mr-1"></i>
+                                    <span id="selectedCount">0</span> projects selected
+                                </span>
+                                <button onclick="selectAllFiltered()" class="text-emerald-600 hover:text-emerald-700 font-medium">
+                                    Select All Filtered
+                                </button>
+                                <button onclick="deselectAll()" class="text-gray-600 hover:text-gray-700 font-medium">
+                                    Deselect All
+                                </button>
+                            </div>
+                            <span class="text-gray-500">
+                                Click checkboxes on project cards to select for bulk download
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quarterly Tabs -->
+                <div class="bg-white rounded-xl shadow-sm mb-6">
+                    <div class="border-b border-gray-200">
+                        <nav class="flex -mb-px">
+                            <button onclick="switchQuarter('Q1')" class="quarter-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-emerald-600 hover:border-emerald-600 border-b-2 border-transparent transition">
+                                Q1 2025
+                                <span class="ml-2 px-2 py-1 text-xs bg-gray-100 rounded-full">8</span>
+                            </button>
+                            <button onclick="switchQuarter('Q2')" class="quarter-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-emerald-600 hover:border-emerald-600 border-b-2 border-transparent transition">
+                                Q2 2025
+                                <span class="ml-2 px-2 py-1 text-xs bg-gray-100 rounded-full">12</span>
+                            </button>
+                            <button onclick="switchQuarter('Q3')" class="quarter-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-emerald-600 hover:border-emerald-600 border-b-2 border-transparent transition">
+                                Q3 2025
+                                <span class="ml-2 px-2 py-1 text-xs bg-gray-100 rounded-full">10</span>
+                            </button>
+                            <button onclick="switchQuarter('Q4')" class="quarter-tab active px-8 py-4 text-sm font-medium text-emerald-600 border-b-2 border-emerald-600 transition">
+                                Q4 2025
+                                <span class="ml-2 px-2 py-1 text-xs bg-emerald-100 rounded-full">8</span>
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div class="p-6">
+                        <div id="quarterSummary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-500">Projects</p>
+                                <p class="text-2xl font-bold text-gray-800 mt-1">8</p>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-500">Budget Used</p>
+                                <p class="text-2xl font-bold text-gray-800 mt-1">₱285K</p>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-500">Volunteers</p>
+                                <p class="text-2xl font-bold text-gray-800 mt-1">68</p>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-500">Avg Success</p>
+                                <p class="text-2xl font-bold text-gray-800 mt-1">91%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Archived Projects List -->
+                <div class="space-y-4" id="projectsList">
+                    <!-- Projects will be rendered here by JavaScript -->
+                </div>
+
+                <!-- Empty State (hidden by default) -->
+                <div id="emptyState" class="hidden bg-white rounded-xl shadow-sm p-12 text-center">
+                    <i class="fas fa-folder-open text-gray-300 text-6xl mb-4"></i>
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">No Archived Projects Found</h3>
+                    <p class="text-gray-500">Try adjusting your filters or search criteria</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Project Detail Modal -->
+    <div id="projectModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <h2 class="text-xl font-bold text-gray-800" id="modalProjectName"></h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6">
+                <!-- Project Metadata -->
+                <div class="mb-6 pb-4 border-b border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-500 font-medium">Category:</p>
+                            <p class="text-gray-800" id="modalCategory">Environment</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium">Project Status:</p>
+                            <p class="text-gray-800">Completed</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium">Generated:</p>
+                            <p class="text-gray-800" id="modalGenerated">December 14, 2025</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Description -->
+                <div class="mb-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Project Description</h3>
+                    <p class="text-gray-700 leading-relaxed" id="modalDescription"></p>
+                </div>
+
+                <!-- Project Details -->
+                <div class="mb-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Project Details</h3>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Location:</span>
+                            <span class="text-gray-800" id="modalLocation"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Project Heads:</span>
+                            <span class="text-gray-800" id="modalHeads"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Schedule -->
+                <div class="mb-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Project Schedule</h3>
+                    <div class="bg-gray-50 rounded-lg p-4 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Date:</span>
+                            <span class="text-gray-800" id="modalPeriod"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Volunteer Statistics -->
+                <div class="mb-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Volunteer Statistics</h3>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Total Applicants</span>
+                            <span class="text-gray-800 font-semibold" id="modalTotalApplicants"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Approved Volunteers</span>
+                            <span class="text-gray-800 font-semibold" id="modalApprovedVolunteers"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Pending Review</span>
+                            <span class="text-gray-800 font-semibold" id="modalPendingReview"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Participation Rate</span>
+                            <span class="text-gray-800 font-semibold" id="modalParticipationRate"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Metrics -->
+                <div class="mb-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Project Evaluation Summary</h3>
+                    <p class="text-sm text-gray-600 mb-4">(5-Factor Weighted Evaluation)</p>
+
+                    <!-- Table Header -->
+                    <div class="grid grid-cols-4 gap-4 text-sm mb-3 pb-2 border-b-2 border-gray-300">
+                        <span class="text-gray-700 font-bold">Metric</span>
+                        <span class="text-gray-700 font-bold text-center">Score</span>
+                        <span class="text-gray-700 font-bold text-center">Weight</span>
+                        <span class="text-gray-700 font-bold text-center">Contribution</span>
+                    </div>
+
+                    <div class="space-y-3" id="modalMetrics"></div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="grid grid-cols-4 gap-4 items-center">
+                            <span class="font-bold text-gray-800">Overall Success Rate</span>
+                            <span class="font-bold text-gray-800 text-center" id="modalOverallSuccess">98%</span>
+                            <span class="font-semibold text-center">100%</span>
+                            <span class="font-bold text-emerald-600 text-center" id="modalOverallContribution">97.25%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Summary -->
+                <div class="mb-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Financial Summary</h3>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Planned Budget</span>
+                            <span class="text-gray-800 font-semibold" id="modalPlannedBudget"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Actual Spent</span>
+                            <span class="text-gray-800 font-semibold" id="modalActualSpent"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Budget Variance</span>
+                            <span class="text-emerald-600 font-semibold" id="modalBudgetVariance"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Budget Efficiency</span>
+                            <span class="text-gray-800 font-semibold" id="modalBudgetEfficiency"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Breakdown -->
+                <div class="mb-6" id="modalBudgetBreakdownSection">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Budget Breakdown</h3>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-gray-300">
+                                        <th class="text-left py-2 px-3 font-semibold text-gray-700">#</th>
+                                        <th class="text-left py-2 px-3 font-semibold text-gray-700">Expense Item</th>
+                                        <th class="text-right py-2 px-3 font-semibold text-gray-700">Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalBudgetBreakdownList">
+                                    <!-- Budget breakdown rows will be inserted here -->
+                                </tbody>
+                                <tfoot>
+                                    <tr class="border-t-2 border-gray-300">
+                                        <td colspan="2" class="py-2 px-3 text-right font-bold text-gray-800">Total:</td>
+                                        <td class="py-2 px-3 text-right font-bold text-emerald-600" id="modalBudgetBreakdownTotal">₱0.00</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community Impact -->
+                <div class="mb-6" id="modalCommunityImpact">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Community Impact</h3>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Target Beneficiaries</span>
+                            <span class="text-gray-800 font-semibold" id="modalTargetBeneficiaries"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Actual Beneficiaries</span>
+                            <span class="text-gray-800 font-semibold" id="modalActualBeneficiaries"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Community Engagement Level</span>
+                            <span class="text-gray-800 font-semibold" id="modalEngagementLevel"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Volunteer Feedback -->
+                <div class="mb-6" id="modalFeedbackSection">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Volunteer Feedback</h3>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Feedback Submitted:</span>
+                            <span class="text-gray-800 font-semibold" id="modalFeedbackSubmitted"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Average Satisfaction Score:</span>
+                            <span class="text-gray-800 font-semibold" id="modalSatisfactionScore"></span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="text-gray-600 font-medium">Summary:</span>
+                            <p class="text-gray-700 mt-1" id="modalFeedbackSummary"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Volunteer List -->
+                <div class="mb-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">List of Volunteers</h3>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-gray-300">
+                                        <th class="text-left py-2 px-3 font-semibold text-gray-700">#</th>
+                                        <th class="text-left py-2 px-3 font-semibold text-gray-700">Volunteer Name</th>
+                                        <th class="text-left py-2 px-3 font-semibold text-gray-700">Age</th>
+                                        <th class="text-left py-2 px-3 font-semibold text-gray-700">Contact Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalVolunteerList">
+                                    <!-- Volunteer rows will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Overall Success -->
+                <div class="mb-6">
+                    <h3 class="text-base font-bold text-gray-800 mb-3">Overall Project Success Rate</h3>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                        <div class="flex items-center justify-center">
+                            <span class="text-3xl font-bold text-emerald-700" id="modalSuccessRateDisplay"></span>
+                            <span class="ml-2 text-lg text-emerald-600 font-semibold" id="modalSuccessLabel">– Highly Successful Project</span>
+                        </div>
+                        <p class="text-sm text-gray-700 mt-3 text-center" id="modalSuccessDescription"></p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+                    <button onclick="confirmPermanentDelete()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                        <i class="fas fa-trash-alt mr-2"></i> Permanent Delete
+                    </button>
+                    <div class="flex space-x-3">
+                        <!-- Download Report Dropdown -->
+                        <div class="relative">
+                            <button onclick="toggleDownloadMenu()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition flex items-center">
+                                <i class="fas fa-download mr-2"></i> Download Report
+                                <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                            </button>
+                            <div id="downloadMenu" class="hidden absolute bottom-full mb-2 right-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[180px] z-50">
+                                <button onclick="exportProject('pdf')" class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2">
+                                    <i class="fas fa-file-pdf text-red-600"></i>
+                                    <span class="text-gray-700">PDF Document</span>
+                                </button>
+                                <button onclick="exportProject('csv')" class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2">
+                                    <i class="fas fa-file-csv text-green-600"></i>
+                                    <span class="text-gray-700">CSV Spreadsheet</span>
+                                </button>
+                                <button onclick="exportProject('txt')" class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2">
+                                    <i class="fas fa-file-alt text-blue-600"></i>
+                                    <span class="text-gray-700">Text Document</span>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="closeModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div id="deleteConfirmModal" class="hidden fixed inset-0 z-[70] overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-gray-900 opacity-75"></div>
+
+            <div class="relative bg-white rounded-xl shadow-2xl max-w-md w-full">
+                <!-- Header with Warning -->
+                <div class="bg-red-600 p-6 rounded-t-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Permanent Delete</h3>
+                            <p class="text-red-100 text-sm">This action cannot be undone!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6">
+                    <div class="mb-6">
+                        <p class="text-gray-700 mb-4">
+                            Are you sure you want to <strong>permanently delete</strong>:
+                        </p>
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
+                            <p class="font-semibold text-gray-900" id="deleteProjectName"></p>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">
+                            This project will be removed from the archive and cannot be recovered.
+                        </p>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3 text-center">
+                            To confirm, type <span class="text-red-600 font-mono font-bold">DELETE</span> in capital letters:
+                        </label>
+
+                        <!-- OTP-Style Delete Input -->
+                        <div class="flex justify-center gap-2 mb-3">
+                            <input type="text" maxlength="1" id="deleteChar0" data-index="0"
+                                   class="delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
+                                   style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);"
+                                   autocomplete="off" />
+                            <input type="text" maxlength="1" id="deleteChar1" data-index="1"
+                                   class="delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
+                                   style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);"
+                                   autocomplete="off" />
+                            <input type="text" maxlength="1" id="deleteChar2" data-index="2"
+                                   class="delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
+                                   style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);"
+                                   autocomplete="off" />
+                            <input type="text" maxlength="1" id="deleteChar3" data-index="3"
+                                   class="delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
+                                   style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);"
+                                   autocomplete="off" />
+                            <input type="text" maxlength="1" id="deleteChar4" data-index="4"
+                                   class="delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
+                                   style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);"
+                                   autocomplete="off" />
+                            <input type="text" maxlength="1" id="deleteChar5" data-index="5"
+                                   class="delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
+                                   style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);"
+                                   autocomplete="off" />
+                        </div>
+
+                        <!-- Placeholder letters below each input -->
+                        <div class="flex justify-center gap-2 mb-3">
+                            <div class="w-12 text-center text-xs text-gray-400 font-mono">D</div>
+                            <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+                            <div class="w-12 text-center text-xs text-gray-400 font-mono">L</div>
+                            <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+                            <div class="w-12 text-center text-xs text-gray-400 font-mono">T</div>
+                            <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+                        </div>
+
+                        <p id="deleteErrorMsg" class="hidden text-sm text-red-600 mt-2 text-center">
+                            <i class="fas fa-exclamation-circle mr-1"></i>
+                            Please type "DELETE" exactly to confirm
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="bg-gray-50 px-6 py-4 rounded-b-xl flex justify-end gap-3">
+                    <button
+                        onclick="closeDeleteModal()"
+                        class="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        id="deleteSubmitBtn"
+                        onclick="executeDelete()"
+                        disabled
+                        class="px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium"
+                    >
+                        <i class="fas fa-trash-alt mr-2"></i>
+                        Delete Permanently
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample archived projects data
+        const archivedProjects = [
+            {
+                id: 1,
+                name: "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
+                quarter: "Q4",
+                year: 2025,
+                category: "Environment",
+                period: "Dec 2, 2025 – Dec 2, 2025",
+                startDate: "2025-12-02",
+                budget: 30000,
+                spent: 29400,
+                volunteers: 38,
+                totalApplicants: 40,
+                approvedVolunteers: 38,
+                pendingReview: 2,
+                successRate: 98,
+                budgetScore: 98,
+                participationScore: 95,
+                timelineScore: 100,
+                impactScore: 96,
+                feedbackScore: 97,
+                feedbackSubmitted: 36,
+                avgSatisfaction: 4.9,
+                targetBeneficiaries: 200,
+                actualBeneficiaries: 240,
+                communityEngagement: "High",
+                location: "Malanday River and surrounding areas",
+                heads: ["Andrea Pelias", "Kyleen Nicdao"],
+                description: "A comprehensive environmental initiative focused on rehabilitating the Malanday River system through organized clean-up operations, waste segregation education, tree-planting activities, and active community participation. The project aimed to promote environmental responsibility among residents while addressing long-standing waste accumulation issues along the riverbanks.",
+                achievements: ["Collected 2 tons of waste", "Engaged 38 active volunteers", "Cleaned entire Malanday River stretch", "240 community members benefited", "Volunteers reported excellent coordination"],
+                budgetBreakdown: [
+                    { id: 1, description: "Cleaning supplies and equipment", cost: 7000 },
+                    { id: 2, description: "Trash bags and waste bins", cost: 3000 },
+                    { id: 3, description: "Refreshments for volunteers", cost: 4500 },
+                    { id: 4, description: "Tree saplings and planting materials", cost: 6500 },
+                    { id: 5, description: "Signage and educational materials", cost: 3500 },
+                    { id: 6, description: "First aid supplies", cost: 1800 },
+                    { id: 7, description: "Transportation and logistics", cost: 2600 },
+                    { id: 8, description: "Documentation (photos/videos)", cost: 1500 }
+                ],
+                volunteerList: [
+                    { name: "Juan Dela Cruz", age: 19, contact: "0912-345-6789" },
+                    { name: "Maria Santos", age: 21, contact: "0923-456-7890" },
+                    { name: "Pedro Garcia", age: 18, contact: "0934-567-8901" },
+                    { name: "Ana Reyes", age: 20, contact: "0945-678-9012" },
+                    { name: "Miguel Torres", age: 22, contact: "0956-789-0123" },
+                    { name: "Sofia Ramos", age: 19, contact: "0967-890-1234" },
+                    { name: "Carlos Mendoza", age: 21, contact: "0978-901-2345" },
+                    { name: "Isabel Cruz", age: 18, contact: "0989-012-3456" },
+                    { name: "Diego Lopez", age: 20, contact: "0910-123-4567" },
+                    { name: "Camila Flores", age: 19, contact: "0921-234-5678" },
+                    { name: "Lucas Rivera", age: 22, contact: "0932-345-6789" },
+                    { name: "Valentina Morales", age: 21, contact: "0943-456-7890" },
+                    { name: "Mateo Castillo", age: 19, contact: "0954-567-8901" },
+                    { name: "Emma Navarro", age: 20, contact: "0965-678-9012" },
+                    { name: "Gabriel Herrera", age: 18, contact: "0976-789-0123" },
+                    { name: "Olivia Jimenez", age: 21, contact: "0987-890-1234" },
+                    { name: "Sebastian Ruiz", age: 19, contact: "0998-901-2345" },
+                    { name: "Mia Gutierrez", age: 22, contact: "0909-012-3456" },
+                    { name: "Daniel Ortiz", age: 20, contact: "0920-123-4567" },
+                    { name: "Luna Diaz", age: 19, contact: "0931-234-5678" },
+                    { name: "Adrian Vargas", age: 21, contact: "0942-345-6789" },
+                    { name: "Zoe Fernandez", age: 18, contact: "0953-456-7890" },
+                    { name: "Ethan Ramirez", age: 20, contact: "0964-567-8901" },
+                    { name: "Chloe Martinez", age: 19, contact: "0975-678-9012" },
+                    { name: "Ryan Alvarez", age: 22, contact: "0986-789-0123" },
+                    { name: "Lily Sanchez", age: 21, contact: "0997-890-1234" },
+                    { name: "Nathan Gomez", age: 19, contact: "0908-901-2345" },
+                    { name: "Grace Perez", age: 20, contact: "0919-012-3456" },
+                    { name: "Aaron Tan", age: 18, contact: "0930-123-4567" },
+                    { name: "Hannah Lim", age: 21, contact: "0941-234-5678" },
+                    { name: "Joshua Ong", age: 19, contact: "0952-345-6789" },
+                    { name: "Sarah Lee", age: 22, contact: "0963-456-7890" },
+                    { name: "David Chua", age: 20, contact: "0974-567-8901" },
+                    { name: "Rachel Sy", age: 19, contact: "0985-678-9012" },
+                    { name: "Matthew Go", age: 21, contact: "0996-789-0123" },
+                    { name: "Jessica Uy", age: 18, contact: "0907-890-1234" },
+                    { name: "Andrew Yap", age: 20, contact: "0918-901-2345" },
+                    { name: "Nicole Dy", age: 19, contact: "0929-012-3456" }
+                ]
+            },
+            {
+                id: 2, name: "Youth Leadership Summit", quarter: "Q4", year: 2025,
+                period: "Oct 20-22, 2025", budget: 45000, spent: 42000, volunteers: 60,
+                successRate: 92, budgetScore: 93, participationScore: 95, timelineScore: 90, impactScore: 88, feedbackScore: 94,
+                description: "Three-day leadership training for SK officers and youth leaders.",
+                achievements: ["Trained 60 youth leaders", "5 expert speakers", "Leadership certification", "92% completion rate"]
+            },
+            {
+                id: 3, name: "Sports Fest 2025", quarter: "Q4", year: 2025,
+                period: "Nov 5-7, 2025", budget: 35000, spent: 34200, volunteers: 38,
+                successRate: 88, budgetScore: 97, participationScore: 76, timelineScore: 90, impactScore: 85, feedbackScore: 92,
+                description: "Annual barangay sports festival promoting health and wellness among youth.",
+                achievements: ["8 sports categories", "120 participants", "Zero injuries", "Community engagement"]
+            },
+            {
+                id: 4, name: "Christmas Gift Giving", quarter: "Q4", year: 2025,
+                period: "Dec 18, 2025", budget: 50000, spent: 49500, volunteers: 52,
+                successRate: 96, budgetScore: 99, participationScore: 95, timelineScore: 100, impactScore: 95, feedbackScore: 91,
+                description: "Annual Christmas outreach program for underprivileged children.",
+                achievements: ["200 gift packs distributed", "50+ volunteers", "Full community coverage", "Heartwarming testimonials"]
+            },
+            {
+                id: 5, name: "Environmental Awareness Campaign", quarter: "Q4", year: 2025,
+                period: "Nov 12-15, 2025", budget: 28000, spent: 27800, volunteers: 42,
+                successRate: 90, budgetScore: 99, participationScore: 84, timelineScore: 90, impactScore: 88, feedbackScore: 89,
+                description: "Educational campaign on environmental conservation and sustainability.",
+                achievements: ["Reached 300 residents", "Planted 50 trees", "Distributed eco-bags", "School partnerships"]
+            },
+            {
+                id: 6, name: "Digital Literacy Workshop", quarter: "Q4", year: 2025,
+                period: "Dec 5-8, 2025", budget: 32000, spent: 31500, volunteers: 35,
+                successRate: 87, budgetScore: 98, participationScore: 70, timelineScore: 85, impactScore: 90, feedbackScore: 92,
+                description: "Computer and internet training for youth and senior citizens.",
+                achievements: ["Trained 80 participants", "Basic to intermediate skills", "Free certificates", "Follow-up sessions planned"]
+            },
+            {
+                id: 7, name: "Mental Health Awareness Day", quarter: "Q4", year: 2025,
+                period: "Nov 28, 2025", budget: 22000, spent: 21200, volunteers: 28,
+                successRate: 93, budgetScore: 96, participationScore: 93, timelineScore: 95, impactScore: 92, feedbackScore: 89,
+                description: "Mental health seminar and counseling services for barangay youth.",
+                achievements: ["2 mental health professionals", "60 participants", "Free counseling sessions", "Mental health resources distributed"]
+            },
+            {
+                id: 8, name: "Year-End Festival & Concert", quarter: "Q4", year: 2025,
+                period: "Dec 28-29, 2025", budget: 48000, spent: 47500, volunteers: 55,
+                successRate: 91, budgetScore: 98, participationScore: 88, timelineScore: 90, impactScore: 89, feedbackScore: 90,
+                description: "Community celebration featuring local talents and cultural performances.",
+                achievements: ["500+ attendees", "10 local performers", "Cultural showcase", "Community unity strengthened"]
+            },
+            // Q3 Projects
+            {
+                id: 9, name: "Summer Reading Program", quarter: "Q3", year: 2025,
+                period: "Jul 1-31, 2025", budget: 18000, spent: 17500, volunteers: 25,
+                successRate: 89, budgetScore: 97, participationScore: 80, timelineScore: 90, impactScore: 88, feedbackScore: 90,
+                description: "Monthly reading program for children during summer break.",
+                achievements: ["40 children enrolled", "100 books read", "Reading certificates", "Literacy improved"]
+            },
+            {
+                id: 10, name: "Livelihood Skills Training", quarter: "Q3", year: 2025,
+                period: "Aug 10-20, 2025", budget: 38000, spent: 37200, volunteers: 32,
+                successRate: 92, budgetScore: 97, participationScore: 90, timelineScore: 90, impactScore: 93, feedbackScore: 92,
+                description: "Skills training for unemployed youth in various crafts and trades.",
+                achievements: ["50 trainees completed", "5 skill modules", "Startup kits provided", "3 trainees started businesses"]
+            }
+        ];
+
+        let currentQuarter = 'Q4';
+        let filteredProjects = [...archivedProjects];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProjects();
+            attachFilterListeners();
+        });
+
+        function renderProjects() {
+            const projectsList = document.getElementById('projectsList');
+            const emptyState = document.getElementById('emptyState');
+
+            if (filteredProjects.length === 0) {
+                projectsList.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            projectsList.innerHTML = filteredProjects.map(project => `
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-6 border border-gray-100 ${selectedProjects.includes(project.id) ? 'ring-2 ring-emerald-500' : ''}">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-3 flex-1">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox"
+                                       class="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
+                                       ${selectedProjects.includes(project.id) ? 'checked' : ''}
+                                       onchange="toggleProjectSelection(${project.id})">
+                            </label>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <h3 class="text-lg font-bold text-gray-800">${project.name}</h3>
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${getSuccessBadgeClass(project.successRate)}">
+                                        ${project.successRate}% Success
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span><i class="far fa-calendar mr-1"></i> ${project.period}</span>
+                                    <span><i class="fas fa-tag mr-1"></i> ${project.quarter} ${project.year}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="viewProject(${project.id})" class="px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition">
+                            <i class="fas fa-eye mr-1"></i> View Details
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Budget</p>
+                            <p class="font-semibold text-gray-800">₱${project.budget.toLocaleString()}</p>
+                            <p class="text-xs text-gray-500">Spent: ₱${project.spent.toLocaleString()}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Volunteers</p>
+                            <p class="font-semibold text-gray-800">${project.volunteers}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Budget Efficiency</p>
+                            <p class="font-semibold text-gray-800">${project.budgetScore}%</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Impact Score</p>
+                            <p class="font-semibold text-gray-800">${project.impactScore}%</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-gray-600">Overall Success Rate</span>
+                            <span class="font-semibold text-gray-800">${project.successRate}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="h-2 rounded-full ${getSuccessBarClass(project.successRate)}" style="width: ${project.successRate}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getSuccessBadgeClass(rate) {
+            if (rate >= 90) return 'bg-green-100 text-green-700';
+            if (rate >= 80) return 'bg-blue-100 text-blue-700';
+            if (rate >= 70) return 'bg-yellow-100 text-yellow-700';
+            return 'bg-red-100 text-red-700';
+        }
+
+        function getSuccessBarClass(rate) {
+            if (rate >= 90) return 'bg-green-500';
+            if (rate >= 80) return 'bg-blue-500';
+            if (rate >= 70) return 'bg-yellow-500';
+            return 'bg-red-500';
+        }
+
+        function switchQuarter(quarter) {
+            currentQuarter = quarter;
+
+            // Update active tab
+            document.querySelectorAll('.quarter-tab').forEach(tab => {
+                tab.classList.remove('active', 'text-emerald-600', 'border-emerald-600');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+            event.target.classList.add('active', 'text-emerald-600', 'border-emerald-600');
+            event.target.classList.remove('text-gray-500', 'border-transparent');
+
+            // Update quarter filter
+            document.getElementById('quarterFilter').value = quarter;
+
+            applyFilters();
+        }
+
+        function attachFilterListeners() {
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('yearFilter').addEventListener('change', applyFilters);
+            document.getElementById('quarterFilter').addEventListener('change', applyFilters);
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const year = document.getElementById('yearFilter').value;
+            const quarter = document.getElementById('quarterFilter').value;
+
+            filteredProjects = archivedProjects.filter(project => {
+                const matchesSearch = project.name.toLowerCase().includes(search);
+                const matchesYear = year === 'all' || project.year.toString() === year;
+                const matchesQuarter = quarter === 'all' || project.quarter === quarter;
+
+                return matchesSearch && matchesYear && matchesQuarter;
+            });
+
+            renderProjects();
+            updateQuarterSummary();
+        }
+
+        function updateQuarterSummary() {
+            const quarterProjects = filteredProjects.filter(p => p.quarter === currentQuarter);
+            const totalBudget = quarterProjects.reduce((sum, p) => sum + p.spent, 0);
+            const totalVolunteers = quarterProjects.reduce((sum, p) => sum + p.volunteers, 0);
+            const avgSuccess = quarterProjects.length > 0
+                ? Math.round(quarterProjects.reduce((sum, p) => sum + p.successRate, 0) / quarterProjects.length)
+                : 0;
+
+            document.getElementById('quarterSummary').innerHTML = `
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-500">Projects</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">${quarterProjects.length}</p>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-500">Budget Used</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">₱${(totalBudget / 1000).toFixed(0)}K</p>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-500">Volunteers</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">${totalVolunteers}</p>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <p class="text-sm text-gray-500">Avg Success</p>
+                    <p class="text-2xl font-bold text-gray-800 mt-1">${avgSuccess}%</p>
+                </div>
+            `;
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('yearFilter').value = '2025';
+            document.getElementById('quarterFilter').value = 'all';
+            applyFilters();
+        }
+
+        function viewProject(id) {
+            const project = archivedProjects.find(p => p.id === id);
+            if (!project) return;
+
+            // Store current project for export
+            currentProjectForExport = project;
+
+            // Basic Info
+            document.getElementById('modalProjectName').textContent = project.name;
+            document.getElementById('modalCategory').textContent = project.category || 'General';
+            document.getElementById('modalGenerated').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('modalDescription').textContent = project.description;
+
+            // Project Details
+            document.getElementById('modalLocation').textContent = project.location || 'Barangay Malanday';
+            document.getElementById('modalHeads').textContent = project.heads ? project.heads.join(', ') : 'N/A';
+            document.getElementById('modalPeriod').textContent = project.period;
+
+            // Volunteer Statistics
+            document.getElementById('modalTotalApplicants').textContent = project.totalApplicants || project.volunteers || 'N/A';
+            document.getElementById('modalApprovedVolunteers').textContent = project.approvedVolunteers || project.volunteers || 'N/A';
+            document.getElementById('modalPendingReview').textContent = project.pendingReview || '0';
+            const participationRate = project.totalApplicants && project.approvedVolunteers
+                ? Math.round((project.approvedVolunteers / project.totalApplicants) * 100) + '%'
+                : '95%';
+            document.getElementById('modalParticipationRate').textContent = participationRate;
+
+            // Metrics with Contribution Calculation
+            const metrics = [
+                { name: 'Budget Efficiency', score: project.budgetScore, weight: 25 },
+                { name: 'Volunteer Participation', score: project.participationScore, weight: 20 },
+                { name: 'Timeline Adherence', score: project.timelineScore, weight: 20 },
+                { name: 'Community Impact', score: project.impactScore, weight: 20 },
+                { name: 'Volunteer Feedback', score: project.feedbackScore, weight: 15 }
+            ];
+
+            const totalContribution = metrics.reduce((sum, m) => sum + (m.score * m.weight / 100), 0);
+
+            document.getElementById('modalMetrics').innerHTML = metrics.map(m => {
+                const contribution = (m.score * m.weight / 100).toFixed(2);
+                return `
+                <div>
+                    <div class="grid grid-cols-4 gap-4 text-sm mb-1">
+                        <span class="text-gray-800 font-medium col-span-1">${m.name}</span>
+                        <span class="text-gray-800 font-semibold text-center">${m.score}%</span>
+                        <span class="text-gray-600 text-center">${m.weight}%</span>
+                        <span class="text-gray-800 font-semibold text-center">${contribution}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="h-2 rounded-full ${getSuccessBarClass(m.score)}" style="width: ${m.score}%"></div>
+                    </div>
+                </div>
+            `}).join('');
+
+            document.getElementById('modalOverallSuccess').textContent = project.successRate + '%';
+            document.getElementById('modalOverallContribution').textContent = totalContribution.toFixed(2) + '%';
+
+            // Financial Summary
+            document.getElementById('modalPlannedBudget').textContent = `₱${project.budget.toLocaleString()}`;
+            document.getElementById('modalActualSpent').textContent = `₱${project.spent.toLocaleString()}`;
+            const variance = project.budget - project.spent;
+            document.getElementById('modalBudgetVariance').textContent = `±${variance.toLocaleString()} (${variance >= 0 ? 'Under Budget' : 'Over Budget'})`;
+            document.getElementById('modalBudgetEfficiency').textContent = project.budgetScore + '%';
+
+            // Budget Breakdown
+            const budgetBreakdownListEl = document.getElementById('modalBudgetBreakdownList');
+            const budgetBreakdownSectionEl = document.getElementById('modalBudgetBreakdownSection');
+            if (project.budgetBreakdown && project.budgetBreakdown.length > 0) {
+                budgetBreakdownSectionEl.style.display = 'block';
+                budgetBreakdownListEl.innerHTML = project.budgetBreakdown.map((item, index) => `
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="py-2 px-3 text-gray-700">${index + 1}</td>
+                        <td class="py-2 px-3 text-gray-800 font-medium">${item.description}</td>
+                        <td class="py-2 px-3 text-gray-700 text-right">₱${item.cost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    </tr>
+                `).join('');
+
+                const totalBreakdown = project.budgetBreakdown.reduce((sum, item) => sum + (item.cost || 0), 0);
+                document.getElementById('modalBudgetBreakdownTotal').textContent = `₱${totalBreakdown.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            } else {
+                budgetBreakdownSectionEl.style.display = 'none';
+            }
+
+            // Community Impact
+            if (project.targetBeneficiaries || project.actualBeneficiaries || project.communityEngagement) {
+                document.getElementById('modalTargetBeneficiaries').textContent = project.targetBeneficiaries || 'N/A';
+                document.getElementById('modalActualBeneficiaries').textContent = project.actualBeneficiaries || 'N/A';
+                document.getElementById('modalEngagementLevel').textContent = project.communityEngagement || 'N/A';
+            } else {
+                document.getElementById('modalCommunityImpact').style.display = 'none';
+            }
+
+            // Volunteer Feedback
+            if (project.feedbackSubmitted || project.avgSatisfaction) {
+                const feedbackText = project.approvedVolunteers && project.feedbackSubmitted
+                    ? `${project.feedbackSubmitted} / ${project.approvedVolunteers} volunteers`
+                    : project.feedbackSubmitted || 'N/A';
+                document.getElementById('modalFeedbackSubmitted').textContent = feedbackText;
+                document.getElementById('modalSatisfactionScore').textContent = project.avgSatisfaction ? project.avgSatisfaction + ' / 5.0' : 'N/A';
+
+                const feedbackSummary = project.achievements && project.achievements.length > 3
+                    ? project.achievements[project.achievements.length - 1]
+                    : 'Volunteers reported positive experience and strong community cooperation throughout the activity.';
+                document.getElementById('modalFeedbackSummary').textContent = feedbackSummary;
+            } else {
+                document.getElementById('modalFeedbackSection').style.display = 'none';
+            }
+
+            // Volunteer List
+            const volunteerListEl = document.getElementById('modalVolunteerList');
+            if (project.volunteerList && project.volunteerList.length > 0) {
+                volunteerListEl.innerHTML = project.volunteerList.map((volunteer, index) => `
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="py-2 px-3 text-gray-700">${index + 1}</td>
+                        <td class="py-2 px-3 text-gray-800 font-medium">${volunteer.name}</td>
+                        <td class="py-2 px-3 text-gray-700">${volunteer.age}</td>
+                        <td class="py-2 px-3 text-gray-700">${volunteer.contact}</td>
+                    </tr>
+                `).join('');
+            } else {
+                volunteerListEl.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="py-4 px-3 text-center text-gray-500">No volunteer data available</td>
+                    </tr>
+                `;
+            }
+
+            // Overall Success
+            document.getElementById('modalSuccessRateDisplay').textContent = project.successRate + '%';
+
+            let successLabel = '';
+            if (project.successRate >= 90) successLabel = '– Highly Successful Project';
+            else if (project.successRate >= 75) successLabel = '– Successful Project';
+            else if (project.successRate >= 60) successLabel = '– Moderately Successful';
+            else successLabel = '– Needs Improvement';
+
+            document.getElementById('modalSuccessLabel').textContent = successLabel;
+
+            const successDesc = `The project achieved an overall success rate of ${project.successRate}%, indicating ${project.successRate >= 90 ? 'excellent' : 'good'} performance across all evaluation criteria. Strong budget efficiency, high volunteer participation, on-time completion, positive community impact, and very favorable volunteer feedback collectively contributed to the project's high success rating.`;
+            document.getElementById('modalSuccessDescription').textContent = successDesc;
+
+            document.getElementById('projectModal').classList.remove('hidden');
+        }
+
+        function confirmPermanentDelete() {
+            if (!currentProjectForExport) return;
+
+            // Show the custom delete confirmation modal
+            document.getElementById('deleteProjectName').textContent = currentProjectForExport.name;
+
+            // Clear all character inputs
+            for (let i = 0; i < 6; i++) {
+                document.getElementById(`deleteChar${i}`).value = '';
+            }
+
+            document.getElementById('deleteErrorMsg').classList.add('hidden');
+            document.getElementById('deleteConfirmModal').classList.remove('hidden');
+
+            // Focus on first input field
+            setTimeout(() => {
+                document.getElementById('deleteChar0').focus();
+            }, 100);
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteConfirmModal').classList.add('hidden');
+
+            // Clear all character inputs
+            for (let i = 0; i < 6; i++) {
+                document.getElementById(`deleteChar${i}`).value = '';
+            }
+
+            document.getElementById('deleteErrorMsg').classList.add('hidden');
+        }
+
+        function executeDelete() {
+            // Collect all characters
+            let userInput = '';
+            for (let i = 0; i < 6; i++) {
+                userInput += document.getElementById(`deleteChar${i}`).value;
+            }
+
+            const errorMsg = document.getElementById('deleteErrorMsg');
+
+            if (userInput === 'DELETE') {
+                const projectName = currentProjectForExport.name;
+
+                // Remove from array
+                const index = archivedProjects.findIndex(p => p.id === currentProjectForExport.id);
+                if (index !== -1) {
+                    archivedProjects.splice(index, 1);
+                    closeDeleteModal();
+                    closeModal();
+                    filterProjects();
+
+                    // Show success message
+                    showToast(`Project "${projectName}" has been permanently deleted.`, 'success');
+                }
+            } else {
+                // Show error message
+                errorMsg.classList.remove('hidden');
+
+                // Shake animation for error
+                const inputs = document.querySelectorAll('.delete-input');
+                inputs.forEach(input => {
+                    input.style.animation = 'shake 0.3s';
+                    setTimeout(() => {
+                        input.style.animation = '';
+                    }, 300);
+                });
+
+                // Clear inputs and focus first
+                for (let i = 0; i < 6; i++) {
+                    document.getElementById(`deleteChar${i}`).value = '';
+                }
+                document.getElementById('deleteChar0').focus();
+            }
+        }
+
+        // Update delete button state
+        function updateDeleteButtonState() {
+            const deleteBtn = document.getElementById('deleteSubmitBtn');
+            let allFilled = true;
+
+            for (let i = 0; i < 6; i++) {
+                if (!document.getElementById(`deleteChar${i}`).value) {
+                    allFilled = false;
+                    break;
+                }
+            }
+
+            if (allFilled) {
+                deleteBtn.disabled = false;
+                deleteBtn.className = 'px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium cursor-pointer';
+            } else {
+                deleteBtn.disabled = true;
+                deleteBtn.className = 'px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium';
+            }
+        }
+
+        // OTP-style input handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteInputs = document.querySelectorAll('.delete-input');
+
+            deleteInputs.forEach((input, index) => {
+                // Move to next input on type
+                input.addEventListener('input', function(e) {
+                    const value = this.value.toUpperCase();
+                    this.value = value;
+
+                    if (value && index < 5) {
+                        document.getElementById(`deleteChar${index + 1}`).focus();
+                    }
+
+                    // Update button state
+                    updateDeleteButtonState();
+                });
+
+                // Handle backspace to move to previous input
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace') {
+                        if (!this.value && index > 0) {
+                            document.getElementById(`deleteChar${index - 1}`).focus();
+                        }
+                        // Update button state after backspace
+                        setTimeout(() => updateDeleteButtonState(), 10);
+                    }
+
+                    // Handle Enter key
+                    if (e.key === 'Enter') {
+                        executeDelete();
+                    }
+                });
+
+                // Prevent paste
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text').toUpperCase();
+
+                    // Fill all boxes if pasting "DELETE"
+                    if (pastedText === 'DELETE') {
+                        for (let i = 0; i < 6; i++) {
+                            document.getElementById(`deleteChar${i}`).value = pastedText[i];
+                        }
+                        updateDeleteButtonState();
+                    }
+                });
+            });
+        });
+
+        function closeModal() {
+            document.getElementById('projectModal').classList.add('hidden');
+            // Close download menu if open
+            document.getElementById('downloadMenu').classList.add('hidden');
+        }
+
+        function toggleDownloadMenu() {
+            const menu = document.getElementById('downloadMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('downloadMenu');
+            if (menu && !event.target.closest('.relative')) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        let currentProjectForExport = null;
+
+        function exportProject(format = 'pdf') {
+            if (!currentProjectForExport) return;
+
+            // Close the download menu
+            document.getElementById('downloadMenu').classList.add('hidden');
+
+            if (format === 'pdf') {
+                exportAsPDF();
+            } else if (format === 'csv') {
+                exportAsCSV();
+            } else if (format === 'txt') {
+                exportAsText();
+            }
+        }
+
+        function exportAsPDF() {
+            if (!currentProjectForExport) return;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const project = currentProjectForExport;
+
+            let y = 15;
+            const pageWidth = 210;
+            const pageHeight = 297;
+            const margin = 20;
+            const contentWidth = pageWidth - (margin * 2);
+
+            // Helper function to add new page if needed
+            function checkPageBreak(neededSpace = 20) {
+                if (y + neededSpace > pageHeight - 20) {
+                    doc.addPage();
+                    y = 20;
+                    return true;
+                }
+                return false;
+            }
+
+            // Helper to draw section header
+            function drawSectionHeader(title) {
+                checkPageBreak(15);
+                doc.setFillColor(5, 150, 105); // emerald-600
+                doc.rect(margin, y - 3, contentWidth, 8, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text(title, margin + 2, y + 2);
+                doc.setTextColor(0, 0, 0);
+                y += 12;
+            }
+
+            // Title Header with background
+            doc.setFillColor(5, 150, 105);
+            doc.rect(0, 0, pageWidth, 35, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            const titleLines = doc.splitTextToSize(project.name, contentWidth);
+            titleLines.forEach((line, idx) => {
+                doc.text(line, pageWidth / 2, 12 + (idx * 7), { align: 'center' });
+            });
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text('PROJECT COMPLETION REPORT', pageWidth / 2, 28, { align: 'center' });
+
+            doc.setTextColor(0, 0, 0);
+            y = 45;
+
+            // Metadata Box
+            doc.setDrawColor(5, 150, 105);
+            doc.setLineWidth(0.5);
+            doc.rect(margin, y, contentWidth, 20);
+
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'bold');
+            doc.text('Category:', margin + 3, y + 6);
+            doc.setFont(undefined, 'normal');
+            doc.text(project.category || 'N/A', margin + 25, y + 6);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('Status:', margin + 3, y + 12);
+            doc.setFont(undefined, 'normal');
+            doc.text('Completed', margin + 25, y + 12);
+
+            doc.setFont(undefined, 'bold');
+            doc.text('Generated:', margin + 3, y + 18);
+            doc.setFont(undefined, 'normal');
+            doc.text(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), margin + 25, y + 18);
+
+            y += 28;
+
+            // Project Description Section
+            drawSectionHeader('Project Description');
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            const descLines = doc.splitTextToSize(project.description, contentWidth);
+            descLines.forEach(line => {
+                checkPageBreak();
+                doc.text(line, margin, y);
+                y += 5;
+            });
+            y += 10;
+
+            // Project Details Section
+            drawSectionHeader('Project Details');
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            doc.text('Location:', margin + 2, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(project.location || 'N/A', margin + 30, y);
+            y += 6;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('Project Heads:', margin + 2, y);
+            doc.setFont(undefined, 'normal');
+            const headsText = (project.heads && project.heads.length > 0) ? project.heads.join(', ') : 'N/A';
+            doc.text(headsText, margin + 35, y);
+            y += 6;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('Date:', margin + 2, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(project.period, margin + 30, y);
+            y += 12;
+
+            // Volunteer Statistics
+            drawSectionHeader('Volunteer Statistics');
+
+            doc.setFontSize(10);
+            const stats = [
+                ['Total Applicants', project.totalApplicants || project.volunteers],
+                ['Approved Volunteers', project.approvedVolunteers || project.volunteers],
+                ['Pending Review', project.pendingReview || 0],
+                ['Participation Rate', `${project.participationScore || 0}%`]
+            ];
+
+            stats.forEach(([label, value]) => {
+                checkPageBreak();
+                doc.setFont(undefined, 'bold');
+                doc.text(label, margin + 2, y);
+                doc.setFont(undefined, 'normal');
+                doc.text(String(value), margin + 60, y);
+                y += 6;
+            });
+            y += 10;
+
+            // List of Volunteers Table
+            if (project.volunteerList && project.volunteerList.length > 0) {
+                drawSectionHeader('List of Volunteers');
+
+                // Table headers
+                doc.setFillColor(240, 240, 240);
+                doc.rect(margin, y, contentWidth, 7, 'F');
+
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'bold');
+                doc.text('#', margin + 2, y + 5);
+                doc.text('Volunteer Name', margin + 10, y + 5);
+                doc.text('Age', margin + 100, y + 5);
+                doc.text('Contact Number', margin + 120, y + 5);
+                y += 7;
+
+                doc.setFont(undefined, 'normal');
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.1);
+
+                project.volunteerList.forEach((volunteer, index) => {
+                    checkPageBreak(8);
+
+                    // Alternate row colors
+                    if (index % 2 === 0) {
+                        doc.setFillColor(250, 250, 250);
+                        doc.rect(margin, y - 1, contentWidth, 6, 'F');
+                    }
+
+                    doc.text(String(index + 1), margin + 2, y + 4);
+                    doc.text(volunteer.name, margin + 10, y + 4);
+                    doc.text(String(volunteer.age), margin + 100, y + 4);
+                    doc.text(volunteer.contact, margin + 120, y + 4);
+
+                    // Draw row separator
+                    doc.line(margin, y + 5, margin + contentWidth, y + 5);
+
+                    y += 6;
+                });
+
+                y += 8;
+            }
+
+            // Project Evaluation Summary
+            drawSectionHeader('Project Evaluation Summary (5-Factor Weighted)');
+
+            const evaluationMetrics = [
+                ['Budget Efficiency', project.budgetScore, '25%', (project.budgetScore * 0.25).toFixed(2)],
+                ['Volunteer Participation', project.participationScore, '20%', (project.participationScore * 0.20).toFixed(2)],
+                ['Timeline Adherence', project.timelineScore, '20%', (project.timelineScore * 0.20).toFixed(2)],
+                ['Community Impact', project.impactScore, '20%', (project.impactScore * 0.20).toFixed(2)],
+                ['Volunteer Feedback', project.feedbackScore, '15%', (project.feedbackScore * 0.15).toFixed(2)]
+            ];
+
+            // Table header
+            doc.setFillColor(240, 240, 240);
+            doc.rect(margin, y, contentWidth, 7, 'F');
+
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'bold');
+            doc.text('Metric', margin + 2, y + 5);
+            doc.text('Score', margin + 80, y + 5);
+            doc.text('Weight', margin + 110, y + 5);
+            doc.text('Contribution', margin + 140, y + 5);
+            y += 7;
+
+            doc.setFont(undefined, 'normal');
+            evaluationMetrics.forEach(([metric, score, weight, contribution], idx) => {
+                checkPageBreak();
+
+                if (idx % 2 === 0) {
+                    doc.setFillColor(250, 250, 250);
+                    doc.rect(margin, y - 1, contentWidth, 6, 'F');
+                }
+
+                doc.text(metric, margin + 2, y + 4);
+                doc.text(`${score}%`, margin + 80, y + 4);
+                doc.text(weight, margin + 110, y + 4);
+                doc.text(`${contribution}%`, margin + 140, y + 4);
+
+                doc.line(margin, y + 5, margin + contentWidth, y + 5);
+                y += 6;
+            });
+
+            // Total row
+            doc.setFillColor(5, 150, 105);
+            doc.rect(margin, y - 1, contentWidth, 7, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFont(undefined, 'bold');
+            doc.text('Overall Success Rate', margin + 2, y + 4);
+            doc.text(`${project.successRate}%`, margin + 80, y + 4);
+            doc.text('100%', margin + 110, y + 4);
+            const totalContribution = evaluationMetrics.reduce((sum, m) => sum + parseFloat(m[3]), 0).toFixed(2);
+            doc.text(`${totalContribution}%`, margin + 140, y + 4);
+            doc.setTextColor(0, 0, 0);
+            y += 12;
+
+            // Financial Summary
+            drawSectionHeader('Financial Summary');
+
+            doc.setFontSize(10);
+            const variance = project.budget - project.spent;
+            const financialData = [
+                ['Planned Budget', `₱${project.budget.toLocaleString()}`],
+                ['Actual Spent', `₱${project.spent.toLocaleString()}`],
+                ['Budget Variance', `₱${variance.toLocaleString()} (${variance >= 0 ? 'Under' : 'Over'} Budget)`],
+                ['Budget Efficiency', `${project.budgetScore}%`]
+            ];
+
+            financialData.forEach(([label, value]) => {
+                checkPageBreak();
+                doc.setFont(undefined, 'bold');
+                doc.text(label, margin + 2, y);
+                doc.setFont(undefined, 'normal');
+                doc.text(value, margin + 60, y);
+                y += 6;
+            });
+            y += 10;
+
+            // Budget Breakdown
+            if (project.budgetBreakdown && project.budgetBreakdown.length > 0) {
+                drawSectionHeader('Budget Breakdown');
+
+                // Table headers
+                doc.setFillColor(240, 240, 240);
+                doc.rect(margin, y, contentWidth, 7, 'F');
+
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'bold');
+                doc.text('#', margin + 2, y + 5);
+                doc.text('Expense Item', margin + 10, y + 5);
+                doc.text('Cost', margin + 150, y + 5);
+                y += 7;
+
+                doc.setFont(undefined, 'normal');
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.1);
+
+                let totalBreakdown = 0;
+                project.budgetBreakdown.forEach((item, index) => {
+                    checkPageBreak(8);
+
+                    // Alternate row colors
+                    if (index % 2 === 0) {
+                        doc.setFillColor(250, 250, 250);
+                        doc.rect(margin, y - 1, contentWidth, 6, 'F');
+                    }
+
+                    doc.text(String(index + 1), margin + 2, y + 4);
+                    doc.text(item.description, margin + 10, y + 4);
+                    doc.text(`₱${item.cost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, margin + 150, y + 4);
+
+                    totalBreakdown += item.cost;
+
+                    // Draw row separator
+                    doc.line(margin, y + 5, margin + contentWidth, y + 5);
+
+                    y += 6;
+                });
+
+                // Total row
+                doc.setFillColor(240, 240, 240);
+                doc.rect(margin, y, contentWidth, 7, 'F');
+                doc.setFont(undefined, 'bold');
+                doc.text('Total:', margin + 120, y + 5);
+                doc.text(`₱${totalBreakdown.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, margin + 150, y + 5);
+                doc.setFont(undefined, 'normal');
+                y += 10;
+            }
+
+            // Community Impact
+            drawSectionHeader('Community Impact');
+
+            doc.setFontSize(10);
+            const communityData = [
+                ['Target Beneficiaries', project.targetBeneficiaries || 'N/A'],
+                ['Actual Beneficiaries', project.actualBeneficiaries || 'N/A'],
+                ['Community Engagement Level', project.communityEngagement || 'N/A']
+            ];
+
+            communityData.forEach(([label, value]) => {
+                checkPageBreak();
+                doc.setFont(undefined, 'bold');
+                doc.text(label, margin + 2, y);
+                doc.setFont(undefined, 'normal');
+                doc.text(String(value), margin + 60, y);
+                y += 6;
+            });
+            y += 10;
+
+            // Volunteer Feedback
+            drawSectionHeader('Volunteer Feedback');
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            doc.text('Feedback Submitted:', margin + 2, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(`${project.feedbackSubmitted || 0} / ${project.approvedVolunteers || project.volunteers} volunteers`, margin + 50, y);
+            y += 6;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('Average Satisfaction Score:', margin + 2, y);
+            doc.setFont(undefined, 'normal');
+            doc.text(`${project.avgSatisfaction || 'N/A'} / 5.0`, margin + 65, y);
+            y += 6;
+
+            doc.setFont(undefined, 'bold');
+            doc.text('Summary:', margin + 2, y);
+            y += 5;
+            doc.setFont(undefined, 'normal');
+            const summaryText = 'Volunteers reported excellent coordination, clear task delegation, and strong community cooperation throughout the activity.';
+            const summaryLines = doc.splitTextToSize(summaryText, contentWidth - 4);
+            summaryLines.forEach(line => {
+                checkPageBreak();
+                doc.text(line, margin + 2, y);
+                y += 5;
+            });
+            y += 10;
+
+            // Overall Project Success Rate
+            drawSectionHeader('Overall Project Success Rate');
+
+            // Success box
+            doc.setFillColor(220, 252, 231); // emerald-50
+            doc.setDrawColor(5, 150, 105);
+            doc.setLineWidth(1);
+            doc.rect(margin, y, contentWidth, 20, 'FD');
+
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(5, 150, 105);
+            doc.text(`${project.successRate}% – Highly Successful Project`, pageWidth / 2, y + 8, { align: 'center' });
+            doc.setTextColor(0, 0, 0);
+            y += 24;
+
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            const conclusionText = `The project achieved an overall success rate of ${project.successRate}%, indicating excellent performance across all evaluation criteria. Strong budget efficiency, high volunteer participation, on-time completion, positive community impact, and very favorable volunteer feedback collectively contributed to the project's high success rating.`;
+            const conclusionLines = doc.splitTextToSize(conclusionText, contentWidth);
+            conclusionLines.forEach(line => {
+                checkPageBreak();
+                doc.text(line, margin, y);
+                y += 5;
+            });
+            y += 10;
+
+            // Footer
+            checkPageBreak(15);
+            doc.setDrawColor(200, 200, 200);
+            doc.line(margin, y, margin + contentWidth, y);
+            y += 5;
+
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.setFont(undefined, 'italic');
+            doc.text('Report generated by BIMS – Barangay Information Management System', margin, y);
+            y += 4;
+            doc.text(`Generated on: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`, margin, y);
+            doc.setTextColor(0, 0, 0);
+
+            // Save PDF
+            doc.save(`${project.name.replace(/[^a-zA-Z0-9]/g, '_')}_Report.pdf`);
+            closeModal();
+        }
+
+        function exportAsText() {
+            if (!currentProjectForExport) return;
+            const project = currentProjectForExport;
+
+            // Create text content
+            let textContent = '';
+            textContent += '═══════════════════════════════════════════════════════════\n';
+            textContent += '                    PROJECT REPORT                         \n';
+            textContent += '═══════════════════════════════════════════════════════════\n\n';
+
+            textContent += '┌─────────────────────────────────────────────────────────┐\n';
+            textContent += '│ PROJECT INFORMATION                                     │\n';
+            textContent += '└─────────────────────────────────────────────────────────┘\n';
+            textContent += `Project Name: ${project.name}\n`;
+            textContent += `Category: ${project.category}\n`;
+            textContent += `Period: ${project.period}\n`;
+            textContent += `Status: ${project.status}\n\n`;
+
+            textContent += '┌─────────────────────────────────────────────────────────┐\n';
+            textContent += '│ BUDGET INFORMATION                                      │\n';
+            textContent += '└─────────────────────────────────────────────────────────┘\n';
+            textContent += `Proposed Budget: ₱${project.budget.toLocaleString()}\n`;
+            textContent += `Total Spent: ₱${project.spent.toLocaleString()}\n`;
+            textContent += `Balance: ₱${(project.budget - project.spent).toLocaleString()}\n\n`;
+
+            textContent += '┌─────────────────────────────────────────────────────────┐\n';
+            textContent += '│ PARTICIPATION METRICS                                   │\n';
+            textContent += '└─────────────────────────────────────────────────────────┘\n';
+            textContent += `Target Volunteers: ${project.targetVolunteers}\n`;
+            textContent += `Actual Volunteers: ${project.actualVolunteers}\n`;
+            textContent += `Target Beneficiaries: ${project.targetBeneficiaries}\n`;
+            textContent += `Actual Beneficiaries: ${project.actualBeneficiaries}\n\n`;
+
+            textContent += '┌─────────────────────────────────────────────────────────┐\n';
+            textContent += '│ SUCCESS RATE                                            │\n';
+            textContent += '└─────────────────────────────────────────────────────────┘\n';
+            textContent += `Overall Success Rate: ${project.successRate}%\n\n`;
+
+            textContent += '┌─────────────────────────────────────────────────────────┐\n';
+            textContent += '│ DESCRIPTION                                             │\n';
+            textContent += '└─────────────────────────────────────────────────────────┘\n';
+            textContent += `${project.description}\n\n`;
+
+            textContent += '┌─────────────────────────────────────────────────────────┐\n';
+            textContent += '│ TEAM HEADS                                              │\n';
+            textContent += '└─────────────────────────────────────────────────────────┘\n';
+            project.heads.forEach((head, index) => {
+                textContent += `${index + 1}. ${head}\n`;
+            });
+            textContent += '\n';
+
+            // Add budget breakdown if available
+            if (project.budgetBreakdown && project.budgetBreakdown.length > 0) {
+                textContent += '┌─────────────────────────────────────────────────────────┐\n';
+                textContent += '│ BUDGET BREAKDOWN                                        │\n';
+                textContent += '└─────────────────────────────────────────────────────────┘\n';
+                project.budgetBreakdown.forEach((item, index) => {
+                    textContent += `${index + 1}. ${item.description.padEnd(40)} ₱${item.cost.toLocaleString()}\n`;
+                });
+                const totalBreakdown = project.budgetBreakdown.reduce((sum, item) => sum + item.cost, 0);
+                textContent += `${'─'.repeat(57)}\n`;
+                textContent += `${'TOTAL:'.padEnd(43)} ₱${totalBreakdown.toLocaleString()}\n\n`;
+            }
+
+            // Add volunteers list if available
+            if (project.volunteers && project.volunteers.length > 0) {
+                textContent += '┌─────────────────────────────────────────────────────────┐\n';
+                textContent += '│ VOLUNTEERS LIST                                         │\n';
+                textContent += '└─────────────────────────────────────────────────────────┘\n';
+                project.volunteers.forEach((vol, index) => {
+                    textContent += `${(index + 1).toString().padStart(3)}. ${vol.name.padEnd(25)} Age: ${vol.age.toString().padStart(2)}  ${vol.contact}\n`;
+                });
+                textContent += '\n';
+            }
+
+            textContent += '═══════════════════════════════════════════════════════════\n';
+            textContent += `Generated on: ${new Date().toLocaleString()}\n`;
+            textContent += '═══════════════════════════════════════════════════════════\n';
+
+            // Download as text file
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${project.name.replace(/[^a-zA-Z0-9]/g, '_')}_Report.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            closeModal();
+        }
+
+        function exportAsCSV() {
+            if (!currentProjectForExport) return;
+            const project = currentProjectForExport;
+
+            // Create CSV data
+            const rows = [
+                ['Project Report'],
+                [''],
+                ['Project Name', project.name],
+                ['Category', project.category],
+                ['Period', project.period],
+                ['Status', project.status],
+                [''],
+                ['Budget Information'],
+                ['Proposed Budget', `₱${project.budget.toLocaleString()}`],
+                ['Total Spent', `₱${project.spent.toLocaleString()}`],
+                [''],
+                ['Participation'],
+                ['Target Volunteers', project.targetVolunteers],
+                ['Actual Volunteers', project.actualVolunteers],
+                ['Target Beneficiaries', project.targetBeneficiaries],
+                ['Actual Beneficiaries', project.actualBeneficiaries],
+                [''],
+                ['Success Rate', `${project.successRate}%`],
+                [''],
+                ['Description', project.description],
+                [''],
+                ['Team Heads']
+            ];
+
+            // Add team heads
+            project.heads.forEach((head, index) => {
+                rows.push([`${index + 1}`, head]);
+            });
+
+            // Add budget breakdown if available
+            if (project.budgetBreakdown && project.budgetBreakdown.length > 0) {
+                rows.push([''], ['Budget Breakdown'], ['#', 'Expense Item', 'Cost']);
+                project.budgetBreakdown.forEach((item, index) => {
+                    rows.push([index + 1, item.description, `₱${item.cost.toLocaleString()}`]);
+                });
+            }
+
+            // Add volunteers list if available
+            if (project.volunteers && project.volunteers.length > 0) {
+                rows.push([''], ['Volunteers List'], ['#', 'Name', 'Age', 'Contact']);
+                project.volunteers.forEach((vol, index) => {
+                    rows.push([index + 1, vol.name, vol.age, vol.contact]);
+                });
+            }
+
+            // Convert to CSV
+            const csvContent = rows.map(row =>
+                row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+            ).join('\n');
+
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${project.name.replace(/[^a-zA-Z0-9]/g, '_')}_Report.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            closeModal();
+        }
+
+        // Bulk Report Download Functions
+        let selectedProjects = [];
+
+        function toggleProjectSelection(projectId) {
+            if (selectedProjects.includes(projectId)) {
+                selectedProjects = selectedProjects.filter(id => id !== projectId);
+            } else {
+                selectedProjects.push(projectId);
+            }
+            updateSelectedCount();
+            renderProjects();
+        }
+
+        function updateSelectedCount() {
+            document.getElementById('selectedCount').textContent = selectedProjects.length;
+        }
+
+        function selectAllFiltered() {
+            selectedProjects = filteredProjects.map(p => p.id);
+            updateSelectedCount();
+            renderProjects();
+        }
+
+        function deselectAll() {
+            selectedProjects = [];
+            updateSelectedCount();
+            renderProjects();
+        }
+
+        async function generateBulkReports() {
+            if (selectedProjects.length === 0) {
+                alert('Please select at least one project to generate reports.');
+                return;
+            }
+
+            if (!confirm(`Generate and download ${selectedProjects.length} PDF report(s)?`)) {
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+
+            // Show progress
+            const selectedProjectsList = archivedProjects.filter(p => selectedProjects.includes(p.id));
+
+            for (let i = 0; i < selectedProjectsList.length; i++) {
+                const project = selectedProjectsList[i];
+
+                // Generate PDF for each project (reuse export logic)
+                const doc = new jsPDF();
+                let y = 20;
+                const lineHeight = 7;
+
+                // Title
+                doc.setFontSize(18);
+                doc.setFont(undefined, 'bold');
+                doc.text(project.name, 105, y, { align: 'center' });
+                y += lineHeight + 3;
+
+                // Metadata
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Category: ${project.category || 'General'}`, 20, y);
+                doc.text(`Project Status: Completed`, 110, y);
+                y += lineHeight;
+                doc.text(`Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, 20, y);
+                y += lineHeight + 3;
+
+                // Description
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text('Project Description', 20, y);
+                y += lineHeight;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                const descLines = doc.splitTextToSize(project.description, 170);
+                doc.text(descLines, 20, y);
+                y += descLines.length * lineHeight + 3;
+
+                // Add more sections similar to exportProject function...
+                // (Simplified for bulk generation)
+
+                doc.text(`Period: ${project.period}`, 20, y);
+                y += lineHeight;
+                doc.text(`Budget: ₱${project.budget.toLocaleString()} (Spent: ₱${project.spent.toLocaleString()})`, 20, y);
+                y += lineHeight;
+                doc.text(`Volunteers: ${project.volunteers}`, 20, y);
+                y += lineHeight;
+                doc.text(`Success Rate: ${project.successRate}%`, 20, y);
+
+                // Save PDF
+                doc.save(`${project.name.replace(/[^a-zA-Z0-9]/g, '_')}_Report_${i + 1}.pdf`);
+
+                // Small delay between downloads
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            alert(`${selectedProjectsList.length} report(s) downloaded successfully!`);
+            deselectAll();
+        }
+
+        // Initialize quarter summary
+        updateQuarterSummary();
+
+        // Update current date
+        function updateCurrentDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const currentDate = new Date().toLocaleDateString('en-US', options);
+            const dateElement = document.getElementById('currentDate');
+            if (dateElement) {
+                dateElement.textContent = currentDate;
+            }
+        }
+        updateCurrentDate();
+    </script>
+</body>
+</html>
