@@ -16,3 +16,16 @@ desktop.ini
 
 # Logs
 *.log
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*-key.json
+credentials.json
+
+# Python scripts (may contain API keys)
+*.py
+__pycache__/
+*.pyc
