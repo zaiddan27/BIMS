@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BIMS - SK Manage Files</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2f6e4e",
+              secondary: "#3d8b64",
+            },
+            fontFamily: {
+              sans: ["Inter", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .icon-wrapper { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+      .icon-wrapper:hover { transform: translateY(-2px); }
+      .nav-link svg { transition: all 0.3s ease; }
+      .nav-link:hover svg { transform: scale(1.1); }
+      .icon-badge { box-shadow: 0 2px 8px rgba(47, 110, 78, 0.15); }
+      .notification-icon { position: relative; }
+      .notification-icon:hover { transform: rotate(15deg) scale(1.1); transition: transform 0.3s ease; }
+      .status-icon-pending { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+      .status-icon-approved { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+      .status-icon-rejected { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+      .icon-primary { filter: drop-shadow(0 2px 4px rgba(47, 110, 78, 0.1)); }
+      .icon-glow { filter: drop-shadow(0 0 8px rgba(47, 110, 78, 0.3)); }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        min-width: 300px;
+        background: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transform: translateX(400px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 9999;
+      }
+
+      .toast.show {
+        transform: translateX(0);
+      }
+
+      .toast.success {
+        border-left: 4px solid #10b981;
+      }
+
+      .toast.error {
+        border-left: 4px solid #ef4444;
+      }
+
+      .toast.warning {
+        border-left: 4px solid #f59e0b;
+      }
+
+      .toast.info {
+        border-left: 4px solid #3b82f6;
+      }
+
+      /* Input validation states */
+      .input-error {
+        border-color: #ef4444 !important;
+        background-color: #fef2f2 !important;
+      }
+
+      .input-success {
+        border-color: #10b981 !important;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 0.6s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+      <!-- Sidebar Navigation -->
+      <aside
+        class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col"
+      >
+        <div class="p-6 flex-1 flex flex-col">
+          <!-- Logo -->
+          <div class="flex items-center space-x-4 mb-8">
+            <div
+              class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden"
+            >
+              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
+            </div>
+            <div>
+              <h1 class="text-xl font-black text-gray-800">BIMS</h1>
+              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
+            </div>
+          </div>
+
+          <!-- Navigation Menu -->
+          <nav class="space-y-2">
+            <a
+              href="sk-dashboard.html"
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
+            >
+              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition">
+                <svg
+                  class="w-5 h-5 group-hover:text-green-600 transition"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="2.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
+                  ></path>
+                </svg>
+              </div>
+              <span>Dashboard</span>
+            </a>
+            <a
+              href="sk-files.html"
+              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group"
+            >
+              <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  ></path>
+                </svg>
+              </div>
+              <span>Manage Files</span>
+            </a>
+            <a
+              href="sk-projects.html"
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
+            >
+              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-purple-50 transition">
+                <svg
+                  class="w-5 h-5 group-hover:text-purple-600 transition"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  ></path>
+                </svg>
+              </div>
+              <span>Project Monitoring</span>
+            </a>
+            <a
+              href="sk-calendar.html"
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
+            >
+              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-50 transition">
+                <svg
+                  class="w-5 h-5 group-hover:text-orange-600 transition"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  ></path>
+                </svg>
+              </div>
+              <span>Calendar</span>
+            </a>
+            <a
+              href="sk-testimonies.html"
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
+            >
+              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-50 transition">
+                <svg
+                  class="w-5 h-5 group-hover:text-indigo-600 transition"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  ></path>
+                </svg>
+              </div>
+              <span>Testimonies</span>
+            </a>
+            <a
+              href="sk-archive.html"
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
+            >
+              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition">
+                <svg
+                  class="w-5 h-5 group-hover:text-gray-700 transition"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                  ></path>
+                </svg>
+              </div>
+              <span>Archives</span>
+            </a>
+          </nav>
+
+          <div class="flex-1"></div>
+
+          <!-- Logout -->
+          <div class="mt-8 pt-8 border-t border-gray-200">
+            <button
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
+            >
+              <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  ></path>
+                </svg>
+              </div>
+              <span class="font-medium">Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Confirmation Modal -->
+      <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+          <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+          </div>
+          <h3 id="confirmTitle" class="text-lg font-bold text-gray-900 text-center mb-2">Confirm Action</h3>
+          <p id="confirmMessage" class="text-sm text-gray-600 text-center mb-6">Are you sure you want to proceed?</p>
+          <div class="flex gap-3">
+            <button id="confirmCancel" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Cancel</button>
+            <button id="confirmOk" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 overflow-auto">
+        <!-- Top Bar -->
+        <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200">
+          <div class="px-8 py-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-[#2f6e4e] font-semibold mb-1" id="currentDate">Sunday, December 14, 2025</p>
+                <h1 class="text-2xl font-bold text-gray-800">Manage Files</h1>
+                <p class="text-sm text-gray-600 mt-1">Upload, organize, and share documents with your team and volunteers</p>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div class="relative">
+                  <button onclick="toggleNotificationModal()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">5</span>
+                  </button>
+                </div>
+                <button onclick="openProfileModal()" class="flex items-center space-x-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
+                  <div class="text-right">
+                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Andrea Pelias</p>
+                    <p class="text-xs text-gray-500">SK Chairman</p>
+                  </div>
+                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">
+                    AP
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- File Management Section -->
+        <div class="px-6 py-6">
+          <div class="max-w-7xl mx-auto">
+            <!-- ========================= -->
+            <!-- MANAGE FILES (REPLACES ANNOUNCEMENTS) -->
+            <!-- ========================= -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+              <div class="flex items-center justify-end mb-6">
+                <!-- Upload button (admin) -->
+                <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="openProfileModal()">
+                  <button
+                    onclick="openUploadModal()"
+                    class="cursor-pointer px-4 py-2 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg font-medium transition flex items-center space-x-2"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      ></path>
+                    </svg>
+                    <span>Upload File</span>
+                  </button>
+
+                  <button
+                    id="bulkDeleteBtn"
+                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition hidden"
+                  >
+                    Delete Selected
+                  </button>
+                </div>
+              </div>
+
+              <!-- Search Bar -->
+              <div class="mb-6 flex items-center gap-4">
+                <input
+                  id="fileSearch"
+                  type="text"
+                  placeholder="Search files by name or date..."
+                  class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
+                />
+                <select
+                  id="filterCategory"
+                  class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white min-w-[150px]"
+                >
+                  <option value="">All categories</option>
+                  <option value="general">General Files</option>
+                  <option value="project">Project Files</option>
+                </select>
+                <button
+                  onclick="filterFiles()"
+                  class="px-6 py-2.5 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] font-medium"
+                >
+                  Search
+                </button>
+              </div>
+
+              <!-- File Grid -->
+              <div
+                id="filesGrid"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                <!-- File cards are injected by JS -->
+              </div>
+
+              <!-- Pagination placeholder -->
+              <div class="mt-6 flex justify-end">
+                <nav
+                  class="inline-flex rounded-md shadow-sm"
+                  role="navigation"
+                  aria-label="Pagination"
+                >
+                  <button
+                    id="prevPage"
+                    class="px-3 py-2 border border-gray-200 rounded-l-md"
+                  >
+                    Prev
+                  </button>
+                  <button
+                    id="nextPage"
+                    class="px-3 py-2 border-t border-b border-gray-200 rounded-r-md"
+                  >
+                    Next
+                  </button>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View File Modal -->
+    <div
+      id="viewFileModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+      >
+        <div
+          class="p-6 border-b border-gray-200 flex items-center justify-between"
+        >
+          <h3 id="viewFileTitle" class="text-2xl font-bold text-gray-800">
+            View File
+          </h3>
+          <button
+            onclick="closeFileModal()"
+            class="text-gray-400 hover:text-gray-600 transition"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+          <div
+            id="viewFilePreview"
+            class="h-80 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden"
+          >
+            <!-- preview (img/pdf icon) -->
+            <img
+              id="viewFileImg"
+              src="/mnt/data/Screenshot 2025-11-20 205421.png"
+              alt="file"
+              class="object-contain h-full w-full"
+            />
+          </div>
+
+          <div>
+            <p class="text-sm text-gray-500">Filename</p>
+            <p id="viewFilename" class="font-semibold text-gray-800">
+              Budget_Report_Q4.pdf
+            </p>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-500">Uploaded</p>
+            <p id="viewFileDate" class="text-sm text-gray-600">Nov 19, 2025</p>
+          </div>
+
+          <div class="flex justify-end">
+            <a
+              id="downloadLink"
+              href="#"
+              download
+              class="px-4 py-2 border border-gray-300 rounded-lg mr-3"
+              >Download</a
+            >
+            <button
+              onclick="closeFileModal()"
+              class="px-4 py-2 bg-[#2f6e4e] text-white rounded-lg"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload File Modal -->
+    <div
+      id="uploadFileModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-xl shadow-2xl max-w-xl w-full">
+        <div
+          class="p-6 border-b border-gray-200 flex items-center justify-between"
+        >
+          <h3 class="text-2xl font-bold text-gray-800">Upload File</h3>
+          <button
+            onclick="closeUploadModal()"
+            class="text-gray-400 hover:text-gray-600 transition text-2xl"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="p-6 space-y-6">
+          <!-- File Selection -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2"
+              >Select File</label
+            >
+            <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="openProfileModal()">
+              <label
+                for="modalFileInput"
+                class="cursor-pointer px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg border border-gray-300 transition font-medium"
+              >
+                Choose File
+              </label>
+              <input
+                id="modalFileInput"
+                type="file"
+                class="hidden"
+                accept=".pdf,.xlsx,.xls,.doc,.docx,.png,.jpg,.jpeg"
+              />
+              <span id="selectedFileName" class="text-gray-500"
+                >No file chosen</span
+              >
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Maximum file size: 10MB</p>
+          </div>
+
+          <!-- File Name Input -->
+          <div>
+            <label
+              for="uploadFileName"
+              class="block text-sm font-semibold text-gray-700 mb-2"
+              >File Name</label
+            >
+            <input
+              id="uploadFileName"
+              type="text"
+              placeholder="Enter file name"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
+            />
+            <p class="text-xs text-gray-500 mt-1">
+              Edit the file name if needed
+            </p>
+          </div>
+
+          <!-- Category Selection -->
+          <div>
+            <label
+              for="uploadFileCategory"
+              class="block text-sm font-semibold text-gray-700 mb-2"
+              >Category</label
+            >
+            <select
+              id="uploadFileCategory"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent appearance-none bg-white"
+            >
+              <option value="">Select category</option>
+              <option value="general">General Files</option>
+              <option value="project">Project Files</option>
+            </select>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex justify-end space-x-3 pt-4">
+            <button
+              onclick="closeUploadModal()"
+              class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              id="confirmUploadBtn"
+              class="px-6 py-3 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg transition font-medium"
+            >
+              Upload File
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete File Confirmation Modal -->
+    <div
+      id="deleteFileModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+        <div class="p-6">
+          <div
+            class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4"
+          >
+            <svg
+              class="w-6 h-6 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">
+            Delete File?
+          </h3>
+          <p id="deleteFileName" class="text-gray-600 text-center mb-6">
+            This action cannot be undone. Are you sure?
+          </p>
+          <div class="flex space-x-3">
+            <button
+              onclick="closeDeleteFileModal()"
+              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              id="confirmDeleteFileBtn"
+              class="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Archive File Confirmation Modal -->
+    <div
+      id="archiveFileModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+        <div class="p-6">
+          <div
+            class="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-full mx-auto mb-4"
+          >
+            <svg
+              class="w-6 h-6 text-yellow-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">
+            Archive File?
+          </h3>
+          <p id="archiveFileName" class="text-gray-600 text-center mb-6">
+            You can restore it from the Archive page.
+          </p>
+          <div class="flex space-x-3">
+            <button
+              onclick="closeArchiveFileModal()"
+              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              id="confirmArchiveFileBtn"
+              class="flex-1 px-4 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition font-medium"
+            >
+              Archive
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div
+      id="fileToast"
+      class="hidden fixed top-4 right-4 z-50 bg-[#2f6e4e] text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3"
+    >
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        ></path>
+      </svg>
+      <span id="fileToastMessage">Action completed successfully!</span>
+    </div>
+
+    <!-- Notification Modal -->
+    <div
+      id="notificationModal"
+      class="hidden fixed top-20 right-6 w-96 bg-white rounded-xl shadow-2xl z-50 border border-gray-200"
+    >
+      <div
+        class="p-4 border-b border-gray-200 flex items-center justify-between"
+      >
+        <h3 class="font-bold text-gray-800">Notifications</h3>
+        <button
+          onclick="markAllAsRead()"
+          class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
+        >
+          Mark all as read
+        </button>
+      </div>
+      <div id="notificationList" class="max-h-96 overflow-y-auto">
+        <!-- Notifications will be dynamically inserted here -->
+      </div>
+    </div>
+
+    <script>
+      // Simple in-memory file store (for demo). Replace with backend integration.
+      let fileStore = [
+        {
+          id: 1,
+          name: "Budget_Report_2023.pdf",
+          type: "pdf",
+          uploaded: "Jan 20, 2023",
+          uploadedDate: new Date("2023-01-20"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 2,
+          name: "Budget_Report_2024.pdf",
+          type: "pdf",
+          uploaded: "Jan 15, 2024",
+          uploadedDate: new Date("2024-01-15"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 3,
+          name: "Budget_Report_2025.pdf",
+          type: "pdf",
+          uploaded: "Jan 10, 2025",
+          uploadedDate: new Date("2025-01-10"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 4,
+          name: "Youth_Database_2025.xlsx",
+          type: "xlsx",
+          uploaded: "Nov 25, 2025",
+          uploadedDate: new Date("2025-11-25"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 5,
+          name: "SK_Guidelines_2025.pdf",
+          type: "pdf",
+          uploaded: "Nov 20, 2025",
+          uploadedDate: new Date("2025-11-20"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 6,
+          name: "Annual_Event_Schedule_2025.pdf",
+          type: "pdf",
+          uploaded: "Nov 18, 2025",
+          uploadedDate: new Date("2025-11-18"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 7,
+          name: "Meeting_Minutes_November.pdf",
+          type: "pdf",
+          uploaded: "Nov 15, 2025",
+          uploadedDate: new Date("2025-11-15"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 8,
+          name: "Barangay_Youth_Profile.xlsx",
+          type: "xlsx",
+          uploaded: "Nov 12, 2025",
+          uploadedDate: new Date("2025-11-12"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 9,
+          name: "Community_Clean-Up_Project_Proposal.pdf",
+          type: "pdf",
+          uploaded: "Nov 10, 2025",
+          uploadedDate: new Date("2025-11-10"),
+          category: "project",
+          url: "",
+        },
+      ];
+
+      // Archived files store
+      let archivedFiles = [];
+
+      // Auto-archive files older than 1 year
+      function autoArchiveOldFiles() {
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+        const filesToArchive = fileStore.filter(file => {
+          return file.uploadedDate && file.uploadedDate < oneYearAgo;
+        });
+
+        filesToArchive.forEach(file => {
+          file.archivedDate = new Date().toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+          archivedFiles.push(file);
+        });
+
+        fileStore = fileStore.filter(file => {
+          return !file.uploadedDate || file.uploadedDate >= oneYearAgo;
+        });
+
+        // Save to localStorage
+        localStorage.setItem('archivedFiles', JSON.stringify(archivedFiles));
+        localStorage.setItem('fileStore', JSON.stringify(fileStore));
+
+        if (filesToArchive.length > 0) {
+          console.log(`Auto-archived ${filesToArchive.length} file(s) older than 1 year.`);
+        }
+      }
+
+      // Load archived files from localStorage
+      function loadArchivedFiles() {
+        const saved = localStorage.getItem('archivedFiles');
+        if (saved) {
+          archivedFiles = JSON.parse(saved);
+        }
+      }
+
+      // Load files from localStorage
+      function loadFileStore() {
+        const saved = localStorage.getItem('fileStore');
+        if (saved) {
+          fileStore = JSON.parse(saved).map(file => ({
+            ...file,
+            uploadedDate: file.uploadedDate ? new Date(file.uploadedDate) : null
+          }));
+        }
+      }
+
+      // Initialize on page load
+      loadFileStore();
+      loadArchivedFiles();
+      autoArchiveOldFiles();
+
+      const filesGrid = document.getElementById("filesGrid");
+      const searchInput = document.getElementById("fileSearch");
+      const filterCategory = document.getElementById("filterCategory");
+      const modalFileInput = document.getElementById("modalFileInput");
+      const uploadFileName = document.getElementById("uploadFileName");
+      const uploadFileCategory = document.getElementById("uploadFileCategory");
+      const selectedFileName = document.getElementById("selectedFileName");
+      let selectedFile = null;
+
+      // Render files into grid
+      function renderFiles(list) {
+        filesGrid.innerHTML = "";
+        if (!list.length) {
+          filesGrid.innerHTML = '<p class="text-gray-500">No files found.</p>';
+          return;
+        }
+        list.forEach((file) => {
+          const card = document.createElement("div");
+          card.className =
+            "border border-gray-200 rounded-xl p-5 hover:shadow-lg transition";
+
+          const fileIconColor =
+            {
+              pdf: "bg-red-100 text-red-600",
+              xlsx: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
+              png: "bg-blue-100 text-blue-600",
+              jpg: "bg-blue-100 text-blue-600",
+              default: "bg-gray-100 text-gray-700",
+            }[file.type] || "bg-gray-100 text-gray-700";
+
+          card.innerHTML = `
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 ${fileIconColor} rounded-lg flex items-center justify-center font-bold">
+                            ${file.type ? file.type.toUpperCase() : "FILE"}
+                        </div>
+                        <div class="ml-3">
+                            <p class="font-semibold text-gray-800">${
+                              file.name
+                            }</p>
+                            <p class="text-xs text-gray-500">Uploaded: ${
+                              file.uploaded
+                            }</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-4 gap-2">
+                        <button class="flex-1 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition text-sm font-medium" onclick="viewFile(${
+                          file.id
+                        })">View</button>
+                        <button class="flex-1 px-4 py-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition text-sm font-medium" onclick="archiveFile(${
+                          file.id
+                        })">Archive</button>
+                    </div>
+                `;
+          filesGrid.appendChild(card);
+        });
+      }
+
+      // Initial render
+      renderFiles(fileStore);
+
+      // Search/filter
+      function applyFilters() {
+        const q = searchInput.value.trim().toLowerCase();
+        const c = filterCategory.value;
+        let filtered = fileStore.filter((f) => {
+          const matchesCategory = !c || f.category === c;
+          const matchesQuery =
+            !q ||
+            f.name.toLowerCase().includes(q) ||
+            (f.uploaded && f.uploaded.toLowerCase().includes(q));
+          return matchesCategory && matchesQuery;
+        });
+        renderFiles(filtered);
+      }
+
+      searchInput.addEventListener("input", applyFilters);
+      filterCategory.addEventListener("change", applyFilters);
+
+      // Upload Modal Functions
+      function openUploadModal() {
+        document.getElementById("uploadFileModal").classList.remove("hidden");
+        // Reset form
+        modalFileInput.value = "";
+        uploadFileName.value = "";
+        uploadFileCategory.value = "";
+        selectedFileName.textContent = "No file chosen";
+        selectedFile = null;
+      }
+
+      function closeUploadModal() {
+        document.getElementById("uploadFileModal").classList.add("hidden");
+      }
+
+      // Handle file selection in modal
+      modalFileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Check file size (10MB limit)
+        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+        if (file.size > maxSize) {
+          showFileToast("File size exceeds 10MB limit!");
+          modalFileInput.value = "";
+          selectedFileName.textContent = "No file chosen";
+          return;
+        }
+
+        selectedFile = file;
+        selectedFileName.textContent = file.name;
+        uploadFileName.value = file.name;
+      });
+
+      // Handle upload confirmation
+      document
+        .getElementById("confirmUploadBtn")
+        .addEventListener("click", () => {
+          if (!selectedFile) {
+            showFileToast("Please select a file first!");
+            return;
+          }
+
+          const fileName = uploadFileName.value.trim();
+          if (!fileName) {
+            showFileToast("Please enter a file name!");
+            return;
+          }
+
+          const category = uploadFileCategory.value;
+          if (!category) {
+            showFileToast("Please select a category!");
+            return;
+          }
+
+          // Create new file entry
+          const ext = selectedFile.name.split(".").pop().toLowerCase();
+          const uploadDate = new Date();
+          const newItem = {
+            id: Date.now(),
+            name: fileName,
+            type: ext,
+            uploaded: uploadDate.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            }),
+            uploadedDate: uploadDate,
+            category: category,
+            url: "", // in a real app you'd upload and set URL
+          };
+
+          fileStore.unshift(newItem);
+          localStorage.setItem('fileStore', JSON.stringify(fileStore));
+          showFileToast("File uploaded successfully!");
+          renderFiles(fileStore);
+          closeUploadModal();
+        });
+
+      // View file
+      function viewFile(id) {
+        const file = fileStore.find((f) => f.id === id);
+        if (!file) return;
+        document.getElementById("viewFileTitle").textContent = file.name;
+        document.getElementById("viewFilename").textContent = file.name;
+        document.getElementById("viewFileDate").textContent = file.uploaded;
+        const img = document.getElementById("viewFileImg");
+        if (file.url) {
+          img.src = file.url;
+          img.style.display = "block";
+        } else {
+          img.style.display = "none";
+        }
+        const dl = document.getElementById("downloadLink");
+        dl.href = file.url || "#";
+        document.getElementById("viewFileModal").classList.remove("hidden");
+      }
+
+      function closeFileModal() {
+        document.getElementById("viewFileModal").classList.add("hidden");
+      }
+
+      // Delete flow
+      let deleteTargetId = null;
+      function promptDeleteFile(id) {
+        const file = fileStore.find((f) => f.id === id);
+        if (!file) return;
+        deleteTargetId = id;
+        document.getElementById(
+          "deleteFileName"
+        ).textContent = `Delete "${file.name}"? This action cannot be undone.`;
+        document.getElementById("deleteFileModal").classList.remove("hidden");
+      }
+
+      function closeDeleteFileModal() {
+        deleteTargetId = null;
+        document.getElementById("deleteFileModal").classList.add("hidden");
+      }
+
+      document
+        .getElementById("confirmDeleteFileBtn")
+        .addEventListener("click", () => {
+          if (!deleteTargetId) return;
+          fileStore = fileStore.filter((f) => f.id !== deleteTargetId);
+          localStorage.setItem('fileStore', JSON.stringify(fileStore));
+          deleteTargetId = null;
+          closeDeleteFileModal();
+          renderFiles(fileStore);
+          showFileToast("File deleted.");
+        });
+
+      // Archive file function
+      let archiveTargetId = null;
+
+      function archiveFile(id) {
+        const file = fileStore.find((f) => f.id === id);
+        if (!file) return;
+
+        archiveTargetId = id;
+        document.getElementById('archiveFileName').textContent = `Archive "${file.name}"? You can restore it from the Archive page.`;
+        document.getElementById('archiveFileModal').classList.remove('hidden');
+      }
+
+      function closeArchiveFileModal() {
+        archiveTargetId = null;
+        document.getElementById('archiveFileModal').classList.add('hidden');
+      }
+
+      document.getElementById('confirmArchiveFileBtn').addEventListener('click', () => {
+        if (!archiveTargetId) return;
+
+        const file = fileStore.find((f) => f.id === archiveTargetId);
+        if (!file) return;
+
+        // Add archived date
+        file.archivedDate = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        // Move to archived files
+        archivedFiles.push(file);
+        fileStore = fileStore.filter((f) => f.id !== archiveTargetId);
+
+        // Save to localStorage
+        localStorage.setItem('archivedFiles', JSON.stringify(archivedFiles));
+        localStorage.setItem('fileStore', JSON.stringify(fileStore));
+
+        archiveTargetId = null;
+        closeArchiveFileModal();
+        renderFiles(fileStore);
+        showFileToast("File archived successfully!");
+      });
+
+      // Toast
+      // Toast notification system
+      function showToast(message, type = 'success') {
+        // Remove any existing toast
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) {
+          existingToast.remove();
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+
+        // Icon based on type
+        let icon = '';
+        if (type === 'success') {
+          icon = '<svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        } else if (type === 'error') {
+          icon = '<svg class="w-5 h-5 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+        } else if (type === 'warning') {
+          icon = '<svg class="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+        } else {
+          icon = '<svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        }
+
+        toast.innerHTML = `
+          ${icon}
+          <span class="text-sm text-gray-800 flex-1">${message}</span>
+          <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600 flex-shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Trigger animation
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        // Auto remove after 4 seconds
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => toast.remove(), 300);
+        }, 4000);
+      }
+
+      // Backward compatibility
+      function showFileToast(msg) {
+        showToast(msg, 'success');
+      }
+
+      // Confirmation modal system
+      function showConfirm(title, message, onConfirm, confirmButtonText = 'Delete', confirmButtonColor = 'red') {
+        const modal = document.getElementById('confirmModal');
+        const titleEl = document.getElementById('confirmTitle');
+        const messageEl = document.getElementById('confirmMessage');
+        const confirmBtn = document.getElementById('confirmOk');
+        const cancelBtn = document.getElementById('confirmCancel');
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        confirmBtn.textContent = confirmButtonText;
+
+        // Update button colors
+        if (confirmButtonColor === 'green') {
+          confirmBtn.className = 'flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition font-medium';
+        } else if (confirmButtonColor === 'yellow') {
+          confirmBtn.className = 'flex-1 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition font-medium';
+        } else {
+          confirmBtn.className = 'flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium';
+        }
+
+        modal.classList.remove('hidden');
+
+        const handleConfirm = () => {
+          modal.classList.add('hidden');
+          onConfirm();
+          cleanup();
+        };
+
+        const handleCancel = () => {
+          modal.classList.add('hidden');
+          cleanup();
+        };
+
+        const cleanup = () => {
+          confirmBtn.removeEventListener('click', handleConfirm);
+          cancelBtn.removeEventListener('click', handleCancel);
+        };
+
+        confirmBtn.addEventListener('click', handleConfirm);
+        cancelBtn.addEventListener('click', handleCancel);
+
+        // Close on click outside
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            handleCancel();
+          }
+        });
+      }
+
+      // Pagination controls (stub - client demo)
+      document
+        .getElementById("prevPage")
+        .addEventListener("click", () => showToast("Previous page - pagination demo", "info"));
+      document
+        .getElementById("nextPage")
+        .addEventListener("click", () => showToast("Next page - pagination demo", "info"));
+
+      // Notification System
+      let notifications = [
+        {
+          id: 1,
+          type: "project_approved",
+          title: "Project Approved: Community Clean-Up Drive 2025",
+          message: "Your project has been approved by the Barangay Captain and is now Ongoing",
+          time: "2 hours ago",
+          read: false,
+          projectId: 1,
+          status: "approved",
+        },
+        {
+          id: 2,
+          type: "project_rejected",
+          title: "Project Rejected: International Youth Exchange Program",
+          message: "Your project has been rejected. Click to view captain's feedback and edit your proposal",
+          time: "1 day ago",
+          read: false,
+          projectId: 4,
+          status: "rejected",
+        },
+        {
+          id: 3,
+          type: "project_revision",
+          title: "Revision Requested: Scholarship Program Deadline",
+          message: "The Barangay Captain requested revisions. Click to view feedback and edit your project",
+          time: "3 hours ago",
+          read: false,
+          projectId: 3,
+          status: "revision",
+        },
+        {
+          id: 4,
+          type: "new_inquiry",
+          title: "New Inquiry: Community Clean-Up Drive 2025",
+          message: "Juan Dela Cruz posted a new inquiry on your project",
+          time: "5 minutes ago",
+          read: false,
+          projectId: 1,
+        },
+        {
+          id: 5,
+          type: "inquiry_reply",
+          title: "Inquiry Reply: Youth Sports Festival",
+          message: "Maria Santos replied to an inquiry thread",
+          time: "1 hour ago",
+          read: false,
+          projectId: 2,
+        },
+        {
+          id: 6,
+          type: "new_announcement",
+          title: "New Announcement Posted",
+          message: "Kyleen Nicdao posted a new announcement",
+          time: "2 hours ago",
+          read: false,
+          referenceId: 1,
+        },
+        {
+          id: 7,
+          type: "new_project",
+          title: "New Project: Beach Clean-Up Initiative",
+          message: "Andrea Pelias created a new project",
+          time: "3 hours ago",
+          read: false,
+          referenceId: 3,
+        },
+        {
+          id: 8,
+          type: "project_application",
+          title: "New Application: Community Clean-Up Drive 2025",
+          message: "Juan Dela Cruz applied to your project",
+          time: "30 minutes ago",
+          read: false,
+          projectId: 1,
+          applicantId: 1,
+        },
+      ];
+
+      function toggleNotificationModal() {
+        const modal = document.getElementById("notificationModal");
+        modal.classList.toggle("hidden");
+        if (!modal.classList.contains("hidden")) {
+          renderNotifications();
+        }
+      }
+
+      function closeNotificationModal() {
+        document.getElementById("notificationModal").classList.add("hidden");
+      }
+
+      function updateNotificationCount() {
+        const unreadCount = notifications.filter((n) => !n.read).length;
+        const badge = document.getElementById("notificationBadge");
+
+        if (unreadCount > 0) {
+          badge.textContent = unreadCount > 9 ? "9+" : unreadCount;
+          badge.classList.remove("hidden");
+        } else {
+          badge.classList.add("hidden");
+        }
+      }
+
+      function getNotificationIcon(type) {
+        switch (type) {
+          case "project_approved":
+            return `<svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>`;
+          case "project_rejected":
+            return `<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>`;
+          case "project_revision":
+            return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>`;
+          case "new_inquiry":
+            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>`;
+          case "inquiry_reply":
+            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                    </svg>`;
+          case "new_announcement":
+            return `<svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                    </svg>`;
+          case "new_project":
+            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>`;
+          case "project_application":
+            return `<svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>`;
+          default:
+            return "";
+        }
+      }
+
+      function getNotificationBgColor(type) {
+        switch (type) {
+          case "project_approved":
+            return "bg-[#2f6e4e]/10";
+          case "project_rejected":
+            return "bg-red-50";
+          case "project_revision":
+            return "bg-yellow-50";
+          case "new_inquiry":
+            return "bg-blue-50";
+          case "inquiry_reply":
+            return "bg-blue-50";
+          case "new_announcement":
+            return "bg-purple-50";
+          case "new_project":
+            return "bg-blue-50";
+          case "project_application":
+            return "bg-[#2f6e4e]/10";
+          default:
+            return "bg-gray-50";
+        }
+      }
+
+      function renderNotifications() {
+        const notificationList = document.getElementById("notificationList");
+
+        if (notifications.length === 0) {
+          notificationList.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                        <p class="font-medium">No notifications</p>
+                        <p class="text-sm mt-1">You're all caught up!</p>
+                    </div>
+                `;
+          return;
+        }
+
+        notificationList.innerHTML = notifications
+          .map(
+            (notif) => `
+                <div
+                    onclick="handleNotificationClick(${notif.id})"
+                    class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
+                      !notif.read ? getNotificationBgColor(notif.type) : ""
+                    }"
+                >
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0">
+                            ${getNotificationIcon(notif.type)}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between">
+                                <p class="text-sm font-semibold text-gray-800 truncate ${
+                                  !notif.read ? "font-bold" : ""
+                                }">
+                                    ${notif.title}
+                                </p>
+                                ${
+                                  !notif.read
+                                    ? '<span class="w-2 h-2 bg-[#2f6e4e] rounded-full flex-shrink-0 ml-2 mt-1"></span>'
+                                    : ""
+                                }
+                            </div>
+                            <p class="text-xs text-gray-600 mt-1">${
+                              notif.message
+                            }</p>
+                            <p class="text-xs text-gray-400 mt-2">${
+                              notif.time
+                            }</p>
+                        </div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      function handleNotificationClick(notifId) {
+        const notif = notifications.find((n) => n.id === notifId);
+        if (!notif) return;
+
+        notif.read = true;
+        updateNotificationCount();
+        closeNotificationModal();
+
+        // Route to appropriate page based on notification type
+        if (notif.type === "project_approved") {
+          // For approved projects (now Ongoing), view project details
+          window.location.href = `sk-projects.html?projectId=${notif.projectId}`;
+        } else if (notif.type === "project_rejected" || notif.type === "project_revision") {
+          // For rejected or revision-needed projects, go to project page to edit
+          window.location.href = `sk-projects.html`;
+        } else if (notif.type === "volunteer_application") {
+          showFileToast("Opening volunteer application details...");
+        } else if (
+          notif.type === "inquiry" ||
+          notif.type === "new_inquiry" ||
+          notif.type === "inquiry_reply"
+        ) {
+          window.location.href = `sk-projects.html?projectId=${notif.projectId}&tab=inquiries`;
+        } else if (
+          notif.type === "project_submission" ||
+          notif.type === "new_project"
+        ) {
+          window.location.href = `sk-projects.html?projectId=${notif.referenceId}`;
+        } else if (notif.type === "project_application") {
+          window.location.href = `sk-projects.html?projectId=${notif.projectId}&tab=applications&applicantId=${notif.applicantId}`;
+        } else if (notif.type === "new_announcement") {
+          window.location.href = "sk-dashboard.html";
+        }
+      }
+
+      function markAllAsRead() {
+        notifications.forEach((n) => (n.read = true));
+        updateNotificationCount();
+        renderNotifications();
+      }
+
+      // Close notification modal when clicking outside
+      document.addEventListener("click", function (event) {
+        const modal = document.getElementById("notificationModal");
+        const notificationButton = event.target.closest(
+          'button[onclick="toggleNotificationModal()"]'
+        );
+
+        if (
+          !modal.contains(event.target) &&
+          !notificationButton &&
+          !modal.classList.contains("hidden")
+        ) {
+          closeNotificationModal();
+        }
+      });
+
+      // Initialize notification count on page load
+      updateNotificationCount();
+
+      // Update current date
+      function updateCurrentDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const currentDate = new Date().toLocaleDateString('en-US', options);
+        const dateElement = document.getElementById('currentDate');
+        if (dateElement) {
+          dateElement.textContent = currentDate;
+        }
+      }
+      updateCurrentDate();
+
+      // User profile data (in production, this would be fetched from server)
+      let userProfile = {
+        firstName: "Andrea",
+        middleName: "",
+        lastName: "Pelias",
+        email: "andrea.pelias@malanday.gov.ph",
+        position: "SK Chairman",
+        address: "",
+        contact: "",
+        gender: "",
+        birthday: ""
+      };
+
+      // Profile Modal Functions
+      function openProfileModal() {
+        // Load profile data into form
+        document.getElementById('profileFirstName').value = userProfile.firstName;
+        document.getElementById('profileMiddleName').value = userProfile.middleName;
+        document.getElementById('profileLastName').value = userProfile.lastName;
+        document.getElementById('profileEmail').value = userProfile.email;
+        document.getElementById('profilePosition').value = userProfile.position;
+        document.getElementById('profileAddress').value = userProfile.address;
+        document.getElementById('profileContact').value = userProfile.contact;
+        document.getElementById('profileGender').value = userProfile.gender;
+        document.getElementById('profileBirthday').value = userProfile.birthday;
+
+        // Load profile picture preview
+        const previewDiv = document.getElementById('profilePicturePreview');
+        if (userProfile.profilePicture) {
+          previewDiv.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
+        } else {
+          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
+          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
+          previewDiv.innerHTML = `<span id="profileInitials" class="text-white font-bold text-2xl">${firstInitial}${lastInitial}</span>`;
+        }
+
+        document.getElementById('profileModal').classList.remove('hidden');
+      }
+
+      function closeProfileModal() {
+        document.getElementById('profileModal').classList.add('hidden');
+      }
+
+      function handleProfilePictureChange(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          showToast('Please upload an image file', 'error');
+          return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('Image size should be less than 5MB', 'error');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imageData = e.target.result;
+
+          // Store in profile
+          userProfile.profilePicture = imageData;
+
+          // Update modal preview
+          const previewDiv = document.getElementById('profilePicturePreview');
+          previewDiv.innerHTML = `<img src="${imageData}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
+
+          // Update header avatar
+          updateHeaderAvatar();
+
+          showFileToast('Profile picture uploaded successfully!');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function updateHeaderAvatar() {
+        const headerAvatar = document.querySelector('header .w-10.h-10.bg-[#2f6e4e]');
+        if (!headerAvatar) return;
+
+        if (userProfile.profilePicture) {
+          headerAvatar.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
+        } else {
+          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
+          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
+          headerAvatar.innerHTML = `<span class="text-white font-bold">${firstInitial}${lastInitial}</span>`;
+        }
+      }
+
+      function saveProfile() {
+        // Get form values
+        userProfile.firstName = document.getElementById('profileFirstName').value;
+        userProfile.middleName = document.getElementById('profileMiddleName').value;
+        userProfile.lastName = document.getElementById('profileLastName').value;
+        userProfile.address = document.getElementById('profileAddress').value;
+        userProfile.contact = document.getElementById('profileContact').value;
+        userProfile.gender = document.getElementById('profileGender').value;
+        userProfile.birthday = document.getElementById('profileBirthday').value;
+
+        // Validation
+        if (!userProfile.firstName || !userProfile.lastName) {
+          showToast('First name and last name are required.', 'error');
+          return;
+        }
+
+        // In production, this would save to the server
+        console.log('Profile saved:', userProfile);
+
+        // Update header display
+        const middleInitial = userProfile.middleName ? ` ${userProfile.middleName.charAt(0)}.` : '';
+        const fullName = `${userProfile.firstName}${middleInitial} ${userProfile.lastName}`;
+        document.querySelector('header .text-sm.font-medium').textContent = fullName;
+
+        // Update header avatar
+        updateHeaderAvatar();
+
+        showFileToast('Profile updated successfully!');
+        closeProfileModal();
+      }
+    </script>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50">
+      <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
+          <!-- Header -->
+          <div class="bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] text-white p-6 rounded-t-2xl">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                  AP
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold">My Profile</h2>
+                  <p class="text-[#2f6e4e]/20 text-sm">Manage your account information</p>
+                </div>
+              </div>
+              <button onclick="closeProfileModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="p-6 space-y-6">
+            <!-- Account Info Section -->
+            <div>
+              <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                Account Information
+              </h3>
+              <div class="grid grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
+                  <input type="text" id="profileFirstName" value="Andrea"
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Middle Name</label>
+                  <input type="text" id="profileMiddleName" placeholder="Optional"
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
+                  <input type="text" id="profileLastName" value="Pelias"
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                <input type="email" id="profileEmail" value="andrea.pelias@malanday.gov.ph"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                       readonly />
+                <p class="text-xs text-gray-500 mt-1">Email cannot be changed. Contact admin if needed.</p>
+              </div>
+
+              <div class="mt-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Position</label>
+                <input type="text" id="profilePosition" value="SK Chairman"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                       readonly />
+              </div>
+            </div>
+
+            <!-- Personal Info Section -->
+            <div class="pt-6 border-t border-gray-200">
+              <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                Personal Information
+              </h3>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Complete Address</label>
+                  <textarea id="profileAddress" rows="3" placeholder="Enter your complete address"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Number</label>
+                  <input type="tel" id="profileContact" placeholder="e.g., 09171234567"
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
+                  <select id="profileGender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="non-binary">Non-binary / Gender Neutral</option>
+                    <option value="prefer-not-to-say">Prefer not to say</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2">Birthday</label>
+                  <input type="date" id="profileBirthday"
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end gap-3 border-t">
+            <button onclick="closeProfileModal()"
+                    class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition">
+              Cancel
+            </button>
+            <button onclick="saveProfile()"
+                    class="px-6 py-3 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg font-medium transition flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+      <script src="js/mobile-nav.js"></script>
+  </body>
+</html>

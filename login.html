@@ -11,6 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="css/responsive.css" />
     <script>
       tailwind.config = {
         theme: {
@@ -30,6 +31,68 @@
       * {
         font-family: "Inter", system-ui, sans-serif;
       }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        min-width: 300px;
+        background: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transform: translateX(400px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 9999;
+      }
+
+      .toast.show {
+        transform: translateX(0);
+      }
+
+      .toast.success {
+        border-left: 4px solid #10b981;
+      }
+
+      .toast.error {
+        border-left: 4px solid #ef4444;
+      }
+
+      .toast.warning {
+        border-left: 4px solid #f59e0b;
+      }
+
+      .toast.info {
+        border-left: 4px solid #3b82f6;
+      }
+
+      /* Input validation states */
+      .input-error {
+        border-color: #ef4444 !important;
+        background-color: #fef2f2 !important;
+      }
+
+      .input-success {
+        border-color: #10b981 !important;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 0.6s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
@@ -45,21 +108,9 @@
           <!-- Logo and Title -->
           <div class="flex items-center space-x-3 mb-12">
             <div
-              class="w-12 h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0"
+              class="w-12 h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
             >
-              <svg
-                class="w-8 h-8 text-[#2f6e4e]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                ></path>
-              </svg>
+              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
             </div>
             <span class="text-xl font-bold">BIMS</span>
           </div>
@@ -208,40 +259,183 @@
     </div>
 
     <script>
+      // Toast Notification System
+      function showToast(message, type = 'info') {
+        // Remove any existing toasts
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) {
+          existingToast.remove();
+        }
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+
+        // Icon based on type
+        let icon = '';
+        if (type === 'success') {
+          icon = '<svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        } else if (type === 'error') {
+          icon = '<svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        } else if (type === 'warning') {
+          icon = '<svg class="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+        } else {
+          icon = '<svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        }
+
+        toast.innerHTML = `
+          ${icon}
+          <div class="flex-1">
+            <p class="text-sm font-medium text-gray-800">${message}</p>
+          </div>
+          <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Animate in
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        // Auto dismiss after 4 seconds
+        setTimeout(() => {
+          toast.classList.remove('show');
+          setTimeout(() => toast.remove(), 300);
+        }, 4000);
+      }
+
+      // Email validation
+      function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+
+      // Password validation
+      function isValidPassword(password) {
+        return password.length >= 8;
+      }
+
+      // Visual feedback for inputs
+      function setInputState(inputElement, isValid, message = '') {
+        inputElement.classList.remove('input-error', 'input-success');
+
+        if (isValid === true) {
+          inputElement.classList.add('input-success');
+        } else if (isValid === false) {
+          inputElement.classList.add('input-error');
+        }
+      }
+
       // Handle form submission
-      document
-        .getElementById("loginForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
+      const loginForm = document.getElementById("loginForm");
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+      const submitButton = loginForm.querySelector('button[type="submit"]');
 
-          const email = document.getElementById("email").value;
-          const password = document.getElementById("password").value;
-
-          // Basic validation
-          if (!email || !password) {
-            alert("Please fill in all required fields");
-            return;
+      // Real-time email validation
+      emailInput.addEventListener('blur', function() {
+        if (this.value) {
+          if (isValidEmail(this.value)) {
+            setInputState(this, true);
+          } else {
+            setInputState(this, false);
+            showToast('Please enter a valid email address', 'error');
           }
+        }
+      });
 
+      // Real-time password validation
+      passwordInput.addEventListener('blur', function() {
+        if (this.value) {
+          if (isValidPassword(this.value)) {
+            setInputState(this, true);
+          } else {
+            setInputState(this, false);
+            showToast('Password must be at least 8 characters', 'warning');
+          }
+        }
+      });
+
+      // Clear error state on input
+      emailInput.addEventListener('input', function() {
+        if (this.classList.contains('input-error')) {
+          this.classList.remove('input-error');
+        }
+      });
+
+      passwordInput.addEventListener('input', function() {
+        if (this.classList.contains('input-error')) {
+          this.classList.remove('input-error');
+        }
+      });
+
+      loginForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        // Validation
+        let isValid = true;
+
+        if (!email) {
+          setInputState(emailInput, false);
+          showToast('Email address is required', 'error');
+          isValid = false;
+        } else if (!isValidEmail(email)) {
+          setInputState(emailInput, false);
+          showToast('Please enter a valid email address', 'error');
+          isValid = false;
+        } else {
+          setInputState(emailInput, true);
+        }
+
+        if (!password) {
+          setInputState(passwordInput, false);
+          showToast('Password is required', 'error');
+          isValid = false;
+        } else if (!isValidPassword(password)) {
+          setInputState(passwordInput, false);
+          showToast('Password must be at least 8 characters', 'error');
+          isValid = false;
+        } else {
+          setInputState(passwordInput, true);
+        }
+
+        if (!isValid) {
+          return;
+        }
+
+        // Show loading state
+        const originalButtonText = submitButton.innerHTML;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<div class="spinner mx-auto"></div>';
+
+        // Simulate authentication delay
+        setTimeout(() => {
           // TODO: Implement actual authentication
-          // For now, redirect to dashboard
           console.log("Login attempt:", { email, password });
 
-          // Simulated login - redirect based on email domain
-          if (email.includes("sk") || email.includes("official")) {
-            window.location.href = "dashb.html";
-          } else {
-            window.location.href = "youtbDashboard.html";
-          }
-        });
+          // Simulated successful login
+          showToast('Login successful! Redirecting...', 'success');
+
+          // Redirect based on email domain
+          setTimeout(() => {
+            if (email.includes("sk") || email.includes("official")) {
+              window.location.href = "sk-dashboard.html";
+            } else {
+              window.location.href = "youth-dashboard.html";
+            }
+          }, 1000);
+        }, 1500);
+      });
 
       // Google Sign In
       function signInWithGoogle() {
-        // TODO: Implement Google OAuth
-        console.log("Google Sign In clicked");
-        alert(
-          "Google Sign In will be implemented with backend authentication"
-        );
+        showToast('Google Sign In will be implemented with backend authentication', 'info');
       }
     </script>
   </body>
