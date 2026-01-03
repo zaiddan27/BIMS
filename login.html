@@ -105,15 +105,15 @@
         <div
           class="w-full md:w-1/2 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] p-12 flex flex-col justify-center text-white"
         >
-          <!-- Logo and Title -->
-          <div class="flex items-center space-x-3 mb-12">
+          <!-- Logo and Title - Clickable to Home -->
+          <a href="index.html" class="flex items-center space-x-3 mb-12 hover:opacity-90 transition-opacity group">
             <div
-              class="w-12 h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
+              class="w-16 h-16 bg-white rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
             >
               <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
             </div>
             <span class="text-xl font-bold">BIMS</span>
-          </div>
+          </a>
 
           <!-- Welcome Text -->
           <div class="space-y-6">
@@ -129,6 +129,17 @@
 
         <!-- Right Side - Sign In Form -->
         <div class="w-full md:w-1/2 p-12 flex flex-col justify-center">
+          <!-- Back to Home Link -->
+          <a
+            href="index.html"
+            class="inline-flex items-center text-sm text-gray-600 hover:text-[#2f6e4e] font-medium mb-6 transition-colors group"
+          >
+            <svg class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Home
+          </a>
+
           <!-- Form Header -->
           <div class="mb-8">
             <h2 class="text-3xl font-bold text-gray-800 mb-2">Sign In</h2>
