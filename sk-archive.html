@@ -43,6 +43,123 @@
         .status-icon-rejected { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
         .icon-primary { filter: drop-shadow(0 2px 4px rgba(47, 110, 78, 0.1)); }
         .icon-glow { filter: drop-shadow(0 0 8px rgba(47, 110, 78, 0.3)); }
+
+        /* Search Match Highlight */
+        @keyframes searchGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.8), 0 0 60px rgba(16, 185, 129, 0.4); }
+        }
+        .search-match-highlight {
+            border: 2px solid #10b981 !important;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%) !important;
+            animation: searchGlow 2s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        /* Premium Download Button Animations */
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes checkmarkDraw {
+            0% {
+                stroke-dashoffset: 100;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes successPulse {
+            0%, 100% {
+                box-shadow: 0 4px 20px rgba(47, 110, 78, 0.4);
+            }
+            50% {
+                box-shadow: 0 8px 30px rgba(47, 110, 78, 0.6);
+            }
+        }
+
+        .download-menu-item {
+            opacity: 0;
+            animation: slideUpFade 0.4s ease-out forwards;
+        }
+
+        .bg-size-200 {
+            background-size: 200% 200%;
+        }
+
+        .bg-pos-0 {
+            background-position: 0% 50%;
+        }
+
+        .bg-pos-100 {
+            background-position: 100% 50%;
+        }
+
+        #downloadBtn.downloading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        #downloadBtn.success {
+            animation: successPulse 1.5s ease-in-out;
+        }
+
+        #successIcon path {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: checkmarkDraw 0.5s ease-out forwards;
+        }
+
+        .download-report-container .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.6);
+            width: 20px;
+            height: 20px;
+            animation: rippleEffect 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Glassmorphism for dropdown */
+        #downloadMenu > div {
+            backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        /* Smooth transitions */
+        .download-report-container * {
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Change format button slide in animation */
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(10px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        #changeFormatBtn:not(.hidden) {
+            animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -232,11 +349,11 @@
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="relative">
-                                <button onclick="toggleNotificationModal()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                                <button onclick="toggleNotificationModal()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                                     </svg>
-                                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">5</span>
+                                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
                                 </button>
                             </div>
                             <button onclick="openProfileModal()" class="flex items-center space-x-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
@@ -338,8 +455,117 @@
                     </div>
                 </div>
 
-                <!-- Search and Filter Bar -->
-                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <!-- Archive Type Tabs -->
+                <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-50 to-white px-3 sm:px-6 pt-3 sm:pt-4 pb-0">
+                        <nav class="flex gap-2 sm:gap-3 -mb-px" role="tablist">
+                            <!-- Projects Tab -->
+                            <button
+                                onclick="switchArchiveType('projects')"
+                                id="projectsTab"
+                                class="archive-type-tab active group flex-1 sm:flex-none relative pb-2 sm:pb-0"
+                                role="tab"
+                                aria-selected="true"
+                                aria-controls="projectsTabContent"
+                            >
+                                <div class="flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-start gap-1 sm:gap-2 px-3 sm:px-6 pt-3 pb-0 sm:py-4 rounded-t-xl transition-all duration-300">
+                                    <!-- Icon Container with integrated badge for mobile -->
+                                    <div class="relative flex-shrink-0">
+                                        <div class="w-10 h-10 sm:w-10 sm:h-10 rounded-lg bg-[#2f6e4e]/10 group-[.active]:bg-[#2f6e4e] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
+                                            <svg class="w-5 h-5 sm:w-5 sm:h-5 text-[#2f6e4e] group-[.active]:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            </svg>
+                                        </div>
+                                        <!-- Mobile Badge (positioned at top-right of icon) -->
+                                        <div class="sm:hidden absolute -top-1 -right-1">
+                                            <span class="inline-flex items-center justify-center min-w-[1.25rem] h-[1.25rem] px-1 text-[10px] font-bold text-white bg-[#2f6e4e] group-[.active]:bg-[#2f6e4e] group-[.active]:ring-2 group-[.active]:ring-white rounded-full shadow-md transition-all duration-300" id="projectsCountMobile">38</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Text & Badge Container (Desktop only) -->
+                                    <div class="hidden sm:flex flex-col items-start min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm sm:text-base font-semibold text-gray-600 group-[.active]:text-[#2f6e4e] transition-colors duration-300 whitespace-nowrap">
+                                                Archived Projects
+                                            </span>
+                                        </div>
+                                        <div class="mt-0.5">
+                                            <span class="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 text-xs font-bold text-[#2f6e4e] bg-[#2f6e4e]/15 group-[.active]:bg-[#2f6e4e]/20 group-[.active]:ring-2 group-[.active]:ring-[#2f6e4e]/30 rounded-full transition-all duration-300" id="projectsCount">38</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Active Indicator -->
+                                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] rounded-t-full transform origin-left scale-x-0 group-[.active]:scale-x-100 transition-transform duration-300 ease-out shadow-lg shadow-[#2f6e4e]/30"></div>
+                            </button>
+
+                            <!-- Files Tab -->
+                            <button
+                                onclick="switchArchiveType('files')"
+                                id="filesTab"
+                                class="archive-type-tab group flex-1 sm:flex-none relative pb-2 sm:pb-0"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="filesTabContent"
+                            >
+                                <div class="flex flex-col sm:flex-row items-center sm:items-center justify-center sm:justify-start gap-1 sm:gap-2 px-3 sm:px-6 pt-3 pb-0 sm:py-4 rounded-t-xl transition-all duration-300 hover:bg-gray-50/50">
+                                    <!-- Icon Container with integrated badge for mobile -->
+                                    <div class="relative flex-shrink-0">
+                                        <div class="w-10 h-10 sm:w-10 sm:h-10 rounded-lg bg-gray-100 group-[.active]:bg-[#2f6e4e] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
+                                            <svg class="w-5 h-5 sm:w-5 sm:h-5 text-gray-500 group-[.active]:text-white group-hover:text-[#2f6e4e] transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                        </div>
+                                        <!-- Mobile Badge (positioned at top-right of icon) -->
+                                        <div class="sm:hidden absolute -top-1 -right-1">
+                                            <span class="inline-flex items-center justify-center min-w-[1.25rem] h-[1.25rem] px-1 text-[10px] font-bold text-white bg-gray-500 group-[.active]:bg-[#2f6e4e] group-[.active]:ring-2 group-[.active]:ring-white rounded-full shadow-md transition-all duration-300" id="filesCountMobile">0</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Text & Badge Container (Desktop only) -->
+                                    <div class="hidden sm:flex flex-col items-start min-w-0">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm sm:text-base font-semibold text-gray-500 group-[.active]:text-[#2f6e4e] group-hover:text-gray-700 transition-colors duration-300 whitespace-nowrap">
+                                                Archived Files
+                                            </span>
+                                        </div>
+                                        <div class="mt-0.5">
+                                            <span class="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 text-xs font-bold text-gray-600 bg-gray-100 group-[.active]:text-[#2f6e4e] group-[.active]:bg-[#2f6e4e]/20 group-[.active]:ring-2 group-[.active]:ring-[#2f6e4e]/30 group-hover:bg-gray-200 rounded-full transition-all duration-300" id="filesCount">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Active Indicator -->
+                                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] rounded-t-full transform origin-left scale-x-0 group-[.active]:scale-x-100 transition-transform duration-300 ease-out shadow-lg shadow-[#2f6e4e]/30"></div>
+                            </button>
+                        </nav>
+                    </div>
+                    <div class="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+
+                    <!-- PROJECTS TAB CONTENT -->
+                    <div id="projectsTabContent" class="p-6">
+                        <!-- Quarter Summary -->
+                        <div id="quarterSummary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-500">Projects</p>
+                                <p class="text-2xl font-bold text-gray-800 mt-1">8</p>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-500">Budget Used</p>
+                                <p class="text-2xl font-bold text-gray-800 mt-1">₱285K</p>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-500">Volunteers</p>
+                                <p class="text-2xl font-bold text-gray-800 mt-1">68</p>
+                            </div>
+                            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                <p class="text-sm text-gray-500">Avg Success</p>
+                                <p class="text-2xl font-bold text-gray-800 mt-1">91%</p>
+                            </div>
+                        </div>
+
+                        <!-- Search and Filter Bar - PROJECTS -->
+                        <div class="bg-gray-50 rounded-xl p-6 mb-6">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Search Projects</label>
@@ -382,135 +608,195 @@
                             Reset Filters
                         </button>
                     </div>
-                </div>
-
-                <!-- Bulk Report Download Section -->
-                <div class="bg-gradient-to-r from-[#2f6e4e]/10 to-white rounded-xl shadow-sm p-6 mb-6 border border-[#2f6e4e]/20">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-1 flex items-center">
-                                <svg class="w-5 h-5 text-[#2f6e4e] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                </svg>
-                                Generate Bulk Reports
-                            </h3>
-                            <p class="text-sm text-gray-600">Download comprehensive reports for selected projects in PDF format</p>
                         </div>
-                        <button onclick="generateBulkReports()" class="px-6 py-3 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] transition font-medium shadow-sm hover:shadow-md flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                            </svg>
-                            Download Selected Reports
-                        </button>
-                    </div>
 
-                    <!-- Selection Info -->
-                    <div class="mt-4 pt-4 border-t border-[#2f6e4e]/30">
-                        <div class="flex items-center justify-between text-sm">
-                            <div class="flex items-center space-x-6">
-                                <span class="text-gray-600 flex items-center">
-                                    <svg class="w-4 h-4 text-[#2f6e4e] mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        <!-- Bulk Report Download Section -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
+                            <!-- Header with gradient background -->
+                            <div class="bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] px-4 sm:px-6 py-4">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                    <!-- Title & Description -->
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <div class="w-8 h-8 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-base sm:text-lg font-bold text-white">Generate Bulk Reports</h3>
+                                        </div>
+                                        <p class="text-sm text-white/90 leading-relaxed">Download comprehensive reports for selected projects in PDF format</p>
+                                    </div>
+
+                                    <!-- Selection Counter Badge -->
+                                    <div class="flex items-center gap-2 sm:gap-3">
+                                        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white/20 backdrop-blur rounded-lg border border-white/30">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <div class="flex flex-col sm:flex-row sm:items-baseline sm:gap-1">
+                                                <span id="selectedCount" class="text-xl sm:text-2xl font-black text-white tabular-nums">0</span>
+                                                <span class="text-xs sm:text-sm text-white/90 font-medium">selected</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions Section -->
+                            <div class="p-4 sm:p-6 space-y-4">
+                                <!-- Primary Action Button -->
+                                <button
+                                    onclick="generateBulkReports()"
+                                    class="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white rounded-xl hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 font-semibold text-sm sm:text-base flex items-center justify-center gap-2 group"
+                                >
+                                    <svg class="w-5 h-5 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                     </svg>
-                                    <span id="selectedCount">0</span> projects selected
-                                </span>
-                                <button onclick="selectAllFiltered()" class="text-[#2f6e4e] hover:text-[#2f6e4e] font-medium">
-                                    Select All Filtered
+                                    <span>Download Selected Reports</span>
                                 </button>
-                                <button onclick="deselectAll()" class="text-gray-600 hover:text-gray-700 font-medium">
-                                    Deselect All
-                                </button>
-                            </div>
-                            <span class="text-gray-500">
-                                Click checkboxes on project cards to select for bulk download
-                            </span>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Archive Type Tabs -->
-                <div class="bg-white rounded-xl shadow-sm mb-6">
-                    <div class="border-b border-gray-200">
-                        <nav class="flex -mb-px">
-                            <button onclick="switchArchiveType('projects')" id="projectsTab" class="archive-type-tab active px-8 py-4 text-sm font-medium text-[#2f6e4e] border-b-2 border-[#2f6e4e] transition">
-                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                </svg>
-                                Archived Projects
-                                <span class="ml-2 px-2 py-1 text-xs bg-[#2f6e4e]/20 rounded-full" id="projectsCount">38</span>
-                            </button>
-                            <button onclick="switchArchiveType('files')" id="filesTab" class="archive-type-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-[#2f6e4e] hover:border-[#2f6e4e] border-b-2 border-transparent transition">
-                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                Archived Files
-                                <span class="ml-2 px-2 py-1 text-xs bg-gray-100 rounded-full" id="filesCount">0</span>
-                            </button>
-                        </nav>
-                    </div>
+                                <!-- Selection Controls -->
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                                    <!-- Action Buttons Group -->
+                                    <div class="flex flex-col xs:flex-row gap-2 sm:gap-3 flex-1">
+                                        <button
+                                            onclick="selectAllFiltered()"
+                                            class="flex-1 xs:flex-none px-4 py-2.5 bg-[#2f6e4e]/10 hover:bg-[#2f6e4e]/20 text-[#2f6e4e] rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-md flex items-center justify-center gap-2 border border-[#2f6e4e]/20 hover:border-[#2f6e4e]/40"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <span>Select All</span>
+                                        </button>
 
-                    <div class="p-6">
-                        <div id="quarterSummary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                <p class="text-sm text-gray-500">Projects</p>
-                                <p class="text-2xl font-bold text-gray-800 mt-1">8</p>
-                            </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                <p class="text-sm text-gray-500">Budget Used</p>
-                                <p class="text-2xl font-bold text-gray-800 mt-1">₱285K</p>
-                            </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                <p class="text-sm text-gray-500">Volunteers</p>
-                                <p class="text-2xl font-bold text-gray-800 mt-1">68</p>
-                            </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                <p class="text-sm text-gray-500">Avg Success</p>
-                                <p class="text-2xl font-bold text-gray-800 mt-1">91%</p>
+                                        <button
+                                            onclick="deselectAll()"
+                                            class="flex-1 xs:flex-none px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-md flex items-center justify-center gap-2 border border-gray-200 hover:border-gray-300"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                            <span>Deselect All</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Helper Text -->
+                                    <div class="hidden lg:flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
+                                        <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-xs text-blue-700 font-medium">Click checkboxes on project cards to select</span>
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Helper Text -->
+                                <div class="lg:hidden flex items-start gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
+                                    <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="text-xs text-blue-700 font-medium leading-relaxed">Click checkboxes on project cards below to select for bulk download</span>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Archived Projects List -->
+                        <div class="space-y-4" id="projectsList">
+                            <!-- Projects will be rendered here by JavaScript -->
+                        </div>
+
+                        <!-- Empty State (hidden by default) -->
+                        <div id="emptyState" class="hidden bg-white rounded-xl shadow-sm p-12 text-center">
+                            <i class="fas fa-folder-open text-gray-300 text-6xl mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">No Archived Projects Found</h3>
+                            <p class="text-gray-500">Try adjusting your filters or search criteria</p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Archived Projects List -->
-                <div class="space-y-4" id="projectsList">
-                    <!-- Projects will be rendered here by JavaScript -->
-                </div>
+                    <!-- FILES TAB CONTENT -->
+                    <div id="filesTabContent" class="hidden p-6">
+                        <!-- Search and Filter Bar - FILES -->
+                        <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="md:col-span-1">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Search Files</label>
+                                    <div class="relative">
+                                        <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                        <input type="text" id="fileSearchInput" placeholder="Search by file name..."
+                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
+                                    </div>
+                                </div>
 
-                <!-- Archived Files List -->
-                <div class="hidden" id="filesList">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Files will be rendered here by JavaScript -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">File Type</label>
+                                    <select id="fileTypeFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
+                                        <option value="all">All Types</option>
+                                        <option value="pdf">PDF</option>
+                                        <option value="xlsx">Excel (XLSX)</option>
+                                        <option value="jpg">Image (JPG)</option>
+                                        <option value="png">Image (PNG)</option>
+                                        <option value="doc">Document (DOC)</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                                    <select id="fileYearFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
+                                        <option value="all">All Years</option>
+                                        <option value="2025" selected>2025</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2023">2023</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-end mt-4 pt-4 border-t border-gray-200">
+                                <button onclick="resetFileFilters()" class="text-sm text-[#2f6e4e] hover:text-[#2f6e4e] font-medium flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    Reset Filters
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Archived Files List -->
+                        <div id="filesList">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <!-- Files will be rendered here by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Empty State for Files -->
+                        <div id="emptyFilesState" class="hidden bg-white rounded-xl shadow-sm p-12 text-center">
+                            <i class="fas fa-file text-gray-300 text-6xl mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">No Archived Files Found</h3>
+                            <p class="text-gray-500">Files older than 1 year will be automatically archived</p>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Empty State (hidden by default) -->
-                <div id="emptyState" class="hidden bg-white rounded-xl shadow-sm p-12 text-center">
-                    <i class="fas fa-folder-open text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-lg font-semibold text-gray-700 mb-2">No Archived Projects Found</h3>
-                    <p class="text-gray-500">Try adjusting your filters or search criteria</p>
-                </div>
-
-                <!-- Empty State for Files -->
-                <div id="emptyFilesState" class="hidden bg-white rounded-xl shadow-sm p-12 text-center">
-                    <i class="fas fa-file text-gray-300 text-6xl mb-4"></i>
-                    <h3 class="text-lg font-semibold text-gray-700 mb-2">No Archived Files Found</h3>
-                    <p class="text-gray-500">Files older than 1 year will be automatically archived</p>
                 </div>
             </main>
         </div>
     </div>
 
     <!-- Project Detail Modal -->
-    <div id="projectModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                <h2 class="text-xl font-bold text-gray-800" id="modalProjectName"></h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
+    <div id="projectModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+        <!-- Modal Container with proper spacing -->
+        <div class="min-h-screen px-4 py-6 sm:py-12 flex items-center justify-center">
+            <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100vh-3rem)] sm:max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col">
+                <!-- Sticky Header -->
+                <div class="sticky top-0 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-3 z-10 shadow-md">
+                    <h2 class="text-lg sm:text-xl font-bold text-white flex-1 min-w-0 pr-2" id="modalProjectName"></h2>
+                    <button onclick="closeModal()" class="flex-shrink-0 w-11 h-11 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-white/30 hover:bg-white/40 active:bg-white/50 text-white transition-all duration-200 text-2xl sm:text-xl font-bold leading-none">
+                        ✕
+                    </button>
+                </div>
 
-            <div class="p-6">
+                <!-- Scrollable Content -->
+                <div class="overflow-y-auto flex-1">
+                    <div class="p-4 sm:p-6">
                 <!-- Project Metadata -->
                 <div class="mb-6 pb-4 border-b border-gray-200">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -732,62 +1018,211 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                    <button onclick="confirmPermanentDelete()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                        <i class="fas fa-trash-alt mr-2"></i> Permanent Delete
-                    </button>
-                    <div class="flex space-x-3">
-                        <!-- Download Report Dropdown -->
-                        <div class="relative">
-                            <button onclick="toggleDownloadMenu()" class="px-4 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] transition flex items-center">
-                                <i class="fas fa-download mr-2"></i> Download Report
-                                <i class="fas fa-chevron-down ml-2 text-xs"></i>
-                            </button>
-                            <div id="downloadMenu" class="hidden absolute bottom-full mb-2 right-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[180px] z-50">
-                                <button onclick="exportProject('pdf')" class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2">
-                                    <i class="fas fa-file-pdf text-red-600"></i>
-                                    <span class="text-gray-700">PDF Document</span>
-                                </button>
-                                <button onclick="exportProject('csv')" class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2">
-                                    <i class="fas fa-file-csv text-green-600"></i>
-                                    <span class="text-gray-700">CSV Spreadsheet</span>
-                                </button>
-                                <button onclick="exportProject('txt')" class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2">
-                                    <i class="fas fa-file-alt text-blue-600"></i>
-                                    <span class="text-gray-700">Text Document</span>
-                                </button>
-                            </div>
-                        </div>
-                        <button onclick="closeModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
-                            Close
+                <div class="grid grid-cols-2 gap-2 sm:gap-3 pt-4 border-t border-gray-200 relative">
+                    <!-- Premium Download Report System -->
+                    <div class="relative w-full download-report-container" style="position: relative; z-index: 10;">
+                        <div class="flex gap-2">
+                            <!-- Main Download Button -->
+                            <button
+                                id="downloadBtn"
+                                onclick="handleDownloadClick(event)"
+                                class="relative flex-1 px-2 sm:px-6 py-3 sm:py-3.5 bg-gradient-to-br from-[#2f6e4e] via-[#3d8b64] to-[#2f6e4e] bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-xl font-semibold transition-all duration-500 flex items-center justify-center gap-1.5 sm:gap-2.5 shadow-lg hover:shadow-xl hover:shadow-[#2f6e4e]/20 text-xs sm:text-base group overflow-hidden"
+                                aria-label="Download project report"
+                                style="position: relative; z-index: 10; touch-action: manipulation;"
+                            >
+                            <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none"></span>
+                            <!-- Loading Spinner (hidden by default) -->
+                            <svg id="loadingSpinner" class="hidden w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+
+                            <!-- Download Icon -->
+                            <svg id="downloadIcon" class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 transition-transform duration-300 group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+
+                            <!-- Success Check Icon (hidden by default) -->
+                            <svg id="successIcon" class="hidden w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+
+                            <!-- Button Text -->
+                            <span id="downloadText" class="font-semibold tracking-wide truncate">Select Format</span>
+
+                            <!-- File Type Badge (hidden by default) -->
+                            <span id="fileTypeBadge" class="hidden px-1.5 sm:px-2.5 py-0.5 bg-white/25 backdrop-blur-sm rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider border border-white/30 flex-shrink-0"></span>
+
+                            <!-- Chevron Icon -->
+                            <svg id="chevronIcon" class="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 transition-transform duration-300 group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Change Format Button (hidden by default) -->
+                        <button
+                            id="changeFormatBtn"
+                            onclick="changeFileFormat()"
+                            class="hidden w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-[#2f6e4e]/20 hover:bg-[#2f6e4e]/30 backdrop-blur border-2 border-[#2f6e4e]/40 text-[#2f6e4e] rounded-xl transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105 active:scale-95 group"
+                            aria-label="Change file format"
+                            title="Change format"
+                            style="position: relative; z-index: 10;"
+                        >
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
                         </button>
                     </div>
+
+                        <!-- Enhanced Dropdown Menu -->
+                        <div id="downloadMenu" class="hidden fixed w-full sm:w-auto min-w-[280px] max-w-[320px] sm:max-w-none pointer-events-none" style="top: -9999px; left: -9999px; z-index: 10000;">
+                            <div id="downloadMenuInner" class="pointer-events-none">
+                            <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden ring-1 ring-black/5">
+                                <!-- Menu Header -->
+                                <div class="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100/50 border-b border-gray-200/70">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <h4 class="text-sm font-bold text-gray-700 tracking-tight">Export Format</h4>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-0.5">Choose your preferred file type</p>
+                                </div>
+
+                                <!-- Menu Items -->
+                                <div class="p-2">
+                                    <!-- PDF Option -->
+                                    <button
+                                        onclick="selectFileType('pdf')"
+                                        class="download-menu-item w-full text-left px-3 py-3 rounded-xl hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100/50 flex items-center gap-3 transition-all duration-300 group border-2 border-transparent hover:border-red-200/50 hover:shadow-md hover:shadow-red-100/50"
+                                        style="animation-delay: 0.05s"
+                                    >
+                                        <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
+                                            <svg class="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path>
+                                                <text x="50%" y="60%" font-size="5" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">PDF</text>
+                                            </svg>
+                                            <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-white/40 to-transparent"></div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="font-bold text-gray-900 text-sm group-hover:text-red-700 transition-colors flex items-center gap-2">
+                                                PDF Document
+                                                <span class="text-xs px-1.5 py-0.5 bg-red-100 text-red-700 rounded font-semibold">Popular</span>
+                                            </div>
+                                            <div class="text-xs text-gray-500 mt-0.5 group-hover:text-gray-600">Professional, shareable format</div>
+                                        </div>
+                                        <svg class="w-5 h-5 text-red-500 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+
+                                    <!-- CSV Option -->
+                                    <button
+                                        onclick="selectFileType('csv')"
+                                        class="download-menu-item w-full text-left px-3 py-3 rounded-xl hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100/50 flex items-center gap-3 transition-all duration-300 group mt-1 border-2 border-transparent hover:border-green-200/50 hover:shadow-md hover:shadow-green-100/50"
+                                        style="animation-delay: 0.1s"
+                                    >
+                                        <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
+                                            <svg class="w-6 h-6 text-green-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path>
+                                            </svg>
+                                            <div class="absolute inset-0 grid grid-cols-3 gap-px p-2 opacity-60">
+                                                <div class="bg-white rounded-sm"></div>
+                                                <div class="bg-white rounded-sm"></div>
+                                                <div class="bg-white rounded-sm"></div>
+                                                <div class="bg-white rounded-sm"></div>
+                                                <div class="bg-white rounded-sm"></div>
+                                                <div class="bg-white rounded-sm"></div>
+                                            </div>
+                                            <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-white/40 to-transparent"></div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="font-bold text-gray-900 text-sm group-hover:text-green-700 transition-colors">CSV Spreadsheet</div>
+                                            <div class="text-xs text-gray-500 mt-0.5 group-hover:text-gray-600">Data analysis & Excel</div>
+                                        </div>
+                                        <svg class="w-5 h-5 text-green-500 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+
+                                    <!-- TXT Option -->
+                                    <button
+                                        onclick="selectFileType('txt')"
+                                        class="download-menu-item w-full text-left px-3 py-3 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100/50 flex items-center gap-3 transition-all duration-300 group mt-1 border-2 border-transparent hover:border-blue-200/50 hover:shadow-md hover:shadow-blue-100/50"
+                                        style="animation-delay: 0.15s"
+                                    >
+                                        <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
+                                            <svg class="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path>
+                                            </svg>
+                                            <div class="absolute inset-0 flex flex-col gap-0.5 p-2.5 opacity-60">
+                                                <div class="h-0.5 bg-white rounded-full w-3/4"></div>
+                                                <div class="h-0.5 bg-white rounded-full w-full"></div>
+                                                <div class="h-0.5 bg-white rounded-full w-2/3"></div>
+                                            </div>
+                                            <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-white/40 to-transparent"></div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="font-bold text-gray-900 text-sm group-hover:text-blue-700 transition-colors">Text Document</div>
+                                            <div class="text-xs text-gray-500 mt-0.5 group-hover:text-gray-600">Simple, plain text format</div>
+                                        </div>
+                                        <svg class="w-5 h-5 text-blue-500 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Menu Footer -->
+                                <div class="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100/30 border-t border-gray-200/70">
+                                    <p class="text-xs text-gray-500 text-center">
+                                        <svg class="w-3.5 h-3.5 inline-block mr-1 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Click to select and download
+                                    </p>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Permanent Delete Button -->
+                    <button onclick="confirmPermanentDelete()" class="w-full px-3 sm:px-6 py-3 sm:py-3.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 active:from-red-800 active:to-red-900 text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 shadow-md hover:shadow-lg text-sm sm:text-base">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span class="hidden xs:inline sm:inline">Permanent Delete</span>
+                        <span class="inline xs:hidden sm:hidden">Delete</span>
+                    </button>
+                    </div>
+                    <!-- End Inner Content -->
                 </div>
+                <!-- End Scrollable Content -->
             </div>
         </div>
     </div>
 
     <!-- DELETE CONFIRMATION MODAL -->
-    <div id="deleteConfirmModal" class="hidden fixed inset-0 z-[70] overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="fixed inset-0 bg-gray-900 opacity-75"></div>
-
-            <div class="relative bg-white rounded-xl shadow-2xl max-w-md w-full">
+    <div id="deleteConfirmModal" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-black bg-opacity-75">
+        <div class="min-h-screen px-4 py-6 sm:py-12 flex items-center justify-center">
+            <div class="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-md w-full my-8">
                 <!-- Header with Warning -->
-                <div class="bg-red-600 p-6 rounded-t-xl">
+                <div class="bg-gradient-to-r from-red-600 to-red-700 p-4 sm:p-6 rounded-t-xl sm:rounded-t-2xl">
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                            <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-white">Permanent Delete</h3>
-                            <p class="text-red-100 text-sm">This action cannot be undone!</p>
+                        <div class="min-w-0">
+                            <h3 class="text-lg sm:text-xl font-bold text-white">Permanent Delete</h3>
+                            <p class="text-red-100 text-xs sm:text-sm">This action cannot be undone!</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Content -->
-                <div class="p-6">
+                <div class="p-4 sm:p-6">
                     <div class="mb-6">
                         <p class="text-gray-700 mb-4">
                             Are you sure you want to <strong>permanently delete</strong>:
@@ -806,17 +1241,17 @@
                         </label>
 
                         <!-- OTP-Style Delete Input -->
-                        <div class="flex justify-center gap-2 mb-3">
+                        <div class="flex justify-center gap-1.5 sm:gap-2 mb-3">
                             <input type="text" maxlength="1" id="deleteChar0" data-index="0"
-                                   class="delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
+                                   class="delete-input w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
                                    style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);"
                                    autocomplete="off" />
                             <input type="text" maxlength="1" id="deleteChar1" data-index="1"
-                                   class="delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
+                                   class="delete-input w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
                                    style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);"
                                    autocomplete="off" />
                             <input type="text" maxlength="1" id="deleteChar2" data-index="2"
-                                   class="delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
+                                   class="delete-input w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase"
                                    style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);"
                                    autocomplete="off" />
                             <input type="text" maxlength="1" id="deleteChar3" data-index="3"
@@ -834,13 +1269,13 @@
                         </div>
 
                         <!-- Placeholder letters below each input -->
-                        <div class="flex justify-center gap-2 mb-3">
-                            <div class="w-12 text-center text-xs text-gray-400 font-mono">D</div>
-                            <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
-                            <div class="w-12 text-center text-xs text-gray-400 font-mono">L</div>
-                            <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
-                            <div class="w-12 text-center text-xs text-gray-400 font-mono">T</div>
-                            <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+                        <div class="flex justify-center gap-1.5 sm:gap-2 mb-3">
+                            <div class="w-10 sm:w-12 text-center text-xs text-gray-400 font-mono">D</div>
+                            <div class="w-10 sm:w-12 text-center text-xs text-gray-400 font-mono">E</div>
+                            <div class="w-10 sm:w-12 text-center text-xs text-gray-400 font-mono">L</div>
+                            <div class="w-10 sm:w-12 text-center text-xs text-gray-400 font-mono">E</div>
+                            <div class="w-10 sm:w-12 text-center text-xs text-gray-400 font-mono">T</div>
+                            <div class="w-10 sm:w-12 text-center text-xs text-gray-400 font-mono">E</div>
                         </div>
 
                         <p id="deleteErrorMsg" class="hidden text-sm text-red-600 mt-2 text-center">
@@ -851,10 +1286,10 @@
                 </div>
 
                 <!-- Footer -->
-                <div class="bg-gray-50 px-6 py-4 rounded-b-xl flex justify-end gap-3">
+                <div class="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 rounded-b-xl sm:rounded-b-2xl flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
                     <button
                         onclick="closeDeleteModal()"
-                        class="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                        class="w-full sm:w-auto px-4 sm:px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium text-sm sm:text-base"
                     >
                         Cancel
                     </button>
@@ -862,9 +1297,11 @@
                         id="deleteSubmitBtn"
                         onclick="executeDelete()"
                         disabled
-                        class="px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium"
+                        class="w-full sm:w-auto px-4 sm:px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition-all duration-200 font-medium text-sm sm:text-base"
                     >
-                        <i class="fas fa-trash-alt mr-2"></i>
+                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
                         Delete Permanently
                     </button>
                 </div>
@@ -873,28 +1310,26 @@
     </div>
 
     <!-- Restore File Confirmation Modal -->
-    <div id="restoreFileModal" class="hidden fixed inset-0 z-[70] overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="fixed inset-0 bg-gray-900 opacity-75" onclick="closeRestoreFileModal()"></div>
-
-            <div class="relative bg-white rounded-xl shadow-2xl max-w-md w-full">
+    <div id="restoreFileModal" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-black bg-opacity-75">
+        <div class="min-h-screen px-4 py-6 sm:py-12 flex items-center justify-center">
+            <div class="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-md w-full my-8">
                 <!-- Header -->
-                <div class="bg-[#2f6e4e] p-6 rounded-t-xl">
+                <div class="bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] p-4 sm:p-6 rounded-t-xl sm:rounded-t-2xl">
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                             </svg>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-white">Restore File</h3>
-                            <p class="text-green-100 text-sm">Move file back to active files</p>
+                        <div class="min-w-0">
+                            <h3 class="text-lg sm:text-xl font-bold text-white">Restore File</h3>
+                            <p class="text-white/90 text-xs sm:text-sm">Move file back to active files</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Content -->
-                <div class="p-6">
+                <div class="p-4 sm:p-6">
                     <p class="text-gray-700 mb-4">
                         Are you sure you want to restore this file?
                     </p>
@@ -907,21 +1342,21 @@
                 </div>
 
                 <!-- Footer -->
-                <div class="bg-gray-50 px-6 py-4 rounded-b-xl flex justify-end gap-3">
+                <div class="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 rounded-b-xl sm:rounded-b-2xl flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
                     <button
                         onclick="closeRestoreFileModal()"
-                        class="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                        class="w-full sm:w-auto px-4 sm:px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium text-sm sm:text-base"
                     >
                         Cancel
                     </button>
                     <button
                         onclick="confirmRestoreFile()"
-                        class="px-6 py-2.5 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#3d8b64] transition font-medium"
+                        class="w-full sm:w-auto px-4 sm:px-6 py-2.5 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white rounded-lg hover:shadow-md transition-all duration-200 font-medium text-sm sm:text-base flex items-center justify-center gap-2"
                     >
-                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                         </svg>
-                        Restore File
+                        <span>Restore File</span>
                     </button>
                 </div>
             </div>
@@ -929,28 +1364,27 @@
     </div>
 
     <!-- Delete Archived File Confirmation Modal -->
-    <div id="deleteArchivedFileModal" class="hidden fixed inset-0 z-[70] overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="fixed inset-0 bg-gray-900 opacity-75" onclick="closeDeleteArchivedFileModal()"></div>
+    <div id="deleteArchivedFileModal" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-black bg-opacity-75">
+        <div class="min-h-screen px-4 py-6 sm:py-12 flex items-center justify-center">
 
-            <div class="relative bg-white rounded-xl shadow-2xl max-w-md w-full">
+            <div class="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-md w-full my-8">
                 <!-- Header -->
-                <div class="bg-red-600 p-6 rounded-t-xl">
+                <div class="bg-gradient-to-r from-red-600 to-red-700 p-4 sm:p-6 rounded-t-xl sm:rounded-t-2xl">
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                             </svg>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-white">Permanent Delete</h3>
-                            <p class="text-red-100 text-sm">This action cannot be undone!</p>
+                        <div class="min-w-0">
+                            <h3 class="text-lg sm:text-xl font-bold text-white">Permanent Delete</h3>
+                            <p class="text-red-100 text-xs sm:text-sm">This action cannot be undone!</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Content -->
-                <div class="p-6">
+                <div class="p-4 sm:p-6">
                     <p class="text-gray-700 mb-4">
                         Are you sure you want to <strong>permanently delete</strong> this file?
                     </p>
@@ -963,21 +1397,21 @@
                 </div>
 
                 <!-- Footer -->
-                <div class="bg-gray-50 px-6 py-4 rounded-b-xl flex justify-end gap-3">
+                <div class="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 rounded-b-xl sm:rounded-b-2xl flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
                     <button
                         onclick="closeDeleteArchivedFileModal()"
-                        class="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                        class="w-full sm:w-auto px-4 sm:px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium text-sm sm:text-base"
                     >
                         Cancel
                     </button>
                     <button
                         onclick="confirmDeleteArchivedFile()"
-                        class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+                        class="w-full sm:w-auto px-4 sm:px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:shadow-md transition-all duration-200 font-medium text-sm sm:text-base flex items-center justify-center gap-2"
                     >
-                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                         </svg>
-                        Delete Permanently
+                        <span>Delete Permanently</span>
                     </button>
                 </div>
             </div>
@@ -1108,65 +1542,140 @@
 
             emptyState.classList.add('hidden');
 
-            projectsList.innerHTML = filteredProjects.map(project => `
-                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-6 border border-gray-100 ${selectedProjects.includes(project.id) ? 'ring-2 ring-[#3d8b64]' : ''}">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex items-center space-x-3 flex-1">
-                            <label class="flex items-center cursor-pointer">
-                                <input type="checkbox"
-                                       class="w-5 h-5 text-[#2f6e4e] rounded focus:ring-[#3d8b64] cursor-pointer"
-                                       ${selectedProjects.includes(project.id) ? 'checked' : ''}
-                                       onchange="toggleProjectSelection(${project.id})">
+            // Get current search query for highlighting
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            projectsList.innerHTML = filteredProjects.map(project => {
+                // Check if this project matches the search query
+                const isSearchMatch = searchQuery && project.name.toLowerCase().includes(searchQuery);
+                const highlightClass = isSearchMatch ? 'search-match-highlight' : '';
+
+                return `
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border-2 ${selectedProjects.includes(project.id) ? 'border-[#2f6e4e] shadow-md' : 'border-gray-100'} ${highlightClass} overflow-hidden">
+                    <!-- Header Section -->
+                    <div class="p-4 sm:p-5 bg-gradient-to-br from-gray-50 to-white border-b border-gray-100">
+                        <div class="flex items-start gap-3 mb-3">
+                            <!-- Checkbox -->
+                            <label class="flex items-center cursor-pointer mt-1 flex-shrink-0">
+                                <div class="relative">
+                                    <input type="checkbox"
+                                           class="w-5 h-5 sm:w-6 sm:h-6 text-[#2f6e4e] rounded-md focus:ring-2 focus:ring-[#2f6e4e] focus:ring-offset-2 cursor-pointer transition-all"
+                                           ${selectedProjects.includes(project.id) ? 'checked' : ''}
+                                           onchange="toggleProjectSelection(${project.id})">
+                                </div>
                             </label>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-3 mb-2">
-                                    <h3 class="text-lg font-bold text-gray-800">${project.name}</h3>
-                                    <span class="px-3 py-1 text-xs font-semibold rounded-full ${getSuccessBadgeClass(project.successRate)}">
-                                        ${project.successRate}% Success
+
+                            <!-- Title & Metadata -->
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-base sm:text-lg font-bold text-gray-900 leading-tight mb-2 line-clamp-2">${project.name}</h3>
+                                <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-600">
+                                    <span class="flex items-center gap-1 bg-white px-2 py-1 rounded-md border border-gray-200">
+                                        <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        ${project.period}
+                                    </span>
+                                    <span class="flex items-center gap-1 bg-[#2f6e4e]/10 text-[#2f6e4e] px-2 py-1 rounded-md font-semibold">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                        </svg>
+                                        ${project.quarter} ${project.year}
                                     </span>
                                 </div>
-                                <div class="flex items-center space-x-4 text-sm text-gray-500">
-                                    <span><i class="far fa-calendar mr-1"></i> ${project.period}</span>
-                                    <span><i class="fas fa-tag mr-1"></i> ${project.quarter} ${project.year}</span>
+                            </div>
+
+                            <!-- Success Badge (Mobile: Top Right) -->
+                            <div class="flex-shrink-0">
+                                <div class="flex flex-col items-end gap-1">
+                                    <div class="px-2.5 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm font-bold rounded-lg ${getSuccessBadgeClass(project.successRate)} shadow-sm">
+                                        ${project.successRate}%
+                                    </div>
+                                    <span class="text-[10px] sm:text-xs text-gray-500 font-medium">Success</span>
                                 </div>
                             </div>
                         </div>
-                        <button onclick="viewProject(${project.id})" class="px-4 py-2 bg-[#2f6e4e] text-white text-sm rounded-lg hover:bg-[#2f6e4e] transition">
-                            <i class="fas fa-eye mr-1"></i> View Details
+
+                        <!-- View Details Button (Mobile-friendly full width) -->
+                        <button onclick="viewProject(${project.id})" class="w-full mt-3 px-4 py-2.5 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white text-sm font-semibold rounded-lg hover:shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <span>View Details</span>
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">Budget</p>
-                            <p class="font-semibold text-gray-800">₱${project.budget.toLocaleString()}</p>
-                            <p class="text-xs text-gray-500">Spent: ₱${project.spent.toLocaleString()}</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">Volunteers</p>
-                            <p class="font-semibold text-gray-800">${project.volunteers}</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">Budget Efficiency</p>
-                            <p class="font-semibold text-gray-800">${project.budgetScore}%</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">Impact Score</p>
-                            <p class="font-semibold text-gray-800">${project.impactScore}%</p>
-                        </div>
-                    </div>
+                    <!-- Stats Grid -->
+                    <div class="p-4 sm:p-5">
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <!-- Budget -->
+                            <div class="bg-gradient-to-br from-blue-50 to-white p-3 sm:p-4 rounded-xl border border-blue-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="hidden sm:flex w-7 h-7 bg-blue-500 rounded-lg items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-xs font-semibold text-blue-700 uppercase tracking-wide">Budget</p>
+                                </div>
+                                <p class="text-base sm:text-lg font-black text-gray-900 mb-1">₱${project.budget.toLocaleString()}</p>
+                                <p class="text-xs text-gray-600">Spent: <span class="font-semibold text-gray-700">₱${project.spent.toLocaleString()}</span></p>
+                            </div>
 
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="text-gray-600">Overall Success Rate</span>
-                            <span class="font-semibold text-gray-800">${project.successRate}%</span>
+                            <!-- Volunteers -->
+                            <div class="bg-gradient-to-br from-purple-50 to-white p-3 sm:p-4 rounded-xl border border-purple-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="hidden sm:flex w-7 h-7 bg-purple-500 rounded-lg items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-xs font-semibold text-purple-700 uppercase tracking-wide">Volunteers</p>
+                                </div>
+                                <p class="text-2xl sm:text-3xl font-black text-gray-900">${project.volunteers}</p>
+                            </div>
+
+                            <!-- Budget Efficiency -->
+                            <div class="bg-gradient-to-br from-emerald-50 to-white p-3 sm:p-4 rounded-xl border border-emerald-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="hidden sm:flex w-7 h-7 bg-emerald-500 rounded-lg items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">Efficiency</p>
+                                </div>
+                                <p class="text-2xl sm:text-3xl font-black text-gray-900">${project.budgetScore}%</p>
+                            </div>
+
+                            <!-- Impact Score -->
+                            <div class="bg-gradient-to-br from-amber-50 to-white p-3 sm:p-4 rounded-xl border border-amber-100">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="hidden sm:flex w-7 h-7 bg-amber-500 rounded-lg items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="text-xs font-semibold text-amber-700 uppercase tracking-wide">Impact</p>
+                                </div>
+                                <p class="text-2xl sm:text-3xl font-black text-gray-900">${project.impactScore}%</p>
+                            </div>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="h-2 rounded-full ${getSuccessBarClass(project.successRate)}" style="width: ${project.successRate}%"></div>
+
+                        <!-- Overall Success Rate Progress Bar -->
+                        <div class="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border-2 ${project.successRate >= 90 ? 'border-green-200' : project.successRate >= 80 ? 'border-blue-200' : 'border-amber-200'}">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wide">Overall Success Rate</span>
+                                <span class="text-xl sm:text-2xl font-black ${project.successRate >= 90 ? 'text-green-600' : project.successRate >= 80 ? 'text-blue-600' : 'text-amber-600'}">${project.successRate}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                                <div class="h-full rounded-full ${getSuccessBarClass(project.successRate)} transition-all duration-500 shadow-sm" style="width: ${project.successRate}%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function getSuccessBadgeClass(rate) {
@@ -1295,6 +1804,11 @@
             document.getElementById('searchInput').addEventListener('input', applyFilters);
             document.getElementById('yearFilter').addEventListener('change', applyFilters);
             document.getElementById('quarterFilter').addEventListener('change', applyFilters);
+
+            // File filter listeners
+            document.getElementById('fileSearchInput').addEventListener('input', renderArchivedFiles);
+            document.getElementById('fileTypeFilter').addEventListener('change', renderArchivedFiles);
+            document.getElementById('fileYearFilter').addEventListener('change', renderArchivedFiles);
         }
 
         function applyFilters() {
@@ -1347,6 +1861,13 @@
             document.getElementById('yearFilter').value = '2025';
             document.getElementById('quarterFilter').value = 'all';
             applyFilters();
+        }
+
+        function resetFileFilters() {
+            document.getElementById('fileSearchInput').value = '';
+            document.getElementById('fileTypeFilter').value = 'all';
+            document.getElementById('fileYearFilter').value = '2025';
+            renderArchivedFiles();
         }
 
         function viewProject(id) {
@@ -1447,7 +1968,7 @@
                     ? `${project.feedbackSubmitted} / ${project.approvedVolunteers} volunteers`
                     : project.feedbackSubmitted || 'N/A';
                 document.getElementById('modalFeedbackSubmitted').textContent = feedbackText;
-                document.getElementById('modalSatisfactionScore').textContent = project.avgSatisfaction ? project.avgSatisfaction + ' / 5.0' : 'N/A';
+                document.getElementById('modalSatisfactionScore').textContent = project.avgSatisfaction ? project.avgSatisfaction + ' / 4.0' : 'N/A';
 
                 const feedbackSummary = project.achievements && project.achievements.length > 3
                     ? project.achievements[project.achievements.length - 1]
@@ -1643,28 +2164,188 @@
             document.getElementById('projectModal').classList.add('hidden');
             // Close download menu if open
             document.getElementById('downloadMenu').classList.add('hidden');
+            // Reset download button
+            resetDownloadButton();
         }
+
+        let selectedFileType = null;
+        let currentProjectForExport = null;
 
         function toggleDownloadMenu() {
             const menu = document.getElementById('downloadMenu');
-            menu.classList.toggle('hidden');
+            const menuInner = document.getElementById('downloadMenuInner');
+            const button = document.getElementById('downloadBtn');
+            const isHidden = menu.classList.contains('hidden');
+
+            if (isHidden) {
+                // Calculate position
+                const buttonRect = button.getBoundingClientRect();
+                const menuHeight = 400; // Approximate menu height
+                const padding = 8;
+
+                // Position menu above the button
+                const top = buttonRect.top - menuHeight - padding;
+                const left = window.innerWidth <= 640 ? 16 : buttonRect.right - 280; // 16px padding on mobile, align right on desktop
+                const width = window.innerWidth <= 640 ? window.innerWidth - 32 : 'auto'; // Full width minus padding on mobile
+
+                menu.style.top = `${top}px`;
+                menu.style.left = `${left}px`;
+                if (window.innerWidth <= 640) {
+                    menu.style.width = `${width}px`;
+                    menu.style.right = '16px';
+                    menu.style.left = '16px';
+                } else {
+                    menu.style.width = 'auto';
+                    menu.style.right = 'auto';
+                }
+
+                menu.classList.remove('hidden');
+                menu.classList.remove('pointer-events-none');
+                menu.classList.add('pointer-events-auto');
+
+                menuInner.classList.remove('pointer-events-none');
+                menuInner.classList.add('pointer-events-auto');
+
+                // Trigger staggered animation for menu items
+                const items = menu.querySelectorAll('.download-menu-item');
+                items.forEach((item, index) => {
+                    item.style.animationDelay = `${0.05 * (index + 1)}s`;
+                });
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.add('pointer-events-none');
+                menu.classList.remove('pointer-events-auto');
+
+                menuInner.classList.add('pointer-events-none');
+                menuInner.classList.remove('pointer-events-auto');
+
+                // Move menu off-screen
+                menu.style.top = '-9999px';
+                menu.style.left = '-9999px';
+            }
         }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('downloadMenu');
-            if (menu && !event.target.closest('.relative')) {
-                menu.classList.add('hidden');
-            }
-        });
+        function selectFileType(format) {
+            selectedFileType = format;
+            const downloadText = document.getElementById('downloadText');
+            const chevronIcon = document.getElementById('chevronIcon');
+            const downloadIcon = document.getElementById('downloadIcon');
+            const fileTypeBadge = document.getElementById('fileTypeBadge');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const changeFormatBtn = document.getElementById('changeFormatBtn');
 
-        let currentProjectForExport = null;
+            // Update button styling with smooth transition
+            downloadBtn.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+
+            // Configuration for each format (no color changes, just badges)
+            const formats = {
+                'pdf': { text: 'Download Report', badge: 'PDF' },
+                'csv': { text: 'Download Report', badge: 'CSV' },
+                'txt': { text: 'Download Report', badge: 'TXT' }
+            };
+
+            const config = formats[format];
+
+            // Update text and show badge with animation
+            downloadText.textContent = config.text;
+            fileTypeBadge.textContent = config.badge;
+            fileTypeBadge.classList.remove('hidden');
+
+            // Hide chevron, show change button
+            chevronIcon.classList.add('hidden');
+            changeFormatBtn.classList.remove('hidden');
+
+            // Close menu
+            const menu = document.getElementById('downloadMenu');
+            const menuInner = document.getElementById('downloadMenuInner');
+            menu.classList.add('hidden');
+            menu.classList.add('pointer-events-none');
+            menu.classList.remove('pointer-events-auto');
+            menuInner.classList.add('pointer-events-none');
+            menuInner.classList.remove('pointer-events-auto');
+            menu.style.top = '-9999px';
+            menu.style.left = '-9999px';
+
+            // Scale animation
+            downloadBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                downloadBtn.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        function changeFileFormat() {
+            // Reset selection and reopen menu
+            selectedFileType = null;
+            const downloadText = document.getElementById('downloadText');
+            const chevronIcon = document.getElementById('chevronIcon');
+            const fileTypeBadge = document.getElementById('fileTypeBadge');
+            const changeFormatBtn = document.getElementById('changeFormatBtn');
+
+            // Reset text and icons
+            downloadText.textContent = 'Select Format';
+            fileTypeBadge.classList.add('hidden');
+            chevronIcon.classList.remove('hidden');
+            changeFormatBtn.classList.add('hidden');
+
+            // Open the menu
+            toggleDownloadMenu();
+        }
+
+        function handleDownloadClick(event) {
+            if (!selectedFileType) {
+                // No file type selected, show the menu
+                toggleDownloadMenu();
+            } else {
+                // Create ripple effect
+                const button = event.currentTarget;
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                const rect = button.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                button.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+
+                // File type selected, proceed with download
+                startDownload(selectedFileType);
+            }
+        }
+
+        function startDownload(format) {
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadIcon = document.getElementById('downloadIcon');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const downloadText = document.getElementById('downloadText');
+            const chevronIcon = document.getElementById('chevronIcon');
+            const fileTypeBadge = document.getElementById('fileTypeBadge');
+            const changeFormatBtn = document.getElementById('changeFormatBtn');
+
+            // Show loading state
+            downloadBtn.classList.add('downloading');
+            downloadIcon.classList.add('hidden');
+            chevronIcon.classList.add('hidden');
+            fileTypeBadge.classList.add('hidden');
+            changeFormatBtn.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+            downloadText.textContent = 'Preparing...';
+
+            // Simulate download preparation and then execute
+            setTimeout(() => {
+                exportProject(format);
+            }, 800);
+        }
 
         function exportProject(format = 'pdf') {
             if (!currentProjectForExport) return;
 
             // Close the download menu
             document.getElementById('downloadMenu').classList.add('hidden');
+
+            // Update text to show downloading
+            const downloadText = document.getElementById('downloadText');
+            downloadText.textContent = 'Generating...';
 
             if (format === 'pdf') {
                 exportAsPDF();
@@ -1673,7 +2354,82 @@
             } else if (format === 'txt') {
                 exportAsText();
             }
+
+            // Show success state briefly
+            showDownloadSuccess();
+
+            // Reset the button after download
+            setTimeout(() => {
+                resetDownloadButton();
+            }, 2000);
         }
+
+        function showDownloadSuccess() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const successIcon = document.getElementById('successIcon');
+            const downloadText = document.getElementById('downloadText');
+
+            setTimeout(() => {
+                loadingSpinner.classList.add('hidden');
+                successIcon.classList.remove('hidden');
+                downloadText.textContent = 'Complete!';
+                downloadBtn.classList.remove('downloading');
+                downloadBtn.classList.add('success');
+            }, 500);
+        }
+
+        function resetDownloadButton() {
+            selectedFileType = null;
+            const downloadText = document.getElementById('downloadText');
+            const chevronIcon = document.getElementById('chevronIcon');
+            const downloadIcon = document.getElementById('downloadIcon');
+            const fileTypeBadge = document.getElementById('fileTypeBadge');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const successIcon = document.getElementById('successIcon');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const changeFormatBtn = document.getElementById('changeFormatBtn');
+
+            // Reset text and icons
+            downloadText.textContent = 'Select Format';
+            chevronIcon.classList.remove('hidden');
+            downloadIcon.classList.remove('hidden');
+            fileTypeBadge.classList.add('hidden');
+            loadingSpinner.classList.add('hidden');
+            successIcon.classList.add('hidden');
+            changeFormatBtn.classList.add('hidden');
+
+            // Remove state classes
+            downloadBtn.classList.remove('downloading', 'success');
+
+            // Reset inline styles
+            downloadBtn.style.transform = '';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('downloadMenu');
+            const menuInner = document.getElementById('downloadMenuInner');
+            const button = document.getElementById('downloadBtn');
+            const changeBtn = document.getElementById('changeFormatBtn');
+
+            if (menu && !menu.classList.contains('hidden')) {
+                // Check if click is outside menu, download button, and change button
+                const isClickInside = menu.contains(event.target) ||
+                                     button.contains(event.target) ||
+                                     (changeBtn && changeBtn.contains(event.target));
+
+                if (!isClickInside) {
+                    menu.classList.add('hidden');
+                    menu.classList.add('pointer-events-none');
+                    menu.classList.remove('pointer-events-auto');
+                    menuInner.classList.add('pointer-events-none');
+                    menuInner.classList.remove('pointer-events-auto');
+                    menu.style.top = '-9999px';
+                    menu.style.left = '-9999px';
+                }
+            }
+        });
 
         function exportAsPDF() {
             if (!currentProjectForExport) return;
@@ -2013,7 +2769,7 @@
             doc.setFont(undefined, 'bold');
             doc.text('Average Satisfaction Score:', margin + 2, y);
             doc.setFont(undefined, 'normal');
-            doc.text(`${project.avgSatisfaction || 'N/A'} / 5.0`, margin + 65, y);
+            doc.text(`${project.avgSatisfaction || 'N/A'} / 4.0`, margin + 65, y);
             y += 6;
 
             doc.setFont(undefined, 'bold');
@@ -2493,8 +3249,12 @@
         // Update files count badge
         function updateFilesCount() {
             const filesCountEl = document.getElementById('filesCount');
+            const filesCountMobileEl = document.getElementById('filesCountMobile');
             if (filesCountEl) {
                 filesCountEl.textContent = archivedFiles.length;
+            }
+            if (filesCountMobileEl) {
+                filesCountMobileEl.textContent = archivedFiles.length;
             }
         }
 
@@ -2502,55 +3262,30 @@
         function switchArchiveType(type) {
             currentArchiveType = type;
 
-            // Update tab styles
+            // Update tab styles and aria attributes
             const tabs = document.querySelectorAll('.archive-type-tab');
             tabs.forEach(tab => {
-                tab.classList.remove('active', 'text-[#2f6e4e]', 'border-[#2f6e4e]');
-                tab.classList.add('text-gray-500', 'border-transparent');
+                tab.classList.remove('active');
+                tab.setAttribute('aria-selected', 'false');
             });
 
             const activeTab = document.getElementById(type + 'Tab');
             if (activeTab) {
-                activeTab.classList.add('active', 'text-[#2f6e4e]', 'border-[#2f6e4e]');
-                activeTab.classList.remove('text-gray-500', 'border-transparent');
-
-                // Update count badge color
-                const countSpan = activeTab.querySelector('span');
-                if (countSpan) {
-                    countSpan.classList.remove('bg-gray-100', 'bg-[#2f6e4e]/20');
-                    countSpan.classList.add('bg-[#2f6e4e]/20');
-                }
+                activeTab.classList.add('active');
+                activeTab.setAttribute('aria-selected', 'true');
             }
 
-            // Update other tab count badge colors
-            tabs.forEach(tab => {
-                if (!tab.classList.contains('active')) {
-                    const countSpan = tab.querySelector('span');
-                    if (countSpan) {
-                        countSpan.classList.remove('bg-[#2f6e4e]/20');
-                        countSpan.classList.add('bg-gray-100');
-                    }
-                }
-            });
-
-            // Show/hide appropriate content
-            const projectsList = document.getElementById('projectsList');
-            const filesList = document.getElementById('filesList');
-            const emptyState = document.getElementById('emptyState');
-            const emptyFilesState = document.getElementById('emptyFilesState');
-            const quarterSummary = document.getElementById('quarterSummary').parentElement;
+            // Show/hide tab content
+            const projectsTabContent = document.getElementById('projectsTabContent');
+            const filesTabContent = document.getElementById('filesTabContent');
 
             if (type === 'projects') {
-                projectsList.classList.remove('hidden');
-                filesList.classList.add('hidden');
-                emptyFilesState.classList.add('hidden');
-                quarterSummary.classList.remove('hidden');
+                projectsTabContent.classList.remove('hidden');
+                filesTabContent.classList.add('hidden');
                 renderProjects();
             } else {
-                projectsList.classList.add('hidden');
-                emptyState.classList.add('hidden');
-                filesList.classList.remove('hidden');
-                quarterSummary.classList.add('hidden');
+                projectsTabContent.classList.add('hidden');
+                filesTabContent.classList.remove('hidden');
                 renderArchivedFiles();
             }
         }
@@ -2567,11 +3302,41 @@
                 return;
             }
 
+            // Apply filters
+            const searchQuery = document.getElementById('fileSearchInput').value.toLowerCase();
+            const fileTypeFilter = document.getElementById('fileTypeFilter').value;
+            const yearFilter = document.getElementById('fileYearFilter').value;
+
+            const filteredFiles = archivedFiles.filter(file => {
+                const matchesSearch = file.name.toLowerCase().includes(searchQuery);
+                const matchesType = fileTypeFilter === 'all' || file.type === fileTypeFilter;
+
+                // Extract year for filtering
+                let fileYear = 'Unknown';
+                if (file.uploadedDate) {
+                    const date = new Date(file.uploadedDate);
+                    fileYear = date.getFullYear().toString();
+                } else if (file.uploaded) {
+                    const match = file.uploaded.match(/\d{4}/);
+                    if (match) {
+                        fileYear = match[0];
+                    }
+                }
+                const matchesYear = yearFilter === 'all' || fileYear === yearFilter;
+
+                return matchesSearch && matchesType && matchesYear;
+            });
+
+            if (filteredFiles.length === 0) {
+                emptyFilesState.classList.remove('hidden');
+                return;
+            }
+
             emptyFilesState.classList.add('hidden');
 
             // Group files by year
             const filesByYear = {};
-            archivedFiles.forEach(file => {
+            filteredFiles.forEach(file => {
                 // Extract year from uploaded date
                 let year = 'Unknown';
                 if (file.uploadedDate) {
@@ -2623,8 +3388,12 @@
                             default: "bg-gray-100 text-gray-700",
                         }[file.type] || "bg-gray-100 text-gray-700";
 
+                    // Check if this file matches the search query for highlighting
+                    const isSearchMatch = searchQuery && file.name.toLowerCase().includes(searchQuery);
+                    const highlightClass = isSearchMatch ? 'search-match-highlight' : '';
+
                     const card = document.createElement("div");
-                    card.className = "bg-white border border-gray-200 rounded-xl p-5 hover:shadow-lg transition";
+                    card.className = `bg-white border border-gray-200 rounded-xl p-5 hover:shadow-lg transition ${highlightClass}`;
 
                     card.innerHTML = `
                         <div class="flex items-center mb-3">
@@ -2976,30 +3745,28 @@
 
     <!-- Profile Modal -->
     <div id="profileModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50">
-        <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
+        <div class="min-h-screen px-4 py-6 sm:py-12 flex items-center justify-center">
+            <div class="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-2xl w-full max-h-[calc(100vh-3rem)] sm:max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col">
                 <!-- Header -->
-                <div class="bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] text-white p-6 rounded-t-2xl">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                <div class="bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white p-4 sm:p-6 rounded-t-xl sm:rounded-t-2xl flex-shrink-0">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-2xl flex-shrink-0">
                                 AP
                             </div>
-                            <div>
-                                <h2 class="text-2xl font-bold">My Profile</h2>
-                                <p class="text-[#2f6e4e]/20 text-sm">Manage your account information</p>
+                            <div class="min-w-0">
+                                <h2 class="text-lg sm:text-2xl font-bold">My Profile</h2>
+                                <p class="text-white/80 text-xs sm:text-sm">Manage your account information</p>
                             </div>
                         </div>
-                        <button onclick="closeProfileModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
+                        <button onclick="closeProfileModal()" class="flex-shrink-0 w-11 h-11 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-white/30 hover:bg-white/40 active:bg-white/50 text-white transition-all duration-200 text-2xl sm:text-xl font-bold leading-none">
+                        ✕
                         </button>
                     </div>
                 </div>
 
-                <!-- Body -->
-                <div class="p-6 space-y-6">
+                <!-- Body (Scrollable) -->
+                <div class="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1">
                     <!-- Account Info Section -->
                     <div>
                         <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
