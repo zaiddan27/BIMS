@@ -29,6 +29,27 @@
       .modal-open {
         overflow: hidden;
       }
+
+      /* Improved Calendar Header Alignment */
+      .fc .fc-col-header-cell {
+        text-align: center !important;
+        vertical-align: middle !important;
+        font-weight: 600 !important;
+        padding: 12px 8px !important;
+        font-size: 0.8125rem !important;
+      }
+
+      .fc .fc-col-header-cell .fc-scrollgrid-sync-inner {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 100% !important;
+      }
+
+      .fc .fc-col-header-cell-cushion {
+        display: inline-block !important;
+        padding: 0 !important;
+      }
       .icon-wrapper { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
       .icon-wrapper:hover { transform: translateY(-2px); }
       .nav-link svg { transition: all 0.3s ease; }
@@ -41,6 +62,172 @@
       .status-icon-rejected { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
       .icon-primary { filter: drop-shadow(0 2px 4px rgba(47, 110, 78, 0.1)); }
       .icon-glow { filter: drop-shadow(0 0 8px rgba(47, 110, 78, 0.3)); }
+
+      /* CRITICAL: Force Calendar Grid Visibility on Mobile */
+      @media (max-width: 767px) {
+        /* Calendar wrapper - allow horizontal scroll */
+        .bg-white.rounded-xl:has(#calendar) {
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+        }
+
+        /* Force calendar container to have height and be visible */
+        #calendar {
+          width: 100% !important;
+          min-width: 340px !important;
+          min-height: 450px !important;
+          overflow: visible !important;
+        }
+
+        /* Force main calendar container to display */
+        .fc,
+        .fc-theme-standard {
+          display: block !important;
+          width: 100% !important;
+          min-height: 450px !important;
+        }
+
+        /* Force view harness to display */
+        .fc .fc-view-harness {
+          display: block !important;
+          height: auto !important;
+          min-height: 400px !important;
+        }
+
+        /* Force daygrid view to display */
+        .fc .fc-daygrid,
+        .fc .fc-dayGridMonth-view {
+          display: block !important;
+        }
+
+        /* Force scrollgrid (main table) to display */
+        .fc .fc-scrollgrid,
+        .fc-scrollgrid {
+          display: table !important;
+          width: 100% !important;
+          border-collapse: collapse !important;
+        }
+
+        /* Force table structure elements to display */
+        .fc-scrollgrid-sync-table {
+          display: table !important;
+          width: 100% !important;
+        }
+
+        /* Force thead and tbody to display */
+        .fc thead,
+        .fc tbody,
+        .fc .fc-scrollgrid thead,
+        .fc .fc-scrollgrid tbody,
+        .fc .fc-daygrid-body,
+        .fc .fc-col-header {
+          display: table-row-group !important;
+        }
+
+        /* Force table rows to display */
+        .fc tr,
+        .fc .fc-scrollgrid tr,
+        .fc-daygrid-day-frame tr {
+          display: table-row !important;
+        }
+
+        /* Force table cells to display */
+        .fc th,
+        .fc td,
+        .fc .fc-daygrid-day,
+        .fc .fc-col-header-cell,
+        .fc .fc-scrollgrid-sync-inner {
+          display: table-cell !important;
+          vertical-align: top !important;
+          border: 1px solid #e5e7eb !important;
+        }
+
+        /* Ensure day cells have minimum height */
+        .fc .fc-daygrid-day {
+          min-height: 60px !important;
+          height: auto !important;
+        }
+
+        /* Force day frame to display */
+        .fc .fc-daygrid-day-frame {
+          display: flex !important;
+          flex-direction: column !important;
+          min-height: 58px !important;
+          padding: 2px !important;
+        }
+
+        /* Force day top (date number area) to display */
+        .fc .fc-daygrid-day-top {
+          display: flex !important;
+          justify-content: flex-end !important;
+        }
+
+        /* Style day numbers */
+        .fc .fc-daygrid-day-number {
+          display: block !important;
+          padding: 4px !important;
+          font-size: 0.875rem !important;
+        }
+
+        /* Force scrollgrid sections to display */
+        .fc-scrollgrid-section,
+        .fc-scrollgrid-section-header,
+        .fc-scrollgrid-section-body,
+        .fc-scrollgrid-section-footer {
+          display: table-row-group !important;
+        }
+
+        /* Column headers - properly aligned for mobile */
+        .fc .fc-col-header-cell {
+          font-size: 0.75rem !important;
+          padding: 10px 4px !important;
+          text-align: center !important;
+          vertical-align: middle !important;
+          font-weight: 600 !important;
+        }
+
+        .fc .fc-col-header-cell .fc-scrollgrid-sync-inner {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+
+        /* Ensure events display */
+        .fc-daygrid-event-harness,
+        .fc-daygrid-event {
+          display: block !important;
+        }
+      }
+
+      /* Large phones (430px - 767px) */
+      @media (min-width: 430px) and (max-width: 767px) {
+        #calendar {
+          min-width: 400px !important;
+        }
+
+        .fc .fc-daygrid-day {
+          min-height: 70px !important;
+        }
+
+        .fc .fc-daygrid-day-number {
+          font-size: 1rem !important;
+          padding: 6px !important;
+        }
+
+        .fc .fc-col-header-cell {
+          font-size: 0.875rem !important;
+          padding: 12px 6px !important;
+          text-align: center !important;
+          vertical-align: middle !important;
+          font-weight: 600 !important;
+        }
+
+        .fc .fc-col-header-cell .fc-scrollgrid-sync-inner {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-50">
@@ -216,11 +403,11 @@
               </div>
               <div class="flex items-center space-x-4">
                 <div class="relative">
-                  <button onclick="toggleNotificationModal()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                  <button onclick="toggleNotificationModal()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
-                    <span id="notificationCount" class="hidden absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">5</span>
+                    <span id="notificationCount" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
                   </button>
                 </div>
                 <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="openProfileModal()">

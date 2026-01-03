@@ -265,15 +265,15 @@
                 <div class="bg-white rounded-xl shadow-sm mb-6">
                     <div class="border-b border-gray-200">
                         <nav class="flex -mb-px">
-                            <button onclick="switchTab('pending')" class="approval-tab active px-8 py-4 text-sm font-medium text-[#2f6e4e] border-b-2 border-[#2f6e4e] transition">
+                            <button data-tab="pending" onclick="switchTab('pending')" class="approval-tab active px-8 py-4 text-sm font-medium text-[#2f6e4e] border-b-2 border-[#2f6e4e] transition">
                                 Pending Approval
                                 <span class="ml-2 px-2 py-1 text-xs bg-orange-100 text-orange-600 rounded-full">5</span>
                             </button>
-                            <button onclick="switchTab('approved')" class="approval-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-[#2f6e4e] hover:border-[#2f6e4e] border-b-2 border-transparent transition">
+                            <button data-tab="approved" onclick="switchTab('approved')" class="approval-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-[#2f6e4e] hover:border-[#2f6e4e] border-b-2 border-transparent transition">
                                 Approved
                                 <span class="ml-2 px-2 py-1 text-xs bg-gray-100 rounded-full">42</span>
                             </button>
-                            <button onclick="switchTab('rejected')" class="approval-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-[#2f6e4e] hover:border-[#2f6e4e] border-b-2 border-transparent transition">
+                            <button data-tab="rejected" onclick="switchTab('rejected')" class="approval-tab px-8 py-4 text-sm font-medium text-gray-500 hover:text-[#2f6e4e] hover:border-[#2f6e4e] border-b-2 border-transparent transition">
                                 Rejected
                                 <span class="ml-2 px-2 py-1 text-xs bg-gray-100 rounded-full">3</span>
                             </button>
@@ -1059,7 +1059,7 @@
             // Render pending
             const pendingSection = document.getElementById('pendingSection');
             if (pendingProjects.length === 0) {
-                pendingSection.innerHTML += '<div class="bg-white rounded-xl shadow-sm p-12 text-center"><svg class="w-16 h-16 text-green-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><h3 class="text-lg font-semibold text-gray-700 mb-2">All Caught Up!</h3><p class="text-gray-500">No pending approvals at the moment</p></div>';
+                pendingSection.innerHTML = '<div class="bg-white rounded-xl shadow-sm p-12 text-center"><svg class="w-16 h-16 text-green-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><h3 class="text-lg font-semibold text-gray-700 mb-2">All Caught Up!</h3><p class="text-gray-500">No pending approvals at the moment</p></div>';
             } else {
                 pendingSection.innerHTML = '<h2 class="text-lg font-bold text-gray-800 mb-4">Projects Awaiting Your Approval</h2>' +
                     pendingProjects.map(project => renderProjectCard(project)).join('');
@@ -1142,20 +1142,37 @@
         }
 
         function switchTab(tab) {
+            console.log('switchTab called with:', tab);
             currentTab = tab;
 
-            // Update tab styles
-            document.querySelectorAll('.approval-tab').forEach(t => {
+            // Update tab styles - remove active from all tabs
+            const allTabs = document.querySelectorAll('.approval-tab');
+            console.log('Found tabs:', allTabs.length);
+
+            allTabs.forEach(t => {
                 t.classList.remove('active', 'text-[#2f6e4e]', 'border-[#2f6e4e]');
                 t.classList.add('text-gray-500', 'border-transparent');
             });
-            event.target.classList.add('active', 'text-[#2f6e4e]', 'border-[#2f6e4e]');
-            event.target.classList.remove('text-gray-500', 'border-transparent');
+
+            // Add active styles to the clicked tab using data attribute
+            const activeButton = document.querySelector(`[data-tab="${tab}"]`);
+            console.log('Active button found:', activeButton);
+
+            if (activeButton) {
+                activeButton.classList.add('active', 'text-[#2f6e4e]', 'border-[#2f6e4e]');
+                activeButton.classList.remove('text-gray-500', 'border-transparent');
+            }
 
             // Show/hide sections
-            document.getElementById('pendingSection').classList.toggle('hidden', tab !== 'pending');
-            document.getElementById('approvedSection').classList.toggle('hidden', tab !== 'approved');
-            document.getElementById('rejectedSection').classList.toggle('hidden', tab !== 'rejected');
+            const pendingSection = document.getElementById('pendingSection');
+            const approvedSection = document.getElementById('approvedSection');
+            const rejectedSection = document.getElementById('rejectedSection');
+
+            if (pendingSection) pendingSection.classList.toggle('hidden', tab !== 'pending');
+            if (approvedSection) approvedSection.classList.toggle('hidden', tab !== 'approved');
+            if (rejectedSection) rejectedSection.classList.toggle('hidden', tab !== 'rejected');
+
+            console.log('Tab switch complete');
         }
 
         function viewProjectDetails(id) {
@@ -1539,17 +1556,6 @@
         // Initialize notification count on page load
         updateNotificationCount();
 
-        // Initialize captain profile display on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Update header with captain's name
-            const middleInitial = captainProfile.middleName ? ` ${captainProfile.middleName.charAt(0)}.` : '';
-            const fullName = `Hon. ${captainProfile.firstName}${middleInitial} ${captainProfile.lastName}`;
-            document.getElementById('headerUserName').textContent = fullName;
-
-            // Update header avatar
-            updateHeaderAvatar();
-        });
-
         // Update current date
         function updateCurrentDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -1559,7 +1565,20 @@
                 dateElement.textContent = currentDate;
             }
         }
-        updateCurrentDate();
+
+        // Initialize captain profile display on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update current date
+            updateCurrentDate();
+
+            // Update header with captain's name
+            const middleInitial = captainProfile.middleName ? ` ${captainProfile.middleName.charAt(0)}.` : '';
+            const fullName = `Hon. ${captainProfile.firstName}${middleInitial} ${captainProfile.lastName}`;
+            document.getElementById('headerUserName').textContent = fullName;
+
+            // Update header avatar
+            updateHeaderAvatar();
+        });
 
         // Create notification for SK when captain makes a decision
         function createSKNotification(project, decision, comments) {

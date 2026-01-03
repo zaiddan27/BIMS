@@ -20,6 +20,25 @@
    >= 1025px portrait OR >= 1280px landscape
 ======================================== */
 
+/* Desktop: Ensure announcement button stays compact (not full-width) */
+@media (min-width: 768px) {
+  .bg-white.rounded-xl.shadow-sm > .flex.items-center.justify-between.mb-6 {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
+  /* CRITICAL FIX: Create Project button must stay compact on desktop */
+  #createProjectBtn {
+    width: auto !important;
+    flex: 0 0 auto !important;
+  }
+
+  .bg-white.rounded-xl.shadow-sm > .flex.items-center.justify-between.mb-6 button {
+    width: auto !important;
+    flex-shrink: 0 !important;
+  }
+}
+
 /* ========================================
    MOBILE NAVIGATION SYSTEM
    Only visible on tablet and mobile
@@ -709,30 +728,173 @@ button,
     gap: 0.375rem !important;
   }
 
+  /* ===== CALENDAR RESPONSIVE FIXES - SMALL PHONES ===== */
+
+  /* Calendar container - allow horizontal scroll on very small screens */
+  #calendar {
+    width: 100% !important;
+    min-height: 400px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Force calendar to be visible and have height */
+  .fc {
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+    min-height: 400px !important;
+  }
+
+  .fc-view-harness {
+    height: auto !important;
+    min-height: 400px !important;
+  }
+
+  /* Ensure calendar view is visible */
+  .fc-view {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* Calendar day grid - set minimum widths */
+  .fc .fc-scrollgrid {
+    min-width: 100% !important;
+    display: table !important;
+    visibility: visible !important;
+    border-collapse: collapse !important;
+  }
+
+  /* Force all calendar table parts to display */
+  .fc .fc-scrollgrid-section,
+  .fc .fc-scrollgrid-section-header,
+  .fc .fc-scrollgrid-section-body,
+  .fc .fc-scrollgrid-section-footer {
+    display: table-row-group !important;
+    visibility: visible !important;
+  }
+
+  .fc .fc-daygrid-body,
+  .fc .fc-col-header,
+  .fc thead,
+  .fc tbody {
+    display: table-row-group !important;
+    visibility: visible !important;
+  }
+
+  /* Table rows */
+  .fc tr {
+    display: table-row !important;
+    visibility: visible !important;
+  }
+
+  /* Day cells - ensure minimum touch-friendly size */
+  .fc .fc-daygrid-day,
+  .fc .fc-col-header-cell,
+  .fc td,
+  .fc th {
+    min-height: 50px !important;
+    display: table-cell !important;
+    visibility: visible !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* Day frame inside cells */
+  .fc .fc-daygrid-day-frame {
+    display: block !important;
+    min-height: 48px !important;
+    visibility: visible !important;
+  }
+
+  /* Day top (where date number appears) */
+  .fc .fc-daygrid-day-top {
+    display: flex !important;
+    visibility: visible !important;
+  }
+
+  /* Day numbers - larger and more readable */
+  .fc .fc-daygrid-day-number {
+    font-size: 0.875rem !important;
+    padding: 4px !important;
+  }
+
+  /* Column headers (day names) - more readable */
+  .fc .fc-col-header-cell {
+    font-size: 0.75rem !important;
+    padding: 8px 4px !important;
+  }
+
+  /* Events in calendar - better sizing */
+  .fc .fc-event {
+    font-size: 0.6875rem !important;
+    padding: 2px 4px !important;
+    margin: 1px !important;
+  }
+
+  .fc .fc-event-title {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  /* Time grid (week/day view) - better sizing */
+  .fc .fc-timegrid-slot {
+    height: 2.5rem !important;
+  }
+
+  .fc .fc-timegrid-event {
+    font-size: 0.75rem !important;
+  }
+
+  /* Calendar wrapper - prevent overflow */
+  .bg-white.rounded-xl:has(#calendar) {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
   /* FIX 3: Search Bar Layout - Stack Vertically */
-  /* Search container should stack */
+  /* Search container should stack - covers all search/filter patterns */
   .flex.items-center.gap-4:has(#projectSearch),
+  .flex.items-center.gap-4:has(#fileSearch),
   .flex.items-center.gap-4:has([id*="search" i]),
-  .flex.items-center.gap-4:has([id*="Search"]) {
+  .flex.items-center.gap-4:has([id*="Search"]),
+  .mb-6.flex.items-center.gap-4:has(input[type="text"]),
+  .mb-6.flex.items-center.gap-4:has(select),
+  .flex.items-center.gap-4:has(#categoryFilter),
+  .flex.items-center.gap-4:has(#filterCategory) {
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 0.75rem !important;
   }
 
   /* Search input full width */
-  .flex-1.relative:has(input[type="text"]) {
+  .flex-1.relative:has(input[type="text"]),
+  .flex-1:has(#projectSearch),
+  .flex-1:has(#fileSearch) {
     flex: none !important;
+    width: 100% !important;
+  }
+
+  /* All search inputs full width */
+  #projectSearch,
+  #fileSearch,
+  input[type="text"][placeholder*="Search" i],
+  input[type="text"][placeholder*="search" i] {
     width: 100% !important;
   }
 
   /* Filter select and button full width */
   select[id*="Filter"],
   select[id*="filter"],
+  #categoryFilter,
+  #filterCategory,
   button:has(+ select),
-  .flex.items-center.gap-4 button {
+  .flex.items-center.gap-4 button,
+  .mb-6.flex.items-center.gap-4 button {
     width: 100% !important;
     min-width: 100% !important;
   }
+
 
   /* FIX 4: My Applications Cards - Force Single Column */
   #myApplicationsGrid,
@@ -981,18 +1143,20 @@ button,
      Issues: Cramped buttons, tabs, modals
   ======================================== */
 
-  /* FIX 10: SK Dashboard - Manage Announcements Header */
-  /* Stack heading and button in announcement sections */
-  .bg-white.rounded-xl.shadow-sm > .flex.items-center.justify-between.mb-6 {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 1rem !important;
-  }
+  /* FIX 10: SK Dashboard - Manage Announcements Header (MOBILE ONLY) */
+  /* Stack heading and button in announcement sections - ONLY ON MOBILE */
+  @media (max-width: 767px) {
+    .bg-white.rounded-xl.shadow-sm > .flex.items-center.justify-between.mb-6 {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 1rem !important;
+    }
 
-  /* Full width button on mobile */
-  .bg-white.rounded-xl.shadow-sm > .flex.items-center.justify-between.mb-6 button {
-    width: 100% !important;
-    justify-content: center !important;
+    /* Full width button on mobile */
+    .bg-white.rounded-xl.shadow-sm > .flex.items-center.justify-between.mb-6 button {
+      width: 100% !important;
+      justify-content: center !important;
+    }
   }
 
   /* FIX 11: SK Projects - Action Bar - MOVED TO SMALL PHONE SECTION */
@@ -1427,13 +1591,6 @@ button,
     min-width: 100% !important;
   }
 
-  /* Create Project button full width and no left margin on small phones */
-  #createProjectBtn,
-  button:has(svg):has([d*="M12 4v16m8-8H4"]) {
-    width: 100% !important;
-    margin-left: 0 !important;
-    justify-content: center !important;
-  }
 
   /* FIX: View Applicants Tab - Cramped Layout */
 
@@ -1602,6 +1759,130 @@ button,
 
   .fc .fc-button-group {
     gap: 0.5rem !important; /* vs 0.375rem */
+  }
+
+  /* ===== CALENDAR RESPONSIVE FIXES - LARGE PHONES ===== */
+
+  /* Calendar container - better sizing */
+  #calendar {
+    width: 100% !important;
+    min-height: 500px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Force calendar to be visible and have height */
+  .fc {
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+    min-height: 500px !important;
+  }
+
+  .fc-view-harness {
+    height: auto !important;
+    min-height: 500px !important;
+  }
+
+  /* Ensure calendar view is visible */
+  .fc-view {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* Calendar day grid - ensure visibility */
+  .fc .fc-scrollgrid {
+    min-width: 100% !important;
+    display: table !important;
+    visibility: visible !important;
+    border-collapse: collapse !important;
+  }
+
+  /* Force all calendar table parts to display */
+  .fc .fc-scrollgrid-section,
+  .fc .fc-scrollgrid-section-header,
+  .fc .fc-scrollgrid-section-body,
+  .fc .fc-scrollgrid-section-footer {
+    display: table-row-group !important;
+    visibility: visible !important;
+  }
+
+  .fc .fc-daygrid-body,
+  .fc .fc-col-header,
+  .fc thead,
+  .fc tbody {
+    display: table-row-group !important;
+    visibility: visible !important;
+  }
+
+  /* Table rows */
+  .fc tr {
+    display: table-row !important;
+    visibility: visible !important;
+  }
+
+  /* Day cells - larger touch targets */
+  .fc .fc-daygrid-day,
+  .fc .fc-col-header-cell,
+  .fc td,
+  .fc th {
+    min-height: 60px !important; /* vs 50px on 375px */
+    display: table-cell !important;
+    visibility: visible !important;
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* Day frame inside cells */
+  .fc .fc-daygrid-day-frame {
+    display: block !important;
+    min-height: 58px !important;
+    visibility: visible !important;
+  }
+
+  /* Day top (where date number appears) */
+  .fc .fc-daygrid-day-top {
+    display: flex !important;
+    visibility: visible !important;
+  }
+
+  /* Day numbers - more readable */
+  .fc .fc-daygrid-day-number {
+    font-size: 1rem !important; /* vs 0.875rem on 375px */
+    padding: 6px !important; /* vs 4px */
+  }
+
+  /* Column headers - larger and clearer */
+  .fc .fc-col-header-cell {
+    font-size: 0.875rem !important; /* vs 0.75rem on 375px */
+    padding: 10px 6px !important; /* vs 8px 4px */
+  }
+
+  /* Events - more readable */
+  .fc .fc-event {
+    font-size: 0.75rem !important; /* vs 0.6875rem on 375px */
+    padding: 3px 6px !important; /* vs 2px 4px */
+    margin: 2px !important; /* vs 1px */
+  }
+
+  .fc .fc-event-title {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  /* Time grid - better spacing */
+  .fc .fc-timegrid-slot {
+    height: 3rem !important; /* vs 2.5rem on 375px */
+  }
+
+  .fc .fc-timegrid-event {
+    font-size: 0.875rem !important; /* vs 0.75rem on 375px */
+  }
+
+  /* Calendar wrapper - prevent overflow */
+  .bg-white.rounded-xl:has(#calendar) {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 
 
@@ -3204,16 +3485,22 @@ button,
   /* Remove old code - no longer needed with single-row layout */
 
   /* NOTIFICATION BELL - COMPACT */
-  header.bg-gradient-to-r .notification-icon {
+  header.bg-gradient-to-r .notification-icon,
+  header.bg-gradient-to-r button[onclick*="Notification"],
+  header.bg-gradient-to-r button[title*="Notification"] {
     padding: 0.5rem !important; /* 8px */
   }
 
-  header.bg-gradient-to-r .notification-icon svg {
+  header.bg-gradient-to-r .notification-icon svg,
+  header.bg-gradient-to-r button[onclick*="Notification"] svg,
+  header.bg-gradient-to-r button[title*="Notification"] svg {
     width: 1.25rem !important; /* 20px */
     height: 1.25rem !important;
   }
 
-  header.bg-gradient-to-r #notificationBadge {
+  /* Notification Badge - Consistent for both SK and Youth pages */
+  header.bg-gradient-to-r #notificationBadge,
+  header.bg-gradient-to-r #notificationCount {
     width: 1rem !important; /* 16px */
     height: 1rem !important;
     font-size: 0.625rem !important; /* 10px */
@@ -3241,6 +3528,28 @@ button,
     padding: 0.25rem !important; /* 4px - icon only */
     gap: 0 !important; /* No gap needed, avatar only */
   }
+
+  /* ===== SK PROJECTS - BUTTON STAYS COMPACT ===== */
+  #createProjectBtn {
+    width: auto !important;
+    max-width: max-content !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ===== NOTIFICATION BADGE OVERFLOW FIX (All screen sizes) ===== */
+/* Ensure notification badge is never cut off by overflow clipping */
+header.bg-gradient-to-r .relative,
+header.bg-gradient-to-r button.notification-icon,
+header.bg-gradient-to-r button[onclick*="Notification"],
+header.bg-gradient-to-r button[title*="Notification"] {
+  overflow: visible !important;
+}
+
+/* Ensure notification buttons get proper styling even without .notification-icon class */
+header.bg-gradient-to-r button[onclick*="Notification"],
+header.bg-gradient-to-r button[title*="Notification"] {
+  position: relative;
 }
 
 /* ===== PHONE LARGE (430px - 767px) ===== */
@@ -3331,16 +3640,22 @@ button,
   /* Remove old code - no longer needed with single-row layout */
 
   /* NOTIFICATION BELL - STANDARD SIZE */
-  header.bg-gradient-to-r .notification-icon {
+  header.bg-gradient-to-r .notification-icon,
+  header.bg-gradient-to-r button[onclick*="Notification"],
+  header.bg-gradient-to-r button[title*="Notification"] {
     padding: 0.625rem !important; /* 10px */
   }
 
-  header.bg-gradient-to-r .notification-icon svg {
+  header.bg-gradient-to-r .notification-icon svg,
+  header.bg-gradient-to-r button[onclick*="Notification"] svg,
+  header.bg-gradient-to-r button[title*="Notification"] svg {
     width: 1.375rem !important; /* 22px */
     height: 1.375rem !important;
   }
 
-  header.bg-gradient-to-r #notificationBadge {
+  /* Notification Badge - Consistent for both SK and Youth pages */
+  header.bg-gradient-to-r #notificationBadge,
+  header.bg-gradient-to-r #notificationCount {
     width: 1.125rem !important; /* 18px */
     height: 1.125rem !important;
     font-size: 0.6875rem !important; /* 11px */
@@ -3365,6 +3680,26 @@ button,
   header.bg-gradient-to-r button[onclick*="Profile"].flex.items-center {
     padding: 0.375rem !important; /* 6px - icon only, slightly more comfortable than 375px */
     gap: 0 !important; /* No gap needed, avatar only */
+  }
+
+  /* ===== SK PROJECTS - BUTTON STAYS COMPACT ===== */
+  #createProjectBtn {
+    width: auto !important;
+    max-width: max-content !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ========================================
+   DESKTOP OVERRIDE - Keep Create Project button compact
+======================================== */
+
+@media (min-width: 768px) {
+  /* Ensure Create Project button stays auto-width on desktop */
+  #createProjectBtn {
+    width: auto !important;
+    max-width: none !important;
+    flex: 0 0 auto !important;
   }
 }
 
