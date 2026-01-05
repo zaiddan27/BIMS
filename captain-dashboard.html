@@ -209,55 +209,63 @@
             </header>
 
             <!-- Main Content Area -->
-            <main class="p-8">
+            <main class="p-4 sm:p-6 lg:p-8">
                 <!-- Stats Overview -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Pending Approval</p>
-                                <p class="text-3xl font-bold text-orange-600 mt-2">5</p>
-                            </div>
-                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+                    <!-- Pending Approval Card -->
+                    <div class="group bg-gradient-to-br from-orange-50 to-white rounded-2xl shadow-md hover:shadow-xl p-5 sm:p-6 border-l-4 border-orange-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                             </div>
                         </div>
+                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Pending Approval</p>
+                        <p class="text-3xl sm:text-4xl font-black text-gray-900" id="pendingCount">5</p>
+                        <p class="text-xs text-gray-500 mt-1">Awaiting review</p>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Approved</p>
-                                <p class="text-3xl font-bold text-green-600 mt-2">42</p>
-                            </div>
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <!-- Approved Card -->
+                    <div class="group bg-gradient-to-br from-green-50 to-white rounded-2xl shadow-md hover:shadow-xl p-5 sm:p-6 border-l-4 border-green-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                             </div>
                         </div>
+                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Approved</p>
+                        <p class="text-3xl sm:text-4xl font-black text-gray-900" id="approvedCount">42</p>
+                        <p class="text-xs text-gray-500 mt-1">Projects greenlit</p>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Rejected</p>
-                                <p class="text-3xl font-bold text-red-600 mt-2">3</p>
-                            </div>
-                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <!-- Rejected Card -->
+                    <div class="group bg-gradient-to-br from-red-50 to-white rounded-2xl shadow-md hover:shadow-xl p-5 sm:p-6 border-l-4 border-red-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                             </div>
                         </div>
+                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Rejected</p>
+                        <p class="text-3xl sm:text-4xl font-black text-gray-900" id="rejectedCount">3</p>
+                        <p class="text-xs text-gray-500 mt-1">Not approved</p>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-500 font-medium">Total Budget</p>
-                                <p class="text-3xl font-bold text-gray-800 mt-2">₱1.5M</p>
-                            </div>
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <!-- Total Budget Card -->
+                    <div class="group bg-gradient-to-br from-blue-50 to-white rounded-2xl shadow-md hover:shadow-xl p-5 sm:p-6 border-l-4 border-blue-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                             </div>
                         </div>
+                        <p class="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">Total Budget</p>
+                        <p class="text-2xl sm:text-3xl font-black text-gray-900" id="totalBudget">₱1.5M</p>
+                        <p class="text-xs text-gray-500 mt-1">All projects</p>
                     </div>
                 </div>
 
@@ -282,45 +290,95 @@
                 </div>
 
                 <!-- Pending Approvals Section -->
-                <div id="pendingSection" class="space-y-4">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4">Projects Awaiting Your Approval</h2>
-                    <!-- Pending projects will be rendered here -->
+                <div id="pendingSection">
+                    <h2 class="text-lg font-bold text-gray-800 mb-6">Projects Awaiting Your Approval</h2>
+                    <div id="pendingGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Pending project cards will be rendered here -->
+                    </div>
+                    <!-- Pagination for Pending -->
+                    <div id="pendingPaginationDots" class="hidden flex justify-center gap-2 mt-6"></div>
+                    <div class="mt-4 flex justify-end">
+                        <nav id="pendingPaginationNav" class="hidden inline-flex rounded-md shadow-sm" role="navigation" aria-label="Pagination">
+                            <button onclick="navigatePage('pending', -1)" class="px-3 py-2 sm:px-4 sm:py-2 text-sm border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="hidden sm:inline">Prev</span>
+                                <span class="sm:hidden">‹</span>
+                            </button>
+                            <button onclick="navigatePage('pending', 1)" class="px-3 py-2 sm:px-4 sm:py-2 text-sm border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="hidden sm:inline">Next</span>
+                                <span class="sm:hidden">›</span>
+                            </button>
+                        </nav>
+                    </div>
                 </div>
 
                 <!-- Approved Section -->
-                <div id="approvedSection" class="hidden space-y-4">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4">Approved Projects</h2>
-                    <!-- Approved projects will be rendered here -->
+                <div id="approvedSection" class="hidden">
+                    <h2 class="text-lg font-bold text-gray-800 mb-6">Approved Projects</h2>
+                    <div id="approvedGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Approved project cards will be rendered here -->
+                    </div>
+                    <!-- Pagination for Approved -->
+                    <div id="approvedPaginationDots" class="hidden flex justify-center gap-2 mt-6"></div>
+                    <div class="mt-4 flex justify-end">
+                        <nav id="approvedPaginationNav" class="hidden inline-flex rounded-md shadow-sm" role="navigation" aria-label="Pagination">
+                            <button onclick="navigatePage('approved', -1)" class="px-3 py-2 sm:px-4 sm:py-2 text-sm border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="hidden sm:inline">Prev</span>
+                                <span class="sm:hidden">‹</span>
+                            </button>
+                            <button onclick="navigatePage('approved', 1)" class="px-3 py-2 sm:px-4 sm:py-2 text-sm border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="hidden sm:inline">Next</span>
+                                <span class="sm:hidden">›</span>
+                            </button>
+                        </nav>
+                    </div>
                 </div>
 
                 <!-- Rejected Section -->
-                <div id="rejectedSection" class="hidden space-y-4">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4">Rejected Projects</h2>
-                    <!-- Rejected projects will be rendered here -->
+                <div id="rejectedSection" class="hidden">
+                    <h2 class="text-lg font-bold text-gray-800 mb-6">Rejected Projects</h2>
+                    <div id="rejectedGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Rejected project cards will be rendered here -->
+                    </div>
+                    <!-- Pagination for Rejected -->
+                    <div id="rejectedPaginationDots" class="hidden flex justify-center gap-2 mt-6"></div>
+                    <div class="mt-4 flex justify-end">
+                        <nav id="rejectedPaginationNav" class="hidden inline-flex rounded-md shadow-sm" role="navigation" aria-label="Pagination">
+                            <button onclick="navigatePage('rejected', -1)" class="px-3 py-2 sm:px-4 sm:py-2 text-sm border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="hidden sm:inline">Prev</span>
+                                <span class="sm:hidden">‹</span>
+                            </button>
+                            <button onclick="navigatePage('rejected', 1)" class="px-3 py-2 sm:px-4 sm:py-2 text-sm border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span class="hidden sm:inline">Next</span>
+                                <span class="sm:hidden">›</span>
+                            </button>
+                        </nav>
+                    </div>
                 </div>
             </main>
         </div>
     </div>
 
     <!-- Approval Modal -->
-    <div id="approvalModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <!-- Modal Header -->
-            <div class="sticky top-0 bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] px-6 py-4 flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl font-bold text-white" id="modalProjectName"></h2>
-                    <p class="text-[#2f6e4e]/20 text-sm mt-1">Project Review & Approval</p>
+    <div id="approvalModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] flex flex-col overflow-hidden">
+            <!-- Modal Header (Sticky) -->
+            <div class="sticky top-0 bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between z-50 shadow-lg flex-shrink-0">
+                <div class="flex-1 min-w-0">
+                    <h2 class="text-lg sm:text-xl font-bold text-white truncate" id="modalProjectName"></h2>
+                    <p class="text-white/70 text-xs sm:text-sm mt-1">Project Review & Approval</p>
                 </div>
-                <button onclick="closeModal()" class="text-white/80 hover:text-white transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <button onclick="closeModal()" class="text-white/80 hover:text-white transition ml-4 flex-shrink-0">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
-            <div class="p-6">
+            <!-- Modal Body (Scrollable) -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="p-4 sm:p-6">
                 <!-- Project Information Card -->
-                <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-5 mb-6">
-                    <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-5 h-5 text-[#2f6e4e] mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div class="bg-gradient-to-br from-gray-50 to-white rounded-lg sm:rounded-xl border border-gray-200 p-3 sm:p-5 mb-4 sm:mb-6">
+                    <h3 class="text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 flex items-center">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[#2f6e4e] mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Project Information
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -352,18 +410,18 @@
                 </div>
 
                 <!-- Target Beneficiaries -->
-                <div class="mb-6 bg-white rounded-xl border border-gray-200 p-5">
-                    <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center">
-                        <svg class="w-5 h-5 text-[#2f6e4e] mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <div class="mb-4 sm:mb-6 bg-white rounded-lg sm:rounded-xl border border-gray-200 p-3 sm:p-5">
+                    <h3 class="text-sm sm:text-base font-bold text-gray-800 mb-2 sm:mb-3 flex items-center">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[#2f6e4e] mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         Target Beneficiaries
                     </h3>
-                    <p class="text-gray-600 leading-relaxed" id="modalBeneficiaries"></p>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed" id="modalBeneficiaries"></p>
                 </div>
 
                 <!-- Budget Breakdown -->
-                <div class="mb-6 bg-white rounded-xl border border-gray-200 p-5">
-                    <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center">
-                        <svg class="w-5 h-5 text-[#2f6e4e] mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                <div class="mb-4 sm:mb-6 bg-white rounded-lg sm:rounded-xl border border-gray-200 p-3 sm:p-5">
+                    <h3 class="text-sm sm:text-base font-bold text-gray-800 mb-2 sm:mb-3 flex items-center">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[#2f6e4e] mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                         Budget Breakdown
                     </h3>
                     <div id="modalBudgetBreakdown">
@@ -372,57 +430,68 @@
                 </div>
 
                 <!-- Project Description -->
-                <div class="mb-6 bg-white rounded-xl border border-gray-200 p-5">
-                    <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center">
-                        <svg class="w-5 h-5 text-[#2f6e4e] mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <div class="mb-4 sm:mb-6 bg-white rounded-lg sm:rounded-xl border border-gray-200 p-3 sm:p-5">
+                    <h3 class="text-sm sm:text-base font-bold text-gray-800 mb-2 sm:mb-3 flex items-center">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[#2f6e4e] mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         Project Description
                     </h3>
-                    <p class="text-gray-600 leading-relaxed whitespace-pre-wrap" id="modalDescription"></p>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed whitespace-pre-wrap" id="modalDescription"></p>
                 </div>
 
                 <!-- Approval Actions -->
-                <div id="approvalActions" class="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 p-5">
-                    <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center">
-                        <svg class="w-5 h-5 text-[#2f6e4e] mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+                <div id="approvalActions" class="bg-gradient-to-br from-gray-50 to-white rounded-lg sm:rounded-xl border border-gray-200 p-3 sm:p-5">
+                    <h3 class="text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 flex items-center">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-[#2f6e4e] mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
                         Approval Decision
                     </h3>
 
-                    <div class="mb-5">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Comments/Notes</label>
-                        <textarea id="approvalNotes" rows="4"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-[#3d8b64] transition"
-                            placeholder="Add any comments, requirements, or feedback for this project proposal..."></textarea>
+                    <div class="mb-4 sm:mb-5">
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Comments/Notes</label>
+                        <textarea id="approvalNotes" rows="3" class="sm:rows-4 w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-[#3d8b64] transition"
+                            placeholder="Add any comments, requirements, or feedback..."></textarea>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <button onclick="rejectProject()" class="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium shadow-sm hover:shadow-md">
-                            <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Reject Project
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <button onclick="rejectProject()" class="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium shadow-sm hover:shadow-md">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="hidden sm:inline">Reject Project</span><span class="sm:hidden">Reject</span>
                         </button>
-                        <button onclick="requestRevision()" class="flex-1 px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition font-medium shadow-sm hover:shadow-md">
-                            <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Request Revision
+                        <button onclick="requestRevision()" class="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition font-medium shadow-sm hover:shadow-md">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            <span class="hidden sm:inline">Request Revision</span><span class="sm:hidden">Revise</span>
                         </button>
-                        <button onclick="approveProject()" class="flex-1 px-6 py-3 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] transition font-medium shadow-sm hover:shadow-md">
-                            <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Approve Project
+                        <button onclick="approveProject()" class="flex-1 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] transition font-medium shadow-sm hover:shadow-md">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span class="hidden sm:inline">Approve Project</span><span class="sm:hidden">Approve</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- View Only Actions (for approved/rejected) -->
                 <div id="viewActions" class="hidden">
-                    <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-200 p-5 mb-4">
-                        <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center">
-                            <svg class="w-5 h-5 text-blue-600 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Decision Notes
+                    <div class="bg-gradient-to-br from-blue-50 to-white rounded-lg sm:rounded-xl border border-blue-200 p-3 sm:p-5 mb-3 sm:mb-4">
+                        <h3 class="text-sm sm:text-base font-bold text-gray-800 mb-2 sm:mb-3 flex items-center">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Previous Decision
                         </h3>
-                        <div class="bg-white rounded-lg p-4 border border-blue-100">
-                            <p class="text-gray-600 leading-relaxed" id="viewNotes"></p>
+                        <div class="bg-white rounded-lg p-3 sm:p-4 border border-blue-100 mb-3 sm:mb-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="text-xs sm:text-sm font-semibold text-gray-600">Status:</span>
+                                <span id="viewStatus" class="px-2 sm:px-3 py-1 text-xs font-bold rounded-lg"></span>
+                            </div>
+                            <div class="mt-3">
+                                <span class="text-xs sm:text-sm font-semibold text-gray-600">Notes:</span>
+                                <p class="text-xs sm:text-sm text-gray-600 leading-relaxed mt-1" id="viewNotes"></p>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                        <button onclick="closeModal()" class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium">
-                            <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Close
+                    <div class="flex justify-end space-x-2 sm:space-x-3 pt-3 sm:pt-4 border-t border-gray-200">
+                        <button onclick="reviewDecision()" class="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white rounded-lg hover:shadow-lg transition font-semibold text-sm">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            Review Decision
                         </button>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -945,9 +1014,9 @@
 
         // Sample project data
         const projects = [
-            {
-                id: 1, name: "New Year Community Festival 2026", status: "pending",
-                submittedBy: "SK Chairman", submissionDate: "Dec 10, 2025",
+            // PENDING PROJECTS (1 per category)
+            { id: 1, name: "New Year Community Festival 2026", status: "pending",
+                category: "Community", submittedBy: "SK Chairman", submissionDate: "Dec 10, 2025",
                 budget: 55000, volunteers: 60, startDate: "Dec 30, 2025", endDate: "Jan 1, 2026",
                 description: "A grand community festival to celebrate the New Year with cultural performances, games, and food stalls.",
                 beneficiaries: "500 Community members of all ages, 15 Local performers",
@@ -959,12 +1028,9 @@
                     { description: "Food and refreshments", cost: 18000 },
                     { description: "Decorations and banners", cost: 5000 },
                     { description: "Entertainment and performers", cost: 5000 }
-                ],
-                notes: ""
-            },
-            {
-                id: 2, name: "Youth Skills Training Program", status: "pending",
-                submittedBy: "SK Treasurer", submissionDate: "Dec 11, 2025",
+                ], notes: "" },
+            { id: 2, name: "Youth Skills Training Program", status: "pending",
+                category: "Education", submittedBy: "SK Treasurer", submissionDate: "Dec 11, 2025",
                 budget: 42000, volunteers: 35, startDate: "Jan 10, 2026", endDate: "Jan 25, 2026",
                 description: "Comprehensive skills training program covering digital literacy, entrepreneurship, and basic trades.",
                 beneficiaries: "60 Youth ages 18-30, 15 Out-of-school youth",
@@ -975,12 +1041,9 @@
                     { description: "Professional trainers fees", cost: 18000 },
                     { description: "Certificates and completion kits", cost: 4000 },
                     { description: "Meals and snacks for participants", cost: 5000 }
-                ],
-                notes: ""
-            },
-            {
-                id: 3, name: "Clean Water Access Project", status: "pending",
-                submittedBy: "SK Secretary", submissionDate: "Dec 12, 2025",
+                ], notes: "" },
+            { id: 3, name: "Clean Water Access Project", status: "pending",
+                category: "Health", submittedBy: "SK Secretary", submissionDate: "Dec 12, 2025",
                 budget: 85000, volunteers: 40, startDate: "Jan 15, 2026", endDate: "Feb 15, 2026",
                 description: "Installation of water filtration systems in 10 households without access to clean drinking water.",
                 beneficiaries: "10 Households (approximately 50 family members)",
@@ -991,144 +1054,393 @@
                     { description: "Installation labor and materials", cost: 15000 },
                     { description: "Water quality testing kits", cost: 5000 },
                     { description: "Educational materials and signage", cost: 5000 }
-                ],
-                notes: ""
-            },
-            {
-                id: 4, name: "Senior Citizens Health Check-up", status: "pending",
-                submittedBy: "SK Vice Chairman", submissionDate: "Dec 12, 2025",
-                budget: 28000, volunteers: 25, startDate: "Jan 20, 2026", endDate: "Jan 21, 2026",
-                description: "Free health screening and check-up services for senior citizens in the barangay.",
-                objectives: ["Monitor senior health", "Provide preventive care", "Health awareness"],
-                outcomes: ["80+ seniors screened", "Free medication for common ailments", "Health records updated"],
-                notes: ""
-            },
-            {
-                id: 5, name: "Scholarship Program Q1 2026", status: "pending",
-                submittedBy: "SK Chairman", submissionDate: "Dec 13, 2025",
-                budget: 120000, volunteers: 15, startDate: "Jan 5, 2026", endDate: "Mar 31, 2026",
-                description: "Educational assistance program for 20 deserving students from low-income families.",
-                objectives: ["Support education", "Reduce dropout rates", "Invest in youth future"],
-                outcomes: ["20 scholars selected", "Full semester support", "Academic monitoring system"],
-                notes: ""
-            },
-            // Approved projects
-            {
-                id: 6, name: "Christmas Gift Giving 2025", status: "approved",
-                submittedBy: "SK Chairman", submissionDate: "Nov 15, 2025",
+                ], notes: "" },
+            { id: 4, name: "Basketball League 2026", status: "pending",
+                category: "Sports", submittedBy: "SK Kagawad", submissionDate: "Dec 13, 2025",
+                budget: 48000, volunteers: 30, startDate: "Jan 20, 2026", endDate: "Feb 28, 2026",
+                description: "Inter-purok basketball tournament to promote sportsmanship and healthy competition among youth.",
+                beneficiaries: "150 Youth basketball players from 8 puroks",
+                objectives: ["Promote youth sports engagement", "Foster healthy competition", "Build community spirit"],
+                outcomes: ["8 teams registered", "40 games scheduled", "Champions awarded"],
+                budgetBreakdown: [
+                    { description: "Court rental and maintenance", cost: 12000 },
+                    { description: "Basketballs and equipment", cost: 8000 },
+                    { description: "Jerseys and uniforms", cost: 15000 },
+                    { description: "Trophies and medals", cost: 8000 },
+                    { description: "Referees and officials", cost: 5000 }
+                ], notes: "" },
+            { id: 5, name: "Tree Planting Initiative", status: "pending",
+                category: "Environment", submittedBy: "SK Secretary", submissionDate: "Dec 14, 2025",
+                budget: 32000, volunteers: 50, startDate: "Jan 25, 2026", endDate: "Jan 26, 2026",
+                description: "Massive tree planting activity to increase green spaces and promote environmental awareness.",
+                beneficiaries: "Entire barangay community and future generations",
+                objectives: ["Increase green coverage", "Combat climate change", "Educate on environmental care"],
+                outcomes: ["500 trees planted", "3 sites rehabilitated", "Community environmental awareness"],
+                budgetBreakdown: [
+                    { description: "Tree seedlings (500 pcs)", cost: 15000 },
+                    { description: "Gardening tools and equipment", cost: 8000 },
+                    { description: "Transportation and logistics", cost: 5000 },
+                    { description: "Meals for volunteers", cost: 4000 }
+                ], notes: "" },
+
+            // APPROVED PROJECTS (1 per category)
+            { id: 6, name: "Christmas Gift Giving 2025", status: "approved",
+                category: "Community", submittedBy: "SK Chairman", submissionDate: "Nov 15, 2025",
                 budget: 50000, volunteers: 52, startDate: "Dec 18, 2025", endDate: "Dec 18, 2025",
                 description: "Annual Christmas outreach program for underprivileged children.",
+                beneficiaries: "200 Underprivileged children and families",
                 objectives: ["Spread Christmas joy", "Support underprivileged families"],
                 outcomes: ["200 gift packs distributed", "Successful community event"],
-                notes: "Approved. Excellent initiative for the holiday season."
-            },
-            {
-                id: 7, name: "Sports Fest 2025", status: "approved",
-                submittedBy: "SK Treasurer", submissionDate: "Oct 20, 2025",
+                budgetBreakdown: [
+                    { description: "Gift packs (200 sets)", cost: 40000 },
+                    { description: "Venue and logistics", cost: 7000 },
+                    { description: "Entertainment", cost: 3000 }
+                ], notes: "Approved. Excellent initiative for the holiday season." },
+            { id: 7, name: "Digital Literacy Workshop", status: "approved",
+                category: "Education", submittedBy: "SK Secretary", submissionDate: "Oct 5, 2025",
+                budget: 28000, volunteers: 22, startDate: "Nov 15, 2025", endDate: "Nov 20, 2025",
+                description: "Week-long workshop teaching basic computer skills and internet safety to adults.",
+                beneficiaries: "40 Adults with limited digital knowledge",
+                objectives: ["Improve digital literacy", "Enhance employability", "Internet safety awareness"],
+                outcomes: ["40 participants trained", "Basic computer skills certified"],
+                budgetBreakdown: [
+                    { description: "Trainers fees", cost: 15000 },
+                    { description: "Training materials", cost: 8000 },
+                    { description: "Certificates", cost: 3000 },
+                    { description: "Snacks", cost: 2000 }
+                ], notes: "Approved. Addresses important community need for digital skills." },
+            { id: 8, name: "Medical Mission 2025", status: "approved",
+                category: "Health", submittedBy: "SK Vice Chairman", submissionDate: "Oct 10, 2025",
+                budget: 65000, volunteers: 45, startDate: "Nov 25, 2025", endDate: "Nov 26, 2025",
+                description: "Free medical and dental services for barangay residents including check-ups and medicines.",
+                beneficiaries: "300 Barangay residents of all ages",
+                objectives: ["Provide accessible healthcare", "Preventive health education", "Free medicines distribution"],
+                outcomes: ["300+ patients served", "Free medicines provided", "Health records updated"],
+                budgetBreakdown: [
+                    { description: "Medical professionals fees", cost: 25000 },
+                    { description: "Medicines and supplies", cost: 30000 },
+                    { description: "Medical equipment rental", cost: 7000 },
+                    { description: "Meals and logistics", cost: 3000 }
+                ], notes: "Approved. Critical health service for the community." },
+            { id: 9, name: "Sports Fest 2025", status: "approved",
+                category: "Sports", submittedBy: "SK Treasurer", submissionDate: "Oct 20, 2025",
                 budget: 35000, volunteers: 38, startDate: "Nov 5, 2025", endDate: "Nov 7, 2025",
                 description: "Annual barangay sports festival promoting health and wellness.",
+                beneficiaries: "120 Youth participants from different puroks",
                 objectives: ["Promote health and fitness", "Community engagement"],
                 outcomes: ["8 sports categories", "120 participants"],
-                notes: "Approved. Great for community health and engagement."
-            },
-            // Rejected projects
-            {
-                id: 8, name: "International Youth Exchange", status: "rejected",
-                submittedBy: "SK Secretary", submissionDate: "Nov 1, 2025",
+                budgetBreakdown: [
+                    { description: "Sports equipment and materials", cost: 15000 },
+                    { description: "Venue rental and setup", cost: 8000 },
+                    { description: "Medals and trophies", cost: 7000 },
+                    { description: "Refreshments", cost: 5000 }
+                ], notes: "Approved. Great for community health and engagement." },
+            { id: 10, name: "Coastal Cleanup Drive", status: "approved",
+                category: "Environment", submittedBy: "SK Secretary", submissionDate: "Oct 25, 2025",
+                budget: 18000, volunteers: 80, startDate: "Nov 12, 2025", endDate: "Nov 12, 2025",
+                description: "Large-scale coastal cleanup activity to protect marine life and promote environmental responsibility.",
+                beneficiaries: "Marine ecosystem and coastal community",
+                objectives: ["Remove coastal waste", "Protect marine life", "Raise environmental awareness"],
+                outcomes: ["5 tons of trash collected", "80 volunteers mobilized", "Cleaner coastline"],
+                budgetBreakdown: [
+                    { description: "Cleanup tools and sacks", cost: 6000 },
+                    { description: "Waste disposal and hauling", cost: 8000 },
+                    { description: "Volunteer meals and drinks", cost: 3000 },
+                    { description: "Documentation and shirts", cost: 1000 }
+                ], notes: "Approved. Important environmental initiative." },
+
+            // REJECTED PROJECTS (1 per category)
+            { id: 11, name: "International Youth Exchange", status: "rejected",
+                category: "Community", submittedBy: "SK Kagawad", submissionDate: "Nov 1, 2025",
                 budget: 250000, volunteers: 10, startDate: "Dec 1, 2025", endDate: "Dec 15, 2025",
                 description: "Youth exchange program with sister barangay in another country.",
+                beneficiaries: "10 Selected youth representatives",
                 objectives: ["Cultural exchange", "Global exposure for youth"],
                 outcomes: ["10 youth participants", "Cultural learning"],
-                notes: "Rejected. Budget too high and not aligned with current barangay priorities. Consider local alternatives."
-            }
+                budgetBreakdown: [
+                    { description: "International airfare (10 pax)", cost: 180000 },
+                    { description: "Accommodation", cost: 40000 },
+                    { description: "Meals and allowances", cost: 20000 },
+                    { description: "Documentation and insurance", cost: 10000 }
+                ], notes: "Rejected. Budget too high and not aligned with current barangay priorities. Consider local alternatives." },
+            { id: 12, name: "Elite Coding Bootcamp", status: "rejected",
+                category: "Education", submittedBy: "SK Kagawad", submissionDate: "Nov 5, 2025",
+                budget: 180000, volunteers: 12, startDate: "Jan 5, 2026", endDate: "Mar 31, 2026",
+                description: "Intensive 3-month coding bootcamp with industry experts and guaranteed job placement.",
+                beneficiaries: "20 Selected youth with high aptitude",
+                objectives: ["Create tech professionals", "High-paying job placement"],
+                outcomes: ["20 certified programmers", "Job placement guarantee"],
+                budgetBreakdown: [
+                    { description: "Expert trainers fees (3 months)", cost: 120000 },
+                    { description: "High-end laptops (20 units)", cost: 40000 },
+                    { description: "Software licenses", cost: 15000 },
+                    { description: "Certification fees", cost: 5000 }
+                ], notes: "Rejected. Budget unrealistic. Scale too limited. Consider broader digital literacy programs." },
+            { id: 13, name: "Premium Hospital Partnership", status: "rejected",
+                category: "Health", submittedBy: "SK Treasurer", submissionDate: "Nov 8, 2025",
+                budget: 320000, volunteers: 15, startDate: "Jan 1, 2026", endDate: "Dec 31, 2026",
+                description: "Year-long partnership with premium hospital for free consultations and discounted services.",
+                beneficiaries: "Barangay residents needing medical care",
+                objectives: ["Access to premium healthcare", "Discounted hospital services"],
+                outcomes: ["Partnership established", "Healthcare access improved"],
+                budgetBreakdown: [
+                    { description: "Partnership fee", cost: 200000 },
+                    { description: "Consultation subsidies", cost: 80000 },
+                    { description: "Emergency fund", cost: 30000 },
+                    { description: "Administrative costs", cost: 10000 }
+                ], notes: "Rejected. Unsustainable cost. Explore government hospital partnerships instead." },
+            { id: 14, name: "Olympic Training Facility", status: "rejected",
+                category: "Sports", submittedBy: "SK Kagawad", submissionDate: "Nov 10, 2025",
+                budget: 450000, volunteers: 20, startDate: "Jan 15, 2026", endDate: "Jun 30, 2026",
+                description: "Construction of multi-sport training facility with professional equipment and coaches.",
+                beneficiaries: "Aspiring athletes in the barangay",
+                objectives: ["Develop athletic talents", "Olympic-level training"],
+                outcomes: ["World-class facility", "Professional coaching"],
+                budgetBreakdown: [
+                    { description: "Facility construction", cost: 300000 },
+                    { description: "Professional equipment", cost: 100000 },
+                    { description: "Coach salaries (6 months)", cost: 40000 },
+                    { description: "Maintenance fund", cost: 10000 }
+                ], notes: "Rejected. Excessive budget and scope. Not aligned with barangay resources. Focus on basic sports programs." },
+            { id: 15, name: "Solar Farm Development", status: "rejected",
+                category: "Environment", submittedBy: "SK Secretary", submissionDate: "Nov 12, 2025",
+                budget: 850000, volunteers: 25, startDate: "Feb 1, 2026", endDate: "Dec 31, 2026",
+                description: "Large-scale solar panel installation to power all barangay facilities and streetlights.",
+                beneficiaries: "Entire barangay through renewable energy",
+                objectives: ["100% renewable energy", "Eliminate electricity costs", "Climate action leadership"],
+                outcomes: ["Solar farm operational", "Energy independence achieved"],
+                budgetBreakdown: [
+                    { description: "Solar panels and batteries", cost: 650000 },
+                    { description: "Installation and wiring", cost: 120000 },
+                    { description: "Engineering and permits", cost: 50000 },
+                    { description: "Monitoring system", cost: 30000 }
+                ], notes: "Rejected. Budget far exceeds barangay capacity. Scale down to pilot solar projects for key facilities only." }
         ];
 
         let currentProject = null;
         let currentTab = 'pending';
 
+        // Pagination state
+        const pagination = {
+            pending: { currentPage: 0, perPage: 3 },
+            approved: { currentPage: 0, perPage: 3 },
+            rejected: { currentPage: 0, perPage: 3 }
+        };
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
+            updateStatistics();
             renderProjects();
+            updateNotificationCount();
         });
 
-        function renderProjects() {
+        // Update statistics dynamically
+        function updateStatistics() {
             const pendingProjects = projects.filter(p => p.status === 'pending');
             const approvedProjects = projects.filter(p => p.status === 'approved');
             const rejectedProjects = projects.filter(p => p.status === 'rejected');
+            const totalBudget = projects.reduce((sum, p) => sum + p.budget, 0);
 
-            // Render pending
-            const pendingSection = document.getElementById('pendingSection');
-            if (pendingProjects.length === 0) {
-                pendingSection.innerHTML = '<div class="bg-white rounded-xl shadow-sm p-12 text-center"><svg class="w-16 h-16 text-green-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><h3 class="text-lg font-semibold text-gray-700 mb-2">All Caught Up!</h3><p class="text-gray-500">No pending approvals at the moment</p></div>';
-            } else {
-                pendingSection.innerHTML = '<h2 class="text-lg font-bold text-gray-800 mb-4">Projects Awaiting Your Approval</h2>' +
-                    pendingProjects.map(project => renderProjectCard(project)).join('');
+            document.getElementById('pendingCount').textContent = pendingProjects.length;
+            document.getElementById('approvedCount').textContent = approvedProjects.length;
+            document.getElementById('rejectedCount').textContent = rejectedProjects.length;
+            document.getElementById('totalBudget').textContent = '₱' + (totalBudget / 1000000).toFixed(1) + 'M';
+
+            // Update tab badges
+            document.querySelector('[data-tab="pending"] span').textContent = pendingProjects.length;
+            document.querySelector('[data-tab="approved"] span').textContent = approvedProjects.length;
+            document.querySelector('[data-tab="rejected"] span').textContent = rejectedProjects.length;
+        }
+
+        function renderProjects() {
+            renderTabProjects('pending');
+            renderTabProjects('approved');
+            renderTabProjects('rejected');
+        }
+
+        function renderTabProjects(status) {
+            const filteredProjects = projects.filter(p => p.status === status);
+            const gridId = status + 'Grid';
+            const dotsId = status + 'PaginationDots';
+            const navId = status + 'PaginationNav';
+            const grid = document.getElementById(gridId);
+            const dotsContainer = document.getElementById(dotsId);
+            const navContainer = document.getElementById(navId);
+
+            if (filteredProjects.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full bg-white rounded-xl shadow-sm p-12 text-center">
+                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No ${status} projects</h3>
+                        <p class="text-gray-500">There are no projects in this category yet</p>
+                    </div>
+                `;
+                dotsContainer.classList.add('hidden');
+                navContainer.classList.add('hidden');
+                return;
             }
 
-            // Render approved
-            const approvedSection = document.getElementById('approvedSection');
-            approvedSection.innerHTML = '<h2 class="text-lg font-bold text-gray-800 mb-4">Approved Projects</h2>' +
-                approvedProjects.map(project => renderProjectCard(project)).join('');
+            // Pagination
+            const { currentPage, perPage } = pagination[status];
+            const startIndex = currentPage * perPage;
+            const endIndex = startIndex + perPage;
+            const projectsToShow = filteredProjects.slice(startIndex, endIndex);
 
-            // Render rejected
-            const rejectedSection = document.getElementById('rejectedSection');
-            rejectedSection.innerHTML = '<h2 class="text-lg font-bold text-gray-800 mb-4">Rejected Projects</h2>' +
-                rejectedProjects.map(project => renderProjectCard(project)).join('');
+            // Render cards
+            grid.innerHTML = projectsToShow.map(project => renderProjectCard(project)).join('');
+
+            // Render pagination
+            renderPagination(status, filteredProjects.length);
+        }
+
+        function renderPagination(status, totalCount) {
+            const { currentPage, perPage } = pagination[status];
+            const totalPages = Math.ceil(totalCount / perPage);
+            const dotsContainer = document.getElementById(status + 'PaginationDots');
+            const navContainer = document.getElementById(status + 'PaginationNav');
+
+            if (totalPages <= 1) {
+                dotsContainer.classList.add('hidden');
+                navContainer.classList.add('hidden');
+                return;
+            }
+
+            dotsContainer.classList.remove('hidden');
+            navContainer.classList.remove('hidden');
+
+            // Render dots
+            dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+                <button
+                    onclick="goToPage('${status}', ${i})"
+                    class="h-2 rounded-full transition-all duration-300 ${i === currentPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+                    style="min-height: 8px;"
+                    aria-label="Go to page ${i + 1}"
+                ></button>
+            `).join('');
+
+            // Update navigation buttons state
+            const prevBtn = navContainer.querySelector('button:first-child');
+            const nextBtn = navContainer.querySelector('button:last-child');
+
+            if (prevBtn) {
+                prevBtn.disabled = currentPage === 0;
+                prevBtn.classList.toggle('opacity-50', currentPage === 0);
+                prevBtn.classList.toggle('cursor-not-allowed', currentPage === 0);
+            }
+
+            if (nextBtn) {
+                nextBtn.disabled = currentPage === totalPages - 1;
+                nextBtn.classList.toggle('opacity-50', currentPage === totalPages - 1);
+                nextBtn.classList.toggle('cursor-not-allowed', currentPage === totalPages - 1);
+            }
+        }
+
+        function goToPage(status, pageIndex) {
+            pagination[status].currentPage = pageIndex;
+            renderTabProjects(status);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function navigatePage(status, direction) {
+            const { currentPage, perPage } = pagination[status];
+            const filteredProjects = projects.filter(p => p.status === status);
+            const totalPages = Math.ceil(filteredProjects.length / perPage);
+
+            const newPage = currentPage + direction;
+
+            if (newPage >= 0 && newPage < totalPages) {
+                pagination[status].currentPage = newPage;
+                renderTabProjects(status);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         function renderProjectCard(project) {
             const statusColors = {
-                pending: 'bg-orange-100 text-orange-700',
-                approved: 'bg-green-100 text-green-700',
-                rejected: 'bg-red-100 text-red-700'
+                pending: 'bg-orange-100 text-orange-700 border-orange-200',
+                approved: 'bg-green-100 text-green-700 border-green-200',
+                rejected: 'bg-red-100 text-red-700 border-red-200'
             };
 
-            const statusIcons = {
-                pending: '<svg class="w-3 h-3 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
-                approved: '<svg class="w-3 h-3 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
-                rejected: '<svg class="w-3 h-3 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+            const bannerColors = {
+                pending: 'from-orange-100 to-orange-50',
+                approved: 'from-green-100 to-green-50',
+                rejected: 'from-red-100 to-red-50'
+            };
+
+            const categoryColors = {
+                'Community': 'bg-blue-100 text-blue-700',
+                'Education': 'bg-purple-100 text-purple-700',
+                'Health': 'bg-green-100 text-green-700',
+                'Sports': 'bg-orange-100 text-orange-700',
+                'Environment': 'bg-teal-100 text-teal-700'
             };
 
             return `
-                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-6 border border-gray-100">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <h3 class="text-lg font-bold text-gray-800">${project.name}</h3>
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusColors[project.status]}">
-                                    ${statusIcons[project.status]}
-                                    ${project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                                </span>
-                            </div>
-                            <div class="flex items-center space-x-4 text-sm text-gray-500">
-                                <span><svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg> ${project.submittedBy}</span>
-                                <span><svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> ${project.submissionDate}</span>
-                            </div>
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                    <!-- Banner Image Area -->
+                    <div class="h-32 sm:h-40 bg-gradient-to-br ${bannerColors[project.status]} relative">
+                        <div class="absolute top-3 right-3">
+                            <span class="px-3 py-1.5 text-xs font-bold rounded-lg ${statusColors[project.status]} shadow-sm border-2 backdrop-blur-sm">
+                                ${project.status.toUpperCase()}
+                            </span>
                         </div>
-                        <button onclick="viewProjectDetails(${project.id})" class="px-4 py-2 bg-[#2f6e4e] text-white text-sm rounded-lg hover:bg-[#2f6e4e] transition">
-                            <svg class="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> Review
-                        </button>
                     </div>
 
-                    <p class="text-gray-600 text-sm mb-4">${project.description}</p>
+                    <!-- Card Body -->
+                    <div class="p-4 sm:p-5 flex flex-col flex-1">
+                        <!-- Title -->
+                        <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-3 line-clamp-2 min-h-[3rem]">
+                            ${project.name}
+                        </h3>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">Budget</p>
-                            <p class="font-semibold text-gray-800">₱${project.budget.toLocaleString()}</p>
+                        <!-- Status and Category badges -->
+                        <div class="flex flex-wrap items-center gap-2 mb-4">
+                            <span class="px-2.5 py-1 ${categoryColors[project.category] || 'bg-gray-100 text-gray-700'} text-xs rounded-md font-medium">
+                                ${project.category}
+                            </span>
+                            <span class="px-2.5 py-1 bg-gray-100 text-gray-600 text-xs rounded-md font-medium flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                ${project.submittedBy}
+                            </span>
                         </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">Volunteers</p>
-                            <p class="font-semibold text-gray-800">${project.volunteers}</p>
+
+                        <!-- Description -->
+                        <p class="text-sm text-gray-600 line-clamp-3 mb-4 flex-1">
+                            ${project.description}
+                        </p>
+
+                        <!-- Statistics Section -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-gradient-to-br from-blue-50 to-white p-3 rounded-lg border border-blue-100">
+                                <p class="text-xs text-blue-600 font-semibold mb-1">Budget</p>
+                                <p class="text-sm sm:text-base font-bold text-gray-900">₱${project.budget.toLocaleString()}</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-50 to-white p-3 rounded-lg border border-purple-100">
+                                <p class="text-xs text-purple-600 font-semibold mb-1">Volunteers</p>
+                                <p class="text-sm sm:text-base font-bold text-gray-900">${project.volunteers}</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-emerald-50 to-white p-3 rounded-lg border border-emerald-100">
+                                <p class="text-xs text-emerald-600 font-semibold mb-1">Start Date</p>
+                                <p class="text-xs sm:text-sm font-semibold text-gray-800">${project.startDate}</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-amber-50 to-white p-3 rounded-lg border border-amber-100">
+                                <p class="text-xs text-amber-600 font-semibold mb-1">Duration</p>
+                                <p class="text-xs sm:text-sm font-semibold text-gray-800">${calculateDuration(project.startDate, project.endDate)}</p>
+                            </div>
                         </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">Start Date</p>
-                            <p class="font-semibold text-gray-800">${project.startDate}</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">Duration</p>
-                            <p class="font-semibold text-gray-800">${calculateDuration(project.startDate, project.endDate)}</p>
-                        </div>
+
+                        <!-- Action Button -->
+                        <button onclick="viewProjectDetails(${project.id})"
+                                class="w-full px-4 py-2.5 sm:py-3 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white rounded-lg hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 font-semibold text-sm flex items-center justify-center gap-2 group">
+                            <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <span>Review Project</span>
+                        </button>
                     </div>
                 </div>
             `;
@@ -1142,25 +1454,44 @@
         }
 
         function switchTab(tab) {
-            console.log('switchTab called with:', tab);
             currentTab = tab;
+
+            // Reset pagination for the new tab
+            pagination[tab].currentPage = 0;
 
             // Update tab styles - remove active from all tabs
             const allTabs = document.querySelectorAll('.approval-tab');
-            console.log('Found tabs:', allTabs.length);
 
             allTabs.forEach(t => {
                 t.classList.remove('active', 'text-[#2f6e4e]', 'border-[#2f6e4e]');
                 t.classList.add('text-gray-500', 'border-transparent');
+                // Reset badge style
+                const badge = t.querySelector('span');
+                if (badge) {
+                    badge.classList.remove('bg-orange-100', 'text-orange-600', 'bg-green-100', 'text-green-600', 'bg-red-100', 'text-red-600');
+                    badge.classList.add('bg-gray-100');
+                }
             });
 
             // Add active styles to the clicked tab using data attribute
             const activeButton = document.querySelector(`[data-tab="${tab}"]`);
-            console.log('Active button found:', activeButton);
 
             if (activeButton) {
                 activeButton.classList.add('active', 'text-[#2f6e4e]', 'border-[#2f6e4e]');
                 activeButton.classList.remove('text-gray-500', 'border-transparent');
+
+                // Update badge style based on tab
+                const badge = activeButton.querySelector('span');
+                if (badge) {
+                    badge.classList.remove('bg-gray-100');
+                    if (tab === 'pending') {
+                        badge.classList.add('bg-orange-100', 'text-orange-600');
+                    } else if (tab === 'approved') {
+                        badge.classList.add('bg-green-100', 'text-green-600');
+                    } else if (tab === 'rejected') {
+                        badge.classList.add('bg-red-100', 'text-red-600');
+                    }
+                }
             }
 
             // Show/hide sections
@@ -1172,7 +1503,11 @@
             if (approvedSection) approvedSection.classList.toggle('hidden', tab !== 'approved');
             if (rejectedSection) rejectedSection.classList.toggle('hidden', tab !== 'rejected');
 
-            console.log('Tab switch complete');
+            // Re-render the current tab to update pagination
+            renderTabProjects(tab);
+
+            // Smooth scroll to top of section
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function viewProjectDetails(id) {
@@ -1204,6 +1539,15 @@
                 document.getElementById('approvalActions').classList.add('hidden');
                 document.getElementById('viewActions').classList.remove('hidden');
                 document.getElementById('viewNotes').textContent = currentProject.notes || 'No notes available.';
+
+                // Update status badge
+                const statusBadge = document.getElementById('viewStatus');
+                const statusColors = {
+                    approved: 'bg-green-100 text-green-700 border-2 border-green-200',
+                    rejected: 'bg-red-100 text-red-700 border-2 border-red-200'
+                };
+                statusBadge.className = `px-3 py-1 text-xs font-bold rounded-lg ${statusColors[currentProject.status] || 'bg-gray-100 text-gray-700'}`;
+                statusBadge.textContent = currentProject.status.toUpperCase();
             }
 
             // Show modal
@@ -1251,6 +1595,15 @@
         function closeModal() {
             document.getElementById('approvalModal').classList.add('hidden');
             currentProject = null;
+        }
+
+        function reviewDecision() {
+            // Switch from view mode to edit mode
+            document.getElementById('viewActions').classList.add('hidden');
+            document.getElementById('approvalActions').classList.remove('hidden');
+
+            // Pre-fill the notes with existing decision notes
+            document.getElementById('approvalNotes').value = currentProject.notes || '';
         }
 
         function approveProject() {
@@ -1346,8 +1699,9 @@
                     notifications = notifications.filter(n => n.projectId !== currentProject.id);
                     updateNotificationCount();
 
-                showToast(`✎ Revision request sent for "${currentProject.name}".`, 'info');
-            }
+                    showToast(`✎ Revision request sent for "${currentProject.name}".`, 'info');
+                }
+            );
         }
 
         // Toast Notification System
@@ -1552,9 +1906,6 @@
                 viewProjectDetails(notif.projectId);
             }
         }
-
-        // Initialize notification count on page load
-        updateNotificationCount();
 
         // Update current date
         function updateCurrentDate() {

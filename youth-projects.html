@@ -93,9 +93,101 @@
       .tab-btn:hover {
         color: #047857;
       }
+
+      /* Badge animations */
+      @keyframes pulse-slow {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      .badge-pulse {
+        animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        min-width: 300px;
+        background: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transform: translateX(400px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 9999;
+      }
+
+      .toast.show {
+        transform: translateX(0);
+      }
+
+      .toast.success {
+        border-left: 4px solid #10b981;
+      }
+
+      .toast.error {
+        border-left: 4px solid #ef4444;
+      }
+
+      .toast.warning {
+        border-left: 4px solid #f59e0b;
+      }
+
+      .toast.info {
+        border-left: 4px solid #3b82f6;
+      }
+
+      /* Input validation states */
+      .input-error {
+        border-color: #ef4444 !important;
+        background-color: #fef2f2 !important;
+      }
+
+      .input-success {
+        border-color: #10b981 !important;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 0.6s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Pagination dots - consistent across all screen sizes */
+      #paginationDots button {
+        flex-shrink: 0;
+        display: inline-block;
+        cursor: pointer;
+        border: none;
+        padding: 0;
+        outline: none;
+      }
+
+      #paginationDots button:focus {
+        outline: 2px solid rgba(47, 110, 78, 0.3);
+        outline-offset: 2px;
+      }
     </style>
   </head>
-  <body class="bg-gray-50">
+  <body class="bg-gray-50 overflow-x-hidden">
     <div class="flex h-screen overflow-hidden">
       <!-- SIDEBAR -->
       <aside
@@ -276,13 +368,15 @@
                     <span id="notificationCount" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
                   </button>
                 </div>
-                <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="openProfileModal()">
+                <button onclick="openProfileModal()" class="flex items-center space-x-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
                   <div class="text-right">
                     <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Juan Dela Cruz</p>
                     <p class="text-xs text-gray-500">Youth Volunteer</p>
                   </div>
-                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">JV</div>
-                </div>
+                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">
+                    JV
+                  </div>
+                </button>
               </div>
             </div>
           </div>
@@ -298,19 +392,17 @@
             >
               <!-- Search and Filters Section -->
               <div class="px-6 py-4 border-b border-gray-200">
-                <div class="flex items-center gap-4">
-                  <div class="flex-1 relative">
-                    <input
-                      id="projectSearch"
-                      type="text"
-                      placeholder="Search projects by name, category, or location..."
-                      class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
-                    />
-                  </div>
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
+                  <input
+                    id="projectSearch"
+                    type="text"
+                    placeholder="Search projects by name, category, or location..."
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
+                  />
 
                   <select
                     id="categoryFilter"
-                    class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white min-w-[150px]"
+                    class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white md:min-w-[180px]"
                   >
                     <option value="">All categories</option>
                     <option>Community</option>
@@ -319,13 +411,6 @@
                     <option>Environment</option>
                     <option>Health</option>
                   </select>
-
-                  <button
-                    onclick="applyFilters()"
-                    class="px-6 py-2.5 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] font-medium"
-                  >
-                    Search
-                  </button>
                 </div>
               </div>
 
@@ -336,6 +421,36 @@
                   class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
                   <!-- Project cards will be dynamically inserted here -->
+                </div>
+
+                <!-- Pagination Dots (Center) -->
+                <div id="paginationDots" class="flex justify-center gap-2 mt-6 hidden">
+                  <!-- Dots will be inserted here -->
+                </div>
+
+                <!-- Pagination Controls (Bottom Right) -->
+                <div class="mt-6 flex justify-end">
+                  <nav
+                    id="paginationNav"
+                    class="hidden inline-flex rounded-md shadow-sm"
+                    role="navigation"
+                    aria-label="Pagination"
+                  >
+                    <button
+                      id="prevBtn"
+                      onclick="navigateProjects(-1)"
+                      class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                    >
+                      Prev
+                    </button>
+                    <button
+                      id="nextBtn"
+                      onclick="navigateProjects(1)"
+                      class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                    >
+                      Next
+                    </button>
+                  </nav>
                 </div>
               </div>
             </div>
@@ -389,36 +504,31 @@
     <!-- PROJECT DETAILS VIEW MODAL (Volunteer Version - No Applicants Tab) -->
     <div
       id="projectViewModal"
-      class="hidden fixed inset-0 z-50 overflow-y-auto"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-2 sm:p-4"
+      onclick="if(event.target === this) closeProjectView()"
     >
-      <div class="flex items-center justify-center min-h-screen px-4">
         <div
-          class="fixed inset-0 bg-gray-500 opacity-75"
-          onclick="closeProjectView()"
-        ></div>
-
-        <div
-          class="relative bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden"
+          class="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[95vh] sm:max-h-[90vh] flex flex-col overflow-hidden"
         >
           <!-- Header with gradient -->
           <div
-            class="bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] text-white p-6"
+            class="sticky top-0 bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] text-white px-4 py-3 sm:px-6 sm:py-4 z-50 shadow-lg flex-shrink-0"
           >
             <div class="flex justify-between items-start">
               <div>
-                <h2 id="viewProjectTitle" class="text-2xl font-bold mb-2"></h2>
-                <div class="flex items-center gap-4 text-[#2f6e4e]/20">
-                  <span id="viewProjectHeadsCount" class="text-sm"></span>
+                <h2 id="viewProjectTitle" class="text-lg sm:text-xl font-bold mb-2"></h2>
+                <div class="flex items-center gap-4 text-white/70">
+                  <span id="viewProjectHeadsCount" class="text-xs sm:text-sm"></span>
                   <span>•</span>
-                  <span id="viewProjectCategory" class="text-sm"></span>
+                  <span id="viewProjectCategory" class="text-xs sm:text-sm"></span>
                 </div>
               </div>
               <button
                 onclick="closeProjectView()"
-                class="text-white/80 hover:text-white"
+                class="text-white/80 hover:text-white flex-shrink-0 ml-4"
               >
                 <svg
-                  class="w-6 h-6"
+                  class="w-5 h-5 sm:w-6 sm:h-6"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -435,8 +545,8 @@
           </div>
 
           <!-- Tabs Navigation -->
-          <div class="border-b border-gray-200 bg-white px-6">
-            <nav class="flex space-x-8">
+          <div class="sticky top-[72px] sm:top-[88px] border-b border-gray-200 bg-white px-4 sm:px-6 z-40 shadow-sm flex-shrink-0">
+            <nav class="flex space-x-4 sm:space-x-8 overflow-x-auto">
               <button
                 onclick="switchTab('details')"
                 id="tabDetails"
@@ -455,9 +565,9 @@
           </div>
 
           <!-- Tab Content -->
-          <div class="overflow-y-auto max-h-[60vh] custom-scrollbar">
+          <div class="flex-1 overflow-y-auto custom-scrollbar" style="min-height: 0;">
             <!-- Project Details Tab -->
-            <div id="tabContentDetails" class="p-6">
+            <div id="tabContentDetails" class="p-4 sm:p-6">
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <div>
                   <h3 class="text-sm font-semibold text-gray-600 mb-1">
@@ -506,7 +616,7 @@
             </div>
 
             <!-- Inquiries Tab -->
-            <div id="tabContentInquiries" class="hidden p-6">
+            <div id="tabContentInquiries" class="hidden p-4 sm:p-6">
               <div id="inquiriesList" class="space-y-4">
                 <!-- Inquiries will be inserted here -->
               </div>
@@ -1070,6 +1180,19 @@
             "Support & scholarship application for deserving students. Deadline: December 15, 2025. Submit requirements to the office during office hours.",
           inquiries: [],
         },
+        {
+          id: 4,
+          title: "Youth Leadership Training Workshop",
+          category: "Education",
+          status: "Ongoing",
+          heads: ["Kyleen Nicdao", "Andrea Pelias"],
+          startDate: "2025-03-10",
+          endDate: "2025-03-12",
+          location: "Barangay Hall Conference Room",
+          description:
+            "A three-day intensive leadership training workshop designed to empower young leaders in our community. Learn essential skills in public speaking, project management, and community organizing.\n\nWorkshop Highlights:\n• Leadership fundamentals and team building\n• Effective communication and public speaking\n• Project planning and execution\n• Community engagement strategies\n• Networking with local youth leaders\n\nVolunteer Opportunities:\n• Workshop Facilitators\n• Registration Team\n• Documentation and Media Coverage\n• Logistics and Venue Coordination\n\nAll participants will receive certificates of completion.",
+          inquiries: [],
+        },
       ];
 
       // User's applications
@@ -1095,18 +1218,78 @@
       let currentProjectId = null;
       let currentTab = "details";
 
+      // Pagination variables
+      let currentPage = 0;
+      const projectsPerPage = 3;
+      let currentFilteredProjects = [];
+
+      // Navigate through project pages
+      function navigateProjects(direction) {
+        const totalPages = Math.ceil(currentFilteredProjects.length / projectsPerPage);
+        currentPage += direction;
+
+        // Wrap around
+        if (currentPage < 0) currentPage = totalPages - 1;
+        if (currentPage >= totalPages) currentPage = 0;
+
+        renderProjects(currentFilteredProjects);
+        updatePaginationDots();
+      }
+
+      // Update pagination dots
+      function updatePaginationDots() {
+        const totalPages = Math.ceil(currentFilteredProjects.length / projectsPerPage);
+        const dotsContainer = document.getElementById('paginationDots');
+        const navContainer = document.getElementById('paginationNav');
+
+        if (totalPages <= 1) {
+          dotsContainer.classList.add('hidden');
+          navContainer.classList.add('hidden');
+          return;
+        }
+
+        dotsContainer.classList.remove('hidden');
+        navContainer.classList.remove('hidden');
+
+        dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+          <button
+            onclick="goToPage(${i})"
+            class="h-2 rounded-full transition-all duration-300 ${i === currentPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+            style="min-height: 8px;"
+          ></button>
+        `).join('');
+      }
+
+      // Go to specific page
+      function goToPage(pageIndex) {
+        currentPage = pageIndex;
+        renderProjects(currentFilteredProjects);
+        updatePaginationDots();
+      }
+
       // Render projects grid
       function renderProjects(list) {
+        currentFilteredProjects = list;
         const grid = document.getElementById("projectsGrid");
         grid.innerHTML = "";
 
         if (list.length === 0) {
           grid.innerHTML =
             '<div class="col-span-full text-center py-12 text-gray-500">No projects found</div>';
+          document.getElementById('paginationDots').classList.add('hidden');
+          document.getElementById('paginationNav').classList.add('hidden');
           return;
         }
 
-        list.forEach((project) => {
+        // Calculate pagination
+        const startIndex = currentPage * projectsPerPage;
+        const endIndex = startIndex + projectsPerPage;
+        const projectsToShow = list.slice(startIndex, endIndex);
+
+        // Update navigation buttons
+        updatePaginationDots();
+
+        projectsToShow.forEach((project) => {
           const hasApplied = myApplications.some(
             (app) => app.projectId === project.id
           );
@@ -1485,7 +1668,7 @@
 
         showToast("Application submitted successfully!");
         closeApplyModal();
-        renderProjects(projects);
+        renderProjects(currentFilteredProjects.length > 0 ? currentFilteredProjects : projects);
         renderMyApplicationsGrid();
       }
 
@@ -1977,6 +2160,7 @@
           return matchSearch && matchCategory;
         });
 
+        currentPage = 0; // Reset to first page when filtering
         renderProjects(filtered);
       }
 
