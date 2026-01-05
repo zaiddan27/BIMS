@@ -86,20 +86,49 @@ ER diagrams available in:
 
 ```
 BIMS/
-├── index.html              # Main landing page
-├── login.html              # Authentication
-├── signup.html             # User registration
-├── skproject.html          # SK project management
-├── youthproject.html       # Youth project management
-├── sk-archive.html         # Project archive
-├── sk-testimonies.html     # Testimonials management
-├── youth-certificates.html # Certificate generation
-├── captain-dashboard.html  # Captain dashboard
-├── youtbDashboard.html     # Youth dashboard
-├── dashb.html              # Admin dashboard
-├── asset/                  # Images and media
-│   └── hero.jpg           # Hero section background
-└── README.md              # This file
+├── index.html                  # Main landing page
+├── login.html                  # Authentication
+├── signup.html                 # User registration
+│
+├── SK Official Pages
+│   ├── sk-dashboard.html       # SK Officials dashboard
+│   ├── sk-projects.html        # Project monitoring & management
+│   ├── sk-files.html           # File management
+│   ├── sk-calendar.html        # Event calendar
+│   ├── sk-testimonies.html     # Testimonials management
+│   └── sk-archive.html         # Completed projects archive
+│
+├── Youth Volunteer Pages
+│   ├── youth-dashboard.html    # Youth volunteer dashboard
+│   ├── youth-projects.html     # Browse & apply to projects
+│   ├── youth-files.html        # Access files & documents
+│   ├── youth-calendar.html     # View events & schedules
+│   └── youth-certificates.html # Download certificates
+│
+├── Captain Pages
+│   └── captain-dashboard.html  # Barangay Captain dashboard
+│
+├── Assets & Resources
+│   ├── asset/                  # Images and media files
+│   │   ├── hero.jpg           # Landing page background
+│   │   └── logo.svg           # BIMS logo
+│   ├── css/
+│   │   └── responsive.css     # Mobile/tablet responsive styles
+│   ├── js/
+│   │   └── mobile-nav.js      # Mobile navigation functionality
+│   └── docs/                  # Documentation
+│
+├── Documentation
+│   ├── README.md              # Project overview
+│   ├── PROGRESS.md            # Development progress tracking
+│   ├── CLAUDE.md              # Development guidelines
+│   ├── CHANGELOG.md           # Version history
+│   ├── RESPONSIVE-GUIDE.md    # Responsive design documentation
+│   └── PROJECT DOCUMENTS/     # SE requirements & specifications
+│
+└── Test Files
+    ├── test-projects.html     # Project testing page
+    └── DEMO_INSTRUCTIONS.html # Demo usage guide
 ```
 
 ## Browser Compatibility
