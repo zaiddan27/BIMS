@@ -89,6 +89,9 @@
         .download-menu-item {
             opacity: 0;
             animation: slideUpFade 0.4s ease-out forwards;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .bg-size-200 {
@@ -136,8 +139,17 @@
         }
 
         /* Glassmorphism for dropdown */
+        #downloadMenu {
+            touch-action: manipulation;
+        }
+
         #downloadMenu > div {
             backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        #downloadMenuContent {
+            touch-action: manipulation;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Smooth transitions */
@@ -159,6 +171,23 @@
 
         #changeFormatBtn:not(.hidden) {
             animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Pagination dots - consistent across all screen sizes */
+        #projectPaginationDots button,
+        #filePaginationDots button {
+            flex-shrink: 0;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+            outline: none;
+        }
+
+        #projectPaginationDots button:focus,
+        #filePaginationDots button:focus {
+            outline: 2px solid rgba(47, 110, 78, 0.3);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -536,26 +565,6 @@
 
                     <!-- PROJECTS TAB CONTENT -->
                     <div id="projectsTabContent" class="p-6">
-                        <!-- Quarter Summary -->
-                        <div id="quarterSummary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                <p class="text-sm text-gray-500">Projects</p>
-                                <p class="text-2xl font-bold text-gray-800 mt-1">8</p>
-                            </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                <p class="text-sm text-gray-500">Budget Used</p>
-                                <p class="text-2xl font-bold text-gray-800 mt-1">₱285K</p>
-                            </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                <p class="text-sm text-gray-500">Volunteers</p>
-                                <p class="text-2xl font-bold text-gray-800 mt-1">68</p>
-                            </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                <p class="text-sm text-gray-500">Avg Success</p>
-                                <p class="text-2xl font-bold text-gray-800 mt-1">91%</p>
-                            </div>
-                        </div>
-
                         <!-- Search and Filter Bar - PROJECTS -->
                         <div class="bg-gray-50 rounded-xl p-6 mb-6">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -603,54 +612,67 @@
                         </div>
 
                         <!-- Bulk Report Download Section -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
-                            <!-- Compact Header for Laptop View -->
-                            <div class="bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] px-4 sm:px-6 py-4 lg:py-5">
-                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
+                        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6 overflow-hidden relative">
+                            <!-- Premium Header with Gradient & Pattern -->
+                            <div class="relative bg-gradient-to-br from-emerald-600 via-[#2f6e4e] to-teal-800 px-4 sm:px-6 py-6 lg:py-7 overflow-hidden">
+                                <!-- Decorative Background Pattern -->
+                                <div class="absolute inset-0 opacity-10">
+                                    <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fill-opacity=&quot;1&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+                                </div>
+
+                                <!-- Ambient Glow Effects -->
+                                <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl"></div>
+                                <div class="absolute bottom-0 left-0 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl"></div>
+
+                                <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6">
                                     <!-- Left: Title, Description & Selection Counter -->
                                     <div class="flex flex-col sm:flex-row sm:items-center gap-4 flex-1">
                                         <!-- Title & Description -->
                                         <div class="flex-1">
-                                            <div class="flex items-center gap-2 mb-1.5">
-                                                <div class="w-8 h-8 bg-white/20 backdrop-blur rounded-lg flex items-center justify-center">
-                                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg ring-2 ring-white/20">
+                                                    <svg class="w-5 h-5 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                                     </svg>
                                                 </div>
-                                                <h3 class="text-base sm:text-lg font-bold text-white">Generate Bulk Reports</h3>
+                                                <h3 class="text-base sm:text-xl font-black text-white drop-shadow-lg tracking-tight">Generate Bulk Reports</h3>
                                             </div>
-                                            <p class="text-xs sm:text-sm text-white/80 leading-relaxed">Download comprehensive reports for selected projects in PDF format</p>
+                                            <p class="text-xs sm:text-sm text-white/90 leading-relaxed font-medium pl-13">Download comprehensive reports for selected projects in PDF format</p>
                                         </div>
 
                                         <!-- Selection Counter Badge -->
-                                        <div class="flex items-center gap-2 px-4 py-2.5 bg-white/20 backdrop-blur rounded-lg border border-white/30">
-                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                            <div class="flex items-baseline gap-1">
-                                                <span id="selectedCount" class="text-2xl font-black text-white tabular-nums">0</span>
-                                                <span class="text-sm text-white/90 font-medium">selected</span>
+                                        <div class="group flex items-center gap-3 px-5 py-3 bg-gradient-to-br from-white/25 to-white/10 backdrop-blur-md rounded-xl border-2 border-white/30 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                                            <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="flex items-baseline gap-1.5">
+                                                <span id="selectedCount" class="text-3xl font-black text-white tabular-nums drop-shadow-lg">0</span>
+                                                <span class="text-sm text-white/95 font-bold uppercase tracking-wider">selected</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- Right: Action Buttons (Laptop Horizontal Layout) -->
                                     <div class="hidden lg:flex items-center gap-3">
-                                        <!-- Download Button -->
+                                        <!-- Download Button - Premium Style -->
                                         <button
                                             onclick="generateBulkReports()"
-                                            class="px-6 py-3 bg-white text-[#2f6e4e] rounded-xl hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 font-bold text-base flex items-center gap-2 group border-2 border-white/20"
+                                            class="relative px-7 py-3.5 bg-gradient-to-r from-white to-gray-50 text-emerald-700 rounded-xl hover:shadow-2xl hover:scale-[1.05] active:scale-[0.98] transition-all duration-300 font-black text-base flex items-center gap-3 group overflow-hidden border-2 border-white/50"
                                         >
-                                            <svg class="w-5 h-5 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <div class="absolute inset-0 bg-gradient-to-r from-emerald-50 to-teal-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                            <svg class="w-5 h-5 group-hover:animate-bounce relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                             </svg>
-                                            <span>Download Reports</span>
+                                            <span class="relative z-10">Download Reports</span>
+                                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                                         </button>
 
-                                        <!-- Select All -->
+                                        <!-- Select All - Enhanced -->
                                         <button
                                             onclick="selectAllFiltered()"
-                                            class="px-5 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-semibold text-sm transition-all duration-200 hover:shadow-md flex items-center gap-2 border border-white/30 hover:border-white/50 backdrop-blur"
+                                            class="px-5 py-3 bg-white/15 hover:bg-white/25 text-white rounded-xl font-bold text-sm transition-all duration-300 hover:shadow-xl flex items-center gap-2 border-2 border-white/30 hover:border-white/60 backdrop-blur-md hover:scale-105"
                                         >
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -658,10 +680,10 @@
                                             <span>Select All</span>
                                         </button>
 
-                                        <!-- Deselect All -->
+                                        <!-- Deselect All - Enhanced -->
                                         <button
                                             onclick="deselectAll()"
-                                            class="px-5 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-semibold text-sm transition-all duration-200 hover:shadow-md flex items-center gap-2 border border-white/30 hover:border-white/50 backdrop-blur"
+                                            class="px-5 py-3 bg-white/15 hover:bg-white/25 text-white rounded-xl font-bold text-sm transition-all duration-300 hover:shadow-xl flex items-center gap-2 border-2 border-white/30 hover:border-white/60 backdrop-blur-md hover:scale-105"
                                         >
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
@@ -673,23 +695,25 @@
                             </div>
 
                             <!-- Mobile/Tablet Actions Section (Hidden on Desktop) -->
-                            <div class="lg:hidden p-4 sm:p-6 space-y-4 border-t border-gray-100">
-                                <!-- Primary Action Button -->
+                            <div class="lg:hidden p-4 sm:p-6 space-y-4 border-t border-gray-100 bg-gradient-to-br from-gray-50 to-white">
+                                <!-- Primary Action Button - Premium Mobile -->
                                 <button
                                     onclick="generateBulkReports()"
-                                    class="w-full px-6 py-3.5 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white rounded-xl hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 font-semibold text-sm sm:text-base flex items-center justify-center gap-2 group"
+                                    class="relative w-full px-6 py-4 bg-gradient-to-r from-emerald-600 via-[#2f6e4e] to-teal-700 text-white rounded-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 font-bold text-sm sm:text-base flex items-center justify-center gap-3 group overflow-hidden"
                                 >
-                                    <svg class="w-5 h-5 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <svg class="w-5 h-5 group-hover:animate-bounce relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                     </svg>
-                                    <span>Download Selected Reports</span>
+                                    <span class="relative z-10">Download Selected Reports</span>
+                                    <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                                 </button>
 
                                 <!-- Selection Controls -->
                                 <div class="flex flex-col xs:flex-row gap-2 sm:gap-3">
                                     <button
                                         onclick="selectAllFiltered()"
-                                        class="flex-1 px-4 py-2.5 bg-[#2f6e4e]/10 hover:bg-[#2f6e4e]/20 text-[#2f6e4e] rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-md flex items-center justify-center gap-2 border border-[#2f6e4e]/20 hover:border-[#2f6e4e]/40"
+                                        class="flex-1 px-4 py-3 bg-gradient-to-br from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 text-emerald-700 rounded-xl font-bold text-sm transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2 border-2 border-emerald-200 hover:border-emerald-300 hover:scale-105"
                                     >
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -699,28 +723,60 @@
 
                                     <button
                                         onclick="deselectAll()"
-                                        class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-md flex items-center justify-center gap-2 border border-gray-200 hover:border-gray-300"
+                                        class="flex-1 px-4 py-3 bg-gradient-to-br from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2 border-2 border-gray-200 hover:border-gray-300 hover:scale-105"
                                     >
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                                         </svg>
-                                        <span>Deselect All</span>
+                                        <span>Clear</span>
                                     </button>
                                 </div>
 
-                                <!-- Mobile Helper Text -->
-                                <div class="lg:hidden flex items-start gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
-                                    <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    <span class="text-xs text-blue-700 font-medium leading-relaxed">Click checkboxes on project cards below to select for bulk download</span>
+                                <!-- Mobile Helper Text - Enhanced -->
+                                <div class="lg:hidden flex items-start gap-3 px-4 py-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-100 shadow-sm">
+                                    <div class="w-5 h-5 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <svg class="w-3 h-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs text-blue-700 font-semibold leading-relaxed">Click checkboxes on project cards below to select for bulk download</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Archived Projects List -->
-                        <div class="space-y-4" id="projectsList">
+                        <div class="space-y-5 max-w-5xl mx-auto flex flex-col items-center md:items-stretch" id="projectsList">
                             <!-- Projects will be rendered here by JavaScript -->
+                        </div>
+
+                        <!-- Pagination Dots (Center) -->
+                        <div id="projectPaginationDots" class="flex justify-center gap-2 mt-6 hidden">
+                            <!-- Dots will be inserted here -->
+                        </div>
+
+                        <!-- Pagination Controls (Bottom Right) -->
+                        <div class="mt-6 flex justify-end max-w-5xl mx-auto">
+                            <nav
+                                id="projectPaginationNav"
+                                class="hidden inline-flex rounded-md shadow-sm"
+                                role="navigation"
+                                aria-label="Pagination"
+                            >
+                                <button
+                                    id="prevProjectPage"
+                                    onclick="navigateProjects(-1)"
+                                    class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                                >
+                                    Prev
+                                </button>
+                                <button
+                                    id="nextProjectPage"
+                                    onclick="navigateProjects(1)"
+                                    class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                                >
+                                    Next
+                                </button>
+                            </nav>
                         </div>
 
                         <!-- Empty State (hidden by default) -->
@@ -735,8 +791,8 @@
                     <div id="filesTabContent" class="hidden p-6">
                         <!-- Search and Filter Bar - FILES -->
                         <div class="bg-gray-50 rounded-xl p-6 mb-6">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="md:col-span-1">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div class="md:col-span-2">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Search Files</label>
                                     <div class="relative">
                                         <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -782,9 +838,39 @@
 
                         <!-- Archived Files List -->
                         <div id="filesList">
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div id="filesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center md:justify-items-stretch">
                                 <!-- Files will be rendered here by JavaScript -->
                             </div>
+                        </div>
+
+                        <!-- Pagination Dots (Center) -->
+                        <div id="filePaginationDots" class="flex justify-center gap-2 mt-6 hidden">
+                            <!-- Dots will be inserted here -->
+                        </div>
+
+                        <!-- Pagination Controls (Bottom Right) -->
+                        <div class="mt-6 flex justify-end">
+                            <nav
+                                id="filePaginationNav"
+                                class="hidden inline-flex rounded-md shadow-sm"
+                                role="navigation"
+                                aria-label="Pagination"
+                            >
+                                <button
+                                    id="prevFilePage"
+                                    onclick="navigateFiles(-1)"
+                                    class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                                >
+                                    Prev
+                                </button>
+                                <button
+                                    id="nextFilePage"
+                                    onclick="navigateFiles(1)"
+                                    class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                                >
+                                    Next
+                                </button>
+                            </nav>
                         </div>
 
                         <!-- Empty State for Files -->
@@ -800,12 +886,10 @@
     </div>
 
     <!-- Project Detail Modal -->
-    <div id="projectModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
-        <!-- Modal Container with proper spacing -->
-        <div class="min-h-screen px-4 py-6 sm:py-12 flex items-center justify-center">
-            <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100vh-3rem)] sm:max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col">
+    <div id="projectModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-2 sm:p-4" onclick="if(event.target === this) closeModal()">
+            <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
                 <!-- Sticky Header -->
-                <div class="sticky top-0 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-3 z-10 shadow-md">
+                <div class="sticky top-0 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3 z-50 shadow-lg flex-shrink-0">
                     <h2 class="text-lg sm:text-xl font-bold text-white flex-1 min-w-0 pr-2" id="modalProjectName"></h2>
                     <button onclick="closeModal()" class="flex-shrink-0 w-11 h-11 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-white/30 hover:bg-white/40 active:bg-white/50 text-white transition-all duration-200 text-2xl sm:text-xl font-bold leading-none">
                         ✕
@@ -1081,13 +1165,14 @@
                         <button
                             id="changeFormatBtn"
                             onclick="changeFileFormat()"
-                            class="hidden w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-[#2f6e4e]/20 hover:bg-[#2f6e4e]/30 backdrop-blur border-2 border-[#2f6e4e]/40 text-[#2f6e4e] rounded-xl transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105 active:scale-95 group"
+                            class="hidden w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 bg-white hover:bg-gray-50 border-2 border-[#2f6e4e] rounded-xl transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg hover:scale-105 active:scale-95 group"
                             aria-label="Change file format"
                             title="Change format"
                             style="position: relative; z-index: 10;"
                         >
-                            <svg class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            <svg class="w-8 h-8 sm:w-7 sm:h-7 group-hover:rotate-180 transition-transform duration-500" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3" stroke="#2f6e4e" stroke-width="3.5" stroke-linecap="round"/>
+                                <path d="M16 3L12 3L12 7" stroke="#2f6e4e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
                     </div>
@@ -1095,7 +1180,7 @@
                         <!-- Enhanced Dropdown Menu -->
                         <div id="downloadMenu" class="hidden fixed w-full sm:w-auto min-w-[280px] max-w-[320px] sm:max-w-none pointer-events-none" style="top: -9999px; left: -9999px; z-index: 10000; visibility: hidden;">
                             <div id="downloadMenuInner" class="pointer-events-none">
-                            <div class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden ring-1 ring-black/5">
+                            <div id="downloadMenuContent" class="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 overflow-hidden ring-1 ring-black/5 pointer-events-none">
                                 <!-- Menu Header -->
                                 <div class="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100/50 border-b border-gray-200/70">
                                     <div class="flex items-center gap-2">
@@ -1111,16 +1196,17 @@
                                 <div class="p-2">
                                     <!-- PDF Option -->
                                     <button
-                                        onclick="selectFileType('pdf')"
+                                        onclick="console.log('🔴 PDF button clicked!'); selectFileType('pdf')"
+                                        ontouchstart="console.log('👆 PDF button touched (touchstart)')"
+                                        ontouchend="console.log('👆 PDF button touch ended (touchend)')"
                                         class="download-menu-item w-full text-left px-3 py-3 rounded-xl hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100/50 flex items-center gap-3 transition-all duration-300 group border-2 border-transparent hover:border-red-200/50 hover:shadow-md hover:shadow-red-100/50"
                                         style="animation-delay: 0.05s"
                                     >
-                                        <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
-                                            <svg class="w-6 h-6 text-red-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path>
-                                                <text x="50%" y="60%" font-size="5" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">PDF</text>
+                                        <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-md">
+                                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                             </svg>
-                                            <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-white/40 to-transparent"></div>
+                                            <div class="absolute bottom-1 right-1 bg-white text-red-600 text-[8px] font-black px-1 rounded shadow-sm">PDF</div>
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <div class="font-bold text-gray-900 text-sm group-hover:text-red-700 transition-colors flex items-center gap-2">
@@ -1136,23 +1222,17 @@
 
                                     <!-- CSV Option -->
                                     <button
-                                        onclick="selectFileType('csv')"
+                                        onclick="console.log('🟢 CSV button clicked!'); selectFileType('csv')"
+                                        ontouchstart="console.log('👆 CSV button touched (touchstart)')"
+                                        ontouchend="console.log('👆 CSV button touch ended (touchend)')"
                                         class="download-menu-item w-full text-left px-3 py-3 rounded-xl hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100/50 flex items-center gap-3 transition-all duration-300 group mt-1 border-2 border-transparent hover:border-green-200/50 hover:shadow-md hover:shadow-green-100/50"
                                         style="animation-delay: 0.1s"
                                     >
-                                        <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
-                                            <svg class="w-6 h-6 text-green-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path>
+                                        <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-md">
+                                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                                             </svg>
-                                            <div class="absolute inset-0 grid grid-cols-3 gap-px p-2 opacity-60">
-                                                <div class="bg-white rounded-sm"></div>
-                                                <div class="bg-white rounded-sm"></div>
-                                                <div class="bg-white rounded-sm"></div>
-                                                <div class="bg-white rounded-sm"></div>
-                                                <div class="bg-white rounded-sm"></div>
-                                                <div class="bg-white rounded-sm"></div>
-                                            </div>
-                                            <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-white/40 to-transparent"></div>
+                                            <div class="absolute bottom-1 right-1 bg-white text-green-600 text-[8px] font-black px-1 rounded shadow-sm">CSV</div>
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <div class="font-bold text-gray-900 text-sm group-hover:text-green-700 transition-colors">CSV Spreadsheet</div>
@@ -1165,20 +1245,17 @@
 
                                     <!-- TXT Option -->
                                     <button
-                                        onclick="selectFileType('txt')"
+                                        onclick="console.log('🔵 TXT button clicked!'); selectFileType('txt')"
+                                        ontouchstart="console.log('👆 TXT button touched (touchstart)')"
+                                        ontouchend="console.log('👆 TXT button touch ended (touchend)')"
                                         class="download-menu-item w-full text-left px-3 py-3 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100/50 flex items-center gap-3 transition-all duration-300 group mt-1 border-2 border-transparent hover:border-blue-200/50 hover:shadow-md hover:shadow-blue-100/50"
                                         style="animation-delay: 0.15s"
                                     >
-                                        <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
-                                            <svg class="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path>
+                                        <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-md">
+                                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
-                                            <div class="absolute inset-0 flex flex-col gap-0.5 p-2.5 opacity-60">
-                                                <div class="h-0.5 bg-white rounded-full w-3/4"></div>
-                                                <div class="h-0.5 bg-white rounded-full w-full"></div>
-                                                <div class="h-0.5 bg-white rounded-full w-2/3"></div>
-                                            </div>
-                                            <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-white/40 to-transparent"></div>
+                                            <div class="absolute bottom-1 right-1 bg-white text-blue-600 text-[8px] font-black px-1 rounded shadow-sm">TXT</div>
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <div class="font-bold text-gray-900 text-sm group-hover:text-blue-700 transition-colors">Text Document</div>
@@ -1536,11 +1613,51 @@
                 feedbackScore: 94,
                 description: "Three-day leadership training for SK officers and youth leaders.",
                 achievements: ["Trained 60 youth leaders", "5 expert speakers", "Leadership certification", "92% completion rate"]
+            },
+            {
+                id: 3,
+                name: "Sports Fest 2025: Malanday Interbarangay Games",
+                quarter: "Q3",
+                year: 2025,
+                period: "Sep 15-17, 2025",
+                budget: 55000,
+                spent: 53200,
+                volunteers: 45,
+                successRate: 89,
+                budgetScore: 97,
+                participationScore: 90,
+                timelineScore: 85,
+                impactScore: 92,
+                feedbackScore: 88,
+                description: "Three-day sports festival featuring basketball, volleyball, badminton, and chess tournaments for youth.",
+                achievements: ["150+ youth participants", "8 sports categories", "Inter-barangay champions crowned", "Community engagement boosted"]
+            },
+            {
+                id: 4,
+                name: "Mental Health Awareness Campaign",
+                quarter: "Q2",
+                year: 2025,
+                period: "Jun 5-7, 2025",
+                budget: 25000,
+                spent: 24100,
+                volunteers: 28,
+                successRate: 94,
+                budgetScore: 96,
+                participationScore: 93,
+                timelineScore: 95,
+                impactScore: 93,
+                feedbackScore: 96,
+                description: "Mental health awareness workshops, free counseling sessions, and stress management activities for youth.",
+                achievements: ["Reached 200+ youth", "Free counseling for 50 participants", "Mental health resource distribution", "High satisfaction rate"]
             }
         ];
 
         let currentQuarter = 'Q4';
         let filteredProjects = [...archivedProjects];
+
+        // Pagination variables for projects
+        let currentProjectPage = 0;
+        const projectsPerPage = 3;
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
@@ -1555,6 +1672,7 @@
             if (filteredProjects.length === 0) {
                 projectsList.innerHTML = '';
                 emptyState.classList.remove('hidden');
+                hideProjectPagination();
                 return;
             }
 
@@ -1563,13 +1681,18 @@
             // Get current search query for highlighting
             const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
 
-            projectsList.innerHTML = filteredProjects.map(project => {
+            // Apply pagination
+            const startIndex = currentProjectPage * projectsPerPage;
+            const endIndex = startIndex + projectsPerPage;
+            const projectsToShow = filteredProjects.slice(startIndex, endIndex);
+
+            projectsList.innerHTML = projectsToShow.map(project => {
                 // Check if this project matches the search query
                 const isSearchMatch = searchQuery && project.name.toLowerCase().includes(searchQuery);
                 const highlightClass = isSearchMatch ? 'search-match-highlight' : '';
 
                 return `
-                <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border-2 ${selectedProjects.includes(project.id) ? 'border-[#2f6e4e] shadow-md' : 'border-gray-100'} ${highlightClass} overflow-hidden">
+                <div class="w-full md:w-auto bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border-2 ${selectedProjects.includes(project.id) ? 'border-[#2f6e4e] shadow-md' : 'border-gray-100'} ${highlightClass} overflow-hidden">
                     <!-- Header Section -->
                     <div class="p-4 sm:p-5 bg-gradient-to-br from-gray-50 to-white border-b border-gray-100">
                         <div class="flex items-start gap-3 mb-3">
@@ -1612,15 +1735,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- View Details Button (Mobile-friendly full width) -->
-                        <button onclick="viewProject(${project.id})" class="w-full mt-3 px-4 py-2.5 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white text-sm font-semibold rounded-lg hover:shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                            </svg>
-                            <span>View Details</span>
-                        </button>
                     </div>
 
                     <!-- Stats Grid -->
@@ -1680,20 +1794,75 @@
                             </div>
                         </div>
 
-                        <!-- Overall Success Rate Progress Bar -->
-                        <div class="bg-gradient-to-br from-gray-50 to-white p-4 rounded-xl border-2 ${project.successRate >= 90 ? 'border-green-200' : project.successRate >= 80 ? 'border-blue-200' : 'border-amber-200'}">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wide">Overall Success Rate</span>
-                                <span class="text-xl sm:text-2xl font-black ${project.successRate >= 90 ? 'text-green-600' : project.successRate >= 80 ? 'text-blue-600' : 'text-amber-600'}">${project.successRate}%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
-                                <div class="h-full rounded-full ${getSuccessBarClass(project.successRate)} transition-all duration-500 shadow-sm" style="width: ${project.successRate}%"></div>
-                            </div>
+                        <!-- View Details Button (Full width on mobile, positioned right on laptop) -->
+                        <div class="flex justify-end">
+                            <button onclick="viewProject(${project.id})" class="w-full md:w-auto px-4 py-3 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group">
+                                <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                <span>View Details</span>
+                            </button>
                         </div>
                     </div>
                 </div>
             `;
             }).join('');
+
+            updateProjectPagination();
+        }
+
+        // Update project pagination controls
+        function updateProjectPagination() {
+            const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
+            const dotsContainer = document.getElementById('projectPaginationDots');
+            const navContainer = document.getElementById('projectPaginationNav');
+
+            if (totalPages <= 1) {
+                dotsContainer.classList.add('hidden');
+                navContainer.classList.add('hidden');
+                return;
+            }
+
+            dotsContainer.classList.remove('hidden');
+            navContainer.classList.remove('hidden');
+
+            // Create pagination dots with green indicator
+            dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+                <button
+                    onclick="goToProjectPage(${i})"
+                    class="h-2 rounded-full transition-all duration-300 ${i === currentProjectPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+                    style="min-height: 8px;"
+                ></button>
+            `).join('');
+        }
+
+        // Hide project pagination controls
+        function hideProjectPagination() {
+            const dotsContainer = document.getElementById('projectPaginationDots');
+            const navContainer = document.getElementById('projectPaginationNav');
+            if (dotsContainer) dotsContainer.classList.add('hidden');
+            if (navContainer) navContainer.classList.add('hidden');
+        }
+
+        // Navigate projects
+        function navigateProjects(direction) {
+            const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
+            currentProjectPage += direction;
+
+            // Wrap around
+            if (currentProjectPage < 0) currentProjectPage = totalPages - 1;
+            if (currentProjectPage >= totalPages) currentProjectPage = 0;
+
+            renderProjects();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Go to specific project page
+        function goToProjectPage(pageIndex) {
+            currentProjectPage = pageIndex;
+            renderProjects();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function getSuccessBadgeClass(rate) {
@@ -1824,9 +1993,9 @@
             document.getElementById('quarterFilter').addEventListener('change', applyFilters);
 
             // File filter listeners
-            document.getElementById('fileSearchInput').addEventListener('input', renderArchivedFiles);
-            document.getElementById('fileTypeFilter').addEventListener('change', renderArchivedFiles);
-            document.getElementById('fileYearFilter').addEventListener('change', renderArchivedFiles);
+            document.getElementById('fileSearchInput').addEventListener('input', applyFileFilters);
+            document.getElementById('fileTypeFilter').addEventListener('change', applyFileFilters);
+            document.getElementById('fileYearFilter').addEventListener('change', applyFileFilters);
         }
 
         function applyFilters() {
@@ -1842,36 +2011,10 @@
                 return matchesSearch && matchesYear && matchesQuarter;
             });
 
+            // Reset pagination to first page when filters change
+            currentProjectPage = 0;
+
             renderProjects();
-            updateQuarterSummary();
-        }
-
-        function updateQuarterSummary() {
-            const quarterProjects = filteredProjects.filter(p => p.quarter === currentQuarter);
-            const totalBudget = quarterProjects.reduce((sum, p) => sum + p.spent, 0);
-            const totalVolunteers = quarterProjects.reduce((sum, p) => sum + p.volunteers, 0);
-            const avgSuccess = quarterProjects.length > 0
-                ? Math.round(quarterProjects.reduce((sum, p) => sum + p.successRate, 0) / quarterProjects.length)
-                : 0;
-
-            document.getElementById('quarterSummary').innerHTML = `
-                <div class="text-center p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-500">Projects</p>
-                    <p class="text-2xl font-bold text-gray-800 mt-1">${quarterProjects.length}</p>
-                </div>
-                <div class="text-center p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-500">Budget Used</p>
-                    <p class="text-2xl font-bold text-gray-800 mt-1">₱${(totalBudget / 1000).toFixed(0)}K</p>
-                </div>
-                <div class="text-center p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-500">Volunteers</p>
-                    <p class="text-2xl font-bold text-gray-800 mt-1">${totalVolunteers}</p>
-                </div>
-                <div class="text-center p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm text-gray-500">Avg Success</p>
-                    <p class="text-2xl font-bold text-gray-800 mt-1">${avgSuccess}%</p>
-                </div>
-            `;
         }
 
         function resetFilters() {
@@ -1885,7 +2028,7 @@
             document.getElementById('fileSearchInput').value = '';
             document.getElementById('fileTypeFilter').value = 'all';
             document.getElementById('fileYearFilter').value = '2025';
-            renderArchivedFiles();
+            applyFileFilters();
         }
 
         function viewProject(id) {
@@ -2189,48 +2332,199 @@
         let selectedFileType = null;
         let currentProjectForExport = null;
 
+        // DIAGNOSTIC: Global touch/click detector
+        document.addEventListener('touchstart', function(e) {
+            const menu = document.getElementById('downloadMenu');
+            if (menu && !menu.classList.contains('hidden')) {
+                const touch = e.touches[0];
+                const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                console.log('👆 GLOBAL touchstart detected while menu open:', {
+                    x: touch.clientX,
+                    y: touch.clientY,
+                    elementAtPoint: element ? element.tagName : 'null',
+                    elementClass: element ? element.className : 'null',
+                    elementId: element ? element.id : 'null'
+                });
+            }
+        }, true); // Use capture phase
+
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('downloadMenu');
+            if (menu && !menu.classList.contains('hidden')) {
+                const element = document.elementFromPoint(e.clientX, e.clientY);
+                console.log('🖱️ GLOBAL click detected while menu open:', {
+                    x: e.clientX,
+                    y: e.clientY,
+                    elementAtPoint: element ? element.tagName : 'null',
+                    elementClass: element ? element.className : 'null',
+                    elementId: element ? element.id : 'null'
+                });
+            }
+        }, true); // Use capture phase
+
         function toggleDownloadMenu() {
+            console.log('🎯 toggleDownloadMenu called');
             const menu = document.getElementById('downloadMenu');
             const menuInner = document.getElementById('downloadMenuInner');
+            const menuContent = document.getElementById('downloadMenuContent');
             const button = document.getElementById('downloadBtn');
             const isHidden = menu.classList.contains('hidden');
 
+            console.log('📊 Menu state:', {
+                isHidden,
+                windowWidth: window.innerWidth,
+                isMobile: window.innerWidth <= 640
+            });
+
             if (isHidden) {
-                // Calculate position
+                console.log('✅ Opening menu...');
+
+                // PORTAL menu to body to escape modal's scroll container
+                document.body.appendChild(menu);
+                console.log('🚪 Menu portaled to document.body');
+
                 const buttonRect = button.getBoundingClientRect();
-                const menuHeight = 400; // Approximate menu height
+                const isMobile = window.innerWidth <= 640;
                 const padding = 8;
 
-                // Position menu above the button
-                const top = buttonRect.top - menuHeight - padding;
-                const left = window.innerWidth <= 640 ? 16 : buttonRect.right - 280; // 16px padding on mobile, align right on desktop
-                const width = window.innerWidth <= 640 ? window.innerWidth - 32 : 'auto'; // Full width minus padding on mobile
-
-                menu.style.top = `${top}px`;
-                menu.style.left = `${left}px`;
-                if (window.innerWidth <= 640) {
-                    menu.style.width = `${width}px`;
-                    menu.style.right = '16px';
-                    menu.style.left = '16px';
-                } else {
-                    menu.style.width = 'auto';
-                    menu.style.right = 'auto';
-                }
-
+                // Make menu visible but off-screen first to measure it
+                menu.style.top = '-9999px';
+                menu.style.left = '-9999px';
                 menu.classList.remove('hidden');
-                menu.classList.remove('pointer-events-none');
-                menu.classList.add('pointer-events-auto');
                 menu.style.visibility = 'visible';
 
-                menuInner.classList.remove('pointer-events-none');
-                menuInner.classList.add('pointer-events-auto');
+                // Force a reflow to get actual measurements
+                const actualMenuHeight = menu.offsetHeight;
+                console.log('📏 Actual menu height measured:', actualMenuHeight);
 
-                // Trigger staggered animation for menu items
-                const items = menu.querySelectorAll('.download-menu-item');
-                items.forEach((item, index) => {
-                    item.style.animationDelay = `${0.05 * (index + 1)}s`;
+                // Calculate position above button
+                let top = buttonRect.top - actualMenuHeight - padding;
+
+                // SAFETY: Ensure menu doesn't go above viewport
+                const minTop = 10;
+                if (top < minTop) {
+                    top = minTop;
+                    console.log('⚠️ Menu would go above viewport, clamped to', minTop);
+                }
+
+                // SAFETY: Ensure menu fits on screen (if button too high, show below)
+                if (top + actualMenuHeight > window.innerHeight) {
+                    // Show below button instead
+                    top = buttonRect.bottom + padding;
+                    console.log('⚠️ Not enough room above, showing below button at', top);
+                }
+
+                let left;
+                if (isMobile) {
+                    // Mobile: full width with side padding
+                    left = 16;
+                } else {
+                    // Desktop: align right with button
+                    left = buttonRect.right - 280;
+                }
+
+                const width = isMobile ? window.innerWidth - 32 : 280;
+
+                console.log('📍 Menu position (FIXED/VIEWPORT - PORTALED):', {
+                    buttonTop: buttonRect.top,
+                    buttonBottom: buttonRect.bottom,
+                    actualMenuHeight,
+                    calculatedTop: `${top}px`,
+                    calculatedLeft: `${left}px`,
+                    width: `${width}px`,
+                    viewportHeight: window.innerHeight,
+                    menuFitsAbove: (buttonRect.top - actualMenuHeight - padding) >= minTop
+                });
+
+                // Set final position with !important to override any CSS
+                menu.style.setProperty('top', `${top}px`, 'important');
+                menu.style.setProperty('left', `${left}px`, 'important');
+                menu.style.setProperty('width', `${width}px`, 'important');
+                menu.style.right = 'auto';
+
+                console.log('👁️ Menu positioned and visible');
+
+                // Small delay to ensure DOM is updated before enabling pointer events
+                requestAnimationFrame(() => {
+                    console.log('🔄 requestAnimationFrame - enabling pointer events');
+                    menu.classList.remove('pointer-events-none');
+                    menu.classList.add('pointer-events-auto');
+
+                    menuInner.classList.remove('pointer-events-none');
+                    menuInner.classList.add('pointer-events-auto');
+
+                    menuContent.classList.remove('pointer-events-none');
+                    menuContent.classList.add('pointer-events-auto');
+
+                    console.log('✔️ Pointer events enabled on all layers');
+
+                    // Trigger staggered animation for menu items
+                    const items = menu.querySelectorAll('.download-menu-item');
+                    console.log(`🎨 Found ${items.length} menu items`);
+                    items.forEach((item, index) => {
+                        item.style.animationDelay = `${0.05 * (index + 1)}s`;
+                        // Ensure each item is clickable
+                        item.style.pointerEvents = 'auto';
+                        item.style.touchAction = 'manipulation';
+                        console.log(`  ✓ Item ${index}: pointer-events=auto, touch-action=manipulation`);
+                    });
+                    console.log('✅ Menu fully opened and interactive');
+
+                    // DIAGNOSTIC: Check computed styles and z-index
+                    setTimeout(() => {
+                        const menuComputed = window.getComputedStyle(menu);
+                        const menuInnerComputed = window.getComputedStyle(menuInner);
+                        const menuContentComputed = window.getComputedStyle(menuContent);
+
+                        console.log('🔍 DIAGNOSTIC - Computed styles:', {
+                            menu: {
+                                zIndex: menuComputed.zIndex,
+                                pointerEvents: menuComputed.pointerEvents,
+                                visibility: menuComputed.visibility,
+                                display: menuComputed.display,
+                                position: menuComputed.position
+                            },
+                            menuInner: {
+                                pointerEvents: menuInnerComputed.pointerEvents,
+                                position: menuInnerComputed.position
+                            },
+                            menuContent: {
+                                pointerEvents: menuContentComputed.pointerEvents,
+                                position: menuContentComputed.position
+                            },
+                            firstButton: items[0] ? {
+                                pointerEvents: window.getComputedStyle(items[0]).pointerEvents,
+                                touchAction: window.getComputedStyle(items[0]).touchAction
+                            } : 'no buttons'
+                        });
+
+                        // Check what element is at the menu's center
+                        const menuRect = menu.getBoundingClientRect();
+                        const centerX = menuRect.left + menuRect.width / 2;
+                        const centerY = menuRect.top + menuRect.height / 2;
+                        const elementAtCenter = document.elementFromPoint(centerX, centerY);
+
+                        console.log('📍 Menu bounding rect:', {
+                            top: menuRect.top,
+                            left: menuRect.left,
+                            width: menuRect.width,
+                            height: menuRect.height,
+                            bottom: menuRect.bottom,
+                            right: menuRect.right
+                        });
+
+                        console.log('📍 Element at menu center:', {
+                            x: centerX,
+                            y: centerY,
+                            element: elementAtCenter ? elementAtCenter.tagName : 'null',
+                            class: elementAtCenter ? elementAtCenter.className : 'null',
+                            id: elementAtCenter ? elementAtCenter.id : 'null',
+                            isMenuOrChild: elementAtCenter && (elementAtCenter.id === 'downloadMenu' || menu.contains(elementAtCenter))
+                        });
+                    }, 100); // Small delay to let animations settle
                 });
             } else {
+                console.log('❌ Closing menu...');
                 menu.classList.add('hidden');
                 menu.classList.add('pointer-events-none');
                 menu.classList.remove('pointer-events-auto');
@@ -2238,13 +2532,26 @@
                 menuInner.classList.add('pointer-events-none');
                 menuInner.classList.remove('pointer-events-auto');
 
+                menuContent.classList.add('pointer-events-none');
+                menuContent.classList.remove('pointer-events-auto');
+
+                // Reset animations for next opening
+                const items = menu.querySelectorAll('.download-menu-item');
+                items.forEach(item => {
+                    item.style.animation = 'none';
+                    item.offsetHeight; // Force reflow
+                    item.style.animation = '';
+                });
+
                 // Move menu off-screen
                 menu.style.top = '-9999px';
                 menu.style.left = '-9999px';
+                console.log('✅ Menu closed and moved off-screen');
             }
         }
 
         function selectFileType(format) {
+            console.log('🎯 selectFileType called with format:', format);
             selectedFileType = format;
             const downloadText = document.getElementById('downloadText');
             const chevronIcon = document.getElementById('chevronIcon');
@@ -2252,6 +2559,8 @@
             const fileTypeBadge = document.getElementById('fileTypeBadge');
             const downloadBtn = document.getElementById('downloadBtn');
             const changeFormatBtn = document.getElementById('changeFormatBtn');
+
+            console.log('📝 Updating UI for format:', format);
 
             // Update button styling with smooth transition
             downloadBtn.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -2274,16 +2583,32 @@
             chevronIcon.classList.add('hidden');
             changeFormatBtn.classList.remove('hidden');
 
+            console.log('✅ UI updated - badge:', config.badge, 'text:', config.text);
+
             // Close menu
             const menu = document.getElementById('downloadMenu');
             const menuInner = document.getElementById('downloadMenuInner');
+            const menuContent = document.getElementById('downloadMenuContent');
             menu.classList.add('hidden');
             menu.classList.add('pointer-events-none');
             menu.classList.remove('pointer-events-auto');
             menuInner.classList.add('pointer-events-none');
             menuInner.classList.remove('pointer-events-auto');
+            menuContent.classList.add('pointer-events-none');
+            menuContent.classList.remove('pointer-events-auto');
+
+            // Reset animations for next opening
+            const items = menu.querySelectorAll('.download-menu-item');
+            items.forEach(item => {
+                item.style.animation = 'none';
+                item.offsetHeight; // Force reflow
+                item.style.animation = '';
+            });
+
             menu.style.top = '-9999px';
             menu.style.left = '-9999px';
+
+            console.log('✅ Menu closed after selection');
 
             // Scale animation
             downloadBtn.style.transform = 'scale(0.95)';
@@ -2293,12 +2618,16 @@
         }
 
         function changeFileFormat() {
+            console.log('🔄 changeFileFormat called');
             // Reset selection and reopen menu
             selectedFileType = null;
             const downloadText = document.getElementById('downloadText');
             const chevronIcon = document.getElementById('chevronIcon');
+            const downloadIcon = document.getElementById('downloadIcon');
             const fileTypeBadge = document.getElementById('fileTypeBadge');
             const changeFormatBtn = document.getElementById('changeFormatBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const successIcon = document.getElementById('successIcon');
 
             // Reset text and icons
             downloadText.textContent = 'Select Format';
@@ -2306,15 +2635,28 @@
             chevronIcon.classList.remove('hidden');
             changeFormatBtn.classList.add('hidden');
 
+            // Ensure download icon is visible
+            downloadIcon.classList.remove('hidden');
+            loadingSpinner.classList.add('hidden');
+            successIcon.classList.add('hidden');
+
+            console.log('✅ Format reset, icons restored, reopening menu');
             // Open the menu
             toggleDownloadMenu();
         }
 
         function handleDownloadClick(event) {
+            console.log('🖱️ handleDownloadClick called');
+            console.log('  Current selectedFileType:', selectedFileType);
+            console.log('  Event type:', event.type);
+            console.log('  Event target:', event.target.tagName);
+
             if (!selectedFileType) {
                 // No file type selected, show the menu
+                console.log('  → No format selected, opening menu');
                 toggleDownloadMenu();
             } else {
+                console.log('  → Format selected, starting download:', selectedFileType);
                 // Create ripple effect
                 const button = event.currentTarget;
                 const ripple = document.createElement('span');
@@ -2333,6 +2675,7 @@
         }
 
         function startDownload(format) {
+            console.log('📥 startDownload called with format:', format);
             const downloadBtn = document.getElementById('downloadBtn');
             const downloadIcon = document.getElementById('downloadIcon');
             const loadingSpinner = document.getElementById('loadingSpinner');
@@ -2429,6 +2772,7 @@
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('downloadMenu');
             const menuInner = document.getElementById('downloadMenuInner');
+            const menuContent = document.getElementById('downloadMenuContent');
             const button = document.getElementById('downloadBtn');
             const changeBtn = document.getElementById('changeFormatBtn');
 
@@ -2438,14 +2782,36 @@
                                      button.contains(event.target) ||
                                      (changeBtn && changeBtn.contains(event.target));
 
+                console.log('🖱️ Click detected while menu open:', {
+                    target: event.target.tagName,
+                    targetClass: event.target.className,
+                    isClickInside,
+                    menuContains: menu.contains(event.target),
+                    buttonContains: button.contains(event.target)
+                });
+
                 if (!isClickInside) {
+                    console.log('❌ Click outside menu - closing');
                     menu.classList.add('hidden');
                     menu.classList.add('pointer-events-none');
                     menu.classList.remove('pointer-events-auto');
                     menuInner.classList.add('pointer-events-none');
                     menuInner.classList.remove('pointer-events-auto');
+                    menuContent.classList.add('pointer-events-none');
+                    menuContent.classList.remove('pointer-events-auto');
+
+                    // Reset animations for next opening
+                    const items = menu.querySelectorAll('.download-menu-item');
+                    items.forEach(item => {
+                        item.style.animation = 'none';
+                        item.offsetHeight; // Force reflow
+                        item.style.animation = '';
+                    });
+
                     menu.style.top = '-9999px';
                     menu.style.left = '-9999px';
+                } else {
+                    console.log('✅ Click inside menu - keeping open');
                 }
             }
         });
@@ -2473,60 +2839,86 @@
                 return false;
             }
 
-            // Helper to draw section header
+            // Helper to draw section header - Minimalist with left border
             function drawSectionHeader(title) {
                 checkPageBreak(15);
-                doc.setFillColor(5, 150, 105); // [#2f6e4e]
-                doc.rect(margin, y - 3, contentWidth, 8, 'F');
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(12);
+                // Green left border accent
+                doc.setDrawColor(47, 110, 78);
+                doc.setLineWidth(2);
+                doc.line(margin, y - 2, margin, y + 6);
+
+                // Title text
+                doc.setTextColor(47, 110, 78);
+                doc.setFontSize(13);
                 doc.setFont(undefined, 'bold');
-                doc.text(title, margin + 2, y + 2);
+                doc.text(title, margin + 5, y + 4);
+
+                // Bottom border line
+                doc.setDrawColor(220, 220, 220);
+                doc.setLineWidth(0.3);
+                doc.line(margin, y + 8, margin + contentWidth, y + 8);
+
                 doc.setTextColor(0, 0, 0);
-                y += 12;
+                y += 15;
             }
 
-            // Title Header with background
-            doc.setFillColor(5, 150, 105);
-            doc.rect(0, 0, pageWidth, 35, 'F');
-
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(16);
+            // Title Header - Clean and minimal
+            doc.setTextColor(47, 110, 78);
+            doc.setFontSize(18);
             doc.setFont(undefined, 'bold');
-            const titleLines = doc.splitTextToSize(project.name, contentWidth);
+            const titleLines = doc.splitTextToSize(project.name, contentWidth - 20);
             titleLines.forEach((line, idx) => {
-                doc.text(line, pageWidth / 2, 12 + (idx * 7), { align: 'center' });
+                doc.text(line, pageWidth / 2, 20 + (idx * 8), { align: 'center' });
             });
 
+            // Subtitle
+            doc.setTextColor(100, 100, 100);
             doc.setFontSize(10);
             doc.setFont(undefined, 'normal');
-            doc.text('PROJECT COMPLETION REPORT', pageWidth / 2, 28, { align: 'center' });
+            doc.text('PROJECT COMPLETION REPORT', pageWidth / 2, 20 + (titleLines.length * 8) + 6, { align: 'center' });
+
+            // Bottom border accent
+            doc.setDrawColor(47, 110, 78);
+            doc.setLineWidth(1.5);
+            doc.line(margin, 20 + (titleLines.length * 8) + 12, margin + contentWidth, 20 + (titleLines.length * 8) + 12);
 
             doc.setTextColor(0, 0, 0);
-            y = 45;
+            y = 20 + (titleLines.length * 8) + 20;
 
-            // Metadata Box
-            doc.setDrawColor(5, 150, 105);
+            // Metadata Box - Clean bordered design
+            doc.setDrawColor(200, 200, 200);
             doc.setLineWidth(0.5);
-            doc.rect(margin, y, contentWidth, 20);
+            doc.rect(margin, y, contentWidth, 22);
+
+            // Green left accent
+            doc.setDrawColor(47, 110, 78);
+            doc.setLineWidth(2);
+            doc.line(margin, y, margin, y + 22);
 
             doc.setFontSize(9);
+            doc.setTextColor(80, 80, 80);
             doc.setFont(undefined, 'bold');
-            doc.text('Category:', margin + 3, y + 6);
+            doc.text('Category:', margin + 5, y + 7);
+            doc.setTextColor(0, 0, 0);
             doc.setFont(undefined, 'normal');
-            doc.text(project.category || 'N/A', margin + 25, y + 6);
+            doc.text(project.category || 'N/A', margin + 28, y + 7);
 
+            doc.setTextColor(80, 80, 80);
             doc.setFont(undefined, 'bold');
-            doc.text('Status:', margin + 3, y + 12);
+            doc.text('Status:', margin + 5, y + 13);
+            doc.setTextColor(0, 0, 0);
             doc.setFont(undefined, 'normal');
-            doc.text('Completed', margin + 25, y + 12);
+            doc.text('Completed', margin + 28, y + 13);
 
+            doc.setTextColor(80, 80, 80);
             doc.setFont(undefined, 'bold');
-            doc.text('Generated:', margin + 3, y + 18);
+            doc.text('Generated:', margin + 5, y + 19);
+            doc.setTextColor(0, 0, 0);
             doc.setFont(undefined, 'normal');
-            doc.text(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), margin + 25, y + 18);
+            doc.text(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), margin + 28, y + 19);
 
-            y += 28;
+            doc.setTextColor(0, 0, 0);
+            y += 30;
 
             // Project Description Section
             drawSectionHeader('Project Description');
@@ -2589,37 +2981,37 @@
             if (project.volunteerList && project.volunteerList.length > 0) {
                 drawSectionHeader('List of Volunteers');
 
-                // Table headers
-                doc.setFillColor(240, 240, 240);
-                doc.rect(margin, y, contentWidth, 7, 'F');
-
+                // Table headers - Clean with bottom border
                 doc.setFontSize(9);
+                doc.setTextColor(80, 80, 80);
                 doc.setFont(undefined, 'bold');
-                doc.text('#', margin + 2, y + 5);
-                doc.text('Volunteer Name', margin + 10, y + 5);
-                doc.text('Age', margin + 100, y + 5);
-                doc.text('Contact Number', margin + 120, y + 5);
-                y += 7;
+                doc.text('#', margin + 2, y + 4);
+                doc.text('Volunteer Name', margin + 10, y + 4);
+                doc.text('Age', margin + 100, y + 4);
+                doc.text('Contact Number', margin + 120, y + 4);
+
+                // Header bottom border
+                doc.setDrawColor(47, 110, 78);
+                doc.setLineWidth(0.5);
+                doc.line(margin, y + 6, margin + contentWidth, y + 6);
+
+                doc.setTextColor(0, 0, 0);
+                y += 10;
 
                 doc.setFont(undefined, 'normal');
-                doc.setDrawColor(200, 200, 200);
+                doc.setDrawColor(230, 230, 230);
                 doc.setLineWidth(0.1);
 
                 project.volunteerList.forEach((volunteer, index) => {
                     checkPageBreak(8);
 
-                    // Alternate row colors
-                    if (index % 2 === 0) {
-                        doc.setFillColor(250, 250, 250);
-                        doc.rect(margin, y - 1, contentWidth, 6, 'F');
-                    }
-
+                    doc.setFontSize(9);
                     doc.text(String(index + 1), margin + 2, y + 4);
                     doc.text(volunteer.name, margin + 10, y + 4);
                     doc.text(String(volunteer.age), margin + 100, y + 4);
                     doc.text(volunteer.contact, margin + 120, y + 4);
 
-                    // Draw row separator
+                    // Draw subtle row separator
                     doc.line(margin, y + 5, margin + contentWidth, y + 5);
 
                     y += 6;
@@ -2639,26 +3031,29 @@
                 ['Volunteer Feedback', project.feedbackScore, '15%', (project.feedbackScore * 0.15).toFixed(2)]
             ];
 
-            // Table header
-            doc.setFillColor(240, 240, 240);
-            doc.rect(margin, y, contentWidth, 7, 'F');
-
+            // Table header - Clean with bottom border
             doc.setFontSize(9);
+            doc.setTextColor(80, 80, 80);
             doc.setFont(undefined, 'bold');
-            doc.text('Metric', margin + 2, y + 5);
-            doc.text('Score', margin + 80, y + 5);
-            doc.text('Weight', margin + 110, y + 5);
-            doc.text('Contribution', margin + 140, y + 5);
-            y += 7;
+            doc.text('Metric', margin + 2, y + 4);
+            doc.text('Score', margin + 80, y + 4);
+            doc.text('Weight', margin + 110, y + 4);
+            doc.text('Contribution', margin + 140, y + 4);
+
+            // Header bottom border
+            doc.setDrawColor(47, 110, 78);
+            doc.setLineWidth(0.5);
+            doc.line(margin, y + 6, margin + contentWidth, y + 6);
+
+            doc.setTextColor(0, 0, 0);
+            y += 10;
 
             doc.setFont(undefined, 'normal');
+            doc.setDrawColor(230, 230, 230);
+            doc.setLineWidth(0.1);
+
             evaluationMetrics.forEach(([metric, score, weight, contribution], idx) => {
                 checkPageBreak();
-
-                if (idx % 2 === 0) {
-                    doc.setFillColor(250, 250, 250);
-                    doc.rect(margin, y - 1, contentWidth, 6, 'F');
-                }
 
                 doc.text(metric, margin + 2, y + 4);
                 doc.text(`${score}%`, margin + 80, y + 4);
@@ -2669,18 +3064,29 @@
                 y += 6;
             });
 
-            // Total row
-            doc.setFillColor(5, 150, 105);
-            doc.rect(margin, y - 1, contentWidth, 7, 'F');
-            doc.setTextColor(255, 255, 255);
+            // Total row - Clean with green left border
+            doc.setDrawColor(47, 110, 78);
+            doc.setLineWidth(2);
+            doc.line(margin, y, margin, y + 8);
+
+            doc.setDrawColor(47, 110, 78);
+            doc.setLineWidth(0.8);
+            doc.line(margin, y, margin + contentWidth, y);
+
+            doc.setTextColor(47, 110, 78);
             doc.setFont(undefined, 'bold');
-            doc.text('Overall Success Rate', margin + 2, y + 4);
-            doc.text(`${project.successRate}%`, margin + 80, y + 4);
-            doc.text('100%', margin + 110, y + 4);
+            doc.text('Overall Success Rate', margin + 5, y + 5);
+            doc.text(`${project.successRate}%`, margin + 80, y + 5);
+            doc.text('100%', margin + 110, y + 5);
             const totalContribution = evaluationMetrics.reduce((sum, m) => sum + parseFloat(m[3]), 0).toFixed(2);
-            doc.text(`${totalContribution}%`, margin + 140, y + 4);
+            doc.text(`${totalContribution}%`, margin + 140, y + 5);
+
+            doc.setDrawColor(47, 110, 78);
+            doc.setLineWidth(0.8);
+            doc.line(margin, y + 8, margin + contentWidth, y + 8);
+
             doc.setTextColor(0, 0, 0);
-            y += 12;
+            y += 15;
 
             // Financial Summary
             drawSectionHeader('Financial Summary');
@@ -2708,51 +3114,56 @@
             if (project.budgetBreakdown && project.budgetBreakdown.length > 0) {
                 drawSectionHeader('Budget Breakdown');
 
-                // Table headers
-                doc.setFillColor(240, 240, 240);
-                doc.rect(margin, y, contentWidth, 7, 'F');
-
+                // Table headers - Clean with bottom border
                 doc.setFontSize(9);
+                doc.setTextColor(80, 80, 80);
                 doc.setFont(undefined, 'bold');
-                doc.text('#', margin + 2, y + 5);
-                doc.text('Expense Item', margin + 10, y + 5);
-                doc.text('Cost', margin + 150, y + 5);
-                y += 7;
+                doc.text('#', margin + 2, y + 4);
+                doc.text('Expense Item', margin + 10, y + 4);
+                doc.text('Cost', margin + 150, y + 4);
+
+                // Header bottom border
+                doc.setDrawColor(47, 110, 78);
+                doc.setLineWidth(0.5);
+                doc.line(margin, y + 6, margin + contentWidth, y + 6);
+
+                doc.setTextColor(0, 0, 0);
+                y += 10;
 
                 doc.setFont(undefined, 'normal');
-                doc.setDrawColor(200, 200, 200);
+                doc.setDrawColor(230, 230, 230);
                 doc.setLineWidth(0.1);
 
                 let totalBreakdown = 0;
                 project.budgetBreakdown.forEach((item, index) => {
                     checkPageBreak(8);
 
-                    // Alternate row colors
-                    if (index % 2 === 0) {
-                        doc.setFillColor(250, 250, 250);
-                        doc.rect(margin, y - 1, contentWidth, 6, 'F');
-                    }
-
+                    doc.setFontSize(9);
                     doc.text(String(index + 1), margin + 2, y + 4);
                     doc.text(item.description, margin + 10, y + 4);
                     doc.text(`₱${item.cost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, margin + 150, y + 4);
 
                     totalBreakdown += item.cost;
 
-                    // Draw row separator
+                    // Draw subtle row separator
                     doc.line(margin, y + 5, margin + contentWidth, y + 5);
 
                     y += 6;
                 });
 
-                // Total row
-                doc.setFillColor(240, 240, 240);
-                doc.rect(margin, y, contentWidth, 7, 'F');
+                // Total row - Clean with top border
+                doc.setDrawColor(47, 110, 78);
+                doc.setLineWidth(0.8);
+                doc.line(margin, y, margin + contentWidth, y);
+
+                doc.setTextColor(47, 110, 78);
                 doc.setFont(undefined, 'bold');
                 doc.text('Total:', margin + 120, y + 5);
                 doc.text(`₱${totalBreakdown.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, margin + 150, y + 5);
+
+                doc.setTextColor(0, 0, 0);
                 doc.setFont(undefined, 'normal');
-                y += 10;
+                y += 12;
             }
 
             // Community Impact
@@ -2807,18 +3218,22 @@
             // Overall Project Success Rate
             drawSectionHeader('Overall Project Success Rate');
 
-            // Success box
-            doc.setFillColor(220, 252, 231); // [#2f6e4e]/10
-            doc.setDrawColor(5, 150, 105);
-            doc.setLineWidth(1);
-            doc.rect(margin, y, contentWidth, 20, 'FD');
+            // Success box - Clean bordered design
+            doc.setDrawColor(47, 110, 78);
+            doc.setLineWidth(1.5);
+            doc.rect(margin, y, contentWidth, 20);
+
+            // Green left accent bar
+            doc.setDrawColor(47, 110, 78);
+            doc.setLineWidth(3);
+            doc.line(margin, y, margin, y + 20);
 
             doc.setFontSize(16);
             doc.setFont(undefined, 'bold');
-            doc.setTextColor(5, 150, 105);
-            doc.text(`${project.successRate}% – Highly Successful Project`, pageWidth / 2, y + 8, { align: 'center' });
+            doc.setTextColor(47, 110, 78);
+            doc.text(`${project.successRate}% – Highly Successful Project`, pageWidth / 2, y + 13, { align: 'center' });
             doc.setTextColor(0, 0, 0);
-            y += 24;
+            y += 26;
 
             doc.setFontSize(10);
             doc.setFont(undefined, 'normal');
@@ -2831,17 +3246,20 @@
             });
             y += 10;
 
-            // Footer
-            checkPageBreak(15);
-            doc.setDrawColor(200, 200, 200);
+            // Footer - Clean and professional
+            checkPageBreak(20);
+            doc.setDrawColor(220, 220, 220);
+            doc.setLineWidth(0.3);
             doc.line(margin, y, margin + contentWidth, y);
-            y += 5;
+            y += 6;
 
-            doc.setFontSize(9);
-            doc.setTextColor(100, 100, 100);
-            doc.setFont(undefined, 'italic');
+            doc.setFontSize(8);
+            doc.setTextColor(120, 120, 120);
+            doc.setFont(undefined, 'normal');
             doc.text('Report generated by BIMS – Barangay Information Management System', margin, y);
             y += 4;
+            doc.setTextColor(150, 150, 150);
+            doc.setFont(undefined, 'italic');
             doc.text(`Generated on: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`, margin, y);
             doc.setTextColor(0, 0, 0);
 
@@ -3113,9 +3531,6 @@
             );
         }
 
-        // Initialize quarter summary
-        updateQuarterSummary();
-
         // Update current date
         function updateCurrentDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -3256,11 +3671,29 @@
         let archivedFiles = [];
         let currentArchiveType = 'projects';
 
+        // Pagination variables for files
+        let currentFilePage = 0;
+        const filesPerPage = 6;
+
         // Load archived files from localStorage
         function loadArchivedFiles() {
             const saved = localStorage.getItem('archivedFiles');
             if (saved) {
                 archivedFiles = JSON.parse(saved);
+                updateFilesCount();
+            } else {
+                // Initialize with sample data for demonstration
+                archivedFiles = [
+                    { id: 1, name: 'Annual_Budget_Report_2023.pdf', type: 'pdf', uploaded: 'Jan 15, 2023', uploadedDate: '2023-01-15', archivedDate: 'Dec 1, 2025' },
+                    { id: 2, name: 'Community_Survey_Results.xlsx', type: 'xlsx', uploaded: 'Mar 20, 2023', uploadedDate: '2023-03-20', archivedDate: 'Dec 1, 2025' },
+                    { id: 3, name: 'SK_Event_Photos_2023.jpg', type: 'jpg', uploaded: 'May 10, 2023', uploadedDate: '2023-05-10', archivedDate: 'Dec 1, 2025' },
+                    { id: 4, name: 'Volunteer_Certificates_2023.pdf', type: 'pdf', uploaded: 'Jul 8, 2023', uploadedDate: '2023-07-08', archivedDate: 'Dec 1, 2025' },
+                    { id: 5, name: 'Project_Proposal_Template.xlsx', type: 'xlsx', uploaded: 'Feb 12, 2024', uploadedDate: '2024-02-12', archivedDate: 'Dec 1, 2025' },
+                    { id: 6, name: 'Youth_Summit_Flyer.png', type: 'png', uploaded: 'Apr 5, 2024', uploadedDate: '2024-04-05', archivedDate: 'Dec 1, 2025' },
+                    { id: 7, name: 'Financial_Statement_Q1.pdf', type: 'pdf', uploaded: 'Jun 18, 2024', uploadedDate: '2024-06-18', archivedDate: 'Dec 1, 2025' },
+                    { id: 8, name: 'Attendance_Sheet_2024.xlsx', type: 'xlsx', uploaded: 'Aug 22, 2024', uploadedDate: '2024-08-22', archivedDate: 'Dec 1, 2025' },
+                    { id: 9, name: 'SK_Logo_Old_Version.png', type: 'png', uploaded: 'Oct 10, 2024', uploadedDate: '2024-10-10', archivedDate: 'Dec 1, 2025' }
+                ];
                 updateFilesCount();
             }
         }
@@ -3309,22 +3742,29 @@
             }
         }
 
-        // Render archived files
+        // Wrapper function for file filter changes - resets pagination
+        function applyFileFilters() {
+            currentFilePage = 0;
+            renderArchivedFiles();
+        }
+
+        // Render archived files with pagination
         function renderArchivedFiles() {
-            const filesListContainer = document.querySelector('#filesList > div');
+            const filesListContainer = document.getElementById('filesGrid');
             const emptyFilesState = document.getElementById('emptyFilesState');
 
             filesListContainer.innerHTML = '';
 
             if (archivedFiles.length === 0) {
                 emptyFilesState.classList.remove('hidden');
+                hidePagination();
                 return;
             }
 
             // Apply filters
-            const searchQuery = document.getElementById('fileSearchInput').value.toLowerCase();
-            const fileTypeFilter = document.getElementById('fileTypeFilter').value;
-            const yearFilter = document.getElementById('fileYearFilter').value;
+            const searchQuery = document.getElementById('fileSearchInput')?.value.toLowerCase() || '';
+            const fileTypeFilter = document.getElementById('fileTypeFilter')?.value || 'all';
+            const yearFilter = document.getElementById('fileYearFilter')?.value || 'all';
 
             const filteredFiles = archivedFiles.filter(file => {
                 const matchesSearch = file.name.toLowerCase().includes(searchQuery);
@@ -3348,93 +3788,144 @@
 
             if (filteredFiles.length === 0) {
                 emptyFilesState.classList.remove('hidden');
+                hidePagination();
                 return;
             }
 
             emptyFilesState.classList.add('hidden');
 
-            // Group files by year
-            const filesByYear = {};
-            filteredFiles.forEach(file => {
-                // Extract year from uploaded date
-                let year = 'Unknown';
+            // Apply pagination
+            const startIndex = currentFilePage * filesPerPage;
+            const endIndex = startIndex + filesPerPage;
+            const filesToShow = filteredFiles.slice(startIndex, endIndex);
+
+            // Render paginated files
+            filesToShow.forEach(file => {
+                const fileIconColor =
+                    {
+                        pdf: "bg-red-100 text-red-600",
+                        xlsx: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
+                        png: "bg-blue-100 text-blue-600",
+                        jpg: "bg-blue-100 text-blue-600",
+                        default: "bg-gray-100 text-gray-700",
+                    }[file.type] || "bg-gray-100 text-gray-700";
+
+                // Check if this file matches the search query for highlighting
+                const isSearchMatch = searchQuery && file.name.toLowerCase().includes(searchQuery);
+                const highlightClass = isSearchMatch ? 'search-match-highlight' : '';
+
+                const card = document.createElement("div");
+                card.className = `w-full md:w-auto bg-white border border-gray-200 rounded-xl p-5 hover:shadow-lg transition ${highlightClass}`;
+
+                // Extract year for display
+                let displayYear = 'Unknown';
                 if (file.uploadedDate) {
                     const date = new Date(file.uploadedDate);
-                    year = date.getFullYear();
+                    displayYear = date.getFullYear();
                 } else if (file.uploaded) {
-                    // Try to parse year from uploaded string (e.g., "Jan 20, 2023")
                     const match = file.uploaded.match(/\d{4}/);
                     if (match) {
-                        year = match[0];
+                        displayYear = match[0];
                     }
                 }
 
-                if (!filesByYear[year]) {
-                    filesByYear[year] = [];
-                }
-                filesByYear[year].push(file);
-            });
-
-            // Sort years in descending order
-            const sortedYears = Object.keys(filesByYear).sort((a, b) => {
-                if (a === 'Unknown') return 1;
-                if (b === 'Unknown') return -1;
-                return parseInt(b) - parseInt(a);
-            });
-
-            // Render files grouped by year
-            sortedYears.forEach(year => {
-                // Create year header
-                const yearHeader = document.createElement('div');
-                yearHeader.className = 'col-span-full mb-4 mt-6 first:mt-0';
-                yearHeader.innerHTML = `
-                    <div class="flex items-center">
-                        <h3 class="text-xl font-bold text-gray-800">${year}</h3>
-                        <span class="ml-3 px-3 py-1 bg-gray-100 text-gray-600 text-sm font-medium rounded-full">${filesByYear[year].length} file${filesByYear[year].length !== 1 ? 's' : ''}</span>
+                card.innerHTML = `
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 ${fileIconColor} rounded-lg flex items-center justify-center font-bold text-xs">
+                            ${file.type ? file.type.toUpperCase() : "FILE"}
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <p class="font-semibold text-gray-800">${file.name}</p>
+                            <p class="text-xs text-gray-500">Uploaded: ${file.uploaded} <span class="text-gray-400">(${displayYear})</span></p>
+                            <p class="text-xs text-gray-400">Archived: ${file.archivedDate || 'N/A'}</p>
+                        </div>
                     </div>
-                    <div class="mt-2 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+                    <div class="flex justify-between mt-4 gap-2">
+                        <button class="px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition text-sm" onclick="viewArchivedFile(${file.id})">View</button>
+                        <button class="px-3 py-2 text-[#2f6e4e] hover:bg-[#2f6e4e]/10 rounded-lg transition text-sm" onclick="restoreFile(${file.id})">Restore</button>
+                        <button class="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition text-sm" onclick="deleteArchivedFile(${file.id})">Delete</button>
+                    </div>
                 `;
-                filesListContainer.appendChild(yearHeader);
 
-                // Render files for this year
-                filesByYear[year].forEach(file => {
-                    const fileIconColor =
-                        {
-                            pdf: "bg-red-100 text-red-600",
-                            xlsx: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
-                            png: "bg-blue-100 text-blue-600",
-                            jpg: "bg-blue-100 text-blue-600",
-                            default: "bg-gray-100 text-gray-700",
-                        }[file.type] || "bg-gray-100 text-gray-700";
-
-                    // Check if this file matches the search query for highlighting
-                    const isSearchMatch = searchQuery && file.name.toLowerCase().includes(searchQuery);
-                    const highlightClass = isSearchMatch ? 'search-match-highlight' : '';
-
-                    const card = document.createElement("div");
-                    card.className = `bg-white border border-gray-200 rounded-xl p-5 hover:shadow-lg transition ${highlightClass}`;
-
-                    card.innerHTML = `
-                        <div class="flex items-center mb-3">
-                            <div class="w-10 h-10 ${fileIconColor} rounded-lg flex items-center justify-center font-bold">
-                                ${file.type ? file.type.toUpperCase() : "FILE"}
-                            </div>
-                            <div class="ml-3 flex-1">
-                                <p class="font-semibold text-gray-800">${file.name}</p>
-                                <p class="text-xs text-gray-500">Uploaded: ${file.uploaded}</p>
-                                <p class="text-xs text-gray-400">Archived: ${file.archivedDate || 'N/A'}</p>
-                            </div>
-                        </div>
-                        <div class="flex justify-between mt-4 gap-2">
-                            <button class="px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition text-sm" onclick="viewArchivedFile(${file.id})">View</button>
-                            <button class="px-3 py-2 text-[#2f6e4e] hover:bg-[#2f6e4e]/10 rounded-lg transition text-sm" onclick="restoreFile(${file.id})">Restore</button>
-                            <button class="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition text-sm" onclick="deleteArchivedFile(${file.id})">Delete</button>
-                        </div>
-                    `;
-
-                    filesListContainer.appendChild(card);
-                });
+                filesListContainer.appendChild(card);
             });
+
+            updateFilePagination(filteredFiles.length);
+        }
+
+        // Update file pagination controls
+        function updateFilePagination(totalFiles) {
+            const totalPages = Math.ceil(totalFiles / filesPerPage);
+            const dotsContainer = document.getElementById('filePaginationDots');
+            const navContainer = document.getElementById('filePaginationNav');
+
+            if (totalPages <= 1) {
+                dotsContainer.classList.add('hidden');
+                navContainer.classList.add('hidden');
+                return;
+            }
+
+            dotsContainer.classList.remove('hidden');
+            navContainer.classList.remove('hidden');
+
+            // Create pagination dots with green indicator
+            dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+                <button
+                    onclick="goToFilePage(${i})"
+                    class="h-2 rounded-full transition-all duration-300 ${i === currentFilePage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+                    style="min-height: 8px;"
+                ></button>
+            `).join('');
+        }
+
+        // Hide pagination controls
+        function hidePagination() {
+            const dotsContainer = document.getElementById('filePaginationDots');
+            const navContainer = document.getElementById('filePaginationNav');
+            if (dotsContainer) dotsContainer.classList.add('hidden');
+            if (navContainer) navContainer.classList.add('hidden');
+        }
+
+        // Navigate files
+        function navigateFiles(direction) {
+            // Recalculate filtered files to get correct total pages
+            const searchQuery = document.getElementById('fileSearchInput')?.value.toLowerCase() || '';
+            const fileTypeFilter = document.getElementById('fileTypeFilter')?.value || 'all';
+            const yearFilter = document.getElementById('fileYearFilter')?.value || 'all';
+
+            const filteredFiles = archivedFiles.filter(file => {
+                const matchesSearch = file.name.toLowerCase().includes(searchQuery);
+                const matchesType = fileTypeFilter === 'all' || file.type === fileTypeFilter;
+
+                let fileYear = 'Unknown';
+                if (file.uploadedDate) {
+                    const date = new Date(file.uploadedDate);
+                    fileYear = date.getFullYear().toString();
+                } else if (file.uploaded) {
+                    const match = file.uploaded.match(/\d{4}/);
+                    if (match) {
+                        fileYear = match[0];
+                    }
+                }
+                const matchesYear = yearFilter === 'all' || fileYear === yearFilter;
+
+                return matchesSearch && matchesType && matchesYear;
+            });
+
+            const totalPages = Math.ceil(filteredFiles.length / filesPerPage);
+            currentFilePage += direction;
+
+            // Wrap around
+            if (currentFilePage < 0) currentFilePage = totalPages - 1;
+            if (currentFilePage >= totalPages) currentFilePage = 0;
+
+            renderArchivedFiles();
+        }
+
+        // Go to specific file page
+        function goToFilePage(pageIndex) {
+            currentFilePage = pageIndex;
+            renderArchivedFiles();
         }
 
         // View archived file (basic implementation)
