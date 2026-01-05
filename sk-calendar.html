@@ -12,236 +12,837 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
 
-    <!-- FullCalendar -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2f6e4e",
+              secondary: "#3d8b64",
+            },
+            fontFamily: {
+              sans: ["Inter", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
 
     <style>
-      .fc .fc-toolbar-title {
-        font-weight: 700;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-      .fc-event {
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background: #fafafa;
+      }
+
+      /* Calendar Container */
+      .calendar-container {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Calendar Header */
+      .calendar-header {
+        background: linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%);
+        padding: 1.5rem;
+        color: white;
+      }
+
+      .calendar-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+      }
+
+      /* View Toggle */
+      .view-toggle {
+        display: inline-flex;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 4px;
+        backdrop-filter: blur(10px);
+      }
+
+      .view-toggle button {
+        padding: 0.5rem 1rem;
+        border: none;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 600;
+        font-size: 0.875rem;
+        border-radius: 8px;
         cursor: pointer;
+        transition: all 0.3s ease;
       }
-      .modal-open {
+
+      .view-toggle button.active {
+        background: white;
+        color: #2f6e4e;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .view-toggle button:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+      }
+
+      /* Navigation */
+      .nav-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .nav-btn-today {
+        width: auto;
+        padding: 0 1rem;
+      }
+
+      /* Calendar Grid */
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-auto-rows: 90px;
+        background: white;
+      }
+
+      /* Day Headers */
+      .day-header {
+        text-align: center;
+        padding: 0.75rem 0.5rem;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #6b7280;
+        background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+        border-bottom: 2px solid #e5e7eb;
+      }
+
+      /* Calendar Cells */
+      .calendar-cell {
+        height: 90px;
+        border: 1px solid #f0f0f0;
+        padding: 0.625rem;
+        background: white;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        position: relative;
         overflow: hidden;
       }
 
-      /* Improved Calendar Header Alignment */
-      .fc .fc-col-header-cell {
-        text-align: center !important;
-        vertical-align: middle !important;
-        font-weight: 600 !important;
-        padding: 12px 8px !important;
-        font-size: 0.8125rem !important;
+      .calendar-cell:hover {
+        background: #fafafa;
+        box-shadow: inset 0 0 0 1px #2f6e4e20;
       }
 
-      .fc .fc-col-header-cell .fc-scrollgrid-sync-inner {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        height: 100% !important;
+      .calendar-cell.other-month {
+        background: #fafafa;
+        color: #9ca3af;
       }
 
-      .fc .fc-col-header-cell-cushion {
-        display: inline-block !important;
-        padding: 0 !important;
+      .calendar-cell.today {
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        border-color: #2f6e4e;
       }
-      .icon-wrapper { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-      .icon-wrapper:hover { transform: translateY(-2px); }
-      .nav-link svg { transition: all 0.3s ease; }
-      .nav-link:hover svg { transform: scale(1.1); }
-      .icon-badge { box-shadow: 0 2px 8px rgba(47, 110, 78, 0.15); }
-      .notification-icon { position: relative; }
-      .notification-icon:hover { transform: rotate(15deg) scale(1.1); transition: transform 0.3s ease; }
-      .status-icon-pending { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-      .status-icon-approved { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-      .status-icon-rejected { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-      .icon-primary { filter: drop-shadow(0 2px 4px rgba(47, 110, 78, 0.1)); }
-      .icon-glow { filter: drop-shadow(0 0 8px rgba(47, 110, 78, 0.3)); }
 
-      /* CRITICAL: Force Calendar Grid Visibility on Mobile */
-      @media (max-width: 767px) {
-        /* Calendar wrapper - allow horizontal scroll */
-        .bg-white.rounded-xl:has(#calendar) {
-          overflow-x: auto !important;
-          -webkit-overflow-scrolling: touch !important;
-        }
+      .cell-date {
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #374151;
+        margin-bottom: 0.5rem;
+      }
 
-        /* Force calendar container to have height and be visible */
-        #calendar {
-          width: 100% !important;
-          min-width: 340px !important;
-          min-height: 450px !important;
-          overflow: visible !important;
-        }
+      .calendar-cell.today .cell-date {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: #2f6e4e;
+        color: white;
+        border-radius: 50%;
+        font-weight: 700;
+      }
 
-        /* Force main calendar container to display */
-        .fc,
-        .fc-theme-standard {
-          display: block !important;
-          width: 100% !important;
-          min-height: 450px !important;
-        }
+      .calendar-cell.other-month .cell-date {
+        color: #9ca3af;
+      }
 
-        /* Force view harness to display */
-        .fc .fc-view-harness {
-          display: block !important;
-          height: auto !important;
-          min-height: 400px !important;
-        }
+      /* Event Pills */
+      .event-pill {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
 
-        /* Force daygrid view to display */
-        .fc .fc-daygrid,
-        .fc .fc-dayGridMonth-view {
-          display: block !important;
-        }
+      .event-pill:hover {
+        transform: translateX(2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        /* Force scrollgrid (main table) to display */
-        .fc .fc-scrollgrid,
-        .fc-scrollgrid {
-          display: table !important;
-          width: 100% !important;
-          border-collapse: collapse !important;
-        }
+      .event-pill.project {
+        background: linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%);
+        color: white;
+      }
 
-        /* Force table structure elements to display */
-        .fc-scrollgrid-sync-table {
-          display: table !important;
-          width: 100% !important;
-        }
+      .event-pill.announcement {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+      }
 
-        /* Force thead and tbody to display */
-        .fc thead,
-        .fc tbody,
-        .fc .fc-scrollgrid thead,
-        .fc .fc-scrollgrid tbody,
-        .fc .fc-daygrid-body,
-        .fc .fc-col-header {
-          display: table-row-group !important;
-        }
+      /* Week View */
+      .week-view-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 0 0 12px 12px;
+        position: relative;
+      }
 
-        /* Force table rows to display */
-        .fc tr,
-        .fc .fc-scrollgrid tr,
-        .fc-daygrid-day-frame tr {
-          display: table-row !important;
-        }
-
-        /* Force table cells to display */
-        .fc th,
-        .fc td,
-        .fc .fc-daygrid-day,
-        .fc .fc-col-header-cell,
-        .fc .fc-scrollgrid-sync-inner {
-          display: table-cell !important;
-          vertical-align: top !important;
-          border: 1px solid #e5e7eb !important;
-        }
-
-        /* Ensure day cells have minimum height */
-        .fc .fc-daygrid-day {
-          min-height: 60px !important;
-          height: auto !important;
-        }
-
-        /* Force day frame to display */
-        .fc .fc-daygrid-day-frame {
-          display: flex !important;
-          flex-direction: column !important;
-          min-height: 58px !important;
-          padding: 2px !important;
-        }
-
-        /* Force day top (date number area) to display */
-        .fc .fc-daygrid-day-top {
-          display: flex !important;
-          justify-content: flex-end !important;
-        }
-
-        /* Style day numbers */
-        .fc .fc-daygrid-day-number {
-          display: block !important;
-          padding: 4px !important;
-          font-size: 0.875rem !important;
-        }
-
-        /* Force scrollgrid sections to display */
-        .fc-scrollgrid-section,
-        .fc-scrollgrid-section-header,
-        .fc-scrollgrid-section-body,
-        .fc-scrollgrid-section-footer {
-          display: table-row-group !important;
-        }
-
-        /* Column headers - properly aligned for mobile */
-        .fc .fc-col-header-cell {
-          font-size: 0.75rem !important;
-          padding: 10px 4px !important;
-          text-align: center !important;
-          vertical-align: middle !important;
-          font-weight: 600 !important;
-        }
-
-        .fc .fc-col-header-cell .fc-scrollgrid-sync-inner {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-        }
-
-        /* Ensure events display */
-        .fc-daygrid-event-harness,
-        .fc-daygrid-event {
-          display: block !important;
+      /* Mobile scroll hint */
+      @media (max-width: 640px) {
+        .week-view-container::after {
+          content: '';
+          position: sticky;
+          right: 0;
+          top: 0;
+          width: 40px;
+          height: 100%;
+          background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
+          pointer-events: none;
+          float: right;
         }
       }
 
-      /* Large phones (430px - 767px) */
-      @media (min-width: 430px) and (max-width: 767px) {
-        #calendar {
-          min-width: 400px !important;
+      .week-view-container::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      .week-view-container::-webkit-scrollbar-track {
+        background: #f0f0f0;
+        border-radius: 4px;
+      }
+
+      .week-view-container::-webkit-scrollbar-thumb {
+        background: #2f6e4e;
+        border-radius: 4px;
+      }
+
+      .week-view-container::-webkit-scrollbar-thumb:hover {
+        background: #3d8b64;
+      }
+
+      .week-view {
+        display: grid;
+        grid-template-columns: 80px repeat(7, minmax(100px, 1fr));
+        gap: 1px;
+        background: #e5e7eb;
+        min-width: min-content;
+      }
+
+      .time-slot {
+        background: white;
+        padding: 0.75rem;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .week-cell {
+        background: white;
+        padding: 0.5rem;
+        min-height: 60px;
+        position: relative;
+      }
+
+      @media (max-width: 768px) {
+        .week-view {
+          grid-template-columns: 60px repeat(7, minmax(80px, 120px));
         }
 
-        .fc .fc-daygrid-day {
-          min-height: 70px !important;
+        .time-slot {
+          font-size: 0.625rem;
+          padding: 0.5rem 0.375rem;
         }
 
-        .fc .fc-daygrid-day-number {
-          font-size: 1rem !important;
-          padding: 6px !important;
+        .week-cell {
+          min-height: 50px;
+          padding: 0.25rem;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .week-view {
+          grid-template-columns: 50px repeat(7, 90px);
         }
 
-        .fc .fc-col-header-cell {
-          font-size: 0.875rem !important;
-          padding: 12px 6px !important;
-          text-align: center !important;
-          vertical-align: middle !important;
-          font-weight: 600 !important;
+        .time-slot {
+          font-size: 0.5625rem;
+          padding: 0.375rem 0.25rem;
         }
 
-        .fc .fc-col-header-cell .fc-scrollgrid-sync-inner {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
+        .week-cell {
+          min-height: 45px;
         }
+
+        .week-view-container::-webkit-scrollbar {
+          height: 6px;
+        }
+      }
+
+      /* Day View */
+      .day-view-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .day-view-header {
+        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        padding: 1.5rem;
+        border-bottom: 2px solid #e5e7eb;
+      }
+
+      .day-view-date {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .day-view-events {
+        padding: 1.5rem;
+      }
+
+      /* Event Card */
+      .event-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid #2f6e4e;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        animation: slideUp 0.4s ease-out backwards;
+      }
+
+      .event-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(47, 110, 78, 0.12);
+      }
+
+      .event-card.announcement {
+        border-left-color: #3b82f6;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .event-card:nth-child(1) { animation-delay: 0.05s; }
+      .event-card:nth-child(2) { animation-delay: 0.1s; }
+      .event-card:nth-child(3) { animation-delay: 0.15s; }
+      .event-card:nth-child(4) { animation-delay: 0.2s; }
+
+      .event-time {
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .event-title {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+      }
+
+      .event-description {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-bottom: 0.75rem;
+      }
+
+      .event-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.75rem;
+        color: #9ca3af;
+      }
+
+      /* Events Sidebar */
+      .events-sidebar {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .events-sidebar-section {
+        margin-bottom: 2rem;
+      }
+
+      .events-sidebar-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .upcoming-event {
+        background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border-left-width: 3px;
+        border-left-style: solid;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .upcoming-event.border-\[#2f6e4e\] {
+        border-left-color: #2f6e4e;
+      }
+
+      .upcoming-event.border-blue-500 {
+        border-left-color: #3b82f6;
+      }
+
+      .upcoming-event:hover {
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(47, 110, 78, 0.1);
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .events-sidebar {
+          margin-top: 1.5rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .calendar-header {
+          padding: 1.25rem;
+        }
+
+        .calendar-header > div {
+          flex-direction: column;
+          gap: 1rem;
+          align-items: stretch;
+        }
+
+        .calendar-header > div > div:first-child {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .calendar-title {
+          font-size: 1.25rem;
+          text-align: center;
+          flex: 1;
+        }
+
+        .view-toggle {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .view-toggle button {
+          flex: 1;
+          padding: 0.625rem 0.5rem;
+          font-size: 0.8125rem;
+        }
+
+        .nav-btn {
+          width: 36px;
+          height: 36px;
+        }
+
+        .calendar-cell {
+          height: 80px;
+          padding: 0.5rem;
+        }
+
+        .cell-date {
+          font-size: 0.75rem;
+        }
+
+        .event-pill {
+          font-size: 0.625rem;
+          padding: 0.125rem 0.375rem;
+        }
+
+        .day-header {
+          padding: 0.875rem 0.5rem;
+          font-size: 0.6875rem;
+        }
+      }
+
+      /* Large phones (430px - 640px) */
+      @media (min-width: 430px) and (max-width: 640px) {
+        .calendar-header > div > div:first-child {
+          gap: 0.625rem;
+        }
+
+        .calendar-title {
+          font-size: 1.125rem;
+        }
+
+        .nav-btn {
+          width: 34px;
+          height: 34px;
+        }
+
+        .view-toggle button {
+          padding: 0.5625rem 0.5rem;
+          font-size: 0.8125rem;
+        }
+
+        .calendar-cell {
+          height: 70px;
+        }
+
+        .day-header {
+          padding: 0.8125rem 0.375rem;
+          font-size: 0.6875rem;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .calendar-header {
+          padding: 1rem;
+        }
+
+        .calendar-header > div {
+          flex-direction: column;
+          gap: 0.875rem;
+          align-items: stretch;
+        }
+
+        .calendar-header > div > div:first-child {
+          width: 100%;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .calendar-title {
+          font-size: 1rem;
+          margin: 0;
+          min-width: 0;
+          flex: 1;
+          text-align: center;
+        }
+
+        .nav-btn {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          flex-shrink: 0;
+        }
+
+        .nav-btn svg {
+          width: 1rem;
+          height: 1rem;
+        }
+
+        .nav-btn-today {
+          display: none;
+        }
+
+        .view-toggle {
+          width: 100%;
+        }
+
+        .view-toggle button {
+          padding: 0.5rem 0.375rem;
+          font-size: 0.75rem;
+          flex: 1;
+        }
+
+        .calendar-cell {
+          height: 60px;
+          padding: 0.375rem;
+        }
+
+        .cell-date {
+          font-size: 0.6875rem;
+        }
+
+        .day-header {
+          padding: 0.75rem 0.25rem;
+          font-size: 0.625rem;
+          letter-spacing: 0.05em;
+        }
+
+        .event-pill {
+          display: none;
+        }
+
+        .calendar-cell::after {
+          content: '';
+          position: absolute;
+          bottom: 4px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 6px;
+          height: 6px;
+          background: #2f6e4e;
+          border-radius: 50%;
+        }
+
+        .calendar-cell.no-events::after {
+          display: none;
+        }
+
+        .events-sidebar-title {
+          font-size: 1rem;
+        }
+
+        .upcoming-event {
+          padding: 0.875rem;
+        }
+      }
+
+      /* Extra small phones */
+      @media (max-width: 375px) {
+        .calendar-header {
+          padding: 0.875rem 0.75rem;
+        }
+
+        .calendar-header > div {
+          gap: 0.75rem;
+        }
+
+        .calendar-header > div > div:first-child {
+          gap: 0.375rem;
+        }
+
+        .calendar-title {
+          font-size: 0.875rem;
+        }
+
+        .nav-btn {
+          width: 28px;
+          height: 28px;
+        }
+
+        .nav-btn svg {
+          width: 0.875rem;
+          height: 0.875rem;
+        }
+
+        .view-toggle {
+          padding: 3px;
+        }
+
+        .view-toggle button {
+          padding: 0.4375rem 0.25rem;
+          font-size: 0.6875rem;
+          border-radius: 6px;
+        }
+
+        .day-header {
+          padding: 0.625rem 0.125rem;
+          font-size: 0.5625rem;
+        }
+
+        .calendar-cell {
+          height: 50px;
+          padding: 0.25rem;
+        }
+
+        .cell-date {
+          font-size: 0.625rem;
+        }
+
+        .calendar-cell.today .cell-date {
+          width: 24px;
+          height: 24px;
+          font-size: 0.625rem;
+        }
+      }
+
+      /* Landscape orientation */
+      @media (max-width: 932px) and (orientation: landscape) {
+        .calendar-header {
+          padding: 0.875rem 1rem;
+        }
+
+        .calendar-header > div {
+          flex-direction: row;
+        }
+
+        .view-toggle {
+          width: auto;
+        }
+
+        .calendar-cell {
+          height: 70px;
+        }
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .modal.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        transform: scale(0.95);
+        transition: transform 0.3s ease;
+      }
+
+      .modal.active .modal-content {
+        transform: scale(1);
+      }
+
+      /* Icons */
+      .icon-wrapper {
+        transition: all 0.3s ease;
+      }
+
+      .icon-wrapper:hover {
+        transform: translateY(-2px);
+      }
+
+      .nav-link svg {
+        transition: all 0.3s ease;
+      }
+
+      .nav-link:hover svg {
+        transform: scale(1.1);
+      }
+
+      .icon-badge {
+        box-shadow: 0 2px 8px rgba(47, 110, 78, 0.15);
+      }
+
+      .notification-icon {
+        position: relative;
+      }
+
+      .notification-icon:hover {
+        transform: rotate(15deg) scale(1.1);
+        transition: transform 0.3s ease;
+      }
+
+      /* Loading Animation */
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .loading {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      /* Toast Notification Animation */
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-slideIn {
+        animation: slideIn 0.3s ease-out forwards;
+      }
+
+      /* Add to Calendar Buttons */
+      .add-to-calendar-btn {
+        transition: all 0.2s ease;
+      }
+
+      .add-to-calendar-btn:active {
+        transform: scale(0.95);
       }
     </style>
   </head>
   <body class="bg-gray-50">
     <div class="flex h-screen overflow-hidden">
       <!-- SIDEBAR -->
-      <aside
-        class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col"
-      >
+      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col">
         <div class="p-6 flex-1 flex flex-col">
           <!-- Logo -->
           <div class="flex items-center space-x-4 mb-8">
-            <div
-              class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden"
-            >
+            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden">
               <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
             </div>
             <div>
@@ -250,129 +851,52 @@
             </div>
           </div>
 
+          <!-- Navigation Menu -->
           <nav class="space-y-2">
-            <a
-              href="sk-dashboard.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
+            <a href="sk-dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group">
               <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-green-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
-                  ></path>
+                <svg class="w-5 h-5 group-hover:text-green-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"></path>
                 </svg>
               </div>
               <span>Dashboard</span>
             </a>
-            <a
-              href="sk-files.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
+            <a href="sk-files.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group">
               <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-blue-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
+                <svg class="w-5 h-5 group-hover:text-blue-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
               </div>
               <span>Manage Files</span>
             </a>
-            <a
-              href="sk-projects.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
+            <a href="sk-projects.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group">
               <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-purple-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-purple-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  ></path>
+                <svg class="w-5 h-5 group-hover:text-purple-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>
               </div>
               <span>Project Monitoring</span>
             </a>
-            <a
-              href="sk-calendar.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group"
-            >
+            <a href="sk-calendar.html" class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group">
               <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
               </div>
               <span>Calendar</span>
             </a>
-            <a
-              href="sk-testimonies.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
+            <a href="sk-testimonies.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group">
               <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-indigo-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  ></path>
+                <svg class="w-5 h-5 group-hover:text-indigo-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                 </svg>
               </div>
               <span>Testimonies</span>
             </a>
-            <a
-              href="sk-archive.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
+            <a href="sk-archive.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group">
               <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-gray-700 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                  ></path>
+                <svg class="w-5 h-5 group-hover:text-gray-700 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
                 </svg>
               </div>
               <span>Archives</span>
@@ -381,23 +905,12 @@
 
           <div class="flex-1"></div>
 
+          <!-- Logout -->
           <div class="mt-8 pt-8 border-t border-gray-200">
-            <button
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
-            >
+            <button class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group">
               <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                 </svg>
               </div>
               <span class="font-medium">Logout</span>
@@ -406,20 +919,20 @@
         </div>
       </aside>
 
-      <!-- MAIN -->
+      <!-- MAIN CONTENT -->
       <div class="flex-1 overflow-auto">
-        <!-- Top bar -->
-        <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200 sticky top-0 z-20">
+        <!-- Top Bar -->
+        <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200">
           <div class="px-8 py-6">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm text-[#2f6e4e] font-semibold mb-1" id="currentDate">Sunday, December 14, 2025</p>
-                <h1 class="text-2xl font-bold text-gray-800">Manage Calendar</h1>
-                <p class="text-sm text-gray-600 mt-1">Manage project deadlines and schedules</p>
+                <p class="text-sm text-[#2f6e4e] font-semibold mb-1" id="currentDate">Sunday, January 04, 2026</p>
+                <h1 class="text-2xl font-bold text-gray-800">Projects & Announcements</h1>
+                <p class="text-sm text-gray-600 mt-1">Manage SK Malanday projects and announcements calendar</p>
               </div>
               <div class="flex items-center space-x-4">
                 <div class="relative">
-                  <button onclick="toggleNotificationModal()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                  <button onclick="toggleNotificationModal()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
@@ -428,10 +941,10 @@
                 </div>
                 <button onclick="openProfileModal()" class="flex items-center space-x-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Andrea Pelias</p>
+                    <p class="text-sm font-medium text-gray-700">Andrea Pelias</p>
                     <p class="text-xs text-gray-500">SK Chairman</p>
                   </div>
-                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">
+                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20">
                     AP
                   </div>
                 </button>
@@ -440,1395 +953,760 @@
           </div>
         </header>
 
-        <div class="max-w-7xl mx-auto px-6 py-6">
-          <!-- Calendar + side -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Calendar main -->
-            <div class="lg:col-span-2 bg-white rounded-xl p-4 shadow-sm">
-              <div id="calendar"></div>
-            </div>
-
-            <!-- Sidebar quick list -->
-            <div class="bg-white rounded-xl p-4 shadow-sm">
-              <h4 class="font-bold text-gray-800 mb-3">
-                Upcoming (next 30 days)
-              </h4>
-              <ul
-                id="upcomingList"
-                class="space-y-3 text-sm text-gray-700"
-              ></ul>
-
-              <hr class="my-4" />
-
-              <h4 class="font-bold text-gray-800 mb-3">Quick Actions</h4>
-              <div class="flex flex-col gap-2">
-                <button
-                  id="showAllProjects"
-                  class="px-3 py-2 border border-gray-200 rounded-lg hover:bg-gray-50"
-                >
-                  Show all projects
-                </button>
-                <button
-                  id="notifyVols"
-                  class="px-3 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e]"
-                >
-                  Notify volunteers (demo)
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- View Event Modal -->
-    <div
-      id="viewModal"
-      class="hidden fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-40 p-6"
-    >
-      <div
-        class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
-      >
-        <div class="p-6 border-b flex items-start justify-between gap-4">
-          <div class="flex-1">
-            <h3 id="viewTitle" class="text-2xl font-bold text-gray-800">
-              Event Title
-            </h3>
-            <p id="viewRange" class="text-sm text-gray-500 mt-1">
-              Date range / time
-            </p>
-          </div>
-          <div class="flex items-center gap-3">
-            <span
-              id="viewTypeBadge"
-              class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 hidden"
-              >Type</span
-            >
-            <button
-              onclick="closeViewModal()"
-              class="text-gray-400 hover:text-gray-600"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="md:col-span-2 space-y-3">
-            <div
-              id="viewBannerWrap"
-              class="w-full rounded-lg overflow-hidden h-44 bg-gray-100 flex items-center justify-center"
-            ></div>
-            <p id="viewDesc" class="text-gray-700"></p>
-
-            <div class="flex items-center gap-4 text-sm text-gray-600">
-              <div><strong>Head:</strong> <span id="viewHead"></span></div>
-              <div>
-                <strong>Status:</strong>
-                <span id="viewStatus" class="font-medium"></span>
-              </div>
-              <div>
-                <strong>Inquiries:</strong>
-                <span id="viewInquiries" class="font-medium"></span>
-              </div>
-            </div>
-
-            <div class="mt-4 flex gap-2">
-              <button
-                id="openInquiryBtn"
-                class="px-3 py-2 border border-gray-200 rounded-lg"
-              >
-                View / Reply Inquiries
-              </button>
-              <button
-                id="viewProjectDetailsBtn"
-                class="px-3 py-2 bg-[#2f6e4e] text-white rounded-lg"
-              >
-                View Project Details
-              </button>
-            </div>
-          </div>
-
-          <div class="space-y-3">
-            <div class="bg-gray-50 p-3 rounded-lg">
-              <p class="text-xs text-gray-500">Start</p>
-              <p id="viewStart" class="font-medium text-gray-800"></p>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-lg">
-              <p class="text-xs text-gray-500">End</p>
-              <p id="viewEnd" class="font-medium text-gray-800"></p>
-            </div>
-            <div class="bg-gray-50 p-3 rounded-lg">
-              <p class="text-xs text-gray-500">Location</p>
-              <p id="viewLocation" class="font-medium text-gray-800">—</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="p-6 flex justify-end border-t">
-          <button
-            onclick="closeViewModal()"
-            class="px-4 py-2 border border-gray-200 rounded-lg"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Inquiry Side Modal -->
-    <div id="inquiryModal" class="hidden fixed inset-0 z-60 flex">
-      <div
-        class="fixed inset-0 bg-black bg-opacity-40"
-        onclick="closeInquiryModal()"
-      ></div>
-      <aside
-        class="ml-auto w-full sm:w-[480px] bg-white h-full shadow-2xl overflow-auto"
-      >
-        <div class="p-6 border-b flex items-center justify-between">
-          <div>
-            <h4 class="text-lg font-bold">Inquiries</h4>
-            <p id="inquiryEventTitle" class="text-xs text-gray-500">Event</p>
-          </div>
-          <button
-            onclick="closeInquiryModal()"
-            class="text-gray-400 hover:text-gray-600"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div class="p-6 space-y-4">
-          <div
-            id="inquiryList"
-            class="space-y-3 max-h-[60vh] overflow-y-auto"
-          ></div>
-
-          <div>
-            <label class="block text-sm text-gray-700 mb-2">Reply</label>
-            <textarea
-              id="replyText"
-              rows="4"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            ></textarea>
-            <div class="flex justify-end mt-3">
-              <button
-                onclick="sendReply()"
-                class="px-4 py-2 bg-[#2f6e4e] text-white rounded-lg"
-              >
-                Send Reply
-              </button>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </div>
-
-    <!-- Notify Volunteers Modal -->
-    <div
-      id="notifyModal"
-      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 p-4"
-    >
-      <div
-        class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-      >
-        <div class="p-6 border-b flex items-center justify-between">
-          <h3 class="text-2xl font-bold">Notify Volunteers</h3>
-          <button
-            onclick="closeNotifyModal()"
-            class="text-gray-400 hover:text-gray-600"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div class="p-6 space-y-6">
-          <!-- Select Project/Event -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2"
-              >Select Project/Event</label
-            >
-            <select
-              id="notifyProject"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg"
-            >
-              <option value="">All Projects</option>
-            </select>
-            <p class="text-xs text-gray-500 mt-1">
-              Choose a specific project or notify about all upcoming events
-            </p>
-          </div>
-
-          <!-- Target Group -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2"
-              >Target Group</label
-            >
-            <select
-              id="notifyTarget"
-              onchange="updateVolunteerCount()"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg"
-            >
-              <option value="all">All Volunteers</option>
-              <option value="approved">Approved Applicants Only</option>
-              <option value="pending">Pending Applicants</option>
-              <option value="project-specific">
-                Project-Specific Volunteers
-              </option>
-            </select>
-            <p class="text-xs text-gray-500 mt-1">
-              <span id="volunteerCount" class="font-semibold text-[#2f6e4e]"
-                >0 volunteers</span
-              >
-              will receive this notification
-            </p>
-          </div>
-
-          <!-- Message -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2"
-              >Message</label
-            >
-            <textarea
-              id="notifyMessage"
-              rows="6"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
-              placeholder="Write your message to volunteers..."
-            ></textarea>
-            <p class="text-xs text-gray-500 mt-1">
-              <span id="charCount">0</span>/500 characters
-            </p>
-          </div>
-
-          <!-- Quick Message Templates -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2"
-              >Quick Templates</label
-            >
-            <div class="flex flex-wrap gap-2">
-              <button
-                onclick="useTemplate('reminder')"
-                class="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Event Reminder
-              </button>
-              <button
-                onclick="useTemplate('cancelled')"
-                class="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Event Cancelled
-              </button>
-              <button
-                onclick="useTemplate('rescheduled')"
-                class="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Rescheduled
-              </button>
-              <button
-                onclick="useTemplate('urgent')"
-                class="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Urgent Need
-              </button>
-              <button
-                onclick="useTemplate('thankyou')"
-                class="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Thank You
-              </button>
-            </div>
-          </div>
-
-          <!-- Preview -->
-          <div class="bg-gray-50 rounded-lg p-4">
-            <h4 class="text-sm font-semibold text-gray-700 mb-2">Preview</h4>
-            <div class="bg-white border border-gray-200 rounded-lg p-3">
-              <div class="flex items-start gap-3">
-                <div
-                  class="w-10 h-10 bg-[#2f6e4e] rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
-                >
-                  SK
+        <!-- Calendar Content -->
+        <div class="p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Main Calendar -->
+            <div class="lg:col-span-3">
+              <div class="calendar-container">
+                <!-- Calendar Header with Controls -->
+                <div class="calendar-header">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <button onclick="previousMonth()" class="nav-btn">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                      </button>
+                      <h2 class="calendar-title" id="monthYear">January 2026</h2>
+                      <button onclick="nextMonth()" class="nav-btn">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                      </button>
+                      <button onclick="goToToday()" class="nav-btn nav-btn-today">
+                        <span class="text-sm font-semibold">Today</span>
+                      </button>
+                    </div>
+                    <div class="view-toggle">
+                      <button onclick="setView('month')" class="active" id="monthViewBtn">Month</button>
+                      <button onclick="setView('week')" id="weekViewBtn">Week</button>
+                      <button onclick="setView('day')" id="dayViewBtn">Day</button>
+                    </div>
+                  </div>
                 </div>
-                <div class="flex-1 min-w-0">
-                  <p class="font-semibold text-sm text-gray-900">SK Malanday</p>
-                  <p id="previewMessage" class="text-sm text-gray-600 mt-1">
-                    Your message will appear here...
-                  </p>
+
+                <!-- Calendar Body -->
+                <div id="calendarBody">
+                  <!-- Month View (Default) -->
+                  <div id="monthView">
+                    <div class="calendar-grid">
+                      <div class="day-header">SUN</div>
+                      <div class="day-header">MON</div>
+                      <div class="day-header">TUE</div>
+                      <div class="day-header">WED</div>
+                      <div class="day-header">THU</div>
+                      <div class="day-header">FRI</div>
+                      <div class="day-header">SAT</div>
+                    </div>
+                    <div class="calendar-grid" id="calendarDays">
+                      <!-- Days will be generated by JavaScript -->
+                    </div>
+                  </div>
+
+                  <!-- Week View -->
+                  <div id="weekView" style="display: none;">
+                    <div class="week-view-container">
+                      <div class="week-view" id="weekGrid">
+                        <!-- Week grid will be generated by JavaScript -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Day View -->
+                  <div id="dayView" style="display: none;">
+                    <div class="day-view-container">
+                      <div class="day-view-header">
+                        <div class="day-view-date" id="dayViewDate">Sunday, January 4, 2026</div>
+                      </div>
+                      <div class="day-view-events" id="dayViewEvents">
+                        <!-- Events will be generated by JavaScript -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+              <div class="events-sidebar">
+                <!-- Upcoming Projects & Announcements -->
+                <div class="events-sidebar-section">
+                  <div class="events-sidebar-title">
+                    <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Upcoming
+                  </div>
+                  <div id="upcomingEvents">
+                    <!-- Upcoming projects and announcements will be generated by JavaScript -->
+                  </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="events-sidebar-section">
+                  <div class="events-sidebar-title">
+                    <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Quick Actions
+                  </div>
+                  <button onclick="exportCalendar()" class="w-full px-4 py-3 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white rounded-xl hover:shadow-lg transition-all duration-300 font-semibold flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Export Calendar</span>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Footer -->
-        <div class="p-6 border-t bg-gray-50 flex justify-between items-center">
-          <button
-            onclick="closeNotifyModal()"
-            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white"
-          >
-            Cancel
-          </button>
-          <button
-            onclick="sendNotification()"
-            class="px-6 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] font-medium"
-          >
-            Send Notification
-          </button>
-        </div>
       </div>
     </div>
 
-    <!-- Notification Modal -->
-    <div
-      id="notificationModal"
-      class="hidden fixed top-20 right-6 w-96 bg-white rounded-xl shadow-2xl z-50 border border-gray-200"
-    >
-      <div
-        class="p-4 border-b border-gray-200 flex items-center justify-between"
-      >
-        <h3 class="font-bold text-gray-800">Notifications</h3>
-        <button
-          onclick="markAllAsRead()"
-          class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
-        >
-          Mark all as read
-        </button>
-      </div>
-      <div id="notificationList" class="max-h-96 overflow-y-auto">
-        <!-- Notifications will be dynamically inserted here -->
+    <!-- Project/Announcement Detail Modal -->
+    <div id="eventModal" class="modal">
+      <div class="modal-content">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-2xl font-bold text-gray-800" id="modalEventTitle">Project Title</h3>
+          <button onclick="closeEventModal()" class="text-gray-400 hover:text-gray-600 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <div id="modalEventContent">
+          <!-- Project/Announcement details will be inserted here -->
+        </div>
       </div>
     </div>
 
     <script>
-      /***********************
-       * Projects from Projects Module *
-       ***********************/
-      const UPLOADED_BANNER = "/mnt/data/Screenshot 2025-11-20 205421.png";
-
-      // Projects data matching the Projects module
-      const sampleProjects = [
+      // Sample Projects and Announcements Data
+      const events = [
         {
           id: 1,
-          title: "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-          start: "2025-12-02T08:00:00",
-          end: "2025-12-02T12:00:00",
-          extendedProps: {
-            type: "project",
-            category: "Environment",
-            head: "Andrea Pelias, Kyleen Nicdao",
-            status: "Ongoing",
-            location: "Malanday River and surrounding areas",
-            banner: UPLOADED_BANNER,
-            description:
-              "A comprehensive environmental initiative focused on rehabilitating the Malanday River system through weekly clean-up activities, waste segregation education, and community involvement.\n\nObjectives:\n• Remove accumulated waste from river and riverbanks\n• Educate residents on proper waste disposal\n• Plant trees along riverbanks\n• Establish monitoring system for illegal dumping\n\nVolunteer Roles Needed:\n• Event Coordinators\n• Documentation Team\n• Logistics Support\n• Community Educators",
-            inquiries: [
-              {
-                id: 101,
-                name: "Juan Dela Cruz",
-                message: "What time po magsisimula?",
-                time: "2h",
-                replied: true,
-                replies: [
-                  {
-                    text: "Good day! The clean-up drive will start at 7:00 AM. Please arrive 15 minutes earlier for registration. Thank you!",
-                    repliedBy: "Andrea Pelias",
-                    repliedAt: "1h",
-                  },
-                ],
-              },
-              {
-                id: 102,
-                name: "Maria Santos",
-                message: "Pwede po bang sumama kahit late?",
-                time: "5h",
-                replied: true,
-                replies: [
-                  {
-                    text: "Hello! Yes, you can join even if you arrive late. However, we encourage everyone to come on time so you won't miss the orientation and safety briefing. See you there!",
-                    repliedBy: "Andrea Pelias",
-                    repliedAt: "4h",
-                  },
-                ],
-              },
-            ],
-          },
+          title: "Community Clean-Up Drive 2026",
+          type: "project",
+          start: "2026-01-15T09:00:00",
+          end: "2026-01-15T16:00:00",
+          description: "Annual community cleanup initiative for SK Malanday",
+          head: "Andrea Pelias",
+          volunteers: 25
         },
         {
           id: 2,
-          title: "Youth Sports Festival 2025",
-          start: "2025-11-25T09:00:00",
-          end: "2025-11-25T17:00:00",
-          extendedProps: {
-            type: "project",
-            category: "Sports",
-            head: "Kyleen Nicdao",
-            status: "Completed",
-            location: "Covered Court",
-            banner: UPLOADED_BANNER,
-            description:
-              "A multi-sport festival for barangay youth including basketball and volleyball. Registration required for teams. Food and first aid on site.",
-            inquiries: [
-              {
-                id: 201,
-                name: "Mark Rivera",
-                message: "Anong uniform ang suot?",
-                time: "1d",
-                replied: false,
-                replies: [],
-              },
-            ],
-          },
+          title: "Important: Project Proposal Deadline",
+          type: "announcement",
+          start: "2026-01-20T17:00:00",
+          end: "2026-01-20T17:00:00",
+          description: "Final day to submit Q1 project proposals to the SK Council",
+          head: "SK Council"
         },
         {
           id: 3,
-          title: "Scholarship Program Deadline",
-          start: "2025-12-15T23:59:00",
-          end: "2025-12-15T23:59:00",
-          allDay: false,
-          extendedProps: {
-            type: "deadline",
-            category: "Education",
-            head: "Andrea Pelias",
-            status: "Open",
-            location: "SK Office",
-            banner: UPLOADED_BANNER,
-            description:
-              "Support & scholarship application for deserving students. Deadline: December 15, 2025. Submit requirements to the office during office hours.",
-            inquiries: [],
-          },
+          title: "Youth Sports Festival 2026",
+          type: "project",
+          start: "2026-01-10T14:00:00",
+          end: "2026-01-10T16:00:00",
+          description: "Annual sports festival for youth in Malanday",
+          head: "Rico Santos",
+          volunteers: 40
         },
+        {
+          id: 4,
+          title: "Skills Training Workshop",
+          type: "project",
+          start: "2026-01-25T10:00:00",
+          end: "2026-01-25T15:00:00",
+          description: "Digital skills training for youth volunteers",
+          head: "Maria Cruz",
+          volunteers: 30
+        },
+        {
+          id: 5,
+          title: "SK Council Meeting",
+          type: "announcement",
+          start: "2026-01-08T15:00:00",
+          end: "2026-01-08T17:00:00",
+          description: "Monthly SK council meeting - all officials required to attend",
+          head: "Andrea Pelias"
+        }
       ];
 
-      let calendar;
-      let projectsStore = {};
+      // Calendar State
+      let currentDate = new Date();
+      let currentView = 'month';
+      let selectedDate = null;
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const calendarEl = document.getElementById("calendar");
+      // Initialize
+      document.addEventListener('DOMContentLoaded', function() {
+        updateCurrentDate();
+        renderCalendar();
+        renderUpcomingEvents();
+        updateNotificationCount();
 
-        sampleProjects.forEach(
-          (ev) => (projectsStore[ev.id] = JSON.parse(JSON.stringify(ev)))
-        );
-
-        calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: "dayGridMonth",
-          height: "auto",
-          headerToolbar: {
-            left: "prev,next",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
-          },
-          events: sampleProjects.map(mapToFcEvent),
-          eventClick: handleEventClick,
-          eventDidMount: function (info) {
-            const hasInq = info.event.extendedProps?.inquiries?.length > 0;
-            if (hasInq) {
-              const dot = document.createElement("span");
-              dot.className =
-                "ml-1 inline-block w-2 h-2 bg-red-500 rounded-full";
-              info.el.querySelector(".fc-event-title")?.appendChild(dot);
-            }
-          },
-        });
-
-        calendar.render();
-        refreshUpcoming();
-        attachControls();
+        // Refresh upcoming events every minute to automatically remove past events
+        setInterval(() => {
+          renderUpcomingEvents();
+        }, 60000); // 60000ms = 1 minute
       });
 
-      function mapToFcEvent(ev) {
-        return {
-          id: ev.id,
-          title: ev.title,
-          start: ev.start,
-          end: ev.end,
-          allDay: !!ev.allDay,
-          extendedProps: ev.extendedProps,
-        };
+      // Update current date display
+      function updateCurrentDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', options);
       }
 
-      function handleEventClick(arg) {
-        const ev = projectsStore[arg.event.id];
-        if (!ev) return;
-        openViewModal(ev);
-      }
+      // Render Calendar
+      function renderCalendar() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
 
-      function openViewModal(ev) {
-        showElement("viewModal");
-        document.getElementById("viewTitle").textContent = ev.title;
-        document.getElementById("viewRange").textContent = `${formatReadable(
-          ev.start
-        )} — ${formatReadable(ev.end)}`;
-        document.getElementById("viewDesc").textContent =
-          ev.extendedProps.description || "";
-        document.getElementById("viewHead").textContent =
-          ev.extendedProps.head || "—";
-        document.getElementById("viewStatus").textContent =
-          ev.extendedProps.status || "—";
-        const inqCount = (ev.extendedProps.inquiries || []).length;
-        document.getElementById("viewInquiries").textContent = inqCount;
-        document.getElementById("viewStart").textContent = formatReadable(
-          ev.start
-        );
-        document.getElementById("viewEnd").textContent = formatReadable(ev.end);
-        document.getElementById("viewLocation").textContent = ev.extendedProps
-          .location || "—";
-        const typeBadge = document.getElementById("viewTypeBadge");
-        typeBadge.textContent = (ev.extendedProps.type || "").toUpperCase();
-        if (ev.extendedProps.type) typeBadge.classList.remove("hidden");
-        else typeBadge.classList.add("hidden");
+        // Update month/year display
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+                           "July", "August", "September", "October", "November", "December"];
+        document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
 
-        const wrap = document.getElementById("viewBannerWrap");
-        wrap.innerHTML = "";
-        if (ev.extendedProps.banner) {
-          const img = document.createElement("img");
-          img.src = ev.extendedProps.banner;
-          img.alt = "banner";
-          img.className = "w-full h-full object-cover";
-          wrap.appendChild(img);
-        } else {
-          wrap.innerHTML = '<div class="text-sm text-gray-400">No banner</div>';
+        // Clear calendar
+        const calendarDays = document.getElementById('calendarDays');
+        calendarDays.innerHTML = '';
+
+        // Get first day of month and number of days
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+        const today = new Date();
+        const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+
+        // Previous month days
+        for (let i = firstDay - 1; i >= 0; i--) {
+          const day = daysInPrevMonth - i;
+          const cell = createDayCell(day, true, year, month - 1);
+          calendarDays.appendChild(cell);
         }
 
-        document.getElementById("openInquiryBtn").onclick = () =>
-          openInquiryModalForEvent(ev.id);
-        document.getElementById("viewProjectDetailsBtn").onclick = () => {
-          window.location.href = "manage-projects-improved.html";
-        };
-      }
-
-      function closeViewModal() {
-        hideElement("viewModal");
-      }
-
-      function openInquiryModalForEvent(eventId) {
-        const ev = projectsStore[eventId];
-        if (!ev) return;
-        showElement("inquiryModal");
-        document.getElementById("inquiryEventTitle").textContent = ev.title;
-        const list = document.getElementById("inquiryList");
-        list.innerHTML = "";
-        const inqs = ev.extendedProps.inquiries || [];
-        if (!inqs.length) {
-          list.innerHTML =
-            '<div class="text-sm text-gray-500">No inquiries yet.</div>';
-        } else {
-          inqs.forEach((q) => {
-            const el = document.createElement("div");
-            el.className = "border border-gray-200 rounded-lg p-3";
-            el.innerHTML = `<div class="flex items-start justify-between">
-                         <div><p class="font-semibold">${
-                           q.name
-                         }</p><p class="text-xs text-gray-600">${
-              q.message
-            }</p></div>
-                         <div class="text-xs text-gray-500">${
-                           q.replied ? "Replied" : "Pending"
-                         }</div>
-                        </div>`;
-            list.appendChild(el);
-          });
+        // Current month days
+        for (let day = 1; day <= daysInMonth; day++) {
+          const isToday = isCurrentMonth && day === today.getDate();
+          const cell = createDayCell(day, false, year, month, isToday);
+          calendarDays.appendChild(cell);
         }
-        inquiryState.activeEvent = eventId;
-      }
 
-      function closeInquiryModal() {
-        hideElement("inquiryModal");
-        inquiryState.activeEvent = null;
-      }
-
-      const inquiryState = { activeEvent: null };
-
-      function sendReply() {
-        const txt = document.getElementById("replyText").value.trim();
-        if (!txt) {
-          showToast("Reply cannot be empty", "warning");
-          return;
-        }
-        const evId = inquiryState.activeEvent;
-        if (!evId) return;
-        const ev = projectsStore[evId];
-        ev.extendedProps.inquiries = (ev.extendedProps.inquiries || []).map(
-          (q) => ({ ...q, replied: true })
-        );
-        document.getElementById("replyText").value = "";
-        showToast("Reply sent (demo) — inquiries marked replied");
-        document.getElementById("viewInquiries").textContent =
-          ev.extendedProps.inquiries.length;
-        refreshUpcoming();
-        closeInquiryModal();
-      }
-
-      function attachControls() {
-        document
-          .getElementById("showAllProjects")
-          .addEventListener("click", () => {
-            window.location.href = "sk-projects.html";
-          });
-        document
-          .getElementById("notifyVols")
-          .addEventListener("click", openNotifyModal);
-        document
-          .getElementById("exportIcsBtn")
-          .addEventListener("click", () => showToast("Export iCal (demo)."));
-
-        // Character counter for notification message
-        const notifyMsg = document.getElementById("notifyMessage");
-        if (notifyMsg) {
-          notifyMsg.addEventListener("input", function () {
-            const count = this.value.length;
-            document.getElementById("charCount").textContent = count;
-            document.getElementById("previewMessage").textContent =
-              this.value || "Your message will appear here...";
-          });
+        // Next month days
+        const totalCells = calendarDays.children.length;
+        const remainingCells = 42 - totalCells; // 6 rows * 7 days
+        for (let day = 1; day <= remainingCells; day++) {
+          const cell = createDayCell(day, true, year, month + 1);
+          calendarDays.appendChild(cell);
         }
       }
 
-      // Notification Modal Functions
-      function openNotifyModal() {
-        showElement("notifyModal");
-        document.body.classList.add("modal-open");
+      // Create day cell
+      function createDayCell(day, isOtherMonth, year, month, isToday = false) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-cell';
+        if (isOtherMonth) cell.classList.add('other-month');
+        if (isToday) cell.classList.add('today');
 
-        // Populate project dropdown
-        const projectSelect = document.getElementById("notifyProject");
-        projectSelect.innerHTML = '<option value="">All Projects</option>';
-        Object.values(projectsStore).forEach((proj) => {
-          const option = document.createElement("option");
-          option.value = proj.id;
-          option.textContent = proj.title;
-          projectSelect.appendChild(option);
-        });
+        const cellDate = new Date(year, month, day);
+        const dayEvents = getEventsForDate(cellDate);
 
-        updateVolunteerCount();
-      }
-
-      function closeNotifyModal() {
-        hideElement("notifyModal");
-        document.body.classList.remove("modal-open");
-        // Reset form
-        document.getElementById("notifyProject").value = "";
-        document.getElementById("notifyTarget").value = "all";
-        document.getElementById("notifyMessage").value = "";
-        document.getElementById("charCount").textContent = "0";
-        document.getElementById("previewMessage").textContent =
-          "Your message will appear here...";
-      }
-
-      function updateVolunteerCount() {
-        const target = document.getElementById("notifyTarget").value;
-        const projectId = document.getElementById("notifyProject").value;
-
-        let count = 0;
-
-        // Calculate based on filters (demo logic)
-        if (target === "all") {
-          count = 156; // All registered volunteers
-        } else if (target === "approved") {
-          count = 89;
-        } else if (target === "pending") {
-          count = 23;
-        } else if (target === "project-specific" && projectId) {
-          const project = projectsStore[projectId];
-          // Mock: count based on project applicants
-          count = Math.floor(Math.random() * 30) + 10;
-        } else if (target === "project-specific") {
-          count = 0;
+        if (dayEvents.length === 0) {
+          cell.classList.add('no-events');
         }
 
-        document.getElementById(
-          "volunteerCount"
-        ).textContent = `${count} volunteer${count !== 1 ? "s" : ""}`;
-      }
-
-      function useTemplate(type) {
-        const templates = {
-          reminder:
-            "Reminder: Your assigned project is coming up soon! Please confirm your attendance and arrive 15 minutes early for the briefing. See you there!",
-          cancelled:
-            "Important Notice: Due to unforeseen circumstances, the scheduled event has been cancelled. We apologize for any inconvenience. Please watch for rescheduling updates.",
-          rescheduled:
-            "Schedule Update: The event has been rescheduled to a new date and time. Please check the updated calendar and confirm your availability. Thank you for your understanding!",
-          urgent:
-            "Urgent: We need more volunteers for an upcoming event! If you're available and interested, please respond ASAP. Your help would be greatly appreciated!",
-          thankyou:
-            "Thank you for your dedication and hard work! Your contribution made a real difference in our community. We look forward to working with you again soon!",
-        };
-
-        const message = templates[type] || "";
-        document.getElementById("notifyMessage").value = message;
-        document.getElementById("charCount").textContent = message.length;
-        document.getElementById("previewMessage").textContent = message;
-      }
-
-      function sendNotification() {
-        const projectId = document.getElementById("notifyProject").value;
-        const target = document.getElementById("notifyTarget").value;
-        const message = document.getElementById("notifyMessage").value.trim();
-
-        if (!message) {
-          showToast("Please enter a message", "warning");
-          return;
-        }
-
-        const volunteerCount =
-          document.getElementById("volunteerCount").textContent;
-        const projectName = projectId
-          ? projectsStore[projectId]?.title
-          : "All Projects";
-
-        showToast(`In-App notification sent to ${volunteerCount}`);
-        closeNotifyModal();
-      }
-
-      function refreshUpcoming() {
-        const listEl = document.getElementById("upcomingList");
-        listEl.innerHTML = "";
-        const now = new Date();
-        const in30 = new Date();
-        in30.setDate(now.getDate() + 30);
-        const upcoming = Object.values(projectsStore)
-          .filter(
-            (ev) => new Date(ev.start) >= now && new Date(ev.start) <= in30
-          )
-          .sort((a, b) => new Date(a.start) - new Date(b.start))
-          .slice(0, 6);
-        if (!upcoming.length) {
-          listEl.innerHTML =
-            '<li class="text-sm text-gray-500">No upcoming events in the next 30 days.</li>';
-        } else {
-          upcoming.forEach((ev) => {
-            const li = document.createElement("li");
-            const count = (ev.extendedProps.inquiries || []).length;
-            li.innerHTML = `<div class="flex items-center justify-between gap-2">
-                         <div>
-                           <div class="text-sm font-semibold text-gray-800">${
-                             ev.title
-                           }</div>
-                           <div class="text-xs text-gray-500">${formatShort(
-                             ev.start
-                           )} • ${ev.extendedProps.head || "—"}</div>
-                         </div>
-                        </div>`;
-            listEl.appendChild(li);
-          });
-        }
-      }
-
-      function formatReadable(dateStr) {
-        if (!dateStr) return "—";
-        const d = new Date(dateStr);
-        return d.toLocaleString();
-      }
-      function formatShort(dateStr) {
-        if (!dateStr) return "—";
-        const d = new Date(dateStr);
-        return d.toLocaleDateString(undefined, {
-          month: "short",
-          day: "numeric",
-        });
-      }
-      function showElement(id) {
-        document.getElementById(id).classList.remove("hidden");
-      }
-      function hideElement(id) {
-        document.getElementById(id).classList.add("hidden");
-      }
-
-      function showToast(message, type = 'success') {
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-          existingToast.remove();
-        }
-
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-
-        const icons = {
-          success: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
-          error: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
-          warning: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
-          info: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
-        };
-
-        toast.innerHTML = `
-          <div class="toast-icon">${icons[type]}</div>
-          <div class="toast-message">${message}</div>
+        cell.innerHTML = `
+          <div class="cell-date">${day}</div>
+          ${dayEvents.slice(0, 3).map(event => `
+            <div class="event-pill ${event.type}" onclick="openEventModal(${event.id}, event)">
+              ${event.title}
+            </div>
+          `).join('')}
+          ${dayEvents.length > 3 ? `<div class="text-xs text-gray-500 mt-1">+${dayEvents.length - 3} more</div>` : ''}
         `;
 
-        const styles = document.createElement('style');
-        if (!document.getElementById('toast-styles')) {
-          styles.id = 'toast-styles';
-          styles.textContent = `
-            .toast {
-              position: fixed;
-              top: 24px;
-              right: 24px;
-              min-width: 300px;
-              max-width: 500px;
-              padding: 16px;
-              border-radius: 12px;
-              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-              display: flex;
-              align-items: center;
-              gap: 12px;
-              z-index: 10000;
-              transform: translateX(400px);
-              transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-              font-family: 'Inter', sans-serif;
-            }
-            .toast.show {
-              transform: translateX(0);
-            }
-            .toast.success {
-              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-              color: white;
-            }
-            .toast.error {
-              background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-              color: white;
-            }
-            .toast.warning {
-              background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-              color: white;
-            }
-            .toast.info {
-              background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-              color: white;
-            }
-            .toast-icon {
-              flex-shrink: 0;
-              width: 20px;
-              height: 20px;
-            }
-            .toast-message {
-              flex: 1;
-              font-size: 14px;
-              font-weight: 500;
-              line-height: 1.5;
-            }
-          `;
-          document.head.appendChild(styles);
+        cell.onclick = () => {
+          if (!isOtherMonth) {
+            selectedDate = cellDate;
+            setView('day');
+          }
+        };
+
+        return cell;
+      }
+
+      // Get events for specific date
+      function getEventsForDate(date) {
+        return events.filter(event => {
+          const eventDate = new Date(event.start);
+          return eventDate.getFullYear() === date.getFullYear() &&
+                 eventDate.getMonth() === date.getMonth() &&
+                 eventDate.getDate() === date.getDate();
+        });
+      }
+
+      // Navigation
+      function previousMonth() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+      }
+
+      function nextMonth() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+      }
+
+      function goToToday() {
+        currentDate = new Date();
+        renderCalendar();
+      }
+
+      // View switching
+      function setView(view) {
+        currentView = view;
+
+        // Update buttons
+        document.getElementById('monthViewBtn').classList.remove('active');
+        document.getElementById('weekViewBtn').classList.remove('active');
+        document.getElementById('dayViewBtn').classList.remove('active');
+        document.getElementById(view + 'ViewBtn').classList.add('active');
+
+        // Hide all views
+        document.getElementById('monthView').style.display = 'none';
+        document.getElementById('weekView').style.display = 'none';
+        document.getElementById('dayView').style.display = 'none';
+
+        // Show selected view
+        if (view === 'month') {
+          document.getElementById('monthView').style.display = 'block';
+        } else if (view === 'week') {
+          document.getElementById('weekView').style.display = 'block';
+          renderWeekView();
+        } else if (view === 'day') {
+          document.getElementById('dayView').style.display = 'block';
+          renderDayView();
         }
+      }
+
+      // Render Week View
+      function renderWeekView() {
+        const weekGrid = document.getElementById('weekGrid');
+        weekGrid.innerHTML = '<div class="time-slot"></div>';
+
+        // Get week dates
+        const weekStart = new Date(currentDate);
+        weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+
+        // Detect mobile
+        const isMobile = window.innerWidth <= 640;
+
+        // Add day headers
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(weekStart);
+          date.setDate(weekStart.getDate() + i);
+          const header = document.createElement('div');
+          header.className = 'time-slot';
+          header.style.fontWeight = '700';
+          header.style.fontSize = isMobile ? '0.625rem' : '0.875rem';
+          header.style.textAlign = 'center';
+          header.style.padding = isMobile ? '0.5rem 0.25rem' : '0.75rem';
+
+          if (isMobile) {
+            // Mobile: Show compact format like "Sun, Jan 5"
+            const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+            const month = date.toLocaleDateString('en-US', { month: 'short' });
+            const day = date.getDate();
+            header.innerHTML = `${weekday},<br>${month} ${day}`;
+          } else {
+            // Desktop: Show full format
+            header.textContent = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+          }
+
+          weekGrid.appendChild(header);
+        }
+
+        // Add time slots
+        for (let hour = 8; hour <= 18; hour++) {
+          const timeSlot = document.createElement('div');
+          timeSlot.className = 'time-slot';
+          timeSlot.textContent = `${hour}:00`;
+          weekGrid.appendChild(timeSlot);
+
+          for (let i = 0; i < 7; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'week-cell';
+            weekGrid.appendChild(cell);
+          }
+        }
+      }
+
+      // Render Day View
+      function renderDayView() {
+        const dateToShow = selectedDate || currentDate;
+        const dayEvents = getEventsForDate(dateToShow);
+
+        document.getElementById('dayViewDate').textContent =
+          dateToShow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+        const dayViewEvents = document.getElementById('dayViewEvents');
+
+        if (dayEvents.length === 0) {
+          dayViewEvents.innerHTML = `
+            <div class="text-center py-12">
+              <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <p class="text-gray-500 font-medium">No projects or announcements</p>
+              <p class="text-sm text-gray-400 mt-1">Nothing scheduled for this day</p>
+            </div>
+          `;
+        } else {
+          dayViewEvents.innerHTML = dayEvents.map(event => {
+            const startTime = new Date(event.start).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+            const endTime = new Date(event.end).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+            return `
+              <div class="event-card ${event.type}" onclick="openEventModal(${event.id})">
+                <div class="event-time">${startTime} - ${endTime}</div>
+                <div class="event-title">${event.title}</div>
+                <div class="event-description">${event.description}</div>
+                <div class="event-meta">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    <span>${event.head}</span>
+                  </div>
+                  ${event.volunteers ? `
+                    <div class="flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                      </svg>
+                      <span>${event.volunteers} volunteers</span>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Render Upcoming Events
+      function renderUpcomingEvents() {
+        const now = new Date();
+        const upcoming = events
+          .filter(event => new Date(event.start) >= now)
+          .sort((a, b) => new Date(a.start) - new Date(b.start))
+          .slice(0, 5);
+
+        const container = document.getElementById('upcomingEvents');
+
+        if (upcoming.length === 0) {
+          container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No upcoming projects or announcements</p>';
+        } else {
+          container.innerHTML = upcoming.map(event => {
+            const eventDate = new Date(event.start);
+            const dateStr = eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            const timeStr = eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+            const typeColor = event.type === 'project' ? 'text-[#2f6e4e] bg-[#2f6e4e]/10' : 'text-blue-600 bg-blue-50';
+            const typeLabel = event.type === 'project' ? 'Project' : 'Announcement';
+            const borderColor = event.type === 'project' ? 'border-[#2f6e4e]' : 'border-blue-500';
+
+            return `
+              <div class="upcoming-event ${borderColor}" onclick="openEventModal(${event.id})">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 text-center">
+                    <div class="text-xs font-semibold text-gray-500 uppercase">${dateStr.split(' ')[0]}</div>
+                    <div class="text-2xl font-bold text-[#2f6e4e]">${dateStr.split(' ')[1]}</div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${typeColor}">${typeLabel}</span>
+                    </div>
+                    <div class="font-semibold text-sm text-gray-800 truncate">${event.title}</div>
+                    <div class="text-xs text-gray-500 mt-1">${timeStr} • ${event.head}</div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Event Modal
+      function openEventModal(eventId, e) {
+        if (e) e.stopPropagation();
+
+        const event = events.find(e => e.id === eventId);
+        if (!event) return;
+
+        const startDate = new Date(event.start);
+        const endDate = new Date(event.end);
+        const startTime = startDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        const endTime = endDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        const dateStr = startDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+        document.getElementById('modalEventTitle').textContent = event.title;
+        document.getElementById('modalEventContent').innerHTML = `
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 text-sm text-gray-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <span>${dateStr}</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm text-gray-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>${startTime} - ${endTime}</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm text-gray-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+              <span>${event.head}</span>
+            </div>
+            ${event.volunteers ? `
+              <div class="flex items-center gap-3 text-sm text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+                <span>${event.volunteers} volunteers needed</span>
+              </div>
+            ` : ''}
+            <div class="pt-4 border-t border-gray-200">
+              <h4 class="font-semibold text-gray-800 mb-2">Description</h4>
+              <p class="text-gray-600">${event.description}</p>
+            </div>
+            <div class="pt-4 space-y-3">
+              <!-- Add to Calendar Section -->
+              <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200">
+                <h5 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  Add to Your Calendar
+                </h5>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <a href="${getAddToCalendarLinks(event).google}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-3 py-2 bg-white border-2 border-blue-200 text-blue-600 rounded-lg text-xs font-semibold hover:bg-blue-50 hover:border-blue-400 transition-all duration-200">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Google
+                  </a>
+                  <a href="${getAddToCalendarLinks(event).outlook}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-3 py-2 bg-white border-2 border-indigo-200 text-indigo-600 rounded-lg text-xs font-semibold hover:bg-indigo-50 hover:border-indigo-400 transition-all duration-200">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M23 12.5v7.18a1.32 1.32 0 0 1-1.32 1.32H14.5v-9h8.5zm0-2.09h-8.5V1.32A1.32 1.32 0 0 1 15.82 0h6.68A1.5 1.5 0 0 1 23 1.32v9.09zM12 0v24l-10.5-4.82V4.82L12 0z"/>
+                    </svg>
+                    Outlook
+                  </a>
+                  <a href="${getAddToCalendarLinks(event).office365}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-3 py-2 bg-white border-2 border-red-200 text-red-600 rounded-lg text-xs font-semibold hover:bg-red-50 hover:border-red-400 transition-all duration-200">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M21.53 4.306v15.363q0 .807-.472 1.433-.472.627-1.253.85l-6.888 1.974q-.136.037-.29.055-.156.019-.293.019-.396 0-.72-.105-.321-.106-.656-.292l-4.505-2.544q-.248-.137-.391-.366-.143-.23-.143-.515 0-.434.304-.738.303-.303.738-.303.26 0 .498.118l4.244 2.39q.205.113.446.17.242.056.498.056.34 0 .498-.074l6.447-1.848q.16-.037.279-.186.12-.15.12-.335V4.964q0-.186-.12-.336-.12-.149-.279-.186l-6.447-1.848q-.158-.074-.498-.074-.26 0-.5.056-.243.056-.447.17L7.035 6.13q-.248.136-.498.117-.396 0-.738-.303-.341-.304-.341-.738 0-.285.143-.515.143-.23.391-.366L10.497.78q.335-.186.656-.292.324-.105.72-.105.137 0 .293.019.154.018.29.055l6.888 1.974q.781.223 1.253.85.472.626.472 1.433z"/>
+                    </svg>
+                    Office365
+                  </a>
+                  <button onclick="exportSingleEvent(${event.id})" class="flex items-center justify-center gap-2 px-3 py-2 bg-white border-2 border-[#2f6e4e]/30 text-[#2f6e4e] rounded-lg text-xs font-semibold hover:bg-[#2f6e4e]/5 hover:border-[#2f6e4e] transition-all duration-200">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    iCal File
+                  </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-2 flex items-start gap-1">
+                  <svg class="w-3 h-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span>Click a platform to add this event to your calendar. The iCal file works with Apple Calendar, Yahoo, and most calendar apps.</span>
+                </p>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex gap-3">
+                <button onclick="window.location.href='sk-projects.html?id=${event.id}'" class="flex-1 px-4 py-3 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
+                  View Details
+                </button>
+                <button onclick="closeEventModal()" class="px-4 py-3 border-2 border-gray-200 rounded-lg font-medium text-gray-700 hover:border-[#2f6e4e] hover:text-[#2f6e4e] transition-all duration-300">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('eventModal').classList.add('active');
+      }
+
+      function closeEventModal() {
+        document.getElementById('eventModal').classList.remove('active');
+      }
+
+      // iCalendar (.ics) Generation Helper Functions
+      function generateICS(events) {
+        const lines = [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//BIMS SK Malanday//Calendar//EN',
+          'CALSCALE:GREGORIAN',
+          'METHOD:PUBLISH',
+          'X-WR-CALNAME:SK Malanday Projects & Announcements',
+          'X-WR-TIMEZONE:Asia/Manila',
+          'X-WR-CALDESC:SK Malanday Barangay Information Management System Calendar'
+        ];
+
+        events.forEach(event => {
+          lines.push(...generateEventICS(event));
+        });
+
+        lines.push('END:VCALENDAR');
+        return lines.join('\r\n');
+      }
+
+      function generateEventICS(event) {
+        const start = new Date(event.start);
+        const end = new Date(event.end);
+
+        const formatDate = (date) => {
+          return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        };
+
+        const escapeText = (text) => {
+          return text.replace(/\\/g, '\\\\')
+                     .replace(/;/g, '\\;')
+                     .replace(/,/g, '\\,')
+                     .replace(/\n/g, '\\n');
+        };
+
+        const now = new Date();
+        const timestamp = formatDate(now);
+
+        let description = escapeText(event.description);
+        if (event.head) {
+          description += `\\n\\nOrganizer: ${escapeText(event.head)}`;
+        }
+        if (event.volunteers) {
+          description += `\\n\\nVolunteers Needed: ${event.volunteers}`;
+        }
+
+        return [
+          'BEGIN:VEVENT',
+          `UID:${event.id}@bims-sk-malanday`,
+          `DTSTAMP:${timestamp}`,
+          `DTSTART:${formatDate(start)}`,
+          `DTEND:${formatDate(end)}`,
+          `SUMMARY:${escapeText(event.title)}`,
+          `DESCRIPTION:${description}`,
+          `LOCATION:SK Malanday, Marikina City`,
+          `STATUS:CONFIRMED`,
+          `CATEGORIES:${event.type === 'project' ? 'PROJECT' : 'ANNOUNCEMENT'}`,
+          event.type === 'project' ? 'CLASS:PUBLIC' : 'CLASS:PUBLIC',
+          'END:VEVENT'
+        ];
+      }
+
+      function downloadICS(icsContent, filename) {
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      }
+
+      // Export All Calendar Events
+      function exportCalendar() {
+        const icsContent = generateICS(events);
+        const filename = `SK_Malanday_Calendar_${new Date().getFullYear()}.ics`;
+        downloadICS(icsContent, filename);
+
+        showToast('Calendar exported successfully! Open the .ics file with your preferred calendar app.');
+      }
+
+      // Export Single Event
+      function exportSingleEvent(eventId) {
+        const event = events.find(e => e.id === eventId);
+        if (!event) return;
+
+        const icsContent = generateICS([event]);
+        const safeTitle = event.title.replace(/[^a-z0-9]/gi, '_');
+        const filename = `${safeTitle}_Event.ics`;
+        downloadICS(icsContent, filename);
+
+        showToast('Event exported successfully!');
+      }
+
+      // Add to Calendar Links
+      function getAddToCalendarLinks(event) {
+        const start = new Date(event.start);
+        const end = new Date(event.end);
+
+        const formatGoogleDate = (date) => {
+          return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        };
+
+        const formatOutlookDate = (date) => {
+          return date.toISOString();
+        };
+
+        const title = encodeURIComponent(event.title);
+        const description = encodeURIComponent(event.description);
+        const location = encodeURIComponent('SK Malanday, Marikina City');
+
+        return {
+          google: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${formatGoogleDate(start)}/${formatGoogleDate(end)}&details=${description}&location=${location}`,
+          outlook: `https://outlook.live.com/calendar/0/deeplink/compose?subject=${title}&startdt=${formatOutlookDate(start)}&enddt=${formatOutlookDate(end)}&body=${description}&location=${location}`,
+          office365: `https://outlook.office.com/calendar/0/deeplink/compose?subject=${title}&startdt=${formatOutlookDate(start)}&enddt=${formatOutlookDate(end)}&body=${description}&location=${location}`,
+          yahoo: `https://calendar.yahoo.com/?v=60&title=${title}&st=${formatGoogleDate(start)}&et=${formatGoogleDate(end)}&desc=${description}&in_loc=${location}`
+        };
+      }
+
+      // Toast Notification
+      function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-6 right-6 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 z-50 animate-slideIn';
+        toast.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          <span class="font-medium">${message}</span>
+        `;
 
         document.body.appendChild(toast);
 
         setTimeout(() => {
-          toast.classList.add('show');
-        }, 10);
-
-        setTimeout(() => {
-          toast.classList.remove('show');
-          setTimeout(() => {
-            toast.remove();
-          }, 300);
-        }, 4000);
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(20px)';
+          setTimeout(() => document.body.removeChild(toast), 300);
+        }, 3000);
       }
 
-      // Notification System
-      let notifications = [
-        {
-          id: 1,
-          type: "project_approved",
-          title: "Project Approved: Community Clean-Up Drive 2025",
-          message: "Your project has been approved by the Barangay Captain and is now Ongoing",
-          time: "2 hours ago",
-          read: false,
-          projectId: 1,
-          status: "approved",
-        },
-        {
-          id: 2,
-          type: "project_rejected",
-          title: "Project Rejected: International Youth Exchange Program",
-          message: "Your project has been rejected. Click to view captain's feedback and edit your proposal",
-          time: "1 day ago",
-          read: false,
-          projectId: 4,
-          status: "rejected",
-        },
-        {
-          id: 3,
-          type: "project_revision",
-          title: "Revision Requested: Scholarship Program Deadline",
-          message: "The Barangay Captain requested revisions. Click to view feedback and edit your project",
-          time: "3 hours ago",
-          read: false,
-          projectId: 3,
-          status: "revision",
-        },
-        {
-          id: 4,
-          type: "new_inquiry",
-          title: "New Inquiry: Community Clean-Up Drive 2025",
-          message: "Juan Dela Cruz posted a new inquiry on your project",
-          time: "5 minutes ago",
-          read: false,
-          projectId: 1,
-        },
-        {
-          id: 5,
-          type: "inquiry_reply",
-          title: "Inquiry Reply: Youth Sports Festival",
-          message: "Maria Santos replied to an inquiry thread",
-          time: "1 hour ago",
-          read: false,
-          projectId: 2,
-        },
-        {
-          id: 6,
-          type: "new_announcement",
-          title: "New Announcement Posted",
-          message: "Kyleen Nicdao posted a new announcement",
-          time: "2 hours ago",
-          read: false,
-          referenceId: 1,
-        },
-        {
-          id: 7,
-          type: "new_project",
-          title: "New Project: Beach Clean-Up Initiative",
-          message: "Andrea Pelias created a new project",
-          time: "3 hours ago",
-          read: false,
-          referenceId: 3,
-        },
-        {
-          id: 8,
-          type: "project_application",
-          title: "New Application: Community Clean-Up Drive 2025",
-          message: "Juan Dela Cruz applied to your project",
-          time: "30 minutes ago",
-          read: false,
-          projectId: 1,
-          applicantId: 1,
-        },
-      ];
-
+      // Notification functions (placeholder)
       function toggleNotificationModal() {
-        const modal = document.getElementById("notificationModal");
-        modal.classList.toggle("hidden");
-        if (!modal.classList.contains("hidden")) {
-          renderNotifications();
-        }
-      }
-
-      function closeNotificationModal() {
-        document.getElementById("notificationModal").classList.add("hidden");
+        alert('Notification modal (demo)');
       }
 
       function updateNotificationCount() {
-        const unreadCount = notifications.filter((n) => !n.read).length;
-        const badge = document.getElementById("notificationBadge");
-
-        if (unreadCount > 0) {
-          badge.textContent = unreadCount > 9 ? "9+" : unreadCount;
-          badge.classList.remove("hidden");
-        } else {
-          badge.classList.add("hidden");
-        }
+        const badge = document.getElementById('notificationBadge');
+        badge.classList.remove('hidden');
       }
 
-      function getNotificationIcon(type) {
-        switch (type) {
-          case "new_inquiry":
-            return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>`;
-          case "inquiry_reply":
-            return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-            </svg>`;
-          case "new_announcement":
-            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
-            </svg>`;
-          case "new_project":
-            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-            </svg>`;
-          case "project_application":
-            return `<svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>`;
-          default:
-            return "";
-        }
-      }
-
-      function getNotificationBgColor(type) {
-        switch (type) {
-          case "new_inquiry":
-            return "bg-yellow-50";
-          case "inquiry_reply":
-            return "bg-yellow-50";
-          case "new_announcement":
-            return "bg-blue-50";
-          case "new_project":
-            return "bg-blue-50";
-          case "project_application":
-            return "bg-[#2f6e4e]/10";
-          default:
-            return "bg-gray-50";
-        }
-      }
-
-      function renderNotifications() {
-        const notificationList = document.getElementById("notificationList");
-
-        if (notifications.length === 0) {
-          notificationList.innerHTML = `
-            <div class="p-8 text-center text-gray-500">
-              <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-              </svg>
-              <p class="font-medium">No notifications</p>
-              <p class="text-sm mt-1">You're all caught up!</p>
-            </div>
-          `;
-          return;
-        }
-
-        notificationList.innerHTML = notifications
-          .map(
-            (notif) => `
-          <div
-            onclick="handleNotificationClick(${notif.id})"
-            class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
-              !notif.read ? getNotificationBgColor(notif.type) : ""
-            }"
-          >
-            <div class="flex items-start space-x-3">
-              <div class="flex-shrink-0">
-                ${getNotificationIcon(notif.type)}
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between">
-                  <p class="text-sm font-semibold text-gray-800 truncate ${
-                    !notif.read ? "font-bold" : ""
-                  }">
-                    ${notif.title}
-                  </p>
-                  ${
-                    !notif.read
-                      ? '<span class="w-2 h-2 bg-[#2f6e4e] rounded-full flex-shrink-0 ml-2 mt-1"></span>'
-                      : ""
-                  }
-                </div>
-                <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
-                <p class="text-xs text-gray-400 mt-2">${notif.time}</p>
-              </div>
-            </div>
-          </div>
-        `
-          )
-          .join("");
-      }
-
-      function handleNotificationClick(notifId) {
-        const notif = notifications.find((n) => n.id === notifId);
-        if (!notif) return;
-
-        notif.read = true;
-        updateNotificationCount();
-        closeNotificationModal();
-
-        // Route to appropriate page based on notification type
-        if (notif.type === "new_inquiry" || notif.type === "inquiry_reply") {
-          window.location.href = `sk-projects.html?projectId=${notif.projectId}&tab=inquiries`;
-        } else if (notif.type === "new_announcement") {
-          window.location.href = `sk-dashboard.html`;
-        } else if (notif.type === "new_project") {
-          window.location.href = `sk-projects.html?projectId=${notif.referenceId}`;
-        } else if (notif.type === "project_application") {
-          window.location.href = `sk-projects.html?projectId=${notif.projectId}&tab=applications&applicantId=${notif.applicantId}`;
-        }
-      }
-
-      function markAllAsRead() {
-        notifications.forEach((n) => (n.read = true));
-        updateNotificationCount();
-        renderNotifications();
-      }
-
-      // Close notification modal when clicking outside
-      document.addEventListener("click", function (event) {
-        const modal = document.getElementById("notificationModal");
-        const notificationButton = event.target.closest(
-          'button[onclick="toggleNotificationModal()"]'
-        );
-
-        if (
-          !modal.contains(event.target) &&
-          !notificationButton &&
-          !modal.classList.contains("hidden")
-        ) {
-          closeNotificationModal();
-        }
-      });
-
-      // Initialize notification count on page load
-      updateNotificationCount();
-
-      // Update current date
-      function updateCurrentDate() {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const currentDate = new Date().toLocaleDateString('en-US', options);
-        const dateElement = document.getElementById('currentDate');
-        if (dateElement) {
-          dateElement.textContent = currentDate;
-        }
-      }
-      updateCurrentDate();
-
-      // User profile data (in production, this would be fetched from server)
-      let userProfile = {
-        firstName: "Andrea",
-        middleName: "",
-        lastName: "Pelias",
-        email: "andrea.pelias@malanday.gov.ph",
-        position: "SK Chairman",
-        address: "",
-        contact: "",
-        gender: "",
-        birthday: ""
-      };
-
-      // Profile Modal Functions
+      // Profile modal (placeholder)
       function openProfileModal() {
-        // Load profile data into form
-        document.getElementById('profileFirstName').value = userProfile.firstName;
-        document.getElementById('profileMiddleName').value = userProfile.middleName;
-        document.getElementById('profileLastName').value = userProfile.lastName;
-        document.getElementById('profileEmail').value = userProfile.email;
-        document.getElementById('profilePosition').value = userProfile.position;
-        document.getElementById('profileAddress').value = userProfile.address;
-        document.getElementById('profileContact').value = userProfile.contact;
-        document.getElementById('profileGender').value = userProfile.gender;
-        document.getElementById('profileBirthday').value = userProfile.birthday;
-
-        // Load profile picture preview
-        const previewDiv = document.getElementById('profilePicturePreview');
-        if (userProfile.profilePicture) {
-          previewDiv.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
-        } else {
-          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
-          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-          previewDiv.innerHTML = `<span id="profileInitials" class="text-white font-bold text-2xl">${firstInitial}${lastInitial}</span>`;
-        }
-
-        document.getElementById('profileModal').classList.remove('hidden');
-      }
-
-      function closeProfileModal() {
-        document.getElementById('profileModal').classList.add('hidden');
-      }
-
-      function handleProfilePictureChange(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-          showToast('Please upload an image file', 'error');
-          return;
-        }
-
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          showToast('Image size should be less than 5MB', 'error');
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const imageData = e.target.result;
-
-          // Store in profile
-          userProfile.profilePicture = imageData;
-
-          // Update modal preview
-          const previewDiv = document.getElementById('profilePicturePreview');
-          previewDiv.innerHTML = `<img src="${imageData}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
-
-          // Update header avatar
-          updateHeaderAvatar();
-
-          showToast('Profile picture uploaded successfully!');
-        };
-        reader.readAsDataURL(file);
-      }
-
-      function updateHeaderAvatar() {
-        const headerAvatar = document.querySelector('header .w-10.h-10.bg-[#2f6e4e]');
-        if (!headerAvatar) return;
-
-        if (userProfile.profilePicture) {
-          headerAvatar.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
-        } else {
-          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
-          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-          headerAvatar.innerHTML = `<span class="text-white font-bold">${firstInitial}${lastInitial}</span>`;
-        }
-      }
-
-      function saveProfile() {
-        // Get form values
-        userProfile.firstName = document.getElementById('profileFirstName').value;
-        userProfile.middleName = document.getElementById('profileMiddleName').value;
-        userProfile.lastName = document.getElementById('profileLastName').value;
-        userProfile.address = document.getElementById('profileAddress').value;
-        userProfile.contact = document.getElementById('profileContact').value;
-        userProfile.gender = document.getElementById('profileGender').value;
-        userProfile.birthday = document.getElementById('profileBirthday').value;
-
-        // Validation
-        if (!userProfile.firstName || !userProfile.lastName) {
-          showToast('First name and last name are required', 'warning');
-          return;
-        }
-
-        // In production, this would save to the server
-        console.log('Profile saved:', userProfile);
-
-        // Update header display
-        const middleInitial = userProfile.middleName ? ` ${userProfile.middleName.charAt(0)}.` : '';
-        const fullName = `${userProfile.firstName}${middleInitial} ${userProfile.lastName}`;
-        document.querySelector('header .text-sm.font-medium').textContent = fullName;
-
-        // Update header avatar
-        updateHeaderAvatar();
-
-        showToast('Profile updated successfully!');
-        closeProfileModal();
+        alert('Profile modal (demo)');
       }
     </script>
-
-    <!-- Profile Modal -->
-    <div id="profileModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50">
-      <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
-          <!-- Header -->
-          <div class="bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] text-white p-6 rounded-t-2xl">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-2xl">
-                  AP
-                </div>
-                <div>
-                  <h2 class="text-2xl font-bold">My Profile</h2>
-                  <p class="text-[#2f6e4e]/20 text-sm">Manage your account information</p>
-                </div>
-              </div>
-              <button onclick="closeProfileModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Body -->
-          <div class="p-6 space-y-6">
-            <!-- Account Info Section -->
-            <div>
-              <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-                Account Information
-              </h3>
-              <div class="grid grid-cols-3 gap-4">
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
-                  <input type="text" id="profileFirstName" value="Andrea"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Middle Name</label>
-                  <input type="text" id="profileMiddleName" placeholder="Optional"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
-                  <input type="text" id="profileLastName" value="Pelias"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-              </div>
-
-              <div class="mt-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                <input type="email" id="profileEmail" value="andrea.pelias@malanday.gov.ph"
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                       readonly />
-                <p class="text-xs text-gray-500 mt-1">Email cannot be changed. Contact admin if needed.</p>
-              </div>
-
-              <div class="mt-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Position</label>
-                <input type="text" id="profilePosition" value="SK Chairman"
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                       readonly />
-              </div>
-            </div>
-
-            <!-- Personal Info Section -->
-            <div class="pt-6 border-t border-gray-200">
-              <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                Personal Information
-              </h3>
-
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Complete Address</label>
-                  <textarea id="profileAddress" rows="3" placeholder="Enter your complete address"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Number</label>
-                  <input type="tel" id="profileContact" placeholder="e.g., 09171234567"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
-                  <select id="profileGender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
-                    <option value="">Select gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="non-binary">Non-binary / Gender Neutral</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Birthday</label>
-                  <input type="date" id="profileBirthday"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Footer -->
-          <div class="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end gap-3 border-t">
-            <button onclick="closeProfileModal()"
-                    class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition">
-              Cancel
-            </button>
-            <button onclick="saveProfile()"
-                    class="px-6 py-3 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg font-medium transition flex items-center gap-2">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              Save Changes
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-      <script src="js/mobile-nav.js"></script>
+    <script src="js/mobile-nav.js"></script>
   </body>
 </html>

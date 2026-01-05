@@ -101,9 +101,24 @@
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
+
+      /* Pagination dots - consistent across all screen sizes */
+      #filePaginationDots button {
+        flex-shrink: 0;
+        display: inline-block;
+        cursor: pointer;
+        border: none;
+        padding: 0;
+        outline: none;
+      }
+
+      #filePaginationDots button:focus {
+        outline: 2px solid rgba(47, 110, 78, 0.3);
+        outline-offset: 2px;
+      }
     </style>
   </head>
-  <body class="bg-gray-50">
+  <body class="bg-gray-50 overflow-x-hidden">
     <div class="flex h-screen overflow-hidden">
       <!-- Sidebar Navigation -->
       <aside
@@ -372,16 +387,16 @@
               </div>
 
               <!-- Search Bar -->
-              <div class="mb-6 flex items-center gap-4">
+              <div class="mb-6 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
                 <input
                   id="fileSearch"
                   type="text"
                   placeholder="Search files by name or date..."
-                  class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
                 />
                 <select
                   id="filterCategory"
-                  class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white min-w-[150px]"
+                  class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white md:min-w-[180px]"
                 >
                   <option value="">All categories</option>
                   <option value="general">General Files</option>
@@ -397,22 +412,30 @@
                 <!-- File cards are injected by JS -->
               </div>
 
-              <!-- Pagination placeholder -->
+              <!-- Pagination Dots (Center) -->
+              <div id="filePaginationDots" class="flex justify-center gap-2 mt-6 hidden">
+                <!-- Dots will be inserted here -->
+              </div>
+
+              <!-- Pagination Controls (Bottom Right) -->
               <div class="mt-6 flex justify-end">
                 <nav
-                  class="inline-flex rounded-md shadow-sm"
+                  id="filePaginationNav"
+                  class="hidden inline-flex rounded-md shadow-sm"
                   role="navigation"
                   aria-label="Pagination"
                 >
                   <button
                     id="prevPage"
-                    class="px-3 py-2 border border-gray-200 rounded-l-md"
+                    onclick="navigateFiles(-1)"
+                    class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium"
                   >
                     Prev
                   </button>
                   <button
                     id="nextPage"
-                    class="px-3 py-2 border-t border-b border-gray-200 rounded-r-md"
+                    onclick="navigateFiles(1)"
+                    class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium"
                   >
                     Next
                   </button>
@@ -811,10 +834,67 @@
           category: "project",
           url: "",
         },
+        {
+          id: 10,
+          name: "Sports_Festival_Project_Plan.pdf",
+          type: "pdf",
+          uploaded: "Oct 28, 2025",
+          uploadedDate: new Date("2025-10-28"),
+          category: "project",
+          url: "",
+        },
+        {
+          id: 11,
+          name: "Volunteer_Registration_Form.xlsx",
+          type: "xlsx",
+          uploaded: "Oct 20, 2025",
+          uploadedDate: new Date("2025-10-20"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 12,
+          name: "Barangay_Activity_Photos.jpg",
+          type: "jpg",
+          uploaded: "Oct 15, 2025",
+          uploadedDate: new Date("2025-10-15"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 13,
+          name: "Monthly_Report_September.pdf",
+          type: "pdf",
+          uploaded: "Oct 5, 2025",
+          uploadedDate: new Date("2025-10-05"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 14,
+          name: "Training_Materials_2025.pdf",
+          type: "pdf",
+          uploaded: "Sep 30, 2025",
+          uploadedDate: new Date("2025-09-30"),
+          category: "general",
+          url: "",
+        },
+        {
+          id: 15,
+          name: "Project_Impact_Assessment.xlsx",
+          type: "xlsx",
+          uploaded: "Sep 25, 2025",
+          uploadedDate: new Date("2025-09-25"),
+          category: "project",
+          url: "",
+        },
       ];
 
       // Archived files store
       let archivedFiles = [];
+
+      // Published files store (for homepage display)
+      let publishedFiles = [];
 
       // Auto-archive files older than 1 year
       function autoArchiveOldFiles() {
@@ -880,14 +960,29 @@
       const selectedFileName = document.getElementById("selectedFileName");
       let selectedFile = null;
 
+      // Pagination variables
+      let currentPage = 0;
+      const filesPerPage = 6;
+
       // Render files into grid
       function renderFiles(list) {
         filesGrid.innerHTML = "";
         if (!list.length) {
           filesGrid.innerHTML = '<p class="text-gray-500">No files found.</p>';
+          document.getElementById('filePaginationNav').classList.add('hidden');
+          document.getElementById('filePaginationDots').classList.add('hidden');
           return;
         }
-        list.forEach((file) => {
+
+        // Calculate pagination
+        const startIndex = currentPage * filesPerPage;
+        const endIndex = startIndex + filesPerPage;
+        const filesToShow = list.slice(startIndex, endIndex);
+
+        // Update pagination controls
+        updateFilePagination(list.length);
+
+        filesToShow.forEach((file) => {
           const card = document.createElement("div");
           card.className =
             "border border-gray-200 rounded-xl p-5 hover:shadow-lg transition";
@@ -943,11 +1038,78 @@
             (f.uploaded && f.uploaded.toLowerCase().includes(q));
           return matchesCategory && matchesQuery;
         });
+        currentPage = 0; // Reset to first page when filters change
         renderFiles(filtered);
       }
 
       searchInput.addEventListener("input", applyFilters);
       filterCategory.addEventListener("change", applyFilters);
+
+      // Pagination functions
+      function updateFilePagination(totalFiles) {
+        const totalPages = Math.ceil(totalFiles / filesPerPage);
+        const dotsContainer = document.getElementById('filePaginationDots');
+        const navContainer = document.getElementById('filePaginationNav');
+
+        if (totalPages <= 1) {
+          dotsContainer.classList.add('hidden');
+          navContainer.classList.add('hidden');
+          return;
+        }
+
+        dotsContainer.classList.remove('hidden');
+        navContainer.classList.remove('hidden');
+
+        // Create pagination dots
+        dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+          <button
+            onclick="goToFilePage(${i})"
+            class="h-2 rounded-full transition-all duration-300 ${i === currentPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+            style="min-height: 8px;"
+          ></button>
+        `).join('');
+      }
+
+      function navigateFiles(direction) {
+        // Get current filtered list
+        const q = searchInput.value.trim().toLowerCase();
+        const c = filterCategory.value;
+        let filtered = fileStore.filter((f) => {
+          const matchesCategory = !c || f.category === c;
+          const matchesQuery =
+            !q ||
+            f.name.toLowerCase().includes(q) ||
+            (f.uploaded && f.uploaded.toLowerCase().includes(q));
+          return matchesCategory && matchesQuery;
+        });
+
+        const totalPages = Math.ceil(filtered.length / filesPerPage);
+        currentPage += direction;
+
+        // Wrap around
+        if (currentPage < 0) currentPage = totalPages - 1;
+        if (currentPage >= totalPages) currentPage = 0;
+
+        renderFiles(filtered);
+      }
+
+      function goToFilePage(pageIndex) {
+        currentPage = pageIndex;
+
+        // Get current filtered list
+        const q = searchInput.value.trim().toLowerCase();
+        const c = filterCategory.value;
+        let filtered = fileStore.filter((f) => {
+          const matchesCategory = !c || f.category === c;
+          const matchesQuery =
+            !q ||
+            f.name.toLowerCase().includes(q) ||
+            (f.uploaded && f.uploaded.toLowerCase().includes(q));
+          return matchesCategory && matchesQuery;
+        });
+
+        renderFiles(filtered);
+      }
 
       // Upload Modal Functions
       function openUploadModal() {
@@ -1224,14 +1386,6 @@
           }
         });
       }
-
-      // Pagination controls (stub - client demo)
-      document
-        .getElementById("prevPage")
-        .addEventListener("click", () => showToast("Previous page - pagination demo", "info"));
-      document
-        .getElementById("nextPage")
-        .addEventListener("click", () => showToast("Next page - pagination demo", "info"));
 
       // Notification System
       let notifications = [

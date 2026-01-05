@@ -162,6 +162,12 @@
     box-shadow: 8px 0 30px rgba(0, 0, 0, 0.2);
   }
 
+  /* FIX: Remove top padding from sidebar content on mobile to make logo flush with top */
+  aside > .p-6,
+  aside > div.p-6 {
+    padding-top: 1rem !important;
+  }
+
   /* FIX: Remove overflow-hidden and h-screen constraints */
   body .flex.h-screen {
     display: block !important;
@@ -2529,18 +2535,27 @@ button,
     font-size: 0.75rem !important; /* 12px */
   }
 
-  /* CTA buttons in nav - stack on mobile (INDEX.HTML ONLY) */
+  /* CTA buttons in nav - KEEP HORIZONTAL on mobile (INDEX.HTML ONLY) */
   nav.fixed .flex.items-center.space-x-3 {
-    flex-direction: column !important;
+    flex-direction: row !important;
     gap: 0.5rem !important;
-    align-items: stretch !important;
+    align-items: center !important;
+    padding-right: 1rem !important; /* 16px from right edge */
   }
 
-  nav.fixed .flex.items-center.space-x-3 a {
-    width: 100% !important;
-    text-align: center !important;
-    padding: 0.625rem 1rem !important;
-    font-size: 0.875rem !important;
+  /* Make Login button look like a button with border */
+  nav.fixed .flex.items-center.space-x-3 a:first-child {
+    padding: 0.375rem 0.75rem !important; /* 6px 12px */
+    font-size: 0.875rem !important; /* 14px */
+    border: 1px solid #2f6e4e !important;
+    border-radius: 0.5rem !important;
+    background: white !important;
+  }
+
+  /* Sign Up button - compact and balanced */
+  nav.fixed .flex.items-center.space-x-3 a:last-child {
+    padding: 0.375rem 0.75rem !important; /* 6px 12px - same as Login */
+    font-size: 0.875rem !important; /* 14px */
   }
 
 
@@ -2643,20 +2658,48 @@ button,
 
   /* PROJECTS SECTION */
 
-  /* Filter buttons - compact and scrollable */
+  /* Filter buttons container - better design for small phones */
   #projects .inline-flex.bg-gray-100 {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+    padding: 0.375rem !important; /* 6px */
+    gap: 0.375rem !important; /* 6px between buttons */
+    border-radius: 0.75rem !important; /* 12px */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1) !important;
     width: 100% !important;
     max-width: 100% !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: thin !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important; /* Allow wrapping on very small screens */
+    overflow: visible !important;
   }
 
+  /* Filter buttons - improved visual design */
   #projects .filter-btn {
-    padding: 0.75rem 1rem !important;
+    padding: 0.625rem 1rem !important; /* 10px 16px */
     font-size: 0.8125rem !important; /* 13px */
+    font-weight: 600 !important;
     white-space: nowrap !important;
-    flex-shrink: 0 !important;
+    flex: 1 1 auto !important; /* Flexible sizing */
+    min-width: fit-content !important;
+    border-radius: 0.5rem !important; /* 8px */
+    transition: all 0.2s ease !important;
+    background: transparent !important;
+    color: #6b7280 !important;
+    box-shadow: none !important;
+  }
+
+  /* Filter button hover state */
+  #projects .filter-btn:hover {
+    background: rgba(255, 255, 255, 0.5) !important;
+    color: #374151 !important;
+  }
+
+  /* Filter button active state */
+  #projects .filter-btn.active {
+    background: linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%) !important;
+    color: white !important;
+    box-shadow: 0 2px 6px rgba(47, 110, 78, 0.3),
+                0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    font-weight: 700 !important;
   }
 
   /* Project cards - single column */
@@ -2704,9 +2747,13 @@ button,
     height: 1.25rem !important;
   }
 
-  /* Testimonial cards - compact */
+  /* Testimonial cards - compact with extra bottom padding to prevent cutoff */
   #testimonialsCarousel .bg-white.p-8 {
     padding: 1.25rem !important;
+    padding-bottom: 1.75rem !important; /* Extra bottom padding to prevent cutoff */
+    min-height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   #testimonialsCarousel .w-14.h-14 {
@@ -2743,6 +2790,71 @@ button,
   #transparency .w-12.h-12 {
     width: 2.5rem !important; /* 40px */
     height: 2.5rem !important;
+  }
+
+  /* Header icons - Budget and Metrics cards */
+  #transparency .w-14.h-14 {
+    width: 2.75rem !important; /* 44px */
+    height: 2.75rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  #transparency .w-14.h-14 svg {
+    width: 1.5rem !important; /* 24px */
+    height: 1.5rem !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Also target SVGs with w-7/h-7 class */
+  #transparency .w-14.h-14 svg.w-7,
+  #transparency .w-14.h-14 svg.h-7 {
+    width: 1.5rem !important; /* 24px */
+    height: 1.5rem !important;
+    display: block !important;
+  }
+
+  /* Small metric card icon containers */
+  #transparency .w-6.h-6 {
+    width: 1.25rem !important; /* 20px */
+    height: 1.25rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  #transparency .w-8.h-8 {
+    width: 1.5rem !important; /* 24px */
+    height: 1.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* SVG icons inside metric card containers - force visibility */
+  #transparency .w-6.h-6 svg,
+  #transparency .w-8.h-8 svg {
+    width: 0.875rem !important; /* 14px */
+    height: 0.875rem !important;
+    display: block !important;
+  }
+
+  /* Also target SVGs with w-3/h-3 and w-4/h-4 classes */
+  #transparency .absolute svg.w-3,
+  #transparency .absolute svg.h-3,
+  #transparency .absolute svg.w-4,
+  #transparency .absolute svg.h-4 {
+    width: 0.875rem !important; /* 14px */
+    height: 0.875rem !important;
+    display: block !important;
+  }
+
+  /* Metric card icon containers */
+  #transparency .absolute.top-2.right-2 {
+    top: 0.375rem !important;
+    right: 0.375rem !important;
   }
 
   #transparency .text-5xl {
@@ -2818,9 +2930,11 @@ button,
     gap: 0.75rem !important;
   }
 
-  section.gradient-bg a {
-    padding: 0.875rem 1.5rem !important;
-    font-size: 0.9375rem !important;
+  /* CTA buttons - smaller and more compact for small phones */
+  section.gradient-bg a.px-10 {
+    padding: 0.625rem 1.25rem !important; /* 10px 20px - much smaller */
+    font-size: 0.875rem !important; /* 14px */
+    line-height: 1.25 !important;
   }
 
 
@@ -2866,15 +2980,27 @@ button,
     font-size: 1.375rem !important; /* 22px */
   }
 
-  /* CTA buttons can go horizontal if space allows (INDEX.HTML ONLY) */
+  /* CTA buttons - horizontal with proper spacing (INDEX.HTML ONLY) */
   nav.fixed .flex.items-center.space-x-3 {
     flex-direction: row !important;
-    gap: 0.75rem !important;
+    gap: 0.75rem !important; /* 12px between buttons */
+    align-items: center !important;
+    padding-right: 1.25rem !important; /* 20px from right edge */
   }
 
-  nav.fixed .flex.items-center.space-x-3 a {
-    width: auto !important;
-    padding: 0.625rem 1.25rem !important;
+  /* Make Login button look like a button with border */
+  nav.fixed .flex.items-center.space-x-3 a:first-child {
+    padding: 0.5rem 1rem !important; /* 8px 16px */
+    font-size: 0.9375rem !important; /* 15px */
+    border: 1px solid #2f6e4e !important;
+    border-radius: 0.5rem !important;
+    background: white !important;
+  }
+
+  /* Sign Up button - compact and balanced */
+  nav.fixed .flex.items-center.space-x-3 a:last-child {
+    padding: 0.5rem 1rem !important; /* 8px 16px - same as Login */
+    font-size: 0.9375rem !important; /* 15px */
   }
 
 
@@ -2938,9 +3064,38 @@ button,
 
   /* PROJECTS SECTION */
 
+  /* Filter buttons container - enhanced for large phones */
+  #projects .inline-flex.bg-gray-100 {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+    padding: 0.5rem !important; /* 8px vs 6px on small phones */
+    gap: 0.5rem !important; /* 8px vs 6px */
+    border-radius: 0.875rem !important; /* 14px vs 12px */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* Filter buttons - larger and more comfortable */
   #projects .filter-btn {
-    padding: 0.875rem 1.25rem !important; /* More comfortable */
+    padding: 0.75rem 1.5rem !important; /* 12px 24px */
     font-size: 0.875rem !important; /* 14px vs 13px */
+    font-weight: 600 !important;
+    border-radius: 0.625rem !important; /* 10px vs 8px */
+    transition: all 0.2s ease !important;
+  }
+
+  /* Filter button hover state */
+  #projects .filter-btn:hover {
+    background: rgba(255, 255, 255, 0.6) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* Filter button active state - enhanced */
+  #projects .filter-btn.active {
+    background: linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%) !important;
+    color: white !important;
+    box-shadow: 0 3px 8px rgba(47, 110, 78, 0.35),
+                0 1px 3px rgba(0, 0, 0, 0.12) !important;
+    font-weight: 700 !important;
+    transform: translateY(-1px) !important;
   }
 
   #projects .h-48 {
@@ -2963,8 +3118,13 @@ button,
     height: 2.75rem !important;
   }
 
+  /* Testimonial cards - larger with extra bottom padding */
   #testimonialsCarousel .bg-white.p-8 {
     padding: 1.5rem !important; /* vs 1.25rem */
+    padding-bottom: 2rem !important; /* Extra bottom padding to prevent cutoff */
+    min-height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   #testimonialsCarousel .w-14.h-14 {
@@ -2986,6 +3146,71 @@ button,
   #transparency .w-12.h-12 {
     width: 2.75rem !important; /* 44px vs 40px */
     height: 2.75rem !important;
+  }
+
+  /* Header icons - Budget and Metrics cards (large phone) */
+  #transparency .w-14.h-14 {
+    width: 3rem !important; /* 48px vs 44px on small phones */
+    height: 3rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  #transparency .w-14.h-14 svg {
+    width: 1.625rem !important; /* 26px vs 24px */
+    height: 1.625rem !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Also target SVGs with w-7/h-7 class */
+  #transparency .w-14.h-14 svg.w-7,
+  #transparency .w-14.h-14 svg.h-7 {
+    width: 1.625rem !important; /* 26px vs 24px */
+    height: 1.625rem !important;
+    display: block !important;
+  }
+
+  /* Small metric card icon containers (large phone) */
+  #transparency .w-6.h-6 {
+    width: 1.375rem !important; /* 22px vs 20px */
+    height: 1.375rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  #transparency .w-8.h-8 {
+    width: 1.625rem !important; /* 26px vs 24px */
+    height: 1.625rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* SVG icons inside metric card containers - force visibility (large phone) */
+  #transparency .w-6.h-6 svg,
+  #transparency .w-8.h-8 svg {
+    width: 1rem !important; /* 16px */
+    height: 1rem !important;
+    display: block !important;
+  }
+
+  /* Also target SVGs with w-3/h-3 and w-4/h-4 classes */
+  #transparency .absolute svg.w-3,
+  #transparency .absolute svg.h-3,
+  #transparency .absolute svg.w-4,
+  #transparency .absolute svg.h-4 {
+    width: 1rem !important; /* 16px */
+    height: 1rem !important;
+    display: block !important;
+  }
+
+  /* Metric card icon containers - slightly larger positioning */
+  #transparency .absolute.top-2.right-2 {
+    top: 0.5rem !important;
+    right: 0.5rem !important;
   }
 
   #transparency .text-5xl {
@@ -3034,6 +3259,13 @@ button,
   section.gradient-bg .flex.flex-col.sm\:flex-row {
     flex-direction: row !important;
     gap: 1rem !important;
+  }
+
+  /* CTA buttons - compact size for large phones */
+  section.gradient-bg a.px-10 {
+    padding: 0.75rem 1.5rem !important; /* 12px 24px */
+    font-size: 0.9375rem !important; /* 15px */
+    line-height: 1.25 !important;
   }
 
 
@@ -3347,10 +3579,10 @@ button,
 
   /* ===== SIGNUP PAGE SPECIFIC ===== */
 
-  /* Name and Password fields - can stay 2-column on large phones if comfortable */
+  /* Name and Password fields - stack on all phones */
   #signupForm .grid.grid-cols-1.md\:grid-cols-2 {
-    grid-template-columns: 1fr 1fr !important; /* 2 columns on large phones */
-    gap: 0.75rem !important;
+    grid-template-columns: 1fr !important; /* Single column on all phones */
+    gap: 1rem !important;
   }
 
   /* Terms checkbox - larger */
@@ -3704,6 +3936,387 @@ header.bg-gradient-to-r button[title*="Notification"] {
 }
 
 /* ========================================
+   SK TESTIMONIES - VIEW MODAL RESPONSIVE
+======================================== */
+
+/* Mobile (max-width: 767px) - All phones */
+@media (max-width: 767px) {
+  /* Modal container - better mobile sizing */
+  #viewModal .bg-white.rounded-xl {
+    max-width: 100% !important;
+    margin: 0.5rem !important;
+    max-height: calc(100vh - 1rem) !important;
+  }
+
+  /* Modal header - compact on mobile */
+  #viewModal .p-6.border-b {
+    padding: 1rem 1.25rem !important;
+  }
+
+  #viewModal .text-2xl {
+    font-size: 1.25rem !important; /* 20px */
+  }
+
+  /* Modal content - compact padding */
+  #viewModal .p-6.space-y-4 {
+    padding: 1rem 1.25rem !important;
+    gap: 1rem !important;
+  }
+
+  /* Avatar - smaller on mobile */
+  #viewAvatar {
+    width: 3rem !important; /* 48px */
+    height: 3rem !important;
+    font-size: 1rem !important; /* 16px */
+  }
+
+  /* Volunteer name and info */
+  #viewVolunteerName {
+    font-size: 1rem !important; /* 16px */
+  }
+
+  #viewProject {
+    font-size: 0.8125rem !important; /* 13px */
+  }
+
+  #viewDate {
+    font-size: 0.6875rem !important; /* 11px */
+  }
+
+  /* Featured badge - full width on mobile, bigger and more visible */
+  #viewStatusBadge {
+    margin-top: 0.5rem !important;
+  }
+
+  #viewStatusBadge span {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 0.625rem 1rem !important; /* 10px 16px */
+    font-size: 0.875rem !important; /* 14px */
+  }
+
+  #viewStatusBadge svg {
+    width: 1.125rem !important; /* 18px */
+    height: 1.125rem !important;
+  }
+
+  /* Testimony section */
+  #viewTestimony {
+    font-size: 0.875rem !important; /* 14px */
+    line-height: 1.5 !important;
+  }
+
+  /* Rating section */
+  #viewRating span {
+    font-size: 1.25rem !important; /* 20px instead of 24px */
+  }
+
+  #viewRatingText {
+    font-size: 0.8125rem !important; /* 13px */
+  }
+
+  /* Modal footer - horizontal buttons on mobile */
+  .testimony-modal-footer {
+    padding: 1rem 1.25rem !important;
+    display: flex !important;
+    gap: 0.75rem !important;
+    justify-content: center !important;
+  }
+
+  .testimony-modal-feature-btn,
+  .testimony-modal-delete-btn {
+    flex: 1 1 0% !important; /* Equal width */
+    padding: 0.75rem 0.5rem !important;
+    font-size: 0.875rem !important; /* 14px */
+  }
+
+  /* Icon size on mobile */
+  .testimony-modal-footer button svg {
+    width: 1.125rem !important; /* 18px */
+    height: 1.125rem !important;
+  }
+}
+
+/* Small phones only (max-width: 429px) */
+@media (max-width: 429px) {
+  /* Even more compact on very small screens */
+  #viewModal .p-6.border-b {
+    padding: 0.875rem 1rem !important; /* 14px 16px */
+  }
+
+  #viewModal .p-6.space-y-4 {
+    padding: 0.875rem 1rem !important;
+  }
+
+  #viewModal .text-2xl {
+    font-size: 1.125rem !important; /* 18px */
+  }
+
+  /* Avatar - even smaller */
+  #viewAvatar {
+    width: 2.5rem !important; /* 40px */
+    height: 2.5rem !important;
+    font-size: 0.875rem !important; /* 14px */
+  }
+
+  /* Smaller text */
+  #viewVolunteerName {
+    font-size: 0.9375rem !important; /* 15px */
+  }
+
+  #viewProject {
+    font-size: 0.75rem !important; /* 12px */
+  }
+
+  /* Featured badge - more compact */
+  #viewStatusBadge span {
+    padding: 0.5rem 0.875rem !important; /* 8px 14px */
+    font-size: 0.8125rem !important; /* 13px */
+  }
+
+  /* Buttons more compact on small phones */
+  .testimony-modal-feature-btn,
+  .testimony-modal-delete-btn {
+    padding: 0.625rem 0.375rem !important; /* 10px 6px */
+    font-size: 0.8125rem !important; /* 13px */
+  }
+
+  .testimony-modal-footer button svg {
+    width: 1rem !important; /* 16px */
+    height: 1rem !important;
+  }
+
+  /* Hide button text on very small screens, show icon only */
+  .testimony-modal-footer button span:not(#featureBtnText) {
+    display: none !important;
+  }
+
+  #featureBtnText {
+    display: none !important;
+  }
+
+  /* Make buttons more icon-focused */
+  .testimony-modal-feature-btn,
+  .testimony-modal-delete-btn {
+    min-width: 3rem !important; /* 48px - good touch target */
+  }
+}
+
+/* Large phones (430px - 767px) */
+@media (min-width: 430px) and (max-width: 767px) {
+  /* Slightly larger than small phones but still compact */
+  #viewModal .bg-white.rounded-xl {
+    margin: 1rem !important;
+  }
+
+  /* Avatar size */
+  #viewAvatar {
+    width: 3.5rem !important; /* 56px */
+    height: 3.5rem !important;
+    font-size: 1.125rem !important; /* 18px */
+  }
+
+  /* Featured badge - good size for large phones */
+  #viewStatusBadge span {
+    padding: 0.625rem 1rem !important;
+    font-size: 0.9375rem !important; /* 15px */
+  }
+
+  /* Buttons good size for large phones */
+  .testimony-modal-feature-btn,
+  .testimony-modal-delete-btn {
+    padding: 0.75rem 0.875rem !important;
+    font-size: 0.875rem !important; /* 14px */
+  }
+
+  .testimony-modal-footer button svg {
+    width: 1.125rem !important; /* 18px */
+    height: 1.125rem !important;
+  }
+}
+
+/* ========================================
+   SK TESTIMONIES - MOBILE FILTER BUTTONS FIX
+======================================== */
+
+/* Mobile (max-width: 767px) - All small and large phones */
+@media (max-width: 767px) {
+  /* Testimonies tabs container - make scrollable */
+  .flex.items-center.gap-6.border-b:has(#filterAll) {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: thin !important;
+    gap: 1rem !important; /* Reduce gap on mobile */
+  }
+
+  /* Testimonies filter tabs - ensure proper touch targets */
+  #filterAll,
+  #filterFeatured {
+    min-height: 44px !important; /* iOS touch target requirement */
+    touch-action: manipulation !important; /* Prevent double-tap zoom */
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important; /* Prevent shrinking */
+  }
+
+  /* Tab icons - slightly smaller on mobile */
+  #filterAll .w-10.h-10,
+  #filterFeatured .w-10.h-10 {
+    width: 2.25rem !important; /* 36px */
+    height: 2.25rem !important;
+  }
+
+  #filterAll svg,
+  #filterFeatured svg {
+    width: 1.125rem !important; /* 18px */
+    height: 1.125rem !important;
+  }
+
+  /* Tab text - smaller on mobile */
+  #filterAll span:not([id*="Badge"]),
+  #filterFeatured span:not([id*="Badge"]) {
+    font-size: 0.875rem !important; /* 14px */
+  }
+
+  /* Count badges - compact on mobile */
+  #allCountBadge,
+  #featuredCountBadge {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important; /* 12px */
+  }
+
+  /* Filter container - proper mobile spacing */
+  .bg-white.rounded-xl.shadow-sm.p-6:has(#testimoniesGrid)
+  .flex.flex-col.md\:flex-row.md\:items-center.md\:justify-between.gap-4.mb-6 {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+
+  /* Search input on mobile - full width */
+  #searchInput {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+}
+
+/* Small phones only (max-width: 429px) */
+@media (max-width: 429px) {
+  /* Make tabs take full width - no scrolling needed */
+  .flex.items-center.gap-6.border-b:has(#filterAll) {
+    gap: 0.5rem !important;
+    width: 100% !important;
+    overflow-x: visible !important; /* Disable scrolling */
+  }
+
+  /* Each tab takes equal space */
+  #filterAll,
+  #filterFeatured {
+    flex: 1 1 0% !important; /* Equal width distribution */
+    gap: 0.375rem !important;
+    justify-content: center !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  /* Show short labels on small phones */
+  .tab-label-full {
+    display: none !important;
+  }
+
+  .tab-label-short {
+    display: inline !important;
+  }
+
+  /* Compact icons */
+  #filterAll .w-10.h-10,
+  #filterFeatured .w-10.h-10 {
+    width: 1.75rem !important; /* 28px */
+    height: 1.75rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  #filterAll svg,
+  #filterFeatured svg {
+    width: 0.875rem !important; /* 14px */
+    height: 0.875rem !important;
+  }
+
+  /* Compact text */
+  .tab-label-short {
+    font-size: 0.75rem !important; /* 12px */
+    white-space: nowrap !important;
+  }
+
+  /* Tiny badges */
+  #allCountBadge,
+  #featuredCountBadge {
+    padding: 0.125rem 0.3125rem !important; /* 2px 5px */
+    font-size: 0.625rem !important; /* 10px */
+    min-width: 1rem !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* Large phones (430px - 767px) */
+@media (min-width: 430px) and (max-width: 767px) {
+  /* Make tabs take full width on large phones */
+  .flex.items-center.gap-6.border-b:has(#filterAll) {
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+
+  /* Each tab expands to fill available space equally */
+  #filterAll,
+  #filterFeatured {
+    flex: 1 1 0% !important; /* Equal width distribution */
+    gap: 0.5rem !important;
+    padding-bottom: 0.625rem !important; /* 10px */
+    justify-content: center !important; /* Center content within tab */
+  }
+
+  /* Smaller icons on large phones */
+  #filterAll .w-10.h-10,
+  #filterFeatured .w-10.h-10 {
+    width: 2rem !important; /* 32px */
+    height: 2rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  #filterAll svg,
+  #filterFeatured svg {
+    width: 1rem !important; /* 16px */
+    height: 1rem !important;
+  }
+
+  /* Show short labels on large phones */
+  .tab-label-full {
+    display: none !important;
+  }
+
+  .tab-label-short {
+    display: inline !important;
+  }
+
+  /* Compact text */
+  .tab-label-short {
+    font-size: 0.8125rem !important; /* 13px */
+    white-space: nowrap !important;
+  }
+
+  /* Smaller badges */
+  #allCountBadge,
+  #featuredCountBadge {
+    padding: 0.125rem 0.375rem !important; /* 2px 6px */
+    font-size: 0.6875rem !important; /* 11px */
+    min-width: 1.25rem !important; /* Minimum width for single digits */
+    text-align: center !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ========================================
    REDUCED MOTION PREFERENCE
 ======================================== */
 
@@ -3714,5 +4327,794 @@ header.bg-gradient-to-r button[title*="Notification"] {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   LANDING PAGE, LOGIN & SIGNUP RESPONSIVE STYLES
+======================================== */
+
+/* ========================================
+   SMALL PHONES: 360px - 480px
+======================================== */
+@media (max-width: 480px) {
+  /* INDEX.HTML - Landing Page */
+
+  /* Navigation */
+  nav .max-w-7xl {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  nav .hidden.md\:flex {
+    display: none !important;
+  }
+
+  nav .flex.items-center.space-x-3 {
+    gap: 0.5rem !important;
+  }
+
+  nav .px-5,
+  nav .px-6 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  nav .py-2\.5 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  /* Logo */
+  nav .w-16.h-16 {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+
+  nav .text-2xl {
+    font-size: 1.25rem !important;
+  }
+
+  nav .text-sm {
+    font-size: 0.75rem !important;
+  }
+
+  /* Hero Section */
+  #home {
+    padding-top: 6rem !important;
+    padding-bottom: 2rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  #home .text-5xl,
+  #home .md\:text-6xl,
+  #home .lg\:text-7xl {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+  }
+
+  #home .text-xl,
+  #home .md\:text-2xl {
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+  }
+
+  #home .text-lg {
+    font-size: 0.9rem !important;
+  }
+
+  #home .px-4 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  #home .inline-block.px-4.py-2 {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Hero Buttons */
+  #home .px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  #home .py-4 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  #home .text-lg {
+    font-size: 0.9rem !important;
+  }
+
+  /* Stats Grid */
+  #home .grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  #home .text-4xl {
+    font-size: 1.5rem !important;
+  }
+
+  #home .text-sm {
+    font-size: 0.7rem !important;
+  }
+
+  /* Features Section */
+  #features {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  #features .text-4xl,
+  #features .md\:text-5xl {
+    font-size: 1.75rem !important;
+  }
+
+  #features .text-xl {
+    font-size: 0.95rem !important;
+  }
+
+  #features .grid {
+    gap: 1.5rem !important;
+  }
+
+  #features .p-8 {
+    padding: 1.25rem !important;
+  }
+
+  #features .w-16.h-16 {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+
+  #features .w-8.h-8 {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+
+  #features .text-2xl {
+    font-size: 1.25rem !important;
+  }
+
+  /* Projects Section */
+  #projects {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  #projects .text-4xl,
+  #projects .md\:text-5xl {
+    font-size: 1.75rem !important;
+  }
+
+  #projects .filter-btn {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  #projects .h-48 {
+    height: 10rem !important;
+  }
+
+  #projects .w-20.h-20 {
+    width: 4rem !important;
+    height: 4rem !important;
+  }
+
+  /* Testimonials */
+  #testimonials {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  #testimonials .text-4xl,
+  #testimonials .md\:text-5xl {
+    font-size: 1.75rem !important;
+  }
+
+  #testimonials .p-8 {
+    padding: 1.25rem !important;
+  }
+
+  #testimonials .w-14.h-14 {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+
+  #testimonials .text-xl {
+    font-size: 1.125rem !important;
+  }
+
+  /* Arrow buttons */
+  #testimonials button {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+
+  #testimonials button svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+
+  /* Transparency Section */
+  #transparency {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  #transparency .text-4xl,
+  #transparency .md\:text-5xl {
+    font-size: 1.75rem !important;
+  }
+
+  #transparency .p-8 {
+    padding: 1.25rem !important;
+  }
+
+  #transparency .text-2xl {
+    font-size: 1.25rem !important;
+  }
+
+  #transparency .text-5xl {
+    font-size: 2rem !important;
+  }
+
+  #transparency .w-12.h-12 {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+
+  /* Footer */
+  footer {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  footer .w-16.h-16 {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+
+  footer .text-lg {
+    font-size: 1rem !important;
+  }
+
+  /* LOGIN.HTML & SIGNUP.HTML */
+
+  /* Hide left green panel on small phones */
+  .md\:w-1\/2.bg-gradient-to-br {
+    display: none !important;
+  }
+
+  /* Make form full width */
+  .md\:w-1\/2.p-12 {
+    width: 100% !important;
+    padding: 1.5rem !important;
+  }
+
+  .min-h-\[600px\],
+  .min-h-\[700px\] {
+    min-height: auto !important;
+  }
+
+  /* Form elements */
+  .text-3xl {
+    font-size: 1.75rem !important;
+  }
+
+  .px-4.py-3 {
+    padding: 0.625rem 0.75rem !important;
+  }
+
+  .py-3\.5 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  /* Grid columns for name and password fields */
+  .grid.grid-cols-1.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ========================================
+   LARGE PHONES: 481px - 640px
+======================================== */
+@media (min-width: 481px) and (max-width: 640px) {
+  /* INDEX.HTML - Landing Page */
+
+  nav .hidden.md\:flex {
+    display: none !important;
+  }
+
+  #home {
+    padding-top: 7rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  #home .text-5xl,
+  #home .md\:text-6xl,
+  #home .lg\:text-7xl {
+    font-size: 2.5rem !important;
+  }
+
+  #home .text-xl,
+  #home .md\:text-2xl {
+    font-size: 1.125rem !important;
+  }
+
+  #features,
+  #projects,
+  #testimonials,
+  #transparency {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  #features .text-4xl,
+  #projects .text-4xl,
+  #testimonials .text-4xl,
+  #transparency .text-4xl,
+  .md\:text-5xl {
+    font-size: 2rem !important;
+  }
+
+  /* LOGIN.HTML & SIGNUP.HTML */
+
+  /* Hide left panel on large phones too */
+  .md\:w-1\/2.bg-gradient-to-br {
+    display: none !important;
+  }
+
+  .md\:w-1\/2.p-12 {
+    width: 100% !important;
+    padding: 2rem !important;
+  }
+}
+
+/* ========================================
+   TABLET PORTRAIT: 641px - 768px
+======================================== */
+@media (min-width: 641px) and (max-width: 768px) {
+  /* INDEX.HTML - Landing Page */
+
+  #home {
+    padding-top: 8rem !important;
+  }
+
+  #home .text-5xl,
+  #home .md\:text-6xl,
+  #home .lg\:text-7xl {
+    font-size: 3rem !important;
+  }
+
+  #features .grid,
+  #projects .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  /* LOGIN.HTML & SIGNUP.HTML */
+
+  /* Show both panels on tablet portrait */
+  .md\:flex-row {
+    flex-direction: row !important;
+  }
+
+  .md\:w-1\/2 {
+    width: 50% !important;
+  }
+
+  .md\:w-1\/2.p-12 {
+    padding: 2rem !important;
+  }
+
+  .md\:w-1\/2.bg-gradient-to-br {
+    display: flex !important;
+    padding: 2rem !important;
+  }
+}
+
+/* ========================================
+   TABLET LANDSCAPE: 769px - 1024px
+======================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* INDEX.HTML - Landing Page */
+
+  #home .text-5xl,
+  #home .md\:text-6xl,
+  #home .lg\:text-7xl {
+    font-size: 3.5rem !important;
+  }
+
+  #features .grid,
+  #projects .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #testimonials .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  /* Budget cards on transparency section */
+  #transparency .grid.grid-cols-1.md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  /* LOGIN.HTML & SIGNUP.HTML */
+
+  .md\:w-1\/2.p-12 {
+    padding: 2.5rem !important;
+  }
+
+  .md\:w-1\/2.bg-gradient-to-br {
+    padding: 2.5rem !important;
+  }
+}
+
+/* ========================================
+   EXTRA SMALL PHONES: max-width 360px
+======================================== */
+@media (max-width: 360px) {
+  /* Even more compact for very small devices */
+
+  nav .py-4 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  nav .w-16.h-16 {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+
+  nav .text-2xl {
+    font-size: 1.125rem !important;
+  }
+
+  #home .text-5xl,
+  #home .md\:text-6xl,
+  #home .lg\:text-7xl {
+    font-size: 1.75rem !important;
+  }
+
+  #home .text-4xl {
+    font-size: 1.25rem !important;
+  }
+
+  #home .grid-cols-3 {
+    gap: 0.5rem !important;
+  }
+
+  #features .text-4xl,
+  #projects .text-4xl,
+  #testimonials .text-4xl,
+  #transparency .text-4xl {
+    font-size: 1.5rem !important;
+  }
+
+  .md\:w-1\/2.p-12 {
+    padding: 1rem !important;
+  }
+
+  .text-3xl {
+    font-size: 1.5rem !important;
+  }
+}
+
+/* ========================================
+   MOBILE MENU FOR INDEX.HTML (HAMBURGER)
+======================================== */
+@media (max-width: 768px) {
+  /* Add hamburger menu styles if needed */
+  nav .hidden.md\:flex {
+    display: none !important;
+  }
+
+  /* Stack buttons vertically on very small screens */
+  nav .flex.items-center.space-x-3 {
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* ========================================
+   LANDSCAPE ORIENTATION FIX FOR PHONES
+======================================== */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* Reduce padding on hero section in landscape */
+  #home {
+    padding-top: 5rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  #home .space-y-8 {
+    gap: 1rem !important;
+  }
+
+  #home .space-y-6 {
+    gap: 0.75rem !important;
+  }
+
+  /* Hide or reduce stats in landscape */
+  #home .grid.grid-cols-3 {
+    display: none !important;
+  }
+
+  /* LOGIN & SIGNUP landscape fix */
+  .min-h-screen {
+    min-height: auto !important;
+  }
+
+  .md\:w-1\/2.p-12 {
+    padding: 1rem !important;
+  }
+
+  .space-y-6,
+  .space-y-5 {
+    gap: 0.75rem !important;
+  }
+}
+
+/* ========================================
+   PAGINATION DOTS - CONSISTENT SMALL SIZE ACROSS ALL DEVICES
+======================================== */
+
+/* Force small pagination dots on ALL screen sizes */
+@media (max-width: 1024px) {
+  /* All pagination dot containers */
+  #filePaginationDots button,
+  #paginationDots button,
+  #announcementPaginationDots button,
+  #testimonialDots button,
+  #projectPaginationDots button,
+  #archiveProjectPaginationDots button,
+  #archiveFilePaginationDots button,
+  #certPaginationDots button,
+  [id*="PaginationDots"] button,
+  [id*="paginationDots"] button {
+    min-width: 8px !important;
+    min-height: 8px !important;
+    width: 8px !important;
+    height: 8px !important;
+    max-width: 8px !important;
+    max-height: 8px !important;
+    border-radius: 9999px !important;
+    transition: all 0.3s ease !important;
+  }
+
+  /* Active pagination dots - elongated pill shape */
+  #filePaginationDots button.bg-\[#2f6e4e\],
+  #paginationDots button.bg-\[#2f6e4e\],
+  #announcementPaginationDots button.bg-\[#2f6e4e\],
+  #testimonialDots button.bg-\[#2f6e4e\],
+  #projectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveProjectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveFilePaginationDots button.bg-\[#2f6e4e\],
+  #certPaginationDots button.bg-\[#2f6e4e\],
+  [id*="PaginationDots"] button.bg-\[#2f6e4e\],
+  [id*="paginationDots"] button.bg-\[#2f6e4e\] {
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+  }
+}
+
+/* Small phones - extra compact */
+@media (max-width: 480px) {
+  #filePaginationDots,
+  #paginationDots,
+  #announcementPaginationDots,
+  #testimonialDots,
+  #projectPaginationDots,
+  #archiveProjectPaginationDots,
+  #archiveFilePaginationDots,
+  #certPaginationDots,
+  [id*="PaginationDots"],
+  [id*="paginationDots"] {
+    gap: 6px !important;
+  }
+
+  #filePaginationDots button,
+  #paginationDots button,
+  #announcementPaginationDots button,
+  #testimonialDots button,
+  #projectPaginationDots button,
+  #archiveProjectPaginationDots button,
+  #archiveFilePaginationDots button,
+  #certPaginationDots button,
+  [id*="PaginationDots"] button,
+  [id*="paginationDots"] button {
+    width: 6px !important;
+    height: 6px !important;
+    min-width: 6px !important;
+    min-height: 6px !important;
+    max-width: 6px !important;
+    max-height: 6px !important;
+  }
+
+  /* Active dots on small phones */
+  #filePaginationDots button.bg-\[#2f6e4e\],
+  #paginationDots button.bg-\[#2f6e4e\],
+  #announcementPaginationDots button.bg-\[#2f6e4e\],
+  #testimonialDots button.bg-\[#2f6e4e\],
+  #projectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveProjectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveFilePaginationDots button.bg-\[#2f6e4e\],
+  #certPaginationDots button.bg-\[#2f6e4e\],
+  [id*="PaginationDots"] button.bg-\[#2f6e4e\],
+  [id*="paginationDots"] button.bg-\[#2f6e4e\] {
+    width: 24px !important;
+    min-width: 24px !important;
+    max-width: 24px !important;
+  }
+}
+
+/* Large phones */
+@media (min-width: 481px) and (max-width: 640px) {
+  #filePaginationDots button,
+  #paginationDots button,
+  #announcementPaginationDots button,
+  #testimonialDots button,
+  #projectPaginationDots button,
+  #archiveProjectPaginationDots button,
+  #archiveFilePaginationDots button,
+  #certPaginationDots button,
+  [id*="PaginationDots"] button,
+  [id*="paginationDots"] button {
+    width: 8px !important;
+    height: 8px !important;
+    min-width: 8px !important;
+    min-height: 8px !important;
+  }
+
+  #filePaginationDots button.bg-\[#2f6e4e\],
+  #paginationDots button.bg-\[#2f6e4e\],
+  #announcementPaginationDots button.bg-\[#2f6e4e\],
+  #testimonialDots button.bg-\[#2f6e4e\],
+  #projectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveProjectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveFilePaginationDots button.bg-\[#2f6e4e\],
+  #certPaginationDots button.bg-\[#2f6e4e\],
+  [id*="PaginationDots"] button.bg-\[#2f6e4e\],
+  [id*="paginationDots"] button.bg-\[#2f6e4e\] {
+    width: 28px !important;
+    min-width: 28px !important;
+  }
+}
+
+/* Tablets portrait */
+@media (min-width: 641px) and (max-width: 768px) {
+  #filePaginationDots button,
+  #paginationDots button,
+  #announcementPaginationDots button,
+  #testimonialDots button,
+  #projectPaginationDots button,
+  #archiveProjectPaginationDots button,
+  #archiveFilePaginationDots button,
+  #certPaginationDots button,
+  [id*="PaginationDots"] button,
+  [id*="paginationDots"] button {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  #filePaginationDots button.bg-\[#2f6e4e\],
+  #paginationDots button.bg-\[#2f6e4e\],
+  #announcementPaginationDots button.bg-\[#2f6e4e\],
+  #testimonialDots button.bg-\[#2f6e4e\],
+  #projectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveProjectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveFilePaginationDots button.bg-\[#2f6e4e\],
+  #certPaginationDots button.bg-\[#2f6e4e\],
+  [id*="PaginationDots"] button.bg-\[#2f6e4e\],
+  [id*="paginationDots"] button.bg-\[#2f6e4e\] {
+    width: 32px !important;
+  }
+}
+
+/* Tablets landscape */
+@media (min-width: 769px) and (max-width: 1024px) {
+  #filePaginationDots button,
+  #paginationDots button,
+  #announcementPaginationDots button,
+  #testimonialDots button,
+  #projectPaginationDots button,
+  #archiveProjectPaginationDots button,
+  #archiveFilePaginationDots button,
+  #certPaginationDots button,
+  [id*="PaginationDots"] button,
+  [id*="paginationDots"] button {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  #filePaginationDots button.bg-\[#2f6e4e\],
+  #paginationDots button.bg-\[#2f6e4e\],
+  #announcementPaginationDots button.bg-\[#2f6e4e\],
+  #testimonialDots button.bg-\[#2f6e4e\],
+  #projectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveProjectPaginationDots button.bg-\[#2f6e4e\],
+  #archiveFilePaginationDots button.bg-\[#2f6e4e\],
+  #certPaginationDots button.bg-\[#2f6e4e\],
+  [id*="PaginationDots"] button.bg-\[#2f6e4e\],
+  [id*="paginationDots"] button.bg-\[#2f6e4e\] {
+    width: 32px !important;
+  }
+}
+
+/* Override any Tailwind width/height classes on pagination dots */
+@media (max-width: 1024px) {
+  /* Override w-3, w-4, w-5, h-3, h-4, h-5 classes on pagination dots */
+  [id*="PaginationDots"] button.w-3,
+  [id*="PaginationDots"] button.w-4,
+  [id*="PaginationDots"] button.w-5,
+  [id*="paginationDots"] button.w-3,
+  [id*="paginationDots"] button.w-4,
+  [id*="paginationDots"] button.w-5,
+  #filePaginationDots button.w-3,
+  #filePaginationDots button.w-4,
+  #paginationDots button.w-3,
+  #paginationDots button.w-4,
+  #testimonialDots button.w-3,
+  #testimonialDots button.w-4 {
+    width: 8px !important;
+  }
+
+  [id*="PaginationDots"] button.h-3,
+  [id*="PaginationDots"] button.h-4,
+  [id*="PaginationDots"] button.h-5,
+  [id*="paginationDots"] button.h-3,
+  [id*="paginationDots"] button.h-4,
+  [id*="paginationDots"] button.h-5,
+  #filePaginationDots button.h-3,
+  #filePaginationDots button.h-4,
+  #paginationDots button.h-3,
+  #paginationDots button.h-4,
+  #testimonialDots button.h-3,
+  #testimonialDots button.h-4 {
+    height: 8px !important;
+  }
+
+  /* Active dots should be wider (pill shape) */
+  [id*="PaginationDots"] button.w-3.bg-\[#2f6e4e\],
+  [id*="PaginationDots"] button.w-4.bg-\[#2f6e4e\],
+  [id*="paginationDots"] button.w-3.bg-\[#2f6e4e\],
+  [id*="paginationDots"] button.w-4.bg-\[#2f6e4e\],
+  #filePaginationDots button.bg-\[#2f6e4e\].w-3,
+  #filePaginationDots button.bg-\[#2f6e4e\].w-4,
+  #paginationDots button.bg-\[#2f6e4e\].w-3,
+  #paginationDots button.bg-\[#2f6e4e\].w-4,
+  #testimonialDots button.bg-\[#2f6e4e\].w-3,
+  #testimonialDots button.bg-\[#2f6e4e\].w-4 {
+    width: 32px !important;
+  }
+}
+
+/* Extra specific rules for small phones */
+@media (max-width: 480px) {
+  [id*="PaginationDots"] button,
+  [id*="paginationDots"] button,
+  .pagination-dot,
+  button[onclick*="goToPage"],
+  button[onclick*="goToSlide"],
+  button[onclick*="goToFilePage"],
+  button[onclick*="goToAnnouncementPage"],
+  button[onclick*="goToProjectPage"] {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  [id*="PaginationDots"] button.bg-\[#2f6e4e\],
+  [id*="paginationDots"] button.bg-\[#2f6e4e\],
+  button[onclick*="goToPage"].bg-\[#2f6e4e\],
+  button[onclick*="goToSlide"].bg-\[#2f6e4e\],
+  button[onclick*="goToFilePage"].bg-\[#2f6e4e\],
+  button[onclick*="goToAnnouncementPage"].bg-\[#2f6e4e\],
+  button[onclick*="goToProjectPage"].bg-\[#2f6e4e\] {
+    width: 24px !important;
   }
 }

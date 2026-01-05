@@ -39,6 +39,21 @@
       .status-icon-rejected { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
       .icon-primary { filter: drop-shadow(0 2px 4px rgba(47, 110, 78, 0.1)); }
       .icon-glow { filter: drop-shadow(0 0 8px rgba(47, 110, 78, 0.3)); }
+
+      /* Pagination dots - consistent across all screen sizes */
+      #filePaginationDots button {
+        flex-shrink: 0;
+        display: inline-block;
+        cursor: pointer;
+        border: none;
+        padding: 0;
+        outline: none;
+      }
+
+      #filePaginationDots button:focus {
+        outline: 2px solid rgba(47, 110, 78, 0.3);
+        outline-offset: 2px;
+      }
     </style>
   </head>
 
@@ -161,9 +176,8 @@
           <div class="max-w-7xl mx-auto">
             <!-- Files Container -->
             <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-              <div class="flex items-center justify-between mb-6">
+              <div class="mb-6">
                 <h3 class="text-xl font-bold text-gray-800">Files</h3>
-                <span class="text-sm text-gray-500">View-only access</span>
               </div>
 
               <!-- Search -->
@@ -196,20 +210,34 @@
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               ></div>
 
-              <!-- Pagination -->
+              <!-- Pagination Dots (Center) -->
+              <div id="filePaginationDots" class="flex justify-center gap-2 mt-6 hidden">
+                <!-- Dots will be inserted here -->
+              </div>
+
+              <!-- Pagination Controls (Bottom Right) -->
               <div class="mt-6 flex justify-end">
-                <button
-                  id="prevPage"
-                  class="px-3 py-2 border border-gray-300 rounded-l-lg"
+                <nav
+                  id="filePaginationNav"
+                  class="hidden inline-flex rounded-md shadow-sm"
+                  role="navigation"
+                  aria-label="Pagination"
                 >
-                  Prev
-                </button>
-                <button
-                  id="nextPage"
-                  class="px-3 py-2 border border-gray-300 rounded-r-lg"
-                >
-                  Next
-                </button>
+                  <button
+                    id="prevPage"
+                    onclick="navigateFiles(-1)"
+                    class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                  >
+                    Prev
+                  </button>
+                  <button
+                    id="nextPage"
+                    onclick="navigateFiles(1)"
+                    class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                  >
+                    Next
+                  </button>
+                </nav>
               </div>
             </div>
           </div>
@@ -716,11 +744,63 @@
           category: "project",
           url: "",
         },
+        {
+          id: 10,
+          name: "Sports_Festival_Project_Plan.pdf",
+          type: "pdf",
+          uploaded: "Oct 28, 2025",
+          category: "project",
+          url: "",
+        },
+        {
+          id: 11,
+          name: "Volunteer_Registration_Form.xlsx",
+          type: "xlsx",
+          uploaded: "Oct 20, 2025",
+          category: "general",
+          url: "",
+        },
+        {
+          id: 12,
+          name: "Barangay_Activity_Photos.jpg",
+          type: "jpg",
+          uploaded: "Oct 15, 2025",
+          category: "general",
+          url: "",
+        },
+        {
+          id: 13,
+          name: "Monthly_Report_September.pdf",
+          type: "pdf",
+          uploaded: "Oct 5, 2025",
+          category: "general",
+          url: "",
+        },
+        {
+          id: 14,
+          name: "Training_Materials_2025.pdf",
+          type: "pdf",
+          uploaded: "Sep 30, 2025",
+          category: "general",
+          url: "",
+        },
+        {
+          id: 15,
+          name: "Project_Impact_Assessment.xlsx",
+          type: "xlsx",
+          uploaded: "Sep 25, 2025",
+          category: "project",
+          url: "",
+        },
       ];
 
       const filesGrid = document.getElementById("filesGrid");
       const searchInput = document.getElementById("fileSearch");
       const filterCategory = document.getElementById("filterCategory");
+
+      // Pagination variables
+      let currentPage = 0;
+      const filesPerPage = 6;
 
       /* RENDER FILES */
       function renderFiles(list) {
@@ -728,10 +808,20 @@
 
         if (!list.length) {
           filesGrid.innerHTML = `<p class="text-gray-500">No files found.</p>`;
+          document.getElementById('filePaginationNav').classList.add('hidden');
+          document.getElementById('filePaginationDots').classList.add('hidden');
           return;
         }
 
-        list.forEach((file) => {
+        // Calculate pagination
+        const startIndex = currentPage * filesPerPage;
+        const endIndex = startIndex + filesPerPage;
+        const filesToShow = list.slice(startIndex, endIndex);
+
+        // Update pagination controls
+        updateFilePagination(list.length);
+
+        filesToShow.forEach((file) => {
           const card = document.createElement("div");
           card.className =
             "border border-gray-200 rounded-xl p-5 hover:shadow-lg transition";
@@ -772,6 +862,8 @@
         const q = searchInput.value.toLowerCase();
         const c = filterCategory.value;
 
+        currentPage = 0; // Reset to first page when filters change
+
         renderFiles(
           fileStore.filter(
             (f) =>
@@ -783,6 +875,66 @@
 
       searchInput.addEventListener("input", applyFilters);
       filterCategory.addEventListener("change", applyFilters);
+
+      // Pagination functions
+      function updateFilePagination(totalFiles) {
+        const totalPages = Math.ceil(totalFiles / filesPerPage);
+        const dotsContainer = document.getElementById('filePaginationDots');
+        const navContainer = document.getElementById('filePaginationNav');
+
+        if (totalPages <= 1) {
+          dotsContainer.classList.add('hidden');
+          navContainer.classList.add('hidden');
+          return;
+        }
+
+        dotsContainer.classList.remove('hidden');
+        navContainer.classList.remove('hidden');
+
+        // Create pagination dots
+        dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+          <button
+            onclick="goToFilePage(${i})"
+            class="h-2 rounded-full transition-all duration-300 ${i === currentPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+            style="min-height: 8px;"
+          ></button>
+        `).join('');
+      }
+
+      function navigateFiles(direction) {
+        // Get current filtered list
+        const q = searchInput.value.toLowerCase();
+        const c = filterCategory.value;
+        let filtered = fileStore.filter(
+          (f) =>
+            (!c || f.category === c) &&
+            (!q || f.name.toLowerCase().includes(q))
+        );
+
+        const totalPages = Math.ceil(filtered.length / filesPerPage);
+        currentPage += direction;
+
+        // Wrap around
+        if (currentPage < 0) currentPage = totalPages - 1;
+        if (currentPage >= totalPages) currentPage = 0;
+
+        renderFiles(filtered);
+      }
+
+      function goToFilePage(pageIndex) {
+        currentPage = pageIndex;
+
+        // Get current filtered list
+        const q = searchInput.value.toLowerCase();
+        const c = filterCategory.value;
+        let filtered = fileStore.filter(
+          (f) =>
+            (!c || f.category === c) &&
+            (!q || f.name.toLowerCase().includes(q))
+        );
+
+        renderFiles(filtered);
+      }
 
       /* MODAL VIEW */
       function viewFile(id) {
