@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -59,6 +59,59 @@
       .status-icon-rejected { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
       .icon-primary { filter: drop-shadow(0 2px 4px rgba(47, 110, 78, 0.1)); }
       .icon-glow { filter: drop-shadow(0 0 8px rgba(47, 110, 78, 0.3)); }
+
+      /* Pagination dots - consistent across all screen sizes */
+      #projectPaginationDots button {
+        flex-shrink: 0;
+        display: inline-block;
+        cursor: pointer;
+        border: none;
+        padding: 0;
+        outline: none;
+      }
+
+      #projectPaginationDots button:focus {
+        outline: 2px solid rgba(47, 110, 78, 0.3);
+        outline-offset: 2px;
+      }
+
+      /* Certificate Responsive Sizing */
+      @media (max-width: 640px) {
+        #certificatePreview {
+          width: calc(100vw - 1rem) !important;
+          height: auto !important;
+          min-height: 600px !important;
+          max-height: none !important;
+          aspect-ratio: 1/1.414 !important; /* Portrait A4 for mobile */
+        }
+      }
+      /* Tablet Portrait - More vertical space needed */
+      @media (min-width: 641px) and (max-width: 1024px) and (orientation: portrait) {
+        #certificatePreview {
+          width: min(85vw, 700px) !important;
+          height: auto !important;
+          min-height: 700px !important;
+          max-height: none !important;
+          aspect-ratio: 1/1.35 !important; /* Taller for portrait tablets */
+        }
+      }
+      /* Tablet Landscape */
+      @media (min-width: 641px) and (max-width: 1024px) and (orientation: landscape) {
+        #certificatePreview {
+          width: min(90vw, 900px) !important;
+          height: auto !important;
+          min-height: 450px !important;
+          max-height: 80vh !important;
+        }
+      }
+      /* Desktop/Laptop */
+      @media (min-width: 1025px) {
+        #certificatePreview {
+          width: min(85vw, 1000px) !important;
+          height: auto !important;
+          max-height: 75vh !important;
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-50">
@@ -275,6 +328,36 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="projectsGrid">
               <!-- Projects will be dynamically inserted here -->
             </div>
+
+            <!-- Pagination Dots (Center) -->
+            <div id="projectPaginationDots" class="flex justify-center gap-2 mt-6 hidden">
+              <!-- Dots will be inserted here -->
+            </div>
+
+            <!-- Pagination Controls (Bottom Right) -->
+            <div class="mt-6 flex justify-end">
+              <nav
+                id="projectPaginationNav"
+                class="hidden inline-flex rounded-md shadow-sm"
+                role="navigation"
+                aria-label="Pagination"
+              >
+                <button
+                  id="prevProjectPage"
+                  onclick="navigateProjects(-1)"
+                  class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                >
+                  Prev
+                </button>
+                <button
+                  id="nextProjectPage"
+                  onclick="navigateProjects(1)"
+                  class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                >
+                  Next
+                </button>
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -414,121 +497,202 @@
       </div>
     </div>
 
-    <!-- CERTIFICATE PREVIEW MODAL -->
-    <div id="certificateModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-75">
-      <div class="flex items-center justify-center min-h-screen px-4 py-8">
-        <div class="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full">
-          <div class="p-6">
-            <div class="flex justify-end mb-4 gap-3">
-              <button onclick="downloadCertificate()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+    <!-- CERTIFICATE PREVIEW MODAL WITH ZOOM -->
+    <div id="certificateModal" class="hidden fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm" style="z-index: 9999;">
+      <div class="h-full flex flex-col">
+        <!-- Enhanced Header Bar -->
+        <div class="bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700 px-3 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4 flex-shrink-0">
+          <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div class="w-8 h-8 sm:w-10 sm:h-10 bg-[#2f6e4e] rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
                 </svg>
-                Download
-              </button>
-              <button onclick="closeCertificateModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium">
-                Close
-              </button>
+              </div>
+              <div class="hidden md:block min-w-0">
+                <h3 class="text-white font-bold text-base lg:text-lg truncate">Certificate Preview</h3>
+                <p class="text-gray-400 text-xs truncate">Pinch or use controls to zoom</p>
+              </div>
+              <div class="block md:hidden min-w-0">
+                <h3 class="text-white font-bold text-sm truncate">Certificate</h3>
+              </div>
             </div>
 
-            <!-- Certificate Design - A4 Landscape Orientation -->
-            <div id="certificatePreview" class="bg-white shadow-2xl relative overflow-hidden" style="width: 297mm; height: 210mm; background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);">
-              <!-- Decorative Corner Ornaments -->
-              <div class="absolute top-0 left-0 w-32 h-32 border-t-8 border-l-8 border-[#3d8b64]/50 opacity-30"></div>
-              <div class="absolute top-0 right-0 w-32 h-32 border-t-8 border-r-8 border-[#3d8b64]/50 opacity-30"></div>
-              <div class="absolute bottom-0 left-0 w-32 h-32 border-b-8 border-l-8 border-[#3d8b64]/50 opacity-30"></div>
-              <div class="absolute bottom-0 right-0 w-32 h-32 border-b-8 border-r-8 border-[#3d8b64]/50 opacity-30"></div>
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+              <button onclick="downloadCertificate()" class="px-2 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium flex items-center gap-1 sm:gap-2 transition-all transform hover:scale-105 text-xs sm:text-sm">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+                <span class="hidden sm:inline">Download</span>
+              </button>
+              <button onclick="closeCertificateModal()" class="px-2 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium flex items-center gap-1 sm:gap-2 transition-all text-xs sm:text-sm">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                <span class="hidden sm:inline">Close</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
-              <!-- Decorative Border Pattern -->
-              <div class="absolute inset-4 border-4 border-double border-[#2f6e4e] rounded-lg"></div>
-              <div class="absolute inset-6 border-2 border-[#3d8b64] rounded-lg"></div>
+        <!-- Certificate Viewer with Zoom Container -->
+        <div class="flex-1 relative overflow-hidden">
+          <div id="certificateViewport" class="w-full h-full overflow-auto" style="cursor: grab;">
+            <div id="certificateContainer" class="w-full h-full flex items-center justify-center p-2 sm:p-4 md:p-8" style="transform-origin: center center;">
+              <!-- Certificate Design - A4 Landscape Orientation - PREMIUM MINIMAL GOVERNMENT STYLE -->
+              <div id="certificatePreview" class="relative mx-auto overflow-hidden" style="width: min(100%, 1000px); max-height: 90vh; aspect-ratio: 297/210; font-family: 'IBM Plex Sans', sans-serif; background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 50%, #faf8f3 100%); box-shadow: 0 20px 60px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.05);">
 
-              <div class="h-full flex flex-col justify-between p-12 text-center relative z-10">
-                <!-- Republic of the Philippines Header -->
-                <div class="space-y-1">
-                  <p class="text-xs text-gray-600 font-medium tracking-wide">Republic of the Philippines</p>
-                  <p class="text-sm text-gray-700 font-semibold">Marikina City</p>
-                  <p class="text-xl text-gray-900 font-black tracking-widest">BARANGAY MALANDAY</p>
-                  <div class="flex justify-center mt-1">
-                    <div class="px-5 py-1.5 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] rounded-full shadow-lg">
-                      <p class="text-xs text-white font-black uppercase tracking-widest">Sangguniang Kabataan</p>
+                <!-- Paper Texture Overlay -->
+                <div class="absolute inset-0 pointer-events-none" style="opacity: 0.03; background-image: url('data:image/svg+xml,%3Csvg viewBox=&quot;0 0 200 200&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cfilter id=&quot;noise&quot;%3E%3CfeTurbulence type=&quot;fractalNoise&quot; baseFrequency=&quot;0.9&quot; numOctaves=&quot;4&quot; /%3E%3C/filter%3E%3Crect width=&quot;100%25&quot; height=&quot;100%25&quot; filter=&quot;url(%23noise)&quot;/%3E%3C/svg%3E');"></div>
+
+                <!-- Premium Watermark - SK Logo -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="opacity: 0.02;">
+                  <img src="asset/logo.svg" alt="Watermark" class="w-64 h-64 md:w-80 md:h-80 object-contain" style="filter: grayscale(100%);">
+                </div>
+
+                <!-- Embossed Border Frame -->
+                <div class="absolute inset-2 sm:inset-3 md:inset-5" style="border: 2px solid #8b7355; box-shadow: inset 0 1px 2px rgba(255,255,255,0.8), inset 0 -1px 2px rgba(0,0,0,0.1), 0 0 0 1px rgba(139,115,85,0.2);"></div>
+                <div class="absolute inset-3 sm:inset-4 md:inset-6" style="border: 1px solid rgba(139,115,85,0.15);"></div>
+
+                <div class="h-full w-full flex flex-col p-3 sm:p-5 md:p-8 text-center relative z-10">
+
+                  <!-- OFFICIAL HEADER WITH DUAL LOGOS -->
+                  <div class="flex items-start justify-between mb-2 md:mb-4 flex-shrink-0">
+                    <!-- PH Government Logo - LEFT -->
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 flex-shrink-0">
+                      <img src="asset/phgov.svg" alt="Philippine Government" class="w-full h-full object-contain">
                     </div>
-                  </div>
-                </div>
 
-                <!-- Seal/Logo -->
-                <div class="my-2">
-                  <div class="w-20 h-20 bg-white rounded-full mx-auto flex items-center justify-center shadow-2xl border-6 border-white ring-4 ring-[#2f6e4e]/30 overflow-hidden">
-                    <img src="asset/logo.svg" alt="BIMS Seal" class="w-full h-full object-contain p-2">
-                  </div>
-                </div>
+                    <!-- Official Header Text - CENTER -->
+                    <div class="flex-1 px-1 sm:px-2 md:px-4" style="font-family: 'Libre Baskerville', serif;">
+                      <p class="text-[0.55rem] sm:text-[0.6rem] md:text-[0.7rem] font-normal tracking-wide mb-0.5" style="color: #5a4a3a; text-shadow: 0 1px 1px rgba(255,255,255,0.8);">Republic of the Philippines</p>
+                      <p class="text-[0.6rem] sm:text-[0.65rem] md:text-[0.75rem] font-semibold tracking-wide mb-0.5" style="color: #4a3a2a; text-shadow: 0 1px 1px rgba(255,255,255,0.8);">Marikina City</p>
+                      <p class="text-[0.7rem] sm:text-xs md:text-sm font-bold tracking-widest mb-0.5 md:mb-1" style="color: #2d2416; text-shadow: 0 1px 2px rgba(255,255,255,0.9);">BARANGAY MALANDAY</p>
+                      <p class="text-[0.65rem] sm:text-[0.7rem] md:text-xs font-semibold tracking-widest" style="color: #5a4a3a; text-shadow: 0 1px 1px rgba(255,255,255,0.8);">SANGGUNIANG KABATAAN</p>
+                    </div>
 
-                <!-- Title -->
-                <div class="my-2">
-                  <div class="relative">
-                    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-16 bg-[#2f6e4e]/20 rounded-full opacity-20"></div>
-                    <h3 class="relative text-4xl font-black text-[#2f6e4e] uppercase tracking-wider" style="font-family: 'Inter', serif; letter-spacing: 0.1em;">
-                      Certificate of Participation
-                    </h3>
-                  </div>
-                  <div class="flex items-center justify-center gap-2 mt-3">
-                    <div class="w-20 h-0.5 bg-gradient-to-r from-transparent to-[#3d8b64]"></div>
-                    <svg class="w-5 h-5 text-[#2f6e4e]" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                    </svg>
-                    <div class="w-20 h-0.5 bg-gradient-to-l from-transparent to-[#3d8b64]"></div>
-                  </div>
-                </div>
-
-                <!-- Body -->
-                <div class="flex-1 flex flex-col justify-center space-y-2 max-w-4xl mx-auto">
-                  <p class="text-sm text-gray-600 italic font-medium">This is proudly presented to</p>
-
-                  <div class="my-1 bg-white px-6 py-3 rounded-lg shadow-inner border-2 border-[#2f6e4e]/20">
-                    <p id="certName" class="text-4xl font-black text-gray-900 tracking-wide" style="font-family: 'Inter', sans-serif;">Juan Dela Cruz</p>
-                  </div>
-
-                  <p class="text-sm text-gray-700 font-medium mb-1">for successfully completing volunteer service in</p>
-
-                  <div class="flex justify-center mb-1">
-                    <div class="bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] py-2 px-6 rounded-xl shadow-lg">
-                      <p id="certProject" class="text-xl font-black text-white tracking-wide">Community Clean-Up Drive 2025</p>
+                    <!-- SK Logo - RIGHT -->
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 flex-shrink-0">
+                      <img src="asset/logo.svg" alt="SK Logo" class="w-full h-full object-contain">
                     </div>
                   </div>
 
-                  <div class="pt-1">
-                    <p class="text-xs text-gray-700 leading-relaxed max-w-2xl mx-auto font-medium">
-                      In recognition of your outstanding dedication, hard work, and commitment<br>
-                      to serving the youth and community of Barangay Malanday
+                  <!-- Divider Line with Emboss Effect -->
+                  <div class="w-full mb-4 sm:mb-3 md:mb-5 flex-shrink-0" style="height: 1px; background: linear-gradient(to right, transparent, rgba(139,115,85,0.3) 20%, rgba(139,115,85,0.3) 80%, transparent); box-shadow: 0 1px 0 rgba(255,255,255,0.5);"></div>
+
+                  <!-- CERTIFICATE TITLE -->
+                  <div class="mb-4 sm:mb-3 md:mb-5 flex-shrink-0">
+                    <h1 class="text-base sm:text-lg md:text-2xl lg:text-3xl font-bold tracking-wider mb-2 md:mb-2" style="font-family: 'Libre Baskerville', serif; letter-spacing: 0.12em; color: #2d2416; text-shadow: 0 1px 2px rgba(255,255,255,0.9), 0 2px 3px rgba(0,0,0,0.08);">
+                      CERTIFICATE OF PARTICIPATION
+                    </h1>
+                    <div class="w-10 sm:w-12 md:w-20 mx-auto" style="height: 2px; background: linear-gradient(to right, transparent, #8b7355, transparent); box-shadow: 0 1px 0 rgba(255,255,255,0.6);"></div>
+                  </div>
+
+                  <!-- BODY CONTENT -->
+                  <div class="flex-1 flex flex-col justify-center space-y-3 sm:space-y-2 md:space-y-3 max-w-2xl mx-auto" style="min-height: 0;">
+                    <p class="text-[0.65rem] sm:text-[0.7rem] md:text-xs font-light mb-2" style="font-family: 'IBM Plex Sans', sans-serif; color: #6a5a4a; text-shadow: 0 1px 0 rgba(255,255,255,0.7);">
+                      This certifies that
+                    </p>
+
+                    <!-- Recipient Name with Embossed Border -->
+                    <div class="pb-2 md:pb-2 px-2 sm:px-4 md:px-8 mb-2" style="border-bottom: 2px solid #8b7355; box-shadow: 0 1px 0 rgba(255,255,255,0.6);">
+                      <p id="certName" class="text-lg sm:text-xl md:text-3xl lg:text-4xl font-bold" style="font-family: 'Libre Baskerville', serif; color: #1a1410; text-shadow: 0 1px 2px rgba(255,255,255,0.9), 0 2px 4px rgba(0,0,0,0.1);">
+                        Juan Dela Cruz
+                      </p>
+                    </div>
+
+                    <p class="text-[0.65rem] sm:text-[0.7rem] md:text-xs font-light leading-relaxed mb-2" style="font-family: 'IBM Plex Sans', sans-serif; color: #6a5a4a; text-shadow: 0 1px 0 rgba(255,255,255,0.7);">
+                      has successfully completed volunteer service in
+                    </p>
+
+                    <!-- Project Name -->
+                    <div class="px-2 sm:px-4 md:px-6 mb-3">
+                      <p id="certProject" class="text-xs sm:text-sm md:text-lg lg:text-xl font-semibold" style="font-family: 'Libre Baskerville', serif; color: #2d2416; text-shadow: 0 1px 2px rgba(255,255,255,0.9), 0 2px 3px rgba(0,0,0,0.08);">
+                        Youth Sports Festival
+                      </p>
+                    </div>
+
+                    <div class="pt-1 sm:pt-1 md:pt-2">
+                      <p class="text-[0.6rem] sm:text-[0.65rem] md:text-[0.7rem] leading-relaxed max-w-xl mx-auto px-2" style="font-family: 'IBM Plex Sans', sans-serif; color: #6a5a4a; text-shadow: 0 1px 0 rgba(255,255,255,0.7);">
+                        In recognition of outstanding dedication, hard work, and commitment<br class="hidden sm:block">
+                        to serving the youth and community of Barangay Malanday
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- FOOTER SECTION -->
+                  <div class="grid grid-cols-2 gap-4 sm:gap-6 md:gap-12 max-w-xl mx-auto flex-shrink-0 px-2 mt-4">
+                    <!-- Date Issued -->
+                    <div class="text-center">
+                      <p id="certDate" class="text-[0.7rem] sm:text-[0.75rem] md:text-xs font-semibold mb-0.5 sm:mb-1" style="font-family: 'IBM Plex Sans', sans-serif; color: #2d2416; text-shadow: 0 1px 1px rgba(255,255,255,0.8);">
+                        January 5, 2026
+                      </p>
+                      <div class="w-12 sm:w-16 md:w-20 mx-auto mb-0.5 md:mb-1" style="height: 1px; background: linear-gradient(to right, transparent, #8b7355, transparent); box-shadow: 0 1px 0 rgba(255,255,255,0.5);"></div>
+                      <p class="text-[0.5rem] sm:text-[0.52rem] md:text-[0.6rem] uppercase tracking-widest font-medium" style="color: #6a5a4a; text-shadow: 0 1px 0 rgba(255,255,255,0.7);">Date Issued</p>
+                    </div>
+
+                    <!-- SK Chairman Signature -->
+                    <div class="text-center">
+                      <p class="text-[0.7rem] sm:text-[0.75rem] md:text-xs font-bold mb-0.5 sm:mb-1" style="font-family: 'Libre Baskerville', serif; color: #2d2416; text-shadow: 0 1px 1px rgba(255,255,255,0.8);">
+                        Andrea Pelias
+                      </p>
+                      <div class="w-12 sm:w-16 md:w-20 mx-auto mb-0.5 md:mb-1" style="height: 1px; background: linear-gradient(to right, transparent, #8b7355, transparent); box-shadow: 0 1px 0 rgba(255,255,255,0.5);"></div>
+                      <p class="text-[0.5rem] sm:text-[0.52rem] md:text-[0.6rem] uppercase tracking-widest font-medium" style="color: #6a5a4a; text-shadow: 0 1px 0 rgba(255,255,255,0.7);">SK Chairman</p>
+                    </div>
+                  </div>
+
+                  <!-- Certificate ID -->
+                  <div class="mt-3 sm:mt-2 md:mt-3 flex-shrink-0">
+                    <p class="text-[0.5rem] sm:text-[0.52rem] md:text-[0.6rem] font-mono tracking-wider" style="color: #8b7355; text-shadow: 0 1px 0 rgba(255,255,255,0.6);">
+                      Certificate ID: BIMS-SK-2025-001
                     </p>
                   </div>
-                </div>
 
-                <!-- Footer -->
-                <div class="mt-4">
-                  <div class="grid grid-cols-2 gap-16 max-w-3xl mx-auto">
-                    <div class="text-center">
-                      <div class="bg-white px-4 py-2 rounded-lg shadow-md border-2 border-[#2f6e4e]/20 mb-1.5">
-                        <p id="certDate" class="text-sm font-black text-[#2f6e4e]">December 14, 2025</p>
-                      </div>
-                      <p class="text-xs text-gray-600 uppercase tracking-widest font-bold">Date Issued</p>
-                    </div>
-                    <div class="text-center">
-                      <div class="mb-1.5">
-                        <p class="text-base font-black text-gray-900 mb-1">Andrea Pelias</p>
-                        <div class="w-2/3 h-0.5 bg-gray-900 mx-auto mb-0.5"></div>
-                      </div>
-                      <p class="text-xs text-gray-600 uppercase tracking-widest font-bold">SK Chairman</p>
-                      <p class="text-xs text-[#2f6e4e] font-semibold mt-0.5">Barangay Malanday</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Verification Code Footer -->
-                <div class="mt-2 bg-[#2f6e4e]/10 py-1.5 px-3 rounded-lg inline-block">
-                  <p class="text-xs text-[#2f6e4e] font-mono font-semibold">Certificate ID: BIMS-SK-2025-001</p>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Floating Zoom Controls -->
+          <div class="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex flex-col gap-1.5 sm:gap-2 z-10">
+            <!-- Zoom In -->
+            <button onclick="zoomIn()" class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900/90 hover:bg-gray-800 text-white rounded-full flex items-center justify-center shadow-xl transition-all transform hover:scale-110 backdrop-blur-sm border border-gray-700">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+            </button>
+
+            <!-- Zoom Level Indicator -->
+            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900/90 text-white rounded-full flex items-center justify-center shadow-xl backdrop-blur-sm border border-gray-700">
+              <span id="zoomLevel" class="text-[0.6rem] sm:text-xs font-bold">100%</span>
+            </div>
+
+            <!-- Zoom Out -->
+            <button onclick="zoomOut()" class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900/90 hover:bg-gray-800 text-white rounded-full flex items-center justify-center shadow-xl transition-all transform hover:scale-110 backdrop-blur-sm border border-gray-700">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18 12H6"></path>
+              </svg>
+            </button>
+
+            <!-- Reset Zoom -->
+            <button onclick="resetZoom()" class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900/90 hover:bg-gray-800 text-white rounded-full flex items-center justify-center shadow-xl transition-all transform hover:scale-110 backdrop-blur-sm border border-gray-700">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Touch Hint (shows briefly on mobile) -->
+          <div id="touchHint" class="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300 z-20">
+            <div class="bg-white rounded-2xl p-6 max-w-sm mx-4 text-center shadow-2xl">
+              <div class="w-16 h-16 bg-[#2f6e4e] rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                </svg>
+              </div>
+              <h4 class="text-lg font-bold text-gray-900 mb-2">Pinch to Zoom</h4>
+              <p class="text-sm text-gray-600">Use two fingers to zoom in and out of the certificate</p>
             </div>
           </div>
         </div>
@@ -568,17 +732,49 @@
           surveyCompleted: true,
           satisfactionScore: 3.6,
           attended: true
+        },
+        {
+          id: 4,
+          title: "Feeding Program for Children",
+          completedDate: "2025-08-12",
+          surveyCompleted: true,
+          satisfactionScore: 4.0,
+          attended: true
+        },
+        {
+          id: 5,
+          title: "Community Health Fair",
+          completedDate: "2025-07-28",
+          surveyCompleted: false,
+          satisfactionScore: null,
+          attended: true
+        },
+        {
+          id: 6,
+          title: "Environmental Awareness Campaign",
+          completedDate: "2025-06-15",
+          surveyCompleted: true,
+          satisfactionScore: 3.9,
+          attended: true
         }
       ];
 
       let currentProjectId = null;
 
-      // Render projects
+      // Pagination variables
+      let currentProjectPage = 0;
+      const projectsPerPage = 4; // 2x2 grid
+
+      // Render projects with pagination
       function renderProjects() {
         const grid = document.getElementById('projectsGrid');
         grid.innerHTML = '';
 
-        completedProjects.forEach(project => {
+        const startIndex = currentProjectPage * projectsPerPage;
+        const endIndex = startIndex + projectsPerPage;
+        const projectsToShow = completedProjects.slice(startIndex, endIndex);
+
+        projectsToShow.forEach(project => {
           const card = document.createElement('div');
           card.className = 'bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition';
 
@@ -627,6 +823,51 @@
 
           grid.appendChild(card);
         });
+
+        updateProjectPagination();
+      }
+
+      // Update project pagination controls
+      function updateProjectPagination() {
+        const totalPages = Math.ceil(completedProjects.length / projectsPerPage);
+        const dotsContainer = document.getElementById('projectPaginationDots');
+        const navContainer = document.getElementById('projectPaginationNav');
+
+        if (totalPages <= 1) {
+          dotsContainer.classList.add('hidden');
+          navContainer.classList.add('hidden');
+          return;
+        }
+
+        dotsContainer.classList.remove('hidden');
+        navContainer.classList.remove('hidden');
+
+        // Create pagination dots
+        dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+          <button
+            onclick="goToProjectPage(${i})"
+            class="h-2 rounded-full transition-all duration-300 ${i === currentProjectPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+            style="min-height: 8px;"
+          ></button>
+        `).join('');
+      }
+
+      // Navigate projects
+      function navigateProjects(direction) {
+        const totalPages = Math.ceil(completedProjects.length / projectsPerPage);
+        currentProjectPage += direction;
+
+        // Wrap around
+        if (currentProjectPage < 0) currentProjectPage = totalPages - 1;
+        if (currentProjectPage >= totalPages) currentProjectPage = 0;
+
+        renderProjects();
+      }
+
+      // Go to specific project page
+      function goToProjectPage(pageIndex) {
+        currentProjectPage = pageIndex;
+        renderProjects();
       }
 
       // Survey Modal
@@ -679,7 +920,18 @@
         }, 300);
       }
 
-      // Certificate Modal
+      // Certificate Modal with Zoom Functionality
+      let currentZoom = 1;
+      let isPanning = false;
+      let startX = 0;
+      let startY = 0;
+      let scrollLeft = 0;
+      let scrollTop = 0;
+
+      // Touch gesture variables
+      let initialDistance = 0;
+      let initialZoom = 1;
+
       function viewCertificate(projectId) {
         const project = completedProjects.find(p => p.id === projectId);
         document.getElementById('certName').textContent = currentUser.name;
@@ -690,10 +942,171 @@
           day: 'numeric'
         });
         document.getElementById('certificateModal').classList.remove('hidden');
+
+        // Reset zoom when opening
+        resetZoom();
+
+        // Initialize zoom controls
+        initializeZoomControls();
+
+        // Show touch hint on mobile for 2 seconds
+        if ('ontouchstart' in window) {
+          showTouchHint();
+        }
       }
 
       function closeCertificateModal() {
         document.getElementById('certificateModal').classList.add('hidden');
+        resetZoom();
+      }
+
+      function initializeZoomControls() {
+        const viewport = document.getElementById('certificateViewport');
+        const container = document.getElementById('certificateContainer');
+
+        // Mouse wheel zoom
+        viewport.addEventListener('wheel', handleWheel, { passive: false });
+
+        // Touch gestures for pinch-to-zoom
+        viewport.addEventListener('touchstart', handleTouchStart, { passive: false });
+        viewport.addEventListener('touchmove', handleTouchMove, { passive: false });
+        viewport.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+        // Pan functionality
+        viewport.addEventListener('mousedown', handleMouseDown);
+        viewport.addEventListener('mousemove', handleMouseMove);
+        viewport.addEventListener('mouseup', handleMouseUp);
+        viewport.addEventListener('mouseleave', handleMouseUp);
+      }
+
+      function handleWheel(e) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        currentZoom = Math.max(0.5, Math.min(3, currentZoom + delta));
+        applyZoom();
+      }
+
+      function handleTouchStart(e) {
+        if (e.touches.length === 2) {
+          // Pinch gesture started
+          e.preventDefault();
+          initialDistance = getDistance(e.touches[0], e.touches[1]);
+          initialZoom = currentZoom;
+        } else if (e.touches.length === 1 && currentZoom > 1) {
+          // Pan gesture for zoomed certificate
+          isPanning = true;
+          const viewport = document.getElementById('certificateViewport');
+          startX = e.touches[0].pageX - viewport.offsetLeft;
+          startY = e.touches[0].pageY - viewport.offsetTop;
+          scrollLeft = viewport.scrollLeft;
+          scrollTop = viewport.scrollTop;
+          viewport.style.cursor = 'grabbing';
+        }
+      }
+
+      function handleTouchMove(e) {
+        if (e.touches.length === 2) {
+          // Pinch zoom
+          e.preventDefault();
+          const currentDistance = getDistance(e.touches[0], e.touches[1]);
+          const scale = currentDistance / initialDistance;
+          currentZoom = Math.max(0.5, Math.min(3, initialZoom * scale));
+          applyZoom();
+        } else if (isPanning && e.touches.length === 1) {
+          // Pan
+          e.preventDefault();
+          const viewport = document.getElementById('certificateViewport');
+          const x = e.touches[0].pageX - viewport.offsetLeft;
+          const y = e.touches[0].pageY - viewport.offsetTop;
+          const walkX = (x - startX) * 2;
+          const walkY = (y - startY) * 2;
+          viewport.scrollLeft = scrollLeft - walkX;
+          viewport.scrollTop = scrollTop - walkY;
+        }
+      }
+
+      function handleTouchEnd(e) {
+        if (e.touches.length < 2) {
+          isPanning = false;
+          const viewport = document.getElementById('certificateViewport');
+          viewport.style.cursor = 'grab';
+        }
+      }
+
+      function handleMouseDown(e) {
+        if (currentZoom > 1) {
+          isPanning = true;
+          const viewport = document.getElementById('certificateViewport');
+          startX = e.pageX - viewport.offsetLeft;
+          startY = e.pageY - viewport.offsetTop;
+          scrollLeft = viewport.scrollLeft;
+          scrollTop = viewport.scrollTop;
+          viewport.style.cursor = 'grabbing';
+        }
+      }
+
+      function handleMouseMove(e) {
+        if (!isPanning) return;
+        e.preventDefault();
+        const viewport = document.getElementById('certificateViewport');
+        const x = e.pageX - viewport.offsetLeft;
+        const y = e.pageY - viewport.offsetTop;
+        const walkX = (x - startX) * 2;
+        const walkY = (y - startY) * 2;
+        viewport.scrollLeft = scrollLeft - walkX;
+        viewport.scrollTop = scrollTop - walkY;
+      }
+
+      function handleMouseUp() {
+        isPanning = false;
+        const viewport = document.getElementById('certificateViewport');
+        viewport.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
+      }
+
+      function getDistance(touch1, touch2) {
+        const dx = touch1.pageX - touch2.pageX;
+        const dy = touch1.pageY - touch2.pageY;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+
+      function zoomIn() {
+        currentZoom = Math.min(3, currentZoom + 0.25);
+        applyZoom();
+      }
+
+      function zoomOut() {
+        currentZoom = Math.max(0.5, currentZoom - 0.25);
+        applyZoom();
+      }
+
+      function resetZoom() {
+        currentZoom = 1;
+        applyZoom();
+        const viewport = document.getElementById('certificateViewport');
+        viewport.scrollLeft = 0;
+        viewport.scrollTop = 0;
+      }
+
+      function applyZoom() {
+        const container = document.getElementById('certificateContainer');
+        const viewport = document.getElementById('certificateViewport');
+
+        container.style.transform = `scale(${currentZoom})`;
+        container.style.transition = 'transform 0.2s ease-out';
+
+        // Update zoom level display
+        document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+
+        // Update cursor based on zoom level
+        viewport.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
+      }
+
+      function showTouchHint() {
+        const hint = document.getElementById('touchHint');
+        hint.style.opacity = '1';
+        setTimeout(() => {
+          hint.style.opacity = '0';
+        }, 2500);
       }
 
       async function downloadCertificate() {
@@ -713,6 +1126,18 @@
             Generating PDF...
           `;
           downloadBtn.disabled = true;
+
+          // Save current zoom level
+          const savedZoom = currentZoom;
+
+          // Temporarily reset zoom for screenshot
+          currentZoom = 1;
+          const container = document.getElementById('certificateContainer');
+          container.style.transform = 'scale(1)';
+          container.style.transition = 'none';
+
+          // Wait for render
+          await new Promise(resolve => setTimeout(resolve, 100));
 
           // Convert certificate to canvas with high quality
           const canvas = await html2canvas(certificateElement, {
@@ -742,9 +1167,16 @@
           // Download the PDF
           pdf.save(filename);
 
+          // Restore zoom level
+          currentZoom = savedZoom;
+          container.style.transition = 'transform 0.2s ease-out';
+          applyZoom();
+
           // Restore button
           downloadBtn.innerHTML = originalText;
           downloadBtn.disabled = false;
+
+          showToast('Certificate downloaded successfully!', 'success');
 
         } catch (error) {
           console.error('Error generating PDF:', error);

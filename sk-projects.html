@@ -1104,7 +1104,7 @@
     <!-- APPLICANT DETAILS MODAL -->
     <div
       id="applicantModal"
-      class="hidden fixed inset-0 z-[60] overflow-y-auto"
+      class="hidden fixed inset-0 z-[10000] overflow-y-auto"
     >
       <div class="flex items-center justify-center min-h-screen px-4">
         <div
@@ -1281,7 +1281,7 @@
 
         <div class="relative bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           <!-- Header -->
-          <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6">
+          <div class="sticky top-0 z-20 bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-t-xl">
             <div class="flex justify-between items-start">
               <div>
                 <h2 class="text-2xl font-bold mb-2">Project Evaluation</h2>
@@ -1343,9 +1343,9 @@
                   </button>
                 </div>
 
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto overflow-y-auto max-h-[400px]">
                   <table class="w-full text-sm">
-                    <thead class="bg-gray-50 border-b-2 border-gray-200">
+                    <thead class="sticky top-0 bg-gray-50 border-b-2 border-gray-200 z-10">
                       <tr>
                         <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700">Description</th>
                         <th class="px-3 py-2 text-left text-xs font-semibold text-gray-700 w-32">Planned (₱)</th>

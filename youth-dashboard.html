@@ -156,6 +156,21 @@
       .char-counter.error {
         color: #ef4444;
       }
+
+      /* Pagination dots - consistent across all screen sizes */
+      #announcementPaginationDots button {
+        flex-shrink: 0;
+        display: inline-block;
+        cursor: pointer;
+        border: none;
+        padding: 0;
+        outline: none;
+      }
+
+      #announcementPaginationDots button:focus {
+        outline: 2px solid rgba(47, 110, 78, 0.3);
+        outline-offset: 2px;
+      }
     </style>
   </head>
   <body class="bg-gray-50">
@@ -362,8 +377,42 @@
                 <h3 class="text-lg font-bold text-gray-800">Announcements</h3>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- announcement card (read-only) -->
+              <div id="announcementsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- announcements will be inserted by JS -->
+              </div>
+
+              <!-- Pagination Dots (Center) -->
+              <div id="announcementPaginationDots" class="flex justify-center gap-2 mt-6 hidden">
+                <!-- Dots will be inserted here -->
+              </div>
+
+              <!-- Pagination Controls (Bottom Right) -->
+              <div class="mt-6 flex justify-end">
+                <nav
+                  id="announcementPaginationNav"
+                  class="hidden inline-flex rounded-md shadow-sm"
+                  role="navigation"
+                  aria-label="Pagination"
+                >
+                  <button
+                    id="prevAnnouncementPage"
+                    onclick="navigateAnnouncements(-1)"
+                    class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                  >
+                    Prev
+                  </button>
+                  <button
+                    id="nextAnnouncementPage"
+                    onclick="navigateAnnouncements(1)"
+                    class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium"
+                  >
+                    Next
+                  </button>
+                </nav>
+              </div>
+
+              <!-- Hidden template for backward compatibility -->
+              <div class="hidden">
                 <article
                   class="border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col"
                 >
@@ -1012,7 +1061,151 @@
           description: "Apply now — deadline Dec 15, 2025.",
           image: "",
         },
+        4: {
+          title: "Community Clean-Up Drive",
+          date: "Dec 5, 2025",
+          category: "urgent",
+          description: "Help clean up our community parks and rivers. Volunteers needed!",
+          image: "",
+        },
+        5: {
+          title: "Youth Leadership Summit 2025",
+          date: "Dec 10, 2025",
+          category: "general",
+          description: "Develop your leadership skills at our annual summit.",
+          image: "",
+        },
+        6: {
+          title: "Christmas Gift-Giving Project",
+          date: "Dec 20, 2025",
+          category: "urgent",
+          description: "Bring joy to children this Christmas. Donate or volunteer!",
+          image: "",
+        },
+        7: {
+          title: "New Year Planning Meeting",
+          date: "Jan 3, 2026",
+          category: "update",
+          description: "Plan activities for the upcoming year with fellow volunteers.",
+          image: "",
+        },
       };
+
+      // Convert announcements to array for pagination
+      const announcementsArray = Object.keys(announcements).map(key => ({
+        id: parseInt(key),
+        ...announcements[key]
+      }));
+
+      // Announcement pagination variables
+      let currentAnnouncementPage = 0;
+      const announcementsPerPage = 3;
+
+      // Render announcements with pagination
+      function renderAnnouncements() {
+        const grid = document.getElementById('announcementsGrid');
+        if (!grid) return;
+
+        const startIndex = currentAnnouncementPage * announcementsPerPage;
+        const endIndex = startIndex + announcementsPerPage;
+        const announcementsToShow = announcementsArray.slice(startIndex, endIndex);
+
+        grid.innerHTML = '';
+
+        announcementsToShow.forEach(announcement => {
+          const categoryColors = {
+            urgent: 'bg-red-100 text-red-700',
+            general: 'bg-blue-100 text-blue-700',
+            update: 'bg-[#2f6e4e]/20 text-[#2f6e4e]'
+          };
+
+          const gradientColors = {
+            urgent: 'from-orange-400 to-orange-500',
+            general: 'from-blue-400 to-blue-500',
+            update: 'from-green-400 to-green-500'
+          };
+
+          const iconPaths = {
+            urgent: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z',
+            general: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253',
+            update: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+          };
+
+          const card = document.createElement('article');
+          card.className = 'border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col';
+
+          card.innerHTML = `
+            <div class="h-36 bg-gradient-to-br ${gradientColors[announcement.category]} flex items-center justify-center">
+              <svg class="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPaths[announcement.category]}"></path>
+              </svg>
+            </div>
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex items-center justify-between mb-3">
+                <span class="px-3 py-1 ${categoryColors[announcement.category]} text-xs font-medium rounded-full">${announcement.category}</span>
+                <span class="text-xs text-gray-500">${announcement.date}</span>
+              </div>
+              <h4 class="text-lg font-bold text-gray-800 mb-2">${announcement.title}</h4>
+              <p class="text-sm text-gray-600 mb-4">${announcement.description}</p>
+              <div class="flex justify-end mt-auto">
+                <button onclick="viewAnnouncement(${announcement.id})" class="px-4 py-2 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg text-sm font-medium transition">
+                  View
+                </button>
+              </div>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+
+        updateAnnouncementPagination();
+      }
+
+      // Update announcement pagination controls
+      function updateAnnouncementPagination() {
+        const totalPages = Math.ceil(announcementsArray.length / announcementsPerPage);
+        const dotsContainer = document.getElementById('announcementPaginationDots');
+        const navContainer = document.getElementById('announcementPaginationNav');
+
+        if (totalPages <= 1) {
+          dotsContainer.classList.add('hidden');
+          navContainer.classList.add('hidden');
+          return;
+        }
+
+        dotsContainer.classList.remove('hidden');
+        navContainer.classList.remove('hidden');
+
+        // Create pagination dots
+        dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+          <button
+            onclick="goToAnnouncementPage(${i})"
+            class="h-2 rounded-full transition-all duration-300 ${i === currentAnnouncementPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+            style="min-height: 8px;"
+          ></button>
+        `).join('');
+      }
+
+      // Navigate announcements
+      function navigateAnnouncements(direction) {
+        const totalPages = Math.ceil(announcementsArray.length / announcementsPerPage);
+        currentAnnouncementPage += direction;
+
+        // Wrap around
+        if (currentAnnouncementPage < 0) currentAnnouncementPage = totalPages - 1;
+        if (currentAnnouncementPage >= totalPages) currentAnnouncementPage = 0;
+
+        renderAnnouncements();
+      }
+
+      // Go to specific announcement page
+      function goToAnnouncementPage(pageIndex) {
+        currentAnnouncementPage = pageIndex;
+        renderAnnouncements();
+      }
+
+      // Initialize announcements
+      renderAnnouncements();
 
       // sample applications
       const applications = {
@@ -1527,31 +1720,69 @@
 
         setInputState(testimonyInput, true);
 
-        // Show loading state
-        const originalButtonText = submitButton.innerHTML;
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<div class="spinner mx-auto"></div>';
-
-        // Simulate submission delay
-        setTimeout(() => {
-          // In a real application, this would send to the backend
-          console.log("Testimony submitted:", { testimony, satisfactionScore: rating });
-
-          // Show success message
-          showToast("Thank you for sharing your experience! Your testimony has been submitted for review.", "success");
-
-          // Reset form
-          resetTestimonyForm();
-
-          // Clear validation state
-          setInputState(testimonyInput, null);
-          document.getElementById('testimonyCharCount').textContent = '0/500 characters';
-
-          // Re-enable button
-          submitButton.disabled = false;
-          submitButton.innerHTML = originalButtonText;
-        }, 1000);
+        // Show confirmation modal before submitting
+        showTestimonyConfirmation(testimony, rating, submitButton, testimonyInput);
       });
+
+      // Show testimony confirmation modal
+      function showTestimonyConfirmation(testimony, rating, submitButton, testimonyInput) {
+        const modal = document.getElementById('testimonyConfirmModal');
+        const confirmBtn = document.getElementById('testimonyConfirmOk');
+        const cancelBtn = document.getElementById('testimonyConfirmCancel');
+
+        modal.classList.remove('hidden');
+
+        const handleConfirm = () => {
+          modal.classList.add('hidden');
+
+          // Show loading state
+          const originalButtonText = submitButton.innerHTML;
+          submitButton.disabled = true;
+          submitButton.innerHTML = '<div class="spinner mx-auto"></div>';
+
+          // Simulate submission delay
+          setTimeout(() => {
+            // In a real application, this would send to the backend
+            console.log("Testimony submitted:", { testimony, satisfactionScore: rating });
+
+            // Show success message
+            showToast("Thank you for sharing your experience! Your testimony has been submitted for review.", "success");
+
+            // Reset form
+            resetTestimonyForm();
+
+            // Clear validation state
+            setInputState(testimonyInput, null);
+            document.getElementById('testimonyCharCount').textContent = '0/500 characters';
+
+            // Re-enable button
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+          }, 1000);
+
+          cleanup();
+        };
+
+        const handleCancel = () => {
+          modal.classList.add('hidden');
+          cleanup();
+        };
+
+        const cleanup = () => {
+          confirmBtn.removeEventListener('click', handleConfirm);
+          cancelBtn.removeEventListener('click', handleCancel);
+        };
+
+        confirmBtn.addEventListener('click', handleConfirm);
+        cancelBtn.addEventListener('click', handleCancel);
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            handleCancel();
+          }
+        });
+      }
 
       function resetTestimonyForm() {
         document.getElementById("testimonyForm").reset();
@@ -1700,6 +1931,29 @@
         </div>
       </div>
     </div>
+
+    <!-- Testimony Submission Confirmation Modal -->
+    <div id="testimonyConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+      <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+        <div class="flex items-center justify-center w-12 h-12 mx-auto bg-[#2f6e4e]/10 rounded-full mb-4">
+          <svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900 text-center mb-2">Submit Your Testimony</h3>
+        <p class="text-sm text-gray-600 text-center mb-6">Your testimony will be reviewed by SK officials before being published. Are you sure you want to submit?</p>
+        <div class="flex gap-3">
+          <button id="testimonyConfirmCancel" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Cancel</button>
+          <button id="testimonyConfirmOk" class="flex-1 px-4 py-2.5 bg-[#2f6e4e] hover:bg-[#3d8b64] text-white rounded-lg transition font-medium flex items-center justify-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Submit</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
       <script src="js/mobile-nav.js"></script>
   </body>
 </html>
