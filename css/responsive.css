@@ -727,16 +727,31 @@ button,
   }
 
   /* Header Login/Sign Up Button Padding - Reduce on Mobile */
-  nav .flex.items-center.space-x-3 a[href="login.html"] {
+  /* More specific selectors to override Tailwind classes */
+  nav a[href="login.html"],
+  nav .flex.items-center.space-x-3 a[href="login.html"],
+  a[href="login.html"].px-5 {
     padding-left: 0.75rem !important; /* px-3 instead of px-5 */
     padding-right: 0.75rem !important;
+  }
+
+  nav a[href="login.html"],
+  nav .flex.items-center.space-x-3 a[href="login.html"],
+  a[href="login.html"].py-2\.5 {
     padding-top: 0.375rem !important; /* Reduced vertical padding */
     padding-bottom: 0.375rem !important; /* Reduced bottom padding */
   }
 
-  nav .flex.items-center.space-x-3 a[href="signup.html"] {
+  nav a[href="signup.html"],
+  nav .flex.items-center.space-x-3 a[href="signup.html"],
+  a[href="signup.html"].px-6 {
     padding-left: 1rem !important; /* px-4 instead of px-6 */
     padding-right: 1rem !important;
+  }
+
+  nav a[href="signup.html"],
+  nav .flex.items-center.space-x-3 a[href="signup.html"],
+  a[href="signup.html"].py-2\.5 {
     padding-top: 0.375rem !important; /* Reduced vertical padding */
     padding-bottom: 0.375rem !important; /* Reduced bottom padding */
   }
