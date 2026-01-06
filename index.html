@@ -70,6 +70,42 @@
           transform: translateY(0);
         }
       }
+
+      /* Hero Section Staggered Animations */
+      @keyframes heroFadeIn {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero-fade-in-1 {
+        animation: heroFadeIn 0.8s ease-out 0.2s both;
+      }
+
+      .hero-fade-in-2 {
+        animation: heroFadeIn 0.8s ease-out 0.4s both;
+      }
+
+      .hero-fade-in-3 {
+        animation: heroFadeIn 0.8s ease-out 0.6s both;
+      }
+
+      .hero-fade-in-4 {
+        animation: heroFadeIn 0.8s ease-out 0.8s both;
+      }
+
+      .hero-fade-in-5 {
+        animation: heroFadeIn 0.8s ease-out 1s both;
+      }
+
+      .hero-fade-in-6 {
+        animation: heroFadeIn 0.8s ease-out 1.2s both;
+      }
     </style>
   </head>
   <body class="bg-white">
@@ -146,68 +182,86 @@
     <!-- Hero Section -->
     <section
       id="home"
-      class="pt-32 pb-20 text-white overflow-hidden relative"
+      class="pt-40 pb-24 md:pt-44 md:pb-28 text-white overflow-hidden relative min-h-[85vh] md:min-h-[90vh] flex items-center"
       style="background-image: url('asset/hero.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;"
     >
       <!-- Green Transparent Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-r from-[#2f6e4e]/60 to-[#3d8b64]/50 hero-pattern"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-[#2f6e4e]/65 to-[#3d8b64]/55 hero-pattern"></div>
 
       <!-- Content Container with relative positioning to stay above overlay -->
-      <div class="relative z-10">
-      <div class="max-w-7xl mx-auto px-6">
+      <div class="relative z-10 w-full">
+      <div class="max-w-7xl mx-auto px-6 md:px-8">
         <div class="flex flex-col items-start">
           <!-- Content -->
-          <div class="max-w-4xl space-y-8">
-            <div class="space-y-4">
-              <div class="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold mb-4 hero-text-shadow">
-                🌟 Open to All Youth of Barangay Malanday
+          <div class="max-w-4xl">
+            <!-- Badge with animation -->
+            <div class="hero-fade-in-1 mb-6">
+              <div class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold hero-text-shadow border border-white/20">
+                <span class="text-lg">🌟</span>
+                <span class="tracking-wide">Open to All Youth of Barangay Malanday</span>
               </div>
-              <h1
-                class="text-5xl md:text-6xl lg:text-7xl font-black leading-tight hero-text-shadow"
-              >
-                Be the Change.<br />Volunteer Today.
+            </div>
+
+            <!-- Main Headline -->
+            <div class="hero-fade-in-2 mb-8">
+              <h1 class="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[1.1] tracking-tight hero-text-shadow">
+                <span class="block">Be the Change.</span>
+                <span class="block mt-2">Volunteer Today.</span>
               </h1>
-              <p class="text-xl md:text-2xl text-white leading-relaxed hero-text-shadow">
+            </div>
+
+            <!-- Subtitle -->
+            <div class="hero-fade-in-3 mb-8">
+              <p class="text-xl md:text-2xl lg:text-3xl text-white/95 leading-relaxed max-w-3xl font-medium hero-text-shadow" style="line-height: 1.5;">
                 Join SK Malanday's Youth Volunteer Program and make a real impact in our community
               </p>
             </div>
 
-            <p class="text-lg text-white leading-relaxed max-w-2xl hero-text-shadow">
-              Discover volunteer opportunities, view ongoing projects, see where funds are spent, and connect with fellow youth volunteers. Full transparency, open to everyone.
-            </p>
+            <!-- Description -->
+            <div class="hero-fade-in-4 mb-10">
+              <p class="text-base md:text-lg text-white/90 leading-relaxed max-w-2xl hero-text-shadow" style="line-height: 1.75;">
+                Discover volunteer opportunities, view ongoing projects, see where funds are spent, and connect with fellow youth volunteers. Full transparency, open to everyone.
+              </p>
+            </div>
 
-            <div class="flex flex-col sm:flex-row gap-4">
+            <!-- CTA Buttons -->
+            <div class="hero-fade-in-5 flex flex-col sm:flex-row gap-4 mb-12">
               <a
                 href="signup.html"
-                class="px-8 py-4 bg-white text-[#2f6e4e] font-bold rounded-lg hover:shadow-2xl transition duration-200 text-center text-lg"
+                class="group px-8 py-4 bg-white text-[#2f6e4e] font-bold rounded-xl hover:shadow-[0_8px_30px_rgba(255,255,255,0.3)] transition-all duration-300 text-center text-lg hover:scale-105 hover:bg-white/95"
               >
-                Join as Volunteer
+                <span class="flex items-center justify-center gap-2">
+                  Join as Volunteer
+                  <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                  </svg>
+                </span>
               </a>
               <a
                 href="#projects"
-                class="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-bold rounded-lg hover:bg-white/20 transition duration-200 text-center text-lg"
+                class="group px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/80 text-white font-bold rounded-xl hover:bg-white/20 hover:border-white transition-all duration-300 text-center text-lg hover:scale-105"
               >
                 Browse Projects
               </a>
             </div>
 
             <!-- Stats -->
-            <div class="grid grid-cols-3 gap-6 pt-8">
-              <div>
-                <div class="text-4xl font-black hero-text-shadow">328+</div>
-                <div class="text-white text-sm font-medium mt-1 hero-text-shadow">
+            <div class="hero-fade-in-6 grid grid-cols-3 gap-6 md:gap-8 pt-8 border-t border-white/20">
+              <div class="group">
+                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;">328<span class="text-3xl md:text-4xl lg:text-5xl">+</span></div>
+                <div class="text-white/95 text-xs md:text-sm font-semibold uppercase tracking-wider hero-text-shadow">
                   Active Volunteers
                 </div>
               </div>
-              <div>
-                <div class="text-4xl font-black hero-text-shadow">42</div>
-                <div class="text-white text-sm font-medium mt-1 hero-text-shadow">
+              <div class="group">
+                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;">42</div>
+                <div class="text-white/95 text-xs md:text-sm font-semibold uppercase tracking-wider hero-text-shadow">
                   Community Projects
                 </div>
               </div>
-              <div>
-                <div class="text-4xl font-black hero-text-shadow">89%</div>
-                <div class="text-white text-sm font-medium mt-1 hero-text-shadow">
+              <div class="group">
+                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;">89<span class="text-3xl md:text-4xl lg:text-5xl">%</span></div>
+                <div class="text-white/95 text-xs md:text-sm font-semibold uppercase tracking-wider hero-text-shadow">
                   Avg Success Rate
                 </div>
               </div>
@@ -234,185 +288,208 @@
         </div>
 
         <!-- Feature Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           <!-- Feature 1 -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition group"
-          >
-            <div
-              class="w-16 h-16 gradient-bg rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition"
-            >
-              <svg
-                class="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                ></path>
-              </svg>
+          <div class="group">
+            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
+              <!-- Icon Container -->
+              <div class="mb-6">
+                <div class="relative inline-block">
+                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+                View All Projects
+              </h3>
+              <p class="text-gray-600 text-[15px] leading-relaxed">
+                Browse ongoing and completed projects in your barangay. See what's happening and where you can help as a volunteer.
+              </p>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-3">
-              View All Projects
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              Browse ongoing and completed projects in your barangay. See what's happening and where you can help as a volunteer.
-            </p>
           </div>
 
           <!-- Feature 2 -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition group"
-          >
-            <div
-              class="w-16 h-16 gradient-bg rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition"
-            >
-              <svg
-                class="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                ></path>
-              </svg>
+          <div class="group">
+            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
+              <!-- Icon Container -->
+              <div class="mb-6">
+                <div class="relative inline-block">
+                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+                Easy Volunteering
+              </h3>
+              <p class="text-gray-600 text-[15px] leading-relaxed">
+                Sign up once and apply to any project that interests you. Simple application process with instant notifications.
+              </p>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-3">
-              Easy Volunteering
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              Sign up once and apply to any project that interests you. Simple application process with instant notifications.
-            </p>
           </div>
 
           <!-- Feature 3 -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition group"
-          >
-            <div
-              class="w-16 h-16 gradient-bg rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition"
-            >
-              <svg
-                class="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                ></path>
-              </svg>
+          <div class="group">
+            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
+              <!-- Icon Container -->
+              <div class="mb-6">
+                <div class="relative inline-block">
+                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+                Stay Updated
+              </h3>
+              <p class="text-gray-600 text-[15px] leading-relaxed">
+                Get notified about new volunteer opportunities, upcoming events, and updates on projects you care about.
+              </p>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-3">
-              Stay Updated
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              Get notified about new volunteer opportunities, upcoming events, and updates on projects you care about.
-            </p>
           </div>
 
           <!-- Feature 4 -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition group"
-          >
-            <div
-              class="w-16 h-16 gradient-bg rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition"
-            >
-              <svg
-                class="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                ></path>
-              </svg>
+          <div class="group">
+            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
+              <!-- Icon Container -->
+              <div class="mb-6">
+                <div class="relative inline-block">
+                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+                Full Transparency
+              </h3>
+              <p class="text-gray-600 text-[15px] leading-relaxed">
+                View detailed reports on budgets, project outcomes, and how your barangay funds are being used - open for everyone to see.
+              </p>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-3">
-              Full Transparency
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              View detailed reports on budgets, project outcomes, and how your barangay funds are being used - open for everyone to see.
-            </p>
           </div>
 
           <!-- Feature 5 -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition group"
-          >
-            <div
-              class="w-16 h-16 gradient-bg rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition"
-            >
-              <svg
-                class="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                ></path>
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                ></path>
-              </svg>
+          <div class="group">
+            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
+              <!-- Icon Container -->
+              <div class="mb-6">
+                <div class="relative inline-block">
+                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                      ></path>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+                See the Impact
+              </h3>
+              <p class="text-gray-600 text-[15px] leading-relaxed">
+                View photos and testimonials from past events. See the real impact volunteers are making in our community.
+              </p>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-3">
-              See the Impact
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              View photos and testimonials from past events. See the real impact volunteers are making in our community.
-            </p>
           </div>
 
           <!-- Feature 6 -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition group"
-          >
-            <div
-              class="w-16 h-16 gradient-bg rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition"
-            >
-              <svg
-                class="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                ></path>
-              </svg>
+          <div class="group">
+            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
+              <!-- Icon Container -->
+              <div class="mb-6">
+                <div class="relative inline-block">
+                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+                Safe & Secure
+              </h3>
+              <p class="text-gray-600 text-[15px] leading-relaxed">
+                Your personal information is protected. Parental consent required for volunteers under 18 years old.
+              </p>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-3">
-              Safe & Secure
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              Your personal information is protected. Parental consent required for volunteers under 18 years old.
-            </p>
           </div>
         </div>
       </div>
@@ -466,114 +543,162 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <!-- Project 1 -->
           <div
-            class="project-card bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-2xl transition group"
+            class="project-card group cursor-pointer"
             data-status="completed"
           >
-            <div
-              class="h-48 gradient-bg flex items-center justify-center relative overflow-hidden"
-            >
-              <img src="asset/logo.svg" alt="BIMS Logo" class="w-20 h-20 object-contain opacity-80">
-              <div
-                class="absolute top-4 right-4 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full"
-              >
-                COMPLETED
+            <div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1">
+              <div class="relative h-44 gradient-bg flex items-center justify-center overflow-hidden">
+                <!-- Subtle overlay for depth -->
+                <div class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>
+
+                <svg
+                  class="relative w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z"
+                  ></path>
+                </svg>
+
+                <!-- Refined status badge -->
+                <div class="absolute top-3 right-3">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full text-[10px] font-semibold tracking-wide text-emerald-600 shadow-sm">
+                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                    COMPLETED
+                  </span>
+                </div>
               </div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-2xl font-bold text-gray-800 mb-3">
-                Community Clean-Up Drive 2025
-              </h3>
-              <p class="text-gray-600 mb-4 leading-relaxed">
-                Successfully organized a barangay-wide clean-up initiative with
-                over 150 youth volunteers.
-              </p>
-              <div class="flex items-center justify-between text-sm text-gray-500">
-                <span>Jan 15, 2025</span>
-                <span class="font-semibold text-[#2f6e4e]">156 Volunteers</span>
+
+              <div class="p-7">
+                <h3 class="text-xl font-bold text-gray-900 mb-2.5 group-hover:text-[#2f6e4e] transition-colors">
+                  Community Clean-Up Drive 2025
+                </h3>
+                <p class="text-gray-600 text-[15px] leading-relaxed mb-5">
+                  Successfully organized a barangay-wide clean-up initiative with
+                  over 150 youth volunteers.
+                </p>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <span class="text-sm text-gray-500 font-medium">Jan 15, 2025</span>
+                  <span class="text-sm font-semibold text-[#2f6e4e] flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                    </svg>
+                    156
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Project 2 -->
           <div
-            class="project-card bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-2xl transition group"
+            class="project-card group cursor-pointer"
             data-status="ongoing"
           >
-            <div
-              class="h-48 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center relative overflow-hidden"
-            >
-              <svg
-                class="w-20 h-20 text-white/80"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+            <div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1">
+              <div class="relative h-44 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center overflow-hidden">
+                <!-- Subtle overlay for depth -->
+                <div class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>
+
+                <svg
+                  class="relative w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                   stroke-width="1.5"
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                ></path>
-              </svg>
-              <div
-                class="absolute top-4 right-4 px-3 py-1 bg-yellow-500 text-white text-xs font-bold rounded-full"
-              >
-                ONGOING
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  ></path>
+                </svg>
+
+                <!-- Refined status badge -->
+                <div class="absolute top-3 right-3">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full text-[10px] font-semibold tracking-wide text-amber-600 shadow-sm">
+                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
+                    ONGOING
+                  </span>
+                </div>
               </div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-2xl font-bold text-gray-800 mb-3">
-                Free Skills Training Workshop
-              </h3>
-              <p class="text-gray-600 mb-4 leading-relaxed">
-                Digital marketing, graphic design, and programming courses for
-                youth development.
-              </p>
-              <div class="flex items-center justify-between text-sm text-gray-500">
-                <span>Feb 1 - Mar 15, 2025</span>
-                <span class="font-semibold text-[#2f6e4e]">89 Enrolled</span>
+
+              <div class="p-7">
+                <h3 class="text-xl font-bold text-gray-900 mb-2.5 group-hover:text-[#2f6e4e] transition-colors">
+                  Free Skills Training Workshop
+                </h3>
+                <p class="text-gray-600 text-[15px] leading-relaxed mb-5">
+                  Digital marketing, graphic design, and programming courses for
+                  youth development.
+                </p>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <span class="text-sm text-gray-500 font-medium">Feb 1 - Mar 15, 2025</span>
+                  <span class="text-sm font-semibold text-[#2f6e4e] flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                    </svg>
+                    89
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Project 3 -->
           <div
-            class="project-card bg-white border-2 border-gray-200 rounded-2xl overflow-hidden hover:shadow-2xl transition group"
+            class="project-card group cursor-pointer"
             data-status="completed"
           >
-            <div
-              class="h-48 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center relative overflow-hidden"
-            >
-              <svg
-                class="w-20 h-20 text-white/80"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+            <div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1">
+              <div class="relative h-44 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center overflow-hidden">
+                <!-- Subtle overlay for depth -->
+                <div class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>
+
+                <svg
+                  class="relative w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                   stroke-width="1.5"
-                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-              <div
-                class="absolute top-4 right-4 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full"
-              >
-                COMPLETED
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+
+                <!-- Refined status badge -->
+                <div class="absolute top-3 right-3">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full text-[10px] font-semibold tracking-wide text-emerald-600 shadow-sm">
+                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                    COMPLETED
+                  </span>
+                </div>
               </div>
-            </div>
-            <div class="p-6">
-              <h3 class="text-2xl font-bold text-gray-800 mb-3">
-                Youth Sports Festival 2024
-              </h3>
-              <p class="text-gray-600 mb-4 leading-relaxed">
-                Basketball, volleyball, and other sports events promoting youth
-                fitness and teamwork.
-              </p>
-              <div class="flex items-center justify-between text-sm text-gray-500">
-                <span>Dec 10, 2024</span>
-                <span class="font-semibold text-[#2f6e4e]">243 Participants</span>
+
+              <div class="p-7">
+                <h3 class="text-xl font-bold text-gray-900 mb-2.5 group-hover:text-[#2f6e4e] transition-colors">
+                  Youth Sports Festival 2024
+                </h3>
+                <p class="text-gray-600 text-[15px] leading-relaxed mb-5">
+                  Basketball, volleyball, and other sports events promoting youth
+                  fitness and teamwork.
+                </p>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <span class="text-sm text-gray-500 font-medium">Dec 10, 2024</span>
+                  <span class="text-sm font-semibold text-[#2f6e4e] flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                    </svg>
+                    243
+                  </span>
+                </div>
               </div>
             </div>
           </div>
