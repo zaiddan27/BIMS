@@ -646,19 +646,49 @@ button,
 
 @media (max-width: 767px) {
   /* FIX 1: Modal Positioning - Prevent Overlap with Mobile Nav */
+  /* Modern responsive approach: Use natural padding instead of forced positioning */
+
+  /* For modals that DON'T have responsive padding built-in (legacy modals) */
   .fixed.inset-0.z-50 .flex.items-center.justify-center.min-h-screen,
-  [id*="Modal"] .flex.items-center.justify-center.min-h-screen,
-  [id*="modal"] .flex.items-center.justify-center.min-h-screen {
-    padding-top: 72px !important; /* Mobile nav height + buffer */
+  [id*="Modal"]:not(#projectViewModal):not(#evaluationModal):not(#downloadReportModal) .flex.items-center.justify-center.min-h-screen,
+  [id*="modal"]:not(#projectViewModal):not(#evaluationModal):not(#downloadReportModal) .flex.items-center.justify-center.min-h-screen {
+    padding-top: 80px !important; /* Mobile nav height + buffer */
+    padding-bottom: 16px !important; /* Bottom spacing */
     align-items: flex-start !important; /* Align to top instead of center */
     min-height: 100vh !important;
   }
 
-  /* Modal content max height adjustment */
+  /* SK Dashboard & Youth Dashboard modals - Modern responsive pattern */
+  /* Mobile: p-2 (8px) for tight spacing on small screens */
+  #createModal,
+  #editModal,
+  #viewModal,
+  #deleteModal,
+  #budgetEditModal,
+  #announcementModal,
+  #profileModal,
+  #testimonyConfirmModal {
+    padding: 0.5rem !important; /* p-2 for mobile (matches sk-projects.html) */
+  }
+
+  /* Modal content max height - Mobile optimized (95vh for more space) */
+  #createModal > div,
+  #editModal > div,
+  #viewModal > div,
+  #deleteModal > div,
+  #budgetEditModal > div,
+  #announcementModal > div,
+  #profileModal > div,
+  #testimonyConfirmModal > div {
+    max-height: 95vh !important; /* More screen space on mobile */
+  }
+
+  /* General modal content max height adjustment */
+  .fixed.inset-0 .max-h-\[90vh\],
   .fixed.inset-0.z-50 .max-h-\[90vh\],
   [id*="Modal"] .max-h-\[90vh\],
   [id*="modal"] .max-h-\[90vh\] {
-    max-height: calc(100vh - 80px) !important;
+    max-height: 95vh !important; /* Mobile gets more space */
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important; /* iOS smooth scrolling */
   }
@@ -3932,6 +3962,31 @@ header.bg-gradient-to-r button[title*="Notification"] {
     width: auto !important;
     max-width: none !important;
     flex: 0 0 auto !important;
+  }
+
+  /* SK Dashboard & Youth Dashboard modals - Modern responsive pattern */
+  /* Tablet/Desktop: sm:p-4 (16px) for comfortable spacing */
+  #createModal,
+  #editModal,
+  #viewModal,
+  #deleteModal,
+  #budgetEditModal,
+  #announcementModal,
+  #profileModal,
+  #testimonyConfirmModal {
+    padding: 1rem !important; /* sm:p-4 for tablet/desktop (matches sk-projects.html) */
+  }
+
+  /* Modal content max height - Desktop uses standard 90vh */
+  #createModal > div,
+  #editModal > div,
+  #viewModal > div,
+  #deleteModal > div,
+  #budgetEditModal > div,
+  #announcementModal > div,
+  #profileModal > div,
+  #testimonyConfirmModal > div {
+    max-height: 90vh !important; /* Standard height on larger screens */
   }
 }
 
