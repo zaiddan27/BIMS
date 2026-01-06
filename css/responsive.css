@@ -5471,3 +5471,438 @@ header.bg-gradient-to-r button[title*="Notification"] {
     height: 1.125rem !important;
   }
 }
+
+
+/* ========================================
+   SK-DASHBOARD.HTML - MODALS RESPONSIVE
+   Small Phones (< 430px)
+======================================== */
+@media (max-width: 429px) {
+  /* All dashboard modals */
+  #createModal .max-w-2xl,
+  #editModal .max-w-2xl,
+  #viewModal .max-w-2xl,
+  #budgetEditModal .max-w-2xl {
+    max-width: 100% !important;
+    margin: 0.5rem !important;
+  }
+
+  #createModal .p-4,
+  #editModal .p-4,
+  #viewModal .p-4,
+  #budgetEditModal .p-4 {
+    padding: 0.5rem !important;
+  }
+
+  /* Modal headers */
+  #createModal .p-6.border-b,
+  #editModal .p-6.border-b,
+  #viewModal .p-6.border-b,
+  #budgetEditModal .p-6.border-b {
+    padding: 1rem !important;
+  }
+
+  #createModal h3,
+  #editModal h3,
+  #viewModal h3,
+  #budgetEditModal h3 {
+    font-size: 1.125rem !important; /* 18px */
+  }
+
+  /* Close buttons */
+  #createModal button[onclick*="close"] svg,
+  #editModal button[onclick*="close"] svg,
+  #viewModal button[onclick*="close"] svg,
+  #budgetEditModal button[onclick*="close"] svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+
+  /* Modal content */
+  #createModal .p-6.space-y-4,
+  #editModal .p-6.space-y-4,
+  #viewModal .p-6.space-y-4,
+  #budgetEditModal .p-6 {
+    padding: 1rem !important;
+  }
+
+  /* Form labels */
+  #createModal label,
+  #editModal label,
+  #budgetEditModal label {
+    font-size: 0.8125rem !important;
+    margin-bottom: 0.375rem !important;
+  }
+
+  /* Form inputs */
+  #createModal input,
+  #createModal textarea,
+  #createModal select,
+  #editModal input,
+  #editModal textarea,
+  #editModal select,
+  #budgetEditModal input,
+  #budgetEditModal select {
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Budget categories container */
+  #budgetCategoriesContainer .grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Footer buttons */
+  #createModal .p-6.border-t,
+  #editModal .p-6.border-t,
+  #viewModal .p-6.border-t,
+  #budgetEditModal .p-6.border-t {
+    padding: 1rem !important;
+    flex-direction: column-reverse !important;
+    gap: 0.5rem !important;
+  }
+
+  #createModal .p-6.border-t button,
+  #editModal .p-6.border-t button,
+  #viewModal .p-6.border-t button,
+  #budgetEditModal .p-6.border-t button {
+    width: 100% !important;
+    padding: 0.625rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Budget Edit specific */
+  #budgetEditModal .bg-blue-50 {
+    padding: 0.75rem !important;
+  }
+
+  #budgetEditModal .bg-blue-50 p {
+    font-size: 0.75rem !important;
+  }
+
+  #budgetEditModal #editTotalBudget {
+    font-size: 1.25rem !important;
+  }
+}
+
+
+/* ========================================
+   SK-DASHBOARD.HTML - MODALS RESPONSIVE
+   Large Phones (430px - 767px)
+======================================== */
+@media (min-width: 430px) and (max-width: 767px) {
+  /* All dashboard modals */
+  #createModal .max-w-2xl,
+  #editModal .max-w-2xl,
+  #viewModal .max-w-2xl,
+  #budgetEditModal .max-w-2xl {
+    max-width: calc(100% - 2rem) !important;
+    margin: 1rem !important;
+  }
+
+  #createModal .p-4,
+  #editModal .p-4,
+  #viewModal .p-4,
+  #budgetEditModal .p-4 {
+    padding: 1rem !important;
+  }
+
+  /* Modal headers */
+  #createModal .p-6.border-b,
+  #editModal .p-6.border-b,
+  #viewModal .p-6.border-b,
+  #budgetEditModal .p-6.border-b {
+    padding: 1.25rem !important;
+  }
+
+  #createModal h3,
+  #editModal h3,
+  #viewModal h3,
+  #budgetEditModal h3 {
+    font-size: 1.25rem !important; /* 20px */
+  }
+
+  /* Modal content */
+  #createModal .p-6.space-y-4,
+  #editModal .p-6.space-y-4,
+  #viewModal .p-6.space-y-4,
+  #budgetEditModal .p-6 {
+    padding: 1.25rem !important;
+  }
+
+  /* Form labels */
+  #createModal label,
+  #editModal label,
+  #budgetEditModal label {
+    font-size: 0.875rem !important;
+  }
+
+  /* Form inputs */
+  #createModal input,
+  #createModal textarea,
+  #createModal select,
+  #editModal input,
+  #editModal textarea,
+  #editModal select,
+  #budgetEditModal input,
+  #budgetEditModal select {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9375rem !important;
+  }
+
+  /* Budget categories container */
+  #budgetCategoriesContainer .grid {
+    grid-template-columns: 2fr 1fr auto !important;
+  }
+
+  /* Footer buttons */
+  #createModal .p-6.border-t,
+  #editModal .p-6.border-t,
+  #viewModal .p-6.border-t,
+  #budgetEditModal .p-6.border-t {
+    padding: 1rem 1.25rem !important;
+  }
+
+  #createModal .p-6.border-t button,
+  #editModal .p-6.border-t button,
+  #viewModal .p-6.border-t button,
+  #budgetEditModal .p-6.border-t button {
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.9375rem !important;
+  }
+}
+
+
+/* ========================================
+   YOUTH-DASHBOARD.HTML - PROFILE MODAL RESPONSIVE
+   Small Phones (< 430px)
+======================================== */
+@media (max-width: 429px) {
+  /* Youth dashboard profile modal - scoped to youth-dashboard only */
+  body:has(#profileModal) #profileModal .max-w-2xl {
+    max-width: 100% !important;
+    margin: 0.5rem !important;
+  }
+
+  body:has(#profileModal) #profileModal .min-h-screen {
+    padding: 0.5rem !important;
+  }
+
+  /* Green header */
+  body:has(#profileModal) #profileModal .bg-gradient-to-r.from-\[#3d8b64\] {
+    padding: 1rem !important;
+    position: relative !important;
+  }
+
+  /* Header content - adjust layout */
+  body:has(#profileModal) #profileModal .bg-gradient-to-r .flex.items-center.justify-between {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+
+  body:has(#profileModal) #profileModal .bg-gradient-to-r .flex.items-center.gap-4 {
+    width: 100% !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Profile picture */
+  body:has(#profileModal) #profileModal #profilePicturePreview {
+    width: 3.5rem !important; /* 56px */
+    height: 3.5rem !important;
+    font-size: 1.125rem !important;
+  }
+
+  body:has(#profileModal) #profileModal #profilePicturePreview + label {
+    padding: 0.375rem !important;
+  }
+
+  body:has(#profileModal) #profileModal #profilePicturePreview + label svg {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+  }
+
+  /* Title */
+  body:has(#profileModal) #profileModal h2 {
+    font-size: 1.125rem !important; /* 18px */
+  }
+
+  body:has(#profileModal) #profileModal .text-sm {
+    font-size: 0.6875rem !important; /* 11px */
+  }
+
+  /* Close button - absolute position in top right */
+  body:has(#profileModal) #profileModal .bg-gradient-to-r button[onclick*="closeProfileModal"] {
+    position: absolute !important;
+    top: 0.75rem !important;
+    right: 0.75rem !important;
+    padding: 0.375rem !important;
+  }
+
+  body:has(#profileModal) #profileModal .bg-gradient-to-r button[onclick*="closeProfileModal"] svg {
+    width: 1.125rem !important;
+    height: 1.125rem !important;
+  }
+
+  /* Form content */
+  body:has(#profileModal) #profileModal .p-6.max-h-\[calc\(100vh-300px\)\] {
+    padding: 1rem !important;
+    max-height: calc(100vh - 200px) !important;
+  }
+
+  body:has(#profileModal) #profileModal form .space-y-6 {
+    gap: 1rem !important;
+  }
+
+  /* Section headers */
+  body:has(#profileModal) #profileModal h3 {
+    font-size: 0.9375rem !important; /* 15px */
+  }
+
+  body:has(#profileModal) #profileModal h3 svg {
+    width: 1.125rem !important;
+    height: 1.125rem !important;
+  }
+
+  /* Form grids - single column */
+  body:has(#profileModal) #profileModal .grid.grid-cols-1.md\:grid-cols-3,
+  body:has(#profileModal) #profileModal .grid.grid-cols-1.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Form inputs */
+  body:has(#profileModal) #profileModal input,
+  body:has(#profileModal) #profileModal textarea,
+  body:has(#profileModal) #profileModal select {
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  body:has(#profileModal) #profileModal label {
+    font-size: 0.8125rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* Footer */
+  body:has(#profileModal) #profileModal .bg-gray-50.px-6.py-4 {
+    padding: 1rem !important;
+    flex-direction: column-reverse !important;
+    gap: 0.5rem !important;
+  }
+
+  body:has(#profileModal) #profileModal .bg-gray-50 button {
+    width: 100% !important;
+    padding: 0.625rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  body:has(#profileModal) #profileModal .bg-gray-50 button svg {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+}
+
+
+/* ========================================
+   YOUTH-DASHBOARD.HTML - PROFILE MODAL RESPONSIVE
+   Large Phones (430px - 767px)
+======================================== */
+@media (min-width: 430px) and (max-width: 767px) {
+  /* Youth dashboard profile modal */
+  body:has(#profileModal) #profileModal .max-w-2xl {
+    max-width: calc(100% - 2rem) !important;
+    margin: 1rem !important;
+  }
+
+  body:has(#profileModal) #profileModal .min-h-screen {
+    padding: 1rem !important;
+  }
+
+  /* Green header */
+  body:has(#profileModal) #profileModal .bg-gradient-to-r.from-\[#3d8b64\] {
+    padding: 1.25rem !important;
+  }
+
+  /* Profile picture */
+  body:has(#profileModal) #profileModal #profilePicturePreview {
+    width: 4rem !important; /* 64px */
+    height: 4rem !important;
+    font-size: 1.25rem !important;
+  }
+
+  body:has(#profileModal) #profileModal #profilePicturePreview + label svg {
+    width: 0.875rem !important;
+    height: 0.875rem !important;
+  }
+
+  /* Title */
+  body:has(#profileModal) #profileModal h2 {
+    font-size: 1.375rem !important; /* 22px */
+  }
+
+  body:has(#profileModal) #profileModal .text-sm {
+    font-size: 0.75rem !important; /* 12px */
+  }
+
+  /* Close button */
+  body:has(#profileModal) #profileModal .bg-gradient-to-r button[onclick*="closeProfileModal"] svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+
+  /* Form content */
+  body:has(#profileModal) #profileModal .p-6.max-h-\[calc\(100vh-300px\)\] {
+    padding: 1.25rem !important;
+    max-height: calc(100vh - 250px) !important;
+  }
+
+  /* Section headers */
+  body:has(#profileModal) #profileModal h3 {
+    font-size: 1rem !important;
+  }
+
+  body:has(#profileModal) #profileModal h3 svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+
+  /* Form grids - 2 columns for most, single for personal info */
+  body:has(#profileModal) #profileModal .grid.grid-cols-1.md\:grid-cols-2 {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1rem !important;
+  }
+
+  body:has(#profileModal) #profileModal .grid.grid-cols-1.md\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* Form inputs */
+  body:has(#profileModal) #profileModal input,
+  body:has(#profileModal) #profileModal textarea,
+  body:has(#profileModal) #profileModal select {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9375rem !important;
+  }
+
+  body:has(#profileModal) #profileModal label {
+    font-size: 0.875rem !important;
+  }
+
+  /* Footer */
+  body:has(#profileModal) #profileModal .bg-gray-50.px-6.py-4 {
+    padding: 1rem 1.25rem !important;
+  }
+
+  body:has(#profileModal) #profileModal .bg-gray-50 button {
+    padding: 0.75rem 1.25rem !important;
+    font-size: 0.9375rem !important;
+  }
+
+  body:has(#profileModal) #profileModal .bg-gray-50 button svg {
+    width: 1.125rem !important;
+    height: 1.125rem !important;
+  }
+}
