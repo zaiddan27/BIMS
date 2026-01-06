@@ -594,7 +594,7 @@
 
     <!-- Testimonials Section -->
     <section id="testimonials" class="py-20 bg-gray-50">
-      <div class="max-w-7xl mx-auto px-6">
+      <div class="max-w-7xl mx-auto px-6 pb-8">
         <!-- Section Header -->
         <div class="text-center mb-16">
           <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4">
@@ -608,8 +608,8 @@
         <!-- Testimonials Carousel Container -->
         <div class="relative">
           <!-- Carousel Wrapper -->
-          <div class="overflow-hidden">
-            <div id="testimonialsCarousel" class="flex transition-transform duration-500 ease-out">
+          <div class="overflow-hidden px-1 pb-4">
+            <div id="testimonialsCarousel" class="flex transition-transform duration-500 ease-out py-2">
               <!-- Testimonial slides will be inserted here by JavaScript -->
             </div>
           </div>
@@ -635,7 +635,7 @@
           </button>
 
           <!-- Navigation Dots -->
-          <div class="flex justify-center mt-8 space-x-2" id="testimonialDots">
+          <div class="flex justify-center mt-12 space-x-2" id="testimonialDots">
             <!-- Dots will be inserted here by JavaScript -->
           </div>
         </div>
@@ -1058,56 +1058,88 @@
       });
 
       // Testimonials Carousel System
-      const featuredTestimonies = [
-        {
-          id: 1,
-          name: "Juan Dela Cruz",
-          initials: "JD",
-          role: "Youth Volunteer",
-          rating: 5,
-          testimony: "This was an amazing experience! I learned so much about environmental conservation and met wonderful people. The SK team was very organized and supportive throughout the project."
-        },
-        {
-          id: 2,
-          name: "Maria Santos",
-          initials: "MS",
-          role: "Community Member",
-          rating: 5,
-          testimony: "Finally, transparency in our barangay! I can see exactly where the budget goes and track project progress. This is what we need more of."
-        },
-        {
-          id: 3,
-          name: "Pedro Reyes",
-          initials: "PR",
-          role: "SK Official",
-          rating: 5,
-          testimony: "BIMS streamlined our project management workflow significantly. From volunteer applications to event documentation, everything is organized in one place."
-        },
-        {
-          id: 4,
-          name: "Lisa Garcia",
-          initials: "LG",
-          role: "Youth Volunteer",
-          rating: 5,
-          testimony: "This project made me realize how important community service is. I'll definitely participate in more SK activities!"
-        },
-        {
-          id: 5,
-          name: "Carlo Mendoza",
-          initials: "CM",
-          role: "Youth Volunteer",
-          rating: 4,
-          testimony: "Great initiative! We collected tons of trash and raised awareness about ocean pollution. The experience opened my eyes to environmental issues."
-        },
-        {
-          id: 6,
-          name: "Sarah Lopez",
-          initials: "SL",
-          role: "Youth Volunteer",
-          rating: 5,
-          testimony: "The workshop exceeded my expectations. I now have practical skills I can use for freelancing. Thank you SK Malanday!"
+      // Load featured testimonies from localStorage (from SK Testimonies page)
+      function loadFeaturedTestimonies() {
+        const stored = localStorage.getItem('testimoniesData');
+        if (stored) {
+          try {
+            const allTestimonies = JSON.parse(stored);
+            // Filter only featured testimonies and map to homepage format
+            const featured = allTestimonies
+              .filter(t => t.featured)
+              .map(t => ({
+                id: t.id,
+                name: t.volunteerName,
+                initials: t.volunteerInitials,
+                role: "Youth Volunteer",
+                rating: t.rating,
+                testimony: t.testimony
+              }));
+
+            return featured.length > 0 ? featured : getDefaultTestimonies();
+          } catch (e) {
+            console.error('Error loading featured testimonies:', e);
+            return getDefaultTestimonies();
+          }
         }
-      ];
+        return getDefaultTestimonies();
+      }
+
+      // Default testimonies (fallback)
+      function getDefaultTestimonies() {
+        return [
+          {
+            id: 1,
+            name: "Juan Dela Cruz",
+            initials: "JD",
+            role: "Youth Volunteer",
+            rating: 5,
+            testimony: "This was an amazing experience! I learned so much about environmental conservation and met wonderful people. The SK team was very organized and supportive throughout the project."
+          },
+          {
+            id: 2,
+            name: "Maria Santos",
+            initials: "MS",
+            role: "Community Member",
+            rating: 5,
+            testimony: "Finally, transparency in our barangay! I can see exactly where the budget goes and track project progress. This is what we need more of."
+          },
+          {
+            id: 3,
+            name: "Pedro Reyes",
+            initials: "PR",
+            role: "SK Official",
+            rating: 5,
+            testimony: "BIMS streamlined our project management workflow significantly. From volunteer applications to event documentation, everything is organized in one place."
+          },
+          {
+            id: 4,
+            name: "Lisa Garcia",
+            initials: "LG",
+            role: "Youth Volunteer",
+            rating: 5,
+            testimony: "This project made me realize how important community service is. I'll definitely participate in more SK activities!"
+          },
+          {
+            id: 5,
+            name: "Carlo Mendoza",
+            initials: "CM",
+            role: "Youth Volunteer",
+            rating: 4,
+            testimony: "Great initiative! We collected tons of trash and raised awareness about ocean pollution. The experience opened my eyes to environmental issues."
+          },
+          {
+            id: 6,
+            name: "Sarah Lopez",
+            initials: "SL",
+            role: "Youth Volunteer",
+            rating: 5,
+            testimony: "The workshop exceeded my expectations. I now have practical skills I can use for freelancing. Thank you SK Malanday!"
+          }
+        ];
+      }
+
+      const featuredTestimonies = loadFeaturedTestimonies();
 
       let currentSlide = 0;
       let autoSlideInterval;
@@ -1129,7 +1161,7 @@
       // Create testimony card HTML
       function createTestimonyCard(testimony) {
         return `
-          <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition h-full">
+          <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition h-full flex flex-col">
             <div class="flex items-center mb-6">
               <div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
                 ${testimony.initials}
@@ -1142,7 +1174,7 @@
             <div class="flex mb-4">
               ${generateStars(testimony.rating)}
             </div>
-            <p class="text-gray-600 leading-relaxed italic">
+            <p class="text-gray-600 leading-relaxed italic flex-1">
               "${testimony.testimony}"
             </p>
           </div>
@@ -1165,7 +1197,7 @@
           );
 
           const slideHTML = `
-            <div class="min-w-full grid grid-cols-1 md:grid-cols-${TESTIMONIES_PER_SLIDE === 2 ? '2' : (TESTIMONIES_PER_SLIDE === 3 ? '3' : '1')} gap-8 px-2">
+            <div class="min-w-full grid grid-cols-1 md:grid-cols-${TESTIMONIES_PER_SLIDE === 2 ? '2' : (TESTIMONIES_PER_SLIDE === 3 ? '3' : '1')} gap-8 px-2 items-stretch">
               ${slideTestimonies.map(t => createTestimonyCard(t)).join('')}
             </div>
           `;
