@@ -862,121 +862,17 @@
         <!-- Downloadable Reports -->
         <div class="bg-gray-50 p-8 rounded-2xl">
           <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-            Download Detailed Reports
+            Download Public Files
           </h3>
-          <div
-            class="grid grid-cols-1 md:grid-cols-3 gap-6"
-          >
-            <button
-              class="flex items-center justify-between p-6 bg-white rounded-xl shadow hover:shadow-lg transition group"
-            >
-              <div class="flex items-center space-x-4">
-                <svg
-                  class="w-10 h-10 text-[#2f6e4e]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-                <div class="text-left">
-                  <div class="font-bold text-gray-800">Financial Report</div>
-                  <div class="text-sm text-gray-500">Q1 2025</div>
-                </div>
-              </div>
-              <svg
-                class="w-6 h-6 text-gray-400 group-hover:text-[#2f6e4e] transition"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                ></path>
-              </svg>
-            </button>
-
-            <button
-              class="flex items-center justify-between p-6 bg-white rounded-xl shadow hover:shadow-lg transition group"
-            >
-              <div class="flex items-center space-x-4">
-                <svg
-                  class="w-10 h-10 text-[#2f6e4e]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-                <div class="text-left">
-                  <div class="font-bold text-gray-800">Project Summary</div>
-                  <div class="text-sm text-gray-500">2024 Annual</div>
-                </div>
-              </div>
-              <svg
-                class="w-6 h-6 text-gray-400 group-hover:text-[#2f6e4e] transition"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                ></path>
-              </svg>
-            </button>
-
-            <button
-              class="flex items-center justify-between p-6 bg-white rounded-xl shadow hover:shadow-lg transition group"
-            >
-              <div class="flex items-center space-x-4">
-                <svg
-                  class="w-10 h-10 text-[#2f6e4e]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-                <div class="text-left">
-                  <div class="font-bold text-gray-800">Volunteer Report</div>
-                  <div class="text-sm text-gray-500">Latest</div>
-                </div>
-              </div>
-              <svg
-                class="w-6 h-6 text-gray-400 group-hover:text-[#2f6e4e] transition"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                ></path>
-              </svg>
-            </button>
+          <div id="publishedFilesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Published files will be dynamically loaded here -->
+          </div>
+          <div id="noPublishedFiles" class="hidden text-center py-8">
+            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="text-gray-500 font-medium">No published files yet</p>
+            <p class="text-sm text-gray-400 mt-1">Files published by SK officials will appear here</p>
           </div>
         </div>
       </div>
@@ -1447,6 +1343,97 @@
           }, 300);
         }, 4000);
       }
+
+      // Load and display published files
+      function loadPublishedFiles() {
+        const grid = document.getElementById('publishedFilesGrid');
+        const noFilesDiv = document.getElementById('noPublishedFiles');
+
+        // Get files from localStorage
+        const fileStoreJSON = localStorage.getItem('fileStore');
+        if (!fileStoreJSON) {
+          grid.classList.add('hidden');
+          noFilesDiv.classList.remove('hidden');
+          return;
+        }
+
+        let files = [];
+        try {
+          files = JSON.parse(fileStoreJSON);
+        } catch (e) {
+          console.error('Error parsing fileStore:', e);
+          grid.classList.add('hidden');
+          noFilesDiv.classList.remove('hidden');
+          return;
+        }
+
+        // Filter only published files
+        const publishedFiles = files.filter(f => f.published);
+
+        if (publishedFiles.length === 0) {
+          grid.classList.add('hidden');
+          noFilesDiv.classList.remove('hidden');
+          return;
+        }
+
+        grid.classList.remove('hidden');
+        noFilesDiv.classList.add('hidden');
+
+        // Get file type icon color
+        function getFileIconColor(type) {
+          const colors = {
+            pdf: "bg-red-100 text-red-600",
+            xlsx: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
+            png: "bg-blue-100 text-blue-600",
+            jpg: "bg-blue-100 text-blue-600",
+            default: "bg-gray-100 text-gray-700",
+          };
+          return colors[type] || colors.default;
+        }
+
+        // Render files
+        grid.innerHTML = publishedFiles.map(file => `
+          <button
+            onclick="downloadFile('${file.name}')"
+            class="flex items-center justify-between p-6 bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer"
+          >
+            <div class="flex items-center space-x-4">
+              <div class="w-10 h-10 ${getFileIconColor(file.type)} rounded-lg flex items-center justify-center font-bold text-xs">
+                ${file.type ? file.type.toUpperCase() : 'FILE'}
+              </div>
+              <div class="text-left">
+                <div class="font-bold text-gray-800 line-clamp-1">${file.name}</div>
+                <div class="text-sm text-gray-500">${file.uploaded}</div>
+              </div>
+            </div>
+            <svg
+              class="w-6 h-6 text-gray-400 group-hover:text-[#2f6e4e] transition flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              ></path>
+            </svg>
+          </button>
+        `).join('');
+      }
+
+      // Download file function (placeholder)
+      function downloadFile(fileName) {
+        showToast(`Downloading ${fileName}...`, 'info');
+        // In a real app, this would trigger an actual download
+        // For now, it just shows a toast notification
+      }
+
+      // Load published files when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        loadPublishedFiles();
+      });
     </script>
   </body>
 </html>
