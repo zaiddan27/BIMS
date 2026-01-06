@@ -704,6 +704,20 @@ button,
     max-width: 100% !important;
   }
 
+  /* Modal Button Alignment Fix - Ensure buttons align vertically */
+  #createModal .flex.justify-end.space-x-3,
+  #editModal .flex.justify-end.space-x-3 {
+    align-items: center !important; /* Ensure vertical alignment */
+  }
+
+  #createModal button,
+  #editModal button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 48px !important; /* Ensure consistent height */
+  }
+
   /* General modal content max height adjustment */
   .fixed.inset-0 .max-h-\[90vh\],
   .fixed.inset-0.z-50 .max-h-\[90vh\],
