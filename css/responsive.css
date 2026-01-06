@@ -697,11 +697,19 @@ button,
 
   /* Notification Dropdown Modal - Mobile Responsive */
   #notificationModal {
-    width: calc(100vw - 2rem) !important; /* Full width minus margins */
-    right: 1rem !important; /* Center with margin */
-    left: 1rem !important;
-    top: 70px !important; /* Below mobile nav */
+    width: calc(100vw - 1.5rem) !important; /* Full width minus margins */
+    right: 0.75rem !important; /* Smaller margin */
+    left: 0.75rem !important;
+    top: 60px !important; /* Closer to mobile nav */
     max-width: 100% !important;
+    max-height: calc(100vh - 70px) !important; /* Prevent overflow */
+  }
+
+  /* Notification modal content - ensure it scrolls properly on mobile */
+  #notificationModal #notificationList {
+    max-height: calc(100vh - 200px) !important; /* Account for header and modal header */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 
   /* Modal Button Alignment Fix - Ensure buttons align vertically */
@@ -4051,22 +4059,49 @@ header.bg-gradient-to-r button[title*="Notification"] {
     right: 1.5rem !important;
     left: auto !important;
     top: 5rem !important;
+    max-height: calc(100vh - 6rem) !important; /* Prevent overflow */
+  }
+
+  /* Notification modal content - desktop */
+  #notificationModal #notificationList {
+    max-height: 400px !important;
+    overflow-y: auto !important;
   }
 }
 
 /* ========================================
    TABLET STYLES - Notification Modal Fix
-   Handles tablets 768px - 1024px
+   Handles tablets 768px - 1024px (Portrait & Landscape)
 ======================================== */
 
 @media (min-width: 768px) and (max-width: 1024px) {
   /* Notification Dropdown Modal - Tablet responsive */
   #notificationModal {
-    width: 320px !important; /* Narrower for tablets */
+    width: 340px !important; /* Moderate width for tablets */
     right: 1rem !important;
     left: auto !important;
-    top: 4.5rem !important; /* Below tablet nav */
+    top: 4rem !important; /* Below tablet nav */
     max-width: calc(100vw - 2rem) !important; /* Prevent overflow */
+    max-height: calc(100vh - 5rem) !important; /* Account for nav */
+  }
+
+  /* Notification modal content - tablet */
+  #notificationModal #notificationList {
+    max-height: calc(100vh - 250px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* Tablet Landscape specific adjustments */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  #notificationModal {
+    top: 3.5rem !important; /* Closer to nav in landscape */
+    max-height: calc(100vh - 4rem) !important;
+  }
+
+  #notificationModal #notificationList {
+    max-height: calc(100vh - 200px) !important;
   }
 }
 

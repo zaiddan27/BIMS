@@ -710,10 +710,19 @@
       id="notificationModal"
       class="hidden fixed top-20 right-6 w-96 bg-white rounded-xl shadow-2xl z-50 border border-gray-200"
     >
-      <div
-        class="p-4 border-b border-gray-200 flex items-center justify-between"
-      >
-        <h3 class="font-bold text-gray-800">Notifications</h3>
+      <div class="p-4 border-b border-gray-200">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-bold text-gray-800">Notifications</h3>
+          <button
+            onclick="toggleNotificationModal()"
+            class="text-gray-400 hover:text-gray-600 transition p-1 rounded-lg hover:bg-gray-100"
+            title="Close notifications"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
         <button
           onclick="markAllAsRead()"
           class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
