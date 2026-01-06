@@ -695,6 +695,15 @@ button,
     -webkit-overflow-scrolling: touch !important; /* iOS smooth scrolling */
   }
 
+  /* Notification Dropdown Modal - Mobile Responsive */
+  #notificationModal {
+    width: calc(100vw - 2rem) !important; /* Full width minus margins */
+    right: 1rem !important; /* Center with margin */
+    left: 1rem !important;
+    top: 70px !important; /* Below mobile nav */
+    max-width: 100% !important;
+  }
+
   /* General modal content max height adjustment */
   .fixed.inset-0 .max-h-\[90vh\],
   .fixed.inset-0.z-50 .max-h-\[90vh\],
@@ -4005,6 +4014,30 @@ header.bg-gradient-to-r button[title*="Notification"] {
   #notificationModal > div,
   #decisionModal > div {
     max-height: 90vh !important; /* Standard height on larger screens */
+  }
+
+  /* Notification Dropdown Modal - Desktop positioning */
+  #notificationModal {
+    width: 384px !important; /* w-96 */
+    right: 1.5rem !important;
+    left: auto !important;
+    top: 5rem !important;
+  }
+}
+
+/* ========================================
+   TABLET STYLES - Notification Modal Fix
+   Handles tablets 768px - 1024px
+======================================== */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Notification Dropdown Modal - Tablet responsive */
+  #notificationModal {
+    width: 320px !important; /* Narrower for tablets */
+    right: 1rem !important;
+    left: auto !important;
+    top: 4.5rem !important; /* Below tablet nav */
+    max-width: calc(100vw - 2rem) !important; /* Prevent overflow */
   }
 }
 
