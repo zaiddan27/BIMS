@@ -659,7 +659,7 @@ button,
   }
 
   /* SK Dashboard & Youth Dashboard modals - Modern responsive pattern */
-  /* Mobile: p-2 (8px) for tight spacing on small screens */
+  /* Mobile: Align to top with proper header spacing + padding for content */
   #createModal,
   #editModal,
   #viewModal,
@@ -667,11 +667,18 @@ button,
   #budgetEditModal,
   #announcementModal,
   #profileModal,
-  #testimonyConfirmModal {
-    padding: 0.5rem !important; /* p-2 for mobile (matches sk-projects.html) */
+  #testimonyConfirmModal,
+  #confirmModal,
+  #notificationModal,
+  #decisionModal {
+    padding-top: 80px !important; /* Header height + buffer */
+    padding-left: 0.5rem !important; /* p-2 for mobile (matches sk-projects.html) */
+    padding-right: 0.5rem !important;
+    padding-bottom: 1rem !important; /* Bottom spacing */
+    align-items: flex-start !important; /* Align to top instead of center */
   }
 
-  /* Modal content max height - Mobile optimized (95vh for more space) */
+  /* Modal content max height - Mobile optimized (account for header) */
   #createModal > div,
   #editModal > div,
   #viewModal > div,
@@ -679,8 +686,13 @@ button,
   #budgetEditModal > div,
   #announcementModal > div,
   #profileModal > div,
-  #testimonyConfirmModal > div {
-    max-height: 95vh !important; /* More screen space on mobile */
+  #testimonyConfirmModal > div,
+  #confirmModal > div,
+  #notificationModal > div,
+  #decisionModal > div {
+    max-height: calc(100vh - 96px) !important; /* Full viewport minus header + padding */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important; /* iOS smooth scrolling */
   }
 
   /* General modal content max height adjustment */
@@ -3973,7 +3985,10 @@ header.bg-gradient-to-r button[title*="Notification"] {
   #budgetEditModal,
   #announcementModal,
   #profileModal,
-  #testimonyConfirmModal {
+  #testimonyConfirmModal,
+  #confirmModal,
+  #notificationModal,
+  #decisionModal {
     padding: 1rem !important; /* sm:p-4 for tablet/desktop (matches sk-projects.html) */
   }
 
@@ -3985,7 +4000,10 @@ header.bg-gradient-to-r button[title*="Notification"] {
   #budgetEditModal > div,
   #announcementModal > div,
   #profileModal > div,
-  #testimonyConfirmModal > div {
+  #testimonyConfirmModal > div,
+  #confirmModal > div,
+  #notificationModal > div,
+  #decisionModal > div {
     max-height: 90vh !important; /* Standard height on larger screens */
   }
 }
