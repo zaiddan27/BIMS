@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up - BIMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -154,37 +158,73 @@
 
           <!-- Sign Up Form -->
           <form id="signupForm" class="space-y-5">
-            <!-- First Name & Last Name -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="firstName"
-                  class="block text-sm font-semibold text-gray-800 mb-2"
-                >
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  placeholder="Enter first name"
-                  required
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-transparent outline-none transition text-gray-800 placeholder-gray-400"
-                />
-              </div>
-              <div>
-                <label
-                  for="lastName"
-                  class="block text-sm font-semibold text-gray-800 mb-2"
-                >
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  placeholder="Enter last name"
-                  required
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-transparent outline-none transition text-gray-800 placeholder-gray-400"
-                />
+            <!-- Last Name, First Name & Middle Name -->
+            <div class="grid grid-cols-1 gap-4">
+              <!-- Desktop: Last & First wider, Middle narrower -->
+              <style>
+                @media (min-width: 768px) {
+                  #nameFieldsGrid {
+                    display: grid;
+                    grid-template-columns: 2fr 2fr 1.2fr;
+                    gap: 1rem;
+                    align-items: start;
+                  }
+                  #nameFieldsGrid > div {
+                    display: flex;
+                    flex-direction: column;
+                  }
+                  #nameFieldsGrid label {
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                  }
+                }
+              </style>
+              <div id="nameFieldsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label
+                    for="lastName"
+                    class="block text-sm font-semibold text-gray-800 mb-2"
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    placeholder="Enter last name"
+                    required
+                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-transparent outline-none transition text-gray-800 placeholder-gray-400"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="firstName"
+                    class="block text-sm font-semibold text-gray-800 mb-2"
+                  >
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    placeholder="Enter first name"
+                    required
+                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-transparent outline-none transition text-gray-800 placeholder-gray-400"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="middleName"
+                    class="block text-sm font-semibold text-gray-800 mb-2"
+                  >
+                    M.I. <span class="text-gray-400 font-normal text-xs">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="middleName"
+                    placeholder="M.I."
+                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-transparent outline-none transition text-gray-800 placeholder-gray-400"
+                  />
+                </div>
               </div>
             </div>
 
@@ -383,6 +423,20 @@
         return name.trim().length >= 2;
       }
 
+      // Format name to Title Case (standard practice for database storage)
+      // Converts "john doe" to "John Doe", "MARY" to "Mary"
+      function formatName(name) {
+        if (!name) return '';
+        return name
+          .trim()
+          .split(' ')
+          .map(word => {
+            if (word.length === 0) return '';
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+          })
+          .join(' ');
+      }
+
       function setInputState(inputElement, isValid) {
         inputElement.classList.remove('input-error', 'input-success');
         if (isValid === true) {
@@ -396,6 +450,7 @@
       const signupForm = document.getElementById("signupForm");
       const firstNameInput = document.getElementById("firstName");
       const lastNameInput = document.getElementById("lastName");
+      const middleNameInput = document.getElementById("middleName");
       const emailInput = document.getElementById("email");
       const passwordInput = document.getElementById("password");
       const confirmPasswordInput = document.getElementById("confirmPassword");
@@ -463,7 +518,7 @@
       });
 
       // Clear error states on input
-      [firstNameInput, lastNameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+      [firstNameInput, lastNameInput, middleNameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
         input.addEventListener('input', function() {
           if (this.classList.contains('input-error')) {
             this.classList.remove('input-error');
@@ -472,11 +527,12 @@
       });
 
       // Form submission
-      signupForm.addEventListener("submit", function (e) {
+      signupForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
         const firstName = firstNameInput.value.trim();
         const lastName = lastNameInput.value.trim();
+        const middleName = middleNameInput.value.trim();
         const email = emailInput.value.trim();
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
@@ -508,6 +564,12 @@
           isValid = false;
         } else {
           setInputState(lastNameInput, true);
+        }
+
+        // Validate middle name (optional - no minimum length restriction)
+        // Middle names can be single letters (e.g., "J", "M.") or full names
+        if (middleName) {
+          setInputState(middleNameInput, true);
         }
 
         // Validate email
@@ -560,25 +622,81 @@
         }
 
         // Show loading state
+        const originalButtonText = submitButton.innerHTML;
         submitButton.disabled = true;
         submitButton.innerHTML = '<div class="spinner mx-auto"></div>';
 
-        // Simulate registration delay
-        setTimeout(() => {
-          // TODO: Implement actual registration
-          console.log("Sign up attempt:", { firstName, lastName, email, password });
+        try {
+          // Format names to Title Case before storing
+          const formattedFirstName = formatName(firstName);
+          const formattedLastName = formatName(lastName);
+          const formattedMiddleName = middleName ? formatName(middleName) : null;
 
-          showToast('Account created successfully! Redirecting to login...', 'success');
+          // Sign up with Supabase
+          const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+              data: {
+                first_name: formattedFirstName,
+                last_name: formattedLastName,
+                middle_name: formattedMiddleName,
+                role: 'YOUTH_VOLUNTEER',
+                terms_conditions: termsAccepted
+              },
+              emailRedirectTo: `${window.location.origin}/verify-otp.html`
+            }
+          });
+
+          if (error) {
+            throw error;
+          }
+
+          // Store email for OTP verification
+          sessionStorage.setItem('verification_email', email);
+
+          showToast('Please check your email for the verification code!', 'success');
 
           setTimeout(() => {
-            window.location.href = "login.html";
+            window.location.href = "verify-otp.html";
           }, 1500);
-        }, 1500);
+
+        } catch (error) {
+          console.error('Signup error:', error);
+          showToast(error.message || 'Registration failed. Please try again.', 'error');
+          submitButton.disabled = false;
+          submitButton.innerHTML = originalButtonText;
+        }
       });
 
       // Google Sign Up
-      function signUpWithGoogle() {
-        showToast('Google Sign Up will be implemented with backend authentication', 'info');
+      async function signUpWithGoogle() {
+        try {
+          // Show loading state
+          showToast('Redirecting to Google...', 'info');
+
+          // Sign in with Google OAuth
+          const { data, error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: `${window.location.origin}/index.html`,
+              queryParams: {
+                access_type: 'offline',
+                prompt: 'consent',
+              }
+            }
+          });
+
+          if (error) throw error;
+
+          // User will be redirected to Google OAuth consent screen
+          // After approval, they'll be redirected back to index.html
+          console.log('✅ Redirecting to Google OAuth...');
+
+        } catch (error) {
+          console.error('❌ Google OAuth error:', error);
+          showToast('Google sign up failed. Please try again.', 'error');
+        }
       }
     </script>
   </body>

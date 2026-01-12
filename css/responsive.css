@@ -695,22 +695,22 @@ button,
     -webkit-overflow-scrolling: touch !important; /* iOS smooth scrolling */
   }
 
-  /* Notification Dropdown Modal - Mobile Responsive */
-  #notificationModal {
-    width: calc(100vw - 1.5rem) !important; /* Full width minus margins */
-    right: 0.75rem !important; /* Smaller margin */
-    left: 0.75rem !important;
-    top: 60px !important; /* Closer to mobile nav */
-    max-width: 100% !important;
-    max-height: calc(100vh - 70px) !important; /* Prevent overflow */
-  }
+  /* TESTING - COMMENTED OUT   /* Notification Dropdown Modal - Mobile Responsive */ */
+  /* TESTING - COMMENTED OUT   #notificationModal { */
+  /* TESTING - COMMENTED OUT     width: calc(100vw - 1.5rem) !important; /* Full width minus margins */ */
+  /* TESTING - COMMENTED OUT     right: 0.75rem !important; /* Smaller margin */ */
+  /* TESTING - COMMENTED OUT     left: 0.75rem !important; */
+  /* TESTING - COMMENTED OUT     top: 60px !important; /* Closer to mobile nav */ */
+  /* TESTING - COMMENTED OUT     max-width: 100% !important; */
+  /* TESTING - COMMENTED OUT     max-height: calc(100vh - 70px) !important; /* Prevent overflow */ */
+  /* TESTING - COMMENTED OUT   } */
 
   /* Notification modal content - ensure it scrolls properly on mobile */
-  #notificationModal #notificationList {
-    max-height: calc(100vh - 200px) !important; /* Account for header and modal header */
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
+  /* TESTING - COMMENTED OUT   #notificationModal #notificationList { */
+  /* TESTING - COMMENTED OUT     max-height: calc(100vh - 200px) !important; /* Account for header and modal header */ */
+  /* TESTING - COMMENTED OUT     overflow-y: auto !important; */
+  /* TESTING - COMMENTED OUT     -webkit-overflow-scrolling: touch !important; */
+  /* TESTING - COMMENTED OUT   } */
 
   /* Modal Button Alignment Fix - Ensure buttons align vertically */
   #createModal .flex.justify-end.space-x-3,
@@ -3741,19 +3741,19 @@ button,
   }
 
   /* NOTIFICATION MODAL - FIX CUT OFF ON SMALL PHONES */
-  #notificationModal {
-    position: fixed !important;
-    top: 56px !important; /* Below mobile nav (52px + 4px gap) */
-    left: 0.5rem !important; /* 8px from left */
-    right: 0.5rem !important; /* 8px from right */
-    width: auto !important; /* Override w-96 (384px) */
-    max-width: calc(100vw - 1rem) !important; /* Ensure it fits */
-  }
-
-  /* Notification list - compact height */
-  #notificationModal .max-h-96 {
-    max-height: 18rem !important; /* 288px instead of 384px */
-  }
+  /* TESTING - COMMENTED OUT   #notificationModal { */
+  /* TESTING - COMMENTED OUT     position: fixed !important; */
+  /* TESTING - COMMENTED OUT     top: 56px !important; /* Below mobile nav (52px + 4px gap) */ */
+  /* TESTING - COMMENTED OUT     left: 0.5rem !important; /* 8px from left */ */
+  /* TESTING - COMMENTED OUT     right: 0.5rem !important; /* 8px from right */ */
+  /* TESTING - COMMENTED OUT     width: auto !important; /* Override w-96 (384px) */ */
+  /* TESTING - COMMENTED OUT     max-width: calc(100vw - 1rem) !important; /* Ensure it fits */ */
+  /* TESTING - COMMENTED OUT   } */
+  /* TESTING - COMMENTED OUT  */
+  /* TESTING - COMMENTED OUT   /* Notification list - compact height */ */
+  /* TESTING - COMMENTED OUT   #notificationModal .max-h-96 { */
+  /* TESTING - COMMENTED OUT     max-height: 18rem !important; /* 288px instead of 384px */ */
+  /* TESTING - COMMENTED OUT   } */
 
   /* HEADER CONTAINER - COMPACT PADDING */
   header.bg-gradient-to-r {
@@ -3897,19 +3897,19 @@ header.bg-gradient-to-r button[title*="Notification"] {
   }
 
   /* NOTIFICATION MODAL - FIX CUT OFF ON LARGE PHONES */
-  #notificationModal {
-    position: fixed !important;
-    top: 60px !important; /* Below mobile nav (56px + 4px gap) */
-    left: 0.75rem !important; /* 12px from left */
-    right: 0.75rem !important; /* 12px from right */
-    width: auto !important; /* Override w-96 (384px) */
-    max-width: calc(100vw - 1.5rem) !important; /* Ensure it fits */
-  }
-
-  /* Notification list - standard height */
-  #notificationModal .max-h-96 {
-    max-height: 20rem !important; /* 320px - slightly taller than small phones */
-  }
+  /* TESTING - COMMENTED OUT   #notificationModal { */
+  /* TESTING - COMMENTED OUT     position: fixed !important; */
+  /* TESTING - COMMENTED OUT     top: 60px !important; /* Below mobile nav (56px + 4px gap) */ */
+  /* TESTING - COMMENTED OUT     left: 0.75rem !important; /* 12px from left */ */
+  /* TESTING - COMMENTED OUT     right: 0.75rem !important; /* 12px from right */ */
+  /* TESTING - COMMENTED OUT     width: auto !important; /* Override w-96 (384px) */ */
+  /* TESTING - COMMENTED OUT     max-width: calc(100vw - 1.5rem) !important; /* Ensure it fits */ */
+  /* TESTING - COMMENTED OUT   } */
+  /* TESTING - COMMENTED OUT  */
+  /* TESTING - COMMENTED OUT   /* Notification list - standard height */ */
+  /* TESTING - COMMENTED OUT   #notificationModal .max-h-96 { */
+  /* TESTING - COMMENTED OUT     max-height: 20rem !important; /* 320px - slightly taller than small phones */ */
+  /* TESTING - COMMENTED OUT   } */
 
   /* HEADER CONTAINER - MORE BREATHING ROOM */
   header.bg-gradient-to-r {

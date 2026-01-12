@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIMS - Test Supabase Connection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                🔌 Supabase Connection Test
+            </h1>
+
+            <div class="space-y-4">
+                <!-- Status Messages -->
+                <div id="status-container" class="space-y-2">
+                    <div id="status-library" class="p-4 rounded-lg bg-gray-100 text-gray-700">
+                        ⏳ Checking Supabase library...
+                    </div>
+                    <div id="status-env" class="p-4 rounded-lg bg-gray-100 text-gray-700">
+                        ⏳ Checking environment configuration...
+                    </div>
+                    <div id="status-client" class="p-4 rounded-lg bg-gray-100 text-gray-700">
+                        ⏳ Initializing Supabase client...
+                    </div>
+                    <div id="status-connection" class="p-4 rounded-lg bg-gray-100 text-gray-700">
+                        ⏳ Testing connection...
+                    </div>
+                </div>
+
+                <!-- Test Button -->
+                <button
+                    id="test-btn"
+                    onclick="runConnectionTest()"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+                >
+                    🔄 Re-test Connection
+                </button>
+
+                <!-- Configuration Display -->
+                <div id="config-display" class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="font-semibold text-gray-800 mb-2">Configuration:</h3>
+                    <div class="text-sm font-mono text-gray-600 space-y-1">
+                        <div>URL: <span id="config-url" class="text-blue-600"></span></div>
+                        <div>Key: <span id="config-key" class="text-blue-600"></span></div>
+                    </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h3 class="font-semibold text-blue-800 mb-2">📝 Setup Instructions:</h3>
+                    <ol class="text-sm text-blue-700 space-y-1 list-decimal list-inside">
+                        <li>Get your anon key from Supabase dashboard</li>
+                        <li>Open <code class="bg-blue-100 px-1 rounded">js/config/env.js</code></li>
+                        <li>Replace <code class="bg-blue-100 px-1 rounded">YOUR_SUPABASE_ANON_KEY_HERE</code> with your actual key</li>
+                        <li>Refresh this page to test the connection</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Supabase from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Load Configuration -->
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+
+    <!-- Test Script -->
+    <script>
+        function updateStatus(elementId, status, message) {
+            const el = document.getElementById(elementId);
+            const colors = {
+                loading: 'bg-gray-100 text-gray-700',
+                success: 'bg-green-100 text-green-800',
+                error: 'bg-red-100 text-red-800',
+                warning: 'bg-yellow-100 text-yellow-800'
+            };
+
+            const icons = {
+                loading: '⏳',
+                success: '✅',
+                error: '❌',
+                warning: '⚠️'
+            };
+
+            el.className = `p-4 rounded-lg ${colors[status]}`;
+            el.textContent = `${icons[status]} ${message}`;
+        }
+
+        async function runConnectionTest() {
+            // Reset all statuses
+            updateStatus('status-library', 'loading', 'Checking Supabase library...');
+            updateStatus('status-env', 'loading', 'Checking environment configuration...');
+            updateStatus('status-client', 'loading', 'Initializing Supabase client...');
+            updateStatus('status-connection', 'loading', 'Testing connection...');
+
+            // Check library
+            if (typeof window.supabase !== 'undefined') {
+                updateStatus('status-library', 'success', 'Supabase library loaded successfully');
+            } else {
+                updateStatus('status-library', 'error', 'Supabase library not found! Check CDN link.');
+                return;
+            }
+
+            // Check environment
+            if (typeof ENV !== 'undefined') {
+                updateStatus('status-env', 'success', 'Environment configuration loaded');
+                document.getElementById('config-url').textContent = ENV.SUPABASE_URL;
+                const keyPreview = ENV.SUPABASE_ANON_KEY.startsWith('YOUR_')
+                    ? '❌ NOT CONFIGURED'
+                    : ENV.SUPABASE_ANON_KEY.substring(0, 20) + '...';
+                document.getElementById('config-key').textContent = keyPreview;
+
+                if (ENV.SUPABASE_ANON_KEY.startsWith('YOUR_')) {
+                    updateStatus('status-env', 'warning', 'Environment loaded but API key not configured yet');
+                    updateStatus('status-client', 'error', 'Cannot initialize client without API key');
+                    updateStatus('status-connection', 'error', 'Cannot test connection without API key');
+                    return;
+                }
+            } else {
+                updateStatus('status-env', 'error', 'Environment configuration not loaded!');
+                return;
+            }
+
+            // Check client
+            if (typeof window.supabaseClient !== 'undefined') {
+                updateStatus('status-client', 'success', 'Supabase client initialized successfully');
+            } else {
+                updateStatus('status-client', 'error', 'Supabase client not initialized!');
+                return;
+            }
+
+            // Test connection
+            try {
+                const result = await window.testSupabaseConnection();
+                if (result) {
+                    updateStatus('status-connection', 'success', 'Connection test passed! Supabase is ready to use.');
+                } else {
+                    updateStatus('status-connection', 'warning', 'Connected but no tables found (normal in Phase 1)');
+                }
+            } catch (error) {
+                updateStatus('status-connection', 'error', `Connection failed: ${error.message}`);
+            }
+        }
+
+        // Auto-run test on page load
+        window.addEventListener('load', () => {
+            setTimeout(runConnectionTest, 500);
+        });
+    </script>
+</body>
+</html>

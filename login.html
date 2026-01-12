@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign In - BIMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -200,7 +204,7 @@
                 </label>
               </div>
               <a
-                href="#"
+                href="forgot-password.html"
                 class="text-sm text-[#2f6e4e] hover:text-[#3d8b64] font-medium transition"
               >
                 Forgot Password?
@@ -383,7 +387,7 @@
         }
       });
 
-      loginForm.addEventListener("submit", function (e) {
+      loginForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
         const email = emailInput.value.trim();
@@ -425,28 +429,114 @@
         submitButton.disabled = true;
         submitButton.innerHTML = '<div class="spinner mx-auto"></div>';
 
-        // Simulate authentication delay
-        setTimeout(() => {
-          // TODO: Implement actual authentication
-          console.log("Login attempt:", { email, password });
+        try {
+          // Sign in with Supabase
+          const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
 
-          // Simulated successful login
-          showToast('Login successful! Redirecting...', 'success');
+          if (error) {
+            throw error;
+          }
 
-          // Redirect based on email domain
+          // Check if email is verified
+          if (!data.user.email_confirmed_at) {
+            showToast('Please verify your email first. Check your inbox for the verification code.', 'warning');
+            sessionStorage.setItem('verification_email', email);
+            setTimeout(() => {
+              window.location.href = "verify-otp.html";
+            }, 2000);
+            return;
+          }
+
+          // Query User_Tbl to get actual user role and account status
+          const { data: userData, error: userError } = await supabaseClient
+            .from('User_Tbl')
+            .select('role, accountStatus, firstName, lastName')
+            .eq('userID', data.user.id)
+            .single();
+
+          if (userError) {
+            throw new Error('Could not fetch user data: ' + userError.message);
+          }
+
+          // Check if account is active
+          if (!userData || userData.accountStatus !== 'ACTIVE') {
+            showToast('Your account is pending approval. Please contact the administrator.', 'warning');
+            await supabaseClient.auth.signOut();
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+            return;
+          }
+
+          showToast(`Welcome back, ${userData.firstName}! Redirecting...`, 'success');
+
+          // Redirect based on actual role from database
           setTimeout(() => {
-            if (email.includes("sk") || email.includes("official")) {
-              window.location.href = "sk-dashboard.html";
-            } else {
-              window.location.href = "youth-dashboard.html";
+            switch(userData.role) {
+              case 'SUPERADMIN':
+                window.location.href = "superadmin-dashboard.html";
+                break;
+              case 'CAPTAIN':
+                window.location.href = "captain-dashboard.html";
+                break;
+              case 'SK_OFFICIAL':
+                window.location.href = "sk-dashboard.html";
+                break;
+              case 'YOUTH_VOLUNTEER':
+                window.location.href = "youth-dashboard.html";
+                break;
+              default:
+                window.location.href = "youth-dashboard.html";
             }
           }, 1000);
-        }, 1500);
+
+        } catch (error) {
+          console.error('Login error:', error);
+
+          let errorMessage = 'Login failed. Please check your credentials.';
+
+          if (error.message.includes('Invalid login credentials')) {
+            errorMessage = 'Invalid email or password. Please try again.';
+          } else if (error.message.includes('Email not confirmed')) {
+            errorMessage = 'Please verify your email first.';
+          }
+
+          showToast(errorMessage, 'error');
+          submitButton.disabled = false;
+          submitButton.innerHTML = originalButtonText;
+        }
       });
 
       // Google Sign In
-      function signInWithGoogle() {
-        showToast('Google Sign In will be implemented with backend authentication', 'info');
+      async function signInWithGoogle() {
+        try {
+          // Show loading state
+          showToast('Redirecting to Google...', 'info');
+
+          // Sign in with Google OAuth
+          const { data, error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: `${window.location.origin}/index.html`,
+              queryParams: {
+                access_type: 'offline',
+                prompt: 'consent',
+              }
+            }
+          });
+
+          if (error) throw error;
+
+          // User will be redirected to Google OAuth consent screen
+          // After approval, they'll be redirected back to index.html
+          console.log('✅ Redirecting to Google OAuth...');
+
+        } catch (error) {
+          console.error('❌ Google OAuth error:', error);
+          showToast('Google login failed. Please try again.', 'error');
+        }
       }
     </script>
   </body>

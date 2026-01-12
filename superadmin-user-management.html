@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - BIMS Superadmin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2f6e4e",
+              secondary: "#3d8b64",
+            },
+            fontFamily: {
+              sans: ["Inter", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      * {
+        font-family: "Inter", system-ui, sans-serif;
+      }
+
+      /* Icon System */
+      .icon-wrapper {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .icon-wrapper:hover {
+        transform: translateY(-2px);
+      }
+      .nav-link svg {
+        transition: all 0.3s ease;
+      }
+      .nav-link:hover svg {
+        transform: scale(1.1);
+      }
+      .icon-badge {
+        box-shadow: 0 2px 8px rgba(47, 110, 78, 0.15);
+      }
+
+      /* Toast Notification Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        min-width: 300px;
+        background: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transform: translateX(400px);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 9999;
+      }
+      .toast.show {
+        transform: translateX(0);
+      }
+      .toast.success {
+        border-left: 4px solid #10b981;
+      }
+      .toast.error {
+        border-left: 4px solid #ef4444;
+      }
+      .toast.warning {
+        border-left: 4px solid #f59e0b;
+      }
+      .toast.info {
+        border-left: 4px solid #3b82f6;
+      }
+
+      /* Badge Styles */
+      .badge-inactive {
+        background-color: #6b7280;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      /* Navigation */
+      .nav-link.active-nav {
+        background-color: rgba(47, 110, 78, 0.1);
+        color: #2f6e4e;
+      }
+    </style>
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+    <script src="js/auth/session.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Mobile Navigation Bar -->
+    <div class="mobile-nav">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle menu">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+        <span>BIMS Superadmin</span>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="mobile-sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col">
+            <div class="p-6 flex-1 flex flex-col">
+                <!-- Logo -->
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden">
+                        <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-black text-gray-800">BIMS</h1>
+                        <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="space-y-2">
+                    <a href="superadmin-dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <span>System Overview</span>
+                    </a>
+
+                    <a href="superadmin-user-management.html" class="nav-link active-nav flex items-center space-x-3 px-4 py-3 rounded-lg font-medium group transition">
+                        <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <span>User Management</span>
+                    </a>
+
+                    <a href="superadmin-activity-logs.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <span>Activity Logs</span>
+                    </a>
+                </nav>
+
+                <div class="flex-1"></div>
+
+                <!-- Logout -->
+                <div class="mt-8 pt-8 border-t border-gray-200">
+                    <button onclick="handleLogout()" class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group">
+                        <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                        </div>
+                        <span class="font-medium">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200">
+                <div class="px-8 py-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-[#2f6e4e] font-semibold mb-1" id="currentDate"></p>
+                            <h1 class="text-2xl font-bold text-gray-800">User Management</h1>
+                            <p class="text-sm text-gray-600 mt-1">Manage user roles, SK Official positions, and account status</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group">
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition" id="headerUserName">System Administrator</p>
+                                    <p class="text-xs text-gray-500">Technical Admin</p>
+                                </div>
+                                <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-purple-600/20 group-hover:ring-purple-600/40 transition" id="headerAvatar">
+                                    SA
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="p-4 sm:p-6 lg:p-8">
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Total Users</p>
+                                <p id="totalUsers" class="text-3xl font-bold text-gray-800">0</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-lg">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">SK Officials</p>
+                                <p id="skOfficials" class="text-3xl font-bold text-green-600">0</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-lg">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Volunteers</p>
+                                <p id="volunteers" class="text-3xl font-bold text-blue-600">0</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-lg">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Pending</p>
+                                <p id="pendingUsers" class="text-3xl font-bold text-yellow-600">0</p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-lg">
+                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Inactive</p>
+                                <p id="inactiveUsers" class="text-3xl font-bold text-gray-600">0</p>
+                            </div>
+                            <div class="bg-gray-100 p-3 rounded-lg">
+                                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <input type="text" id="searchInput" placeholder="Search by name or email..."
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-transparent outline-none">
+                        </div>
+                        <select id="roleFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
+                            <option value="">All Roles</option>
+                            <option value="YOUTH_VOLUNTEER">Youth Volunteers</option>
+                            <option value="SK_OFFICIAL">SK Officials</option>
+                            <option value="CAPTAIN">Captain</option>
+                            <option value="SUPERADMIN">Superadmin</option>
+                        </select>
+                        <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
+                            <option value="">All Status</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="PENDING">Pending</option>
+                            <option value="INACTIVE">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SK Position</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination Dots (Center) -->
+                    <div id="usersPaginationDots" class="flex justify-center gap-2 mt-6 mb-4 hidden">
+                        <!-- Dots will be inserted here -->
+                    </div>
+
+                    <!-- Pagination Controls (Bottom Right) -->
+                    <div class="p-4 border-t flex justify-end">
+                        <nav id="usersPaginationNav" class="hidden inline-flex rounded-md shadow-sm" role="navigation" aria-label="Pagination">
+                            <button id="prevPageUsers" onclick="navigateUsers(-1)" class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium">
+                                Prev
+                            </button>
+                            <button id="nextPageUsers" onclick="navigateUsers(1)" class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium">
+                                Next
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Promote to SK Modal -->
+    <div id="promoteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] px-6 py-5 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-white/20 p-2 rounded-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Promote to SK Official</h3>
+                            <p class="text-white/80 text-sm">Assign position and term</p>
+                        </div>
+                    </div>
+                    <button onclick="closePromoteModal()" class="text-white/80 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-5">
+                <!-- User Info -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                    <p class="text-sm text-blue-800 font-medium">Promoting User:</p>
+                    <p id="promoteUserName" class="text-lg font-bold text-blue-900 mt-1"></p>
+                </div>
+
+                <!-- Position Selection -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        SK Position <span class="text-red-500">*</span>
+                    </label>
+                    <select id="skPosition" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#2f6e4e] focus:ring-2 focus:ring-[#2f6e4e]/20 outline-none transition">
+                        <option value="">Select position...</option>
+                        <option value="SK_CHAIRMAN">SK Chairman</option>
+                        <option value="SK_SECRETARY">SK Secretary</option>
+                        <option value="SK_TREASURER">SK Treasurer</option>
+                        <option value="SK_KAGAWAD">SK Kagawad</option>
+                    </select>
+                </div>
+
+                <!-- Term Dates -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Term Start <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="termStart" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#2f6e4e] focus:ring-2 focus:ring-[#2f6e4e]/20 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Term End <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="termEnd" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#2f6e4e] focus:ring-2 focus:ring-[#2f6e4e]/20 outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Info Notice -->
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg">
+                    <div class="flex">
+                        <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <p class="text-sm text-yellow-800 ml-3">This user will gain SK Official permissions and access to administrative features.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end space-x-3">
+                <button onclick="closePromoteModal()" class="px-6 py-2.5 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 transition">
+                    Cancel
+                </button>
+                <button onclick="confirmPromote()" class="px-6 py-2.5 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition">
+                    <span class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Promote to SK Official</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demote User Modal -->
+    <div id="demoteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-5 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-white/20 p-2 rounded-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Remove Position</h3>
+                            <p class="text-white/80 text-sm">Demote user to Youth Volunteer</p>
+                        </div>
+                    </div>
+                    <button onclick="closeDemoteModal()" class="text-white/80 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-5">
+                <!-- User Info -->
+                <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg">
+                    <p class="text-sm text-orange-800 font-medium">Demoting User:</p>
+                    <p id="demoteUserName" class="text-lg font-bold text-orange-900 mt-1"></p>
+                    <p id="demoteUserRole" class="text-sm text-orange-700 mt-1"></p>
+                </div>
+
+                <!-- Warning Notice -->
+                <div class="bg-orange-50 border-2 border-orange-200 p-4 rounded-lg">
+                    <div class="flex">
+                        <svg class="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div class="ml-3">
+                            <p class="text-sm font-semibold text-orange-800">This action will:</p>
+                            <ul class="text-sm text-orange-700 mt-2 space-y-1 list-disc list-inside">
+                                <li>Remove their current position</li>
+                                <li>Change role to Youth Volunteer</li>
+                                <li>Remove all administrative privileges</li>
+                                <li>Account will remain active</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirmation Checkbox -->
+                <div class="flex items-start space-x-3">
+                    <input type="checkbox" id="confirmDemote" class="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500 mt-0.5">
+                    <label for="confirmDemote" class="text-sm text-gray-700">
+                        I understand that this user will lose their current position and administrative access.
+                    </label>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end space-x-3">
+                <button onclick="closeDemoteModal()" class="px-6 py-2.5 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 transition">
+                    Cancel
+                </button>
+                <button onclick="confirmDemote()" class="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition">
+                    <span class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Confirm Demotion</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deactivate User Modal -->
+    <div id="deactivateModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-white/20 p-2 rounded-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Deactivate User Account</h3>
+                            <p class="text-white/80 text-sm">This action will block user access</p>
+                        </div>
+                    </div>
+                    <button onclick="closeDeactivateModal()" class="text-white/80 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-5">
+                <!-- User Info -->
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                    <p class="text-sm text-red-800 font-medium">Deactivating User:</p>
+                    <p id="deactivateUserName" class="text-lg font-bold text-red-900 mt-1"></p>
+                </div>
+
+                <!-- Reason Selection -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Reason for Deactivation <span class="text-red-500">*</span>
+                    </label>
+                    <select id="deactivationReason" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition">
+                        <option value="">Select reason...</option>
+                        <option value="policy_violation">Policy Violation</option>
+                        <option value="inappropriate_behavior">Inappropriate Behavior</option>
+                        <option value="inactivity">Prolonged Inactivity</option>
+                        <option value="duplicate_account">Duplicate Account</option>
+                        <option value="user_request">User Request</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Additional Notes -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Additional Notes (Optional)
+                    </label>
+                    <textarea id="deactivationNotes" rows="3" placeholder="Add any additional information..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition resize-none"></textarea>
+                </div>
+
+                <!-- Warning Notice -->
+                <div class="bg-red-50 border-2 border-red-200 p-4 rounded-lg">
+                    <div class="flex">
+                        <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div class="ml-3">
+                            <p class="text-sm font-semibold text-red-800">Warning: This action will:</p>
+                            <ul class="text-sm text-red-700 mt-2 space-y-1 list-disc list-inside">
+                                <li>Immediately block user from logging in</li>
+                                <li>Revoke all active sessions</li>
+                                <li>Send notification to user email</li>
+                                <li>Can be reversed by reactivating the account</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirmation Checkbox -->
+                <div class="flex items-start space-x-3">
+                    <input type="checkbox" id="confirmDeactivate" class="w-5 h-5 text-red-600 border-gray-300 rounded focus:ring-red-500 mt-0.5">
+                    <label for="confirmDeactivate" class="text-sm text-gray-700">
+                        I understand that this user will be immediately blocked from accessing the system and will receive a notification email.
+                    </label>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end space-x-3">
+                <button onclick="closeDeactivateModal()" class="px-6 py-2.5 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 transition">
+                    Cancel
+                </button>
+                <button onclick="confirmDeactivate()" class="px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition">
+                    <span class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                        </svg>
+                        <span>Deactivate User</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promotion Type Choice Modal -->
+    <div id="promotionTypeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] px-6 py-5 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-white/20 p-2 rounded-lg">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Choose Promotion Type</h3>
+                            <p class="text-white/80 text-sm">Select role to assign</p>
+                        </div>
+                    </div>
+                    <button onclick="closePromotionTypeModal()" class="text-white/80 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-4">
+                <!-- User Info -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                    <p class="text-sm text-blue-800 font-medium">Promoting User:</p>
+                    <p id="promotionTypeUserName" class="text-lg font-bold text-blue-900 mt-1"></p>
+                </div>
+
+                <!-- Promotion Options -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="selectPromotionType('SK')" class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-lg hover:border-[#2f6e4e] hover:bg-[#2f6e4e]/5 transition group">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-[#2f6e4e] transition">
+                            <svg class="w-6 h-6 text-blue-600 group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <span class="font-semibold text-gray-700 group-hover:text-[#2f6e4e] transition">Promote as SK</span>
+                        <span class="text-xs text-gray-500 mt-1">SK Official Position</span>
+                    </button>
+
+                    <button onclick="selectPromotionType('CAPTAIN')" class="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition group">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-green-600 transition">
+                            <svg class="w-6 h-6 text-green-600 group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                        </div>
+                        <span class="font-semibold text-gray-700 group-hover:text-green-600 transition">Promote as Captain</span>
+                        <span class="text-xs text-gray-500 mt-1">Barangay Captain</span>
+                    </button>
+                </div>
+
+                <!-- Info Notice -->
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg">
+                    <div class="flex">
+                        <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <p class="text-sm text-yellow-800 ml-3">Choose carefully. Some positions are limited to one active account.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end">
+                <button onclick="closePromotionTypeModal()" class="px-6 py-2.5 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 hover:border-gray-400 transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Script -->
+    <script>
+        // ==================== AUTH GUARD ====================
+        /**
+         * SECURITY: Independent authentication check for User Management page
+         * Each admin page verifies SUPERADMIN role independently
+         */
+        async function checkAuth() {
+            console.log('🔐 User Management - Checking authentication...');
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                console.error('❌ No session found');
+                window.location.href = 'login.html';
+                return false;
+            }
+
+            // Verify SUPERADMIN role
+            const { data: user, error } = await supabaseClient
+                .from('User_Tbl')
+                .select('*')
+                .eq('userID', session.user.id)
+                .single();
+
+            if (error || !user || user.role !== 'SUPERADMIN') {
+                console.error('❌ Access denied. SUPERADMIN role required.');
+                showToast('Access denied. SUPERADMIN role required.', 'error');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return false;
+            }
+
+            // Update header
+            document.getElementById('headerUserName').textContent = `${user.firstName} ${user.lastName}`;
+            document.getElementById('headerAvatar').textContent = `${user.firstName[0]}${user.lastName[0]}`;
+
+            console.log('✅ Authentication successful:', user.role);
+            return true;
+        }
+
+        // ==================== LOGOUT ====================
+        /**
+         * Handle logout - Sign out from Supabase and redirect to landing page
+         */
+        async function handleLogout() {
+            try {
+                console.log('🚪 Logging out...');
+
+                // Sign out from Supabase
+                const { error } = await supabaseClient.auth.signOut();
+
+                if (error) {
+                    console.error('❌ Logout error:', error);
+                    showToast('Error logging out. Please try again.', 'error');
+                    return;
+                }
+
+                // Clear localStorage
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userID');
+
+                console.log('✅ Logout successful');
+
+                // Redirect to landing page
+                window.location.href = 'index.html';
+
+            } catch (error) {
+                console.error('❌ Logout exception:', error);
+                showToast('Error logging out. Please try again.', 'error');
+            }
+        }
+
+        // ==================== DATA LOADING ====================
+        let allUsers = [];
+        let currentUserPage = 0;
+        const usersPerPage = 10;
+
+        async function loadUsers() {
+            try {
+                const { data: users, error } = await supabaseClient
+                    .from('User_Tbl')
+                    .select(`
+                        userID,
+                        email,
+                        firstName,
+                        lastName,
+                        middleName,
+                        role,
+                        birthday,
+                        contactNumber,
+                        address,
+                        imagePathURL,
+                        termsConditions,
+                        accountStatus,
+                        gender,
+                        createdAt,
+                        updatedAt,
+                        SK_Tbl (position, termEnd)
+                    `)
+                    .order('createdAt', { ascending: false });
+
+                if (error) throw error;
+
+                // DEBUG: Check for users without userID
+                console.log('🔍 Raw users data (first user):', users[0]);
+                const usersWithoutID = users.filter(u => !u.userID);
+                if (usersWithoutID.length > 0) {
+                    console.error('⚠️ Found users without userID:', usersWithoutID);
+                }
+
+                console.log('✅ Loaded users:', users.length);
+
+                allUsers = users;
+                updateUserStats(users);
+                renderUsers(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showToast('Error loading users', 'error');
+            }
+        }
+
+        function updateUserStats(users) {
+            const total = users.length;
+            const skOfficials = users.filter(u => u.role === 'SK_OFFICIAL').length;
+            const volunteers = users.filter(u => u.role === 'YOUTH_VOLUNTEER').length;
+            const pending = users.filter(u => u.accountStatus === 'PENDING').length;
+            const inactive = users.filter(u => u.accountStatus === 'INACTIVE').length;
+
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('skOfficials').textContent = skOfficials;
+            document.getElementById('volunteers').textContent = volunteers;
+            document.getElementById('pendingUsers').textContent = pending;
+            document.getElementById('inactiveUsers').textContent = inactive;
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+
+            if (!users || users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">No users found</td></tr>';
+                document.getElementById('usersPaginationNav').classList.add('hidden');
+                document.getElementById('usersPaginationDots').classList.add('hidden');
+                return;
+            }
+
+            // Calculate pagination
+            const startIndex = currentUserPage * usersPerPage;
+            const endIndex = startIndex + usersPerPage;
+            const usersToShow = users.slice(startIndex, endIndex);
+
+            // Update pagination controls
+            updateUsersPagination(users.length);
+
+            tbody.innerHTML = usersToShow.map(user => {
+                const isInactive = user.accountStatus === 'INACTIVE';
+                const isSuperadmin = user.role === 'SUPERADMIN';
+                const isCaptain = user.role === 'CAPTAIN';
+
+                // DEBUG: Log user data for youth volunteers
+                if (user.role === 'YOUTH_VOLUNTEER') {
+                    console.log('🔍 Youth Volunteer user data:', {
+                        userID: user.userID,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        role: user.role
+                    });
+                }
+
+                // CRITICAL: Validate userID exists
+                if (!user.userID) {
+                    console.error('❌ User missing userID:', user);
+                    return '';
+                }
+
+                // Check if SK Official term has ended
+                const termEnd = user.SK_Tbl && user.SK_Tbl.length > 0
+                    ? new Date(user.SK_Tbl[0].termEnd)
+                    : null;
+                const termEnded = termEnd && termEnd < new Date();
+
+                // Escape user data to prevent XSS and ensure proper string handling
+                const safeUserID = user.userID || '';
+                const safeFirstName = (user.firstName || '').replace(/'/g, "\\'");
+                const safeLastName = (user.lastName || '').replace(/'/g, "\\'");
+                const safeFullName = `${safeFirstName} ${safeLastName}`;
+
+                // DEBUG: Log the safe values being used
+                if (user.role === 'YOUTH_VOLUNTEER') {
+                    console.log('🔍 Safe values for button:', {
+                        safeUserID,
+                        safeFullName
+                    });
+                }
+
+                let actionButtons = '';
+                if (isSuperadmin) {
+                    // No actions for Superadmin only
+                    actionButtons = '<span class="text-xs text-gray-500">Protected</span>';
+                } else if (isCaptain) {
+                    // Captain can be replaced by promoting a new one
+                    actionButtons = `
+                        <button onclick="demoteCaptain('${safeUserID}', '${safeFullName}')"
+                                class="text-orange-600 hover:text-orange-700 text-sm font-medium">
+                            Remove Captain Role
+                        </button>
+                    `;
+                } else if (isInactive) {
+                    actionButtons = `
+                        <button onclick="reactivateUser('${safeUserID}', '${safeFullName}')"
+                                class="text-green-600 hover:text-green-700 text-sm font-medium">
+                            Reactivate
+                        </button>
+                    `;
+                } else if (user.role === 'SK_OFFICIAL') {
+                    actionButtons = `
+                        <div class="flex flex-col space-y-1 items-end">
+                            ${termEnded ? '<span class="text-xs text-red-600">⚠ Term Ended</span>' : ''}
+                            <button onclick="demoteUser('${safeUserID}', '${safeFullName}')"
+                                    class="text-orange-600 hover:text-orange-700 text-sm font-medium">
+                                Remove SK Role
+                            </button>
+                            <button onclick="deactivateUser('${safeUserID}', '${safeFullName}')"
+                                    class="text-red-600 hover:text-red-700 text-sm font-medium">
+                                Deactivate
+                            </button>
+                        </div>
+                    `;
+                } else if (user.role === 'YOUTH_VOLUNTEER') {
+                    actionButtons = `
+                        <div class="flex flex-col space-y-1 items-end">
+                            <button onclick="promoteToSK('${safeUserID}', '${safeFullName}')"
+                                    class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                Promote
+                            </button>
+                            <button onclick="deactivateUser('${safeUserID}', '${safeFullName}')"
+                                    class="text-red-600 hover:text-red-700 text-sm font-medium">
+                                Deactivate
+                            </button>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <tr class="${isInactive ? 'opacity-75 bg-gray-50' : ''}">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold ${isInactive ? 'opacity-50' : ''}">
+                                    ${user.firstName[0]}${user.lastName[0]}
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${user.firstName} ${user.lastName}</div>
+                                    <div class="text-sm text-gray-500">${user.email}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                ${user.role === 'SUPERADMIN' ? 'bg-purple-100 text-purple-800' :
+                                  user.role === 'CAPTAIN' ? 'bg-green-100 text-green-800' :
+                                  user.role === 'SK_OFFICIAL' ? 'bg-blue-100 text-blue-800' :
+                                  'bg-gray-100 text-gray-800'}">
+                                ${user.role.replace('_', ' ')}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${user.SK_Tbl && user.SK_Tbl.length > 0 ? user.SK_Tbl[0].position.replace('_', ' ') : '-'}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            ${isInactive
+                                ? '<span class="badge-inactive">INACTIVE</span>'
+                                : `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                    ${user.accountStatus === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                    ${user.accountStatus}
+                                </span>`}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${new Date(user.createdAt).toLocaleDateString()}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            ${actionButtons}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            currentUserPage = 0; // Reset to first page when filters change
+
+            const filtered = allUsers.filter(user => {
+                const matchesSearch = !searchTerm ||
+                    user.firstName.toLowerCase().includes(searchTerm) ||
+                    user.lastName.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm);
+
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                const matchesStatus = !statusFilter || user.accountStatus === statusFilter;
+
+                return matchesSearch && matchesRole && matchesStatus;
+            });
+
+            updateUserStats(filtered);
+            renderUsers(filtered);
+        }
+
+        // ==================== PAGINATION ====================
+        function updateUsersPagination(totalUsers) {
+            const totalPages = Math.ceil(totalUsers / usersPerPage);
+            const dotsContainer = document.getElementById('usersPaginationDots');
+            const navContainer = document.getElementById('usersPaginationNav');
+
+            if (totalPages <= 1) {
+                dotsContainer.classList.add('hidden');
+                navContainer.classList.add('hidden');
+                return;
+            }
+
+            dotsContainer.classList.remove('hidden');
+            navContainer.classList.remove('hidden');
+
+            // Create pagination dots
+            dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+                <button
+                    onclick="goToUserPage(${i})"
+                    class="h-2 rounded-full transition-all duration-300 ${i === currentUserPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+                    style="min-height: 8px; flex-shrink: 0; cursor: pointer;"
+                    aria-label="Go to page ${i + 1}"
+                ></button>
+            `).join('');
+        }
+
+        window.navigateUsers = function(direction) {
+            // Get current filtered list
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            let filtered = allUsers.filter(user => {
+                const matchesSearch = !searchTerm ||
+                    user.firstName.toLowerCase().includes(searchTerm) ||
+                    user.lastName.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm);
+
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                const matchesStatus = !statusFilter || user.accountStatus === statusFilter;
+
+                return matchesSearch && matchesRole && matchesStatus;
+            });
+
+            const totalPages = Math.ceil(filtered.length / usersPerPage);
+            currentUserPage += direction;
+
+            // Wrap around
+            if (currentUserPage < 0) currentUserPage = totalPages - 1;
+            if (currentUserPage >= totalPages) currentUserPage = 0;
+
+            renderUsers(filtered);
+        };
+
+        window.goToUserPage = function(pageIndex) {
+            currentUserPage = pageIndex;
+
+            // Get current filtered list
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            let filtered = allUsers.filter(user => {
+                const matchesSearch = !searchTerm ||
+                    user.firstName.toLowerCase().includes(searchTerm) ||
+                    user.lastName.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm);
+
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                const matchesStatus = !statusFilter || user.accountStatus === statusFilter;
+
+                return matchesSearch && matchesRole && matchesStatus;
+            });
+
+            renderUsers(filtered);
+        };
+
+        // ==================== USER MANAGEMENT ACTIONS ====================
+        let currentModalUserId = null;
+        let currentModalUserName = null;
+
+        // Promote User - Show promotion type selection
+        window.promoteToSK = function(userId, userName) {
+            console.log('🔍 promoteToSK called with:', { userId, userName, type: typeof userId });
+
+            // Validate inputs
+            if (!userId || userId === 'null' || userId === 'undefined' || userId === '') {
+                console.error('❌ Invalid userId passed to promoteToSK:', userId);
+                showToast('Error: Invalid user data. Please refresh the page.', 'error');
+                return;
+            }
+
+            currentModalUserId = userId;
+            currentModalUserName = userName;
+            console.log('✅ Set currentModalUserId to:', currentModalUserId);
+
+            document.getElementById('promotionTypeUserName').textContent = userName;
+            document.getElementById('promotionTypeModal').classList.remove('hidden');
+        };
+
+        window.closePromotionTypeModal = function() {
+            document.getElementById('promotionTypeModal').classList.add('hidden');
+            currentModalUserId = null;
+            currentModalUserName = null;
+        };
+
+        window.selectPromotionType = async function(type) {
+            if (type === 'SK') {
+                // IMPORTANT: Save the values before closing the modal (which resets them)
+                const savedUserId = currentModalUserId;
+                const savedUserName = currentModalUserName;
+
+                console.log('🔍 selectPromotionType - Saved values:', { savedUserId, savedUserName });
+
+                // Close promotion type modal (this will reset currentModalUserId to null)
+                document.getElementById('promotionTypeModal').classList.add('hidden');
+
+                // Restore the saved values
+                currentModalUserId = savedUserId;
+                currentModalUserName = savedUserName;
+
+                console.log('🔍 selectPromotionType - Restored values:', { currentModalUserId, currentModalUserName });
+
+                // Open SK promotion modal
+                document.getElementById('promoteUserName').textContent = currentModalUserName;
+                document.getElementById('promoteModal').classList.remove('hidden');
+
+                // Reset form
+                document.getElementById('skPosition').value = '';
+                document.getElementById('termStart').value = '';
+                document.getElementById('termEnd').value = '';
+            } else if (type === 'CAPTAIN') {
+                // Check for existing active Captain
+                await promoteToCaptain();
+            }
+        };
+
+        async function promoteToCaptain() {
+            try {
+                // Check if there's an existing active Captain
+                const { data: existingCaptain, error: checkError } = await supabaseClient
+                    .from('User_Tbl')
+                    .select('userID, firstName, lastName')
+                    .eq('role', 'CAPTAIN')
+                    .eq('accountStatus', 'ACTIVE')
+                    .single();
+
+                if (checkError && checkError.code !== 'PGRST116') {
+                    throw checkError;
+                }
+
+                if (existingCaptain) {
+                    // Ask for confirmation to replace existing Captain
+                    const confirmed = confirm(
+                        `There is already an active Captain: ${existingCaptain.firstName} ${existingCaptain.lastName}.\n\n` +
+                        `Promoting ${currentModalUserName} will deactivate the current Captain.\n\n` +
+                        `Do you want to proceed?`
+                    );
+
+                    if (!confirmed) {
+                        closePromotionTypeModal();
+                        return;
+                    }
+
+                    // Deactivate existing Captain
+                    const { error: deactivateError } = await supabaseClient
+                        .from('User_Tbl')
+                        .update({ accountStatus: 'INACTIVE' })
+                        .eq('userID', existingCaptain.userID);
+
+                    if (deactivateError) throw deactivateError;
+
+                    showToast(`${existingCaptain.firstName} ${existingCaptain.lastName} has been deactivated`, 'info');
+                }
+
+                // Promote user to Captain
+                const { error: promoteError } = await supabaseClient
+                    .from('User_Tbl')
+                    .update({ role: 'CAPTAIN', accountStatus: 'ACTIVE' })
+                    .eq('userID', currentModalUserId);
+
+                if (promoteError) throw promoteError;
+
+                showToast(`${currentModalUserName} promoted to Barangay Captain`, 'success');
+                closePromotionTypeModal();
+                loadUsers();
+            } catch (error) {
+                console.error('Error promoting to Captain:', error);
+                showToast('Error promoting to Captain: ' + error.message, 'error');
+            }
+        }
+
+        window.closePromoteModal = function() {
+            document.getElementById('promoteModal').classList.add('hidden');
+            currentModalUserId = null;
+            currentModalUserName = null;
+        };
+
+        window.confirmPromote = async function() {
+            const position = document.getElementById('skPosition').value;
+            const termStart = document.getElementById('termStart').value;
+            const termEnd = document.getElementById('termEnd').value;
+
+            // CRITICAL: Validate userID exists and is not null/undefined
+            if (!currentModalUserId || currentModalUserId === 'null' || currentModalUserId === 'undefined') {
+                console.error('❌ Invalid userID:', currentModalUserId);
+                showToast('Error: Invalid user ID. Please refresh the page and try again.', 'error');
+                closePromoteModal();
+                return;
+            }
+
+            // Validation
+            if (!position) {
+                showToast('Please select an SK position', 'error');
+                return;
+            }
+
+            if (!termStart || !termEnd) {
+                showToast('Please select term start and end dates', 'error');
+                return;
+            }
+
+            if (new Date(termStart) >= new Date(termEnd)) {
+                showToast('Term end date must be after start date', 'error');
+                return;
+            }
+
+            try {
+                // Single-active-account positions
+                const singleAccountPositions = ['SK_CHAIRMAN', 'SK_SECRETARY', 'SK_TREASURER'];
+
+                // Check for existing active position holders
+                if (singleAccountPositions.includes(position)) {
+                    // Query SK_Tbl with User_Tbl join
+                    const { data: skRecords, error: checkError } = await supabaseClient
+                        .from('SK_Tbl')
+                        .select(`
+                            skID,
+                            position,
+                            User_Tbl!inner (
+                                userID,
+                                firstName,
+                                lastName,
+                                accountStatus
+                            )
+                        `)
+                        .eq('position', position);
+
+                    if (checkError) {
+                        throw checkError;
+                    }
+
+                    // Filter for active users in JavaScript (Supabase doesn't support filtering on joined columns)
+                    const activePositionHolders = skRecords?.filter(sk =>
+                        sk.User_Tbl && sk.User_Tbl.accountStatus === 'ACTIVE'
+                    ) || [];
+
+                    if (activePositionHolders.length > 0) {
+                        const existing = activePositionHolders[0];
+                        const existingUser = existing.User_Tbl;
+
+                        const confirmed = confirm(
+                            `There is already an active ${position.replace(/_/g, ' ')}: ${existingUser.firstName} ${existingUser.lastName}.\n\n` +
+                            `Promoting ${currentModalUserName} will deactivate the current holder.\n\n` +
+                            `Do you want to proceed?`
+                        );
+
+                        if (!confirmed) {
+                            return;
+                        }
+
+                        // Deactivate existing position holder
+                        const { error: deactivateError } = await supabaseClient
+                            .from('User_Tbl')
+                            .update({ accountStatus: 'INACTIVE' })
+                            .eq('userID', existingUser.userID);
+
+                        if (deactivateError) throw deactivateError;
+
+                        showToast(`${existingUser.firstName} ${existingUser.lastName} has been deactivated`, 'info');
+                    }
+                } else if (position === 'SK_KAGAWAD') {
+                    // Check Kagawad limit (max 7 active)
+                    const { data: kagawads, error: countError } = await supabaseClient
+                        .from('SK_Tbl')
+                        .select(`
+                            skID,
+                            User_Tbl!inner (
+                                userID,
+                                accountStatus
+                            )
+                        `)
+                        .eq('position', 'SK_KAGAWAD');
+
+                    if (countError) throw countError;
+
+                    // Filter for active Kagawads in JavaScript
+                    const activeKagawads = kagawads?.filter(sk =>
+                        sk.User_Tbl && sk.User_Tbl.accountStatus === 'ACTIVE'
+                    ) || [];
+
+                    if (activeKagawads.length >= 7) {
+                        showToast('Maximum of 7 active Kagawad positions reached. Please deactivate an existing Kagawad first.', 'error');
+                        return;
+                    }
+                }
+
+                // Update user role
+                const { error: roleError } = await supabaseClient
+                    .from('User_Tbl')
+                    .update({ role: 'SK_OFFICIAL', accountStatus: 'ACTIVE' })
+                    .eq('userID', currentModalUserId);
+
+                if (roleError) throw roleError;
+
+                // Create SK record
+                const { error: skError } = await supabaseClient
+                    .from('SK_Tbl')
+                    .insert({
+                        userID: currentModalUserId,
+                        position: position,
+                        termStart: termStart,
+                        termEnd: termEnd
+                    });
+
+                if (skError) throw skError;
+
+                showToast(`${currentModalUserName} promoted to ${position.replace(/_/g, ' ')}`, 'success');
+                closePromoteModal();
+                loadUsers();
+            } catch (error) {
+                console.error('Error promoting user:', error);
+                showToast('Error promoting user: ' + error.message, 'error');
+            }
+        };
+
+        // Demote SK Official - Open Modal
+        window.demoteUser = function(userId, userName) {
+            currentModalUserId = userId;
+            currentModalUserName = userName;
+            document.getElementById('demoteUserName').textContent = userName;
+            document.getElementById('demoteUserRole').textContent = 'Current Role: SK Official';
+            document.getElementById('demoteModal').classList.remove('hidden');
+
+            // Reset form
+            document.getElementById('confirmDemote').checked = false;
+        };
+
+        // Demote Captain - Open Modal
+        window.demoteCaptain = function(userId, userName) {
+            currentModalUserId = userId;
+            currentModalUserName = userName;
+            document.getElementById('demoteUserName').textContent = userName;
+            document.getElementById('demoteUserRole').textContent = 'Current Role: Barangay Captain';
+            document.getElementById('demoteModal').classList.remove('hidden');
+
+            // Reset form
+            document.getElementById('confirmDemote').checked = false;
+        };
+
+        window.closeDemoteModal = function() {
+            document.getElementById('demoteModal').classList.add('hidden');
+            currentModalUserId = null;
+            currentModalUserName = null;
+        };
+
+        window.confirmDemote = async function() {
+            const confirmed = document.getElementById('confirmDemote').checked;
+
+            // Validation
+            if (!confirmed) {
+                showToast('Please confirm that you understand the consequences', 'error');
+                return;
+            }
+
+            try {
+                // Get current user to check role
+                const { data: userData, error: userError } = await supabaseClient
+                    .from('User_Tbl')
+                    .select('role')
+                    .eq('userID', currentModalUserId)
+                    .single();
+
+                if (userError) throw userError;
+
+                // If SK Official, delete SK record
+                if (userData.role === 'SK_OFFICIAL') {
+                    const { error: skError } = await supabaseClient
+                        .from('SK_Tbl')
+                        .delete()
+                        .eq('userID', currentModalUserId);
+
+                    if (skError) throw skError;
+                }
+
+                // If Captain, delete Captain record
+                if (userData.role === 'CAPTAIN') {
+                    const { error: captainError } = await supabaseClient
+                        .from('Captain_Tbl')
+                        .delete()
+                        .eq('userID', currentModalUserId);
+
+                    if (captainError) throw captainError;
+                }
+
+                // Update user role to Youth Volunteer
+                const { error: roleError } = await supabaseClient
+                    .from('User_Tbl')
+                    .update({ role: 'YOUTH_VOLUNTEER' })
+                    .eq('userID', currentModalUserId);
+
+                if (roleError) throw roleError;
+
+                showToast(`${currentModalUserName} demoted to Youth Volunteer`, 'success');
+                closeDemoteModal();
+                loadUsers();
+            } catch (error) {
+                console.error('Error demoting user:', error);
+                showToast('Error demoting user: ' + error.message, 'error');
+            }
+        };
+
+        // Deactivate User
+        window.deactivateUser = function(userId, userName) {
+            currentModalUserId = userId;
+            currentModalUserName = userName;
+            document.getElementById('deactivateUserName').textContent = userName;
+            document.getElementById('deactivateModal').classList.remove('hidden');
+
+            // Reset form
+            document.getElementById('deactivationReason').value = '';
+            document.getElementById('deactivationNotes').value = '';
+            document.getElementById('confirmDeactivate').checked = false;
+        };
+
+        window.closeDeactivateModal = function() {
+            document.getElementById('deactivateModal').classList.add('hidden');
+            currentModalUserId = null;
+            currentModalUserName = null;
+        };
+
+        window.confirmDeactivate = async function() {
+            const reason = document.getElementById('deactivationReason').value;
+            const notes = document.getElementById('deactivationNotes').value;
+            const confirmed = document.getElementById('confirmDeactivate').checked;
+
+            // Validation
+            if (!reason) {
+                showToast('Please select a reason for deactivation', 'error');
+                return;
+            }
+
+            if (!confirmed) {
+                showToast('Please confirm that you understand the consequences', 'error');
+                return;
+            }
+
+            try {
+                // Update user status
+                const { error } = await supabaseClient
+                    .from('User_Tbl')
+                    .update({ accountStatus: 'INACTIVE' })
+                    .eq('userID', currentModalUserId);
+
+                if (error) throw error;
+
+                // Log the action
+                const logMessage = `User ${currentModalUserName} deactivated. Reason: ${reason}${notes ? '. Notes: ' + notes : ''}`;
+                console.log(logMessage);
+
+                showToast(`${currentModalUserName} has been deactivated`, 'success');
+                closeDeactivateModal();
+                loadUsers();
+            } catch (error) {
+                console.error('Error deactivating user:', error);
+                showToast('Error deactivating user: ' + error.message, 'error');
+            }
+        };
+
+        // Reactivate User
+        window.reactivateUser = async function(userId, userName) {
+            if (!confirm(`Are you sure you want to reactivate ${userName}?`)) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('User_Tbl')
+                    .update({ accountStatus: 'ACTIVE' })
+                    .eq('userID', userId);
+
+                if (error) throw error;
+
+                showToast(`${userName} has been reactivated`, 'success');
+                loadUsers();
+            } catch (error) {
+                console.error('Error reactivating user:', error);
+                showToast('Error reactivating user', 'error');
+            }
+        };
+
+        // ==================== UTILITIES ====================
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ${type === 'success' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>' :
+                      type === 'error' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>' :
+                      '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>'}
+                </svg>
+                <span class="flex-1">${message}</span>
+            `;
+
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 100);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function setCurrentDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', options);
+        }
+
+        // ==================== MOBILE NAVIGATION ====================
+        function toggleSidebar() {
+            const sidebar = document.querySelector('aside');
+            const overlay = document.querySelector('.mobile-sidebar-overlay');
+
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking nav links on mobile
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('aside a.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 1024) {
+                        toggleSidebar();
+                    }
+                });
+            });
+        });
+
+        // ==================== INITIALIZATION ====================
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 User Management Page - Initializing...');
+
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) return;
+
+            setCurrentDate();
+            await loadUsers();
+
+            // Add event listeners
+            document.getElementById('searchInput').addEventListener('input', filterUsers);
+            document.getElementById('roleFilter').addEventListener('change', filterUsers);
+            document.getElementById('statusFilter').addEventListener('change', filterUsers);
+
+            console.log('✅ User Management Page loaded successfully!');
+        });
+    </script>
+</body>
+</html>

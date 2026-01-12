@@ -148,14 +148,32 @@
 
                 <!-- Navigation Menu -->
                 <nav class="space-y-2">
-                    <a href="captain-dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group">
+                    <button onclick="switchSection('dashboard')" class="nav-link active-nav flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group transition w-full text-left">
                         <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
                             </svg>
                         </div>
-                        <span>Dashboard</span>
-                    </a>
+                        <span>Announcements</span>
+                    </button>
+
+                    <button onclick="switchSection('approvals')" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full text-left">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                            </svg>
+                        </div>
+                        <span>Project Approvals</span>
+                    </button>
+
+                    <button onclick="switchSection('archives')" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full text-left">
+                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                            </svg>
+                        </div>
+                        <span>Archives</span>
+                    </button>
                 </nav>
 
                 <div class="flex-1"></div>
@@ -183,11 +201,11 @@
                         <div>
                             <p class="text-sm text-[#2f6e4e] font-semibold mb-1" id="currentDate">Sunday, December 14, 2025</p>
                             <h1 class="text-2xl font-bold text-gray-800">Barangay Captain Dashboard</h1>
-                            <p class="text-sm text-gray-600 mt-1">Project approval and oversight system for barangay projects</p>
+                            <p class="text-sm text-gray-600 mt-1">Governance oversight: announcements, project approvals, and archives</p>
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="relative">
-                                <button onclick="toggleNotificationModal()" class="notification-icon p-2.5 text-gray-600 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-xl transition-all duration-300" title="Notifications">
+                                <button onclick="window.notificationModal.toggle()" class="notification-icon p-2.5 text-gray-600 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-xl transition-all duration-300" title="Notifications">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                                     </svg>
@@ -210,6 +228,28 @@
 
             <!-- Main Content Area -->
             <main class="p-4 sm:p-6 lg:p-8">
+                <!-- Dashboard Section - Announcements View -->
+                <div id="dashboardSection">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-6">Announcements</h1>
+                    <p class="text-gray-600 mb-8">View all active barangay announcements</p>
+
+                    <!-- Announcements Grid -->
+                    <div id="announcementsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Announcements will be loaded here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyAnnouncements" class="hidden text-center py-12">
+                        <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                        </svg>
+                        <p class="text-gray-500 text-lg">No announcements available</p>
+                    </div>
+                </div>
+                <!-- End Dashboard Section -->
+
+                <!-- Project Approvals Section -->
+                <div id="approvalsSection" class="hidden">
                 <!-- Stats Overview -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
                     <!-- Pending Approval Card -->
@@ -354,7 +394,84 @@
                         </nav>
                     </div>
                 </div>
-            </main>
+                </div>
+                <!-- End Project Approvals Section -->
+
+                <!-- Archives Section -->
+                <div id="archivesSection" class="hidden">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-6">Archives</h1>
+                    <p class="text-gray-600 mb-8">View archived projects and files (Read-only)</p>
+
+                    <!-- Archive Tabs -->
+                    <div class="bg-white rounded-lg shadow mb-6">
+                        <div class="border-b border-gray-200">
+                            <nav class="flex -mb-px">
+                                <button onclick="switchArchiveTab('projects')" class="archive-tab active px-6 py-4 text-sm font-medium text-[#2f6e4e] border-b-2 border-[#2f6e4e]">
+                                    Archived Projects
+                                </button>
+                                <button onclick="switchArchiveTab('files')" class="archive-tab px-6 py-4 text-sm font-medium text-gray-500 hover:text-[#2f6e4e] border-b-2 border-transparent">
+                                    Archived Files
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- Archived Projects Tab -->
+                    <div id="archivedProjectsTab" class="archive-tab-content">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold text-gray-800">Archived Projects</h3>
+                                <div class="text-sm text-gray-500">
+                                    <span class="bg-gray-100 px-3 py-1 rounded-full" id="archivedProjectsCount">0 projects</span>
+                                </div>
+                            </div>
+                            <div id="archivedProjectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <!-- Archived projects will be loaded here -->
+                            </div>
+                            <div id="emptyArchivedProjects" class="hidden text-center py-12">
+                                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                                </svg>
+                                <p class="text-gray-500 text-lg">No archived projects</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Archived Files Tab -->
+                    <div id="archivedFilesTab" class="archive-tab-content hidden">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold text-gray-800">Archived Files</h3>
+                                <div class="text-sm text-gray-500">
+                                    <span class="bg-gray-100 px-3 py-1 rounded-full" id="archivedFilesCount">0 files</span>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">File Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Archived Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="archivedFilesTableBody" class="bg-white divide-y divide-gray-200">
+                                        <!-- Archived files will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="emptyArchivedFiles" class="hidden text-center py-12">
+                                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                                <p class="text-gray-500 text-lg">No archived files</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Archives Section -->            </main>
         </div>
     </div>
 
@@ -748,24 +865,97 @@
     </div>
 
     <!-- Notification Modal -->
-    <div id="notificationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-end p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mt-16 mr-4 max-h-[80vh] flex flex-col">
-            <!-- Header -->
-            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
-                <h3 class="font-bold text-gray-800 text-lg">Notifications</h3>
-                <button onclick="closeNotificationModal()" class="text-gray-400 hover:text-gray-600 transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
+    <!-- Notification Modal - Injected by NotificationModal.js component -->
 
-            <!-- Notification List -->
-            <div id="notificationList" class="flex-1 overflow-y-auto">
-                <!-- Notifications will be dynamically inserted here -->
+    <!-- Promote to SK Official Modal -->
+    <div id="promoteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Promote to SK Official</h3>
+
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600">User: <strong id="promoteUserName"></strong></p>
+                    <p class="text-sm text-gray-600">Email: <strong id="promoteUserEmail"></strong></p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">SK Position</label>
+                    <select id="skPosition" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
+                        <option value="">-- Select Position --</option>
+                        <option value="SK_CHAIRMAN">SK Chairman</option>
+                        <option value="SK_SECRETARY">SK Secretary</option>
+                        <option value="SK_TREASURER">SK Treasurer</option>
+                        <option value="SK_AUDITOR">SK Auditor</option>
+                        <option value="SK_KAGAWAD">SK Kagawad</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Term Start</label>
+                        <input type="date" id="termStart" value="2023-10-30"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Term End</label>
+                        <input type="date" id="termEnd" value="2026-10-30"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="closePromoteModal()"
+                            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                        Cancel
+                    </button>
+                    <button onclick="confirmPromotion()"
+                            class="flex-1 px-4 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#3d8b64] transition">
+                        Assign Position
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
+    <style>
+        .badge {
+            @apply px-2 py-1 text-xs font-semibold rounded-full;
+        }
+        .badge-official {
+            @apply bg-green-100 text-green-800;
+        }
+        .badge-volunteer {
+            @apply bg-blue-100 text-blue-800;
+        }
+        .badge-captain {
+            @apply bg-purple-100 text-purple-800;
+        }
+        .badge-active {
+            @apply bg-green-100 text-green-800;
+        }
+        .badge-pending {
+            @apply bg-yellow-100 text-yellow-800;
+        }
+        .badge-inactive {
+            @apply bg-gray-100 text-gray-800;
+        }
+        .admin-tab-content {
+            display: none;
+        }
+        .admin-tab-content:not(.hidden) {
+            display: block;
+        }
+    </style>
+
+    <script type="module">
+        // Import NotificationModal component
+        import { NotificationModal } from './js/components/NotificationModal.js';
+
+        // Initialize NotificationModal component
+        const notificationModal = new NotificationModal();
+        notificationModal.render();
+        console.log('[CAPTAIN DASHBOARD] NotificationModal component initialized');
+
         // Captain Profile Data
         const captainProfile = {
             // User_Tbl fields
@@ -1795,117 +1985,9 @@
             });
         }
 
-        // Notification System - Generate from pending projects
-        function generateNotifications() {
-            const notifications = [];
-            let notifId = 1;
+        // Old demo notification system removed - now using NotificationModal.js component with Supabase
 
-            // Get pending projects and create notifications for them
-            const pendingProjects = projects.filter(p => p.status === 'pending');
-
-            pendingProjects.forEach((project, index) => {
-                const timeOptions = ['Just now', '5 minutes ago', '15 minutes ago', '30 minutes ago', '1 hour ago'];
-                notifications.push({
-                    id: notifId++,
-                    type: "pending_approval",
-                    title: "Project Awaiting Approval",
-                    message: `${project.name} submitted by ${project.submittedBy}`,
-                    time: timeOptions[index] || `${index} hours ago`,
-                    read: false,
-                    projectId: project.id,
-                });
-            });
-
-
-            return notifications;
-        }
-
-        let notifications = generateNotifications();
-
-        function toggleNotificationModal() {
-            const modal = document.getElementById('notificationModal');
-            modal.classList.toggle('hidden');
-            if (!modal.classList.contains('hidden')) {
-                renderNotifications();
-            }
-        }
-
-        function closeNotificationModal() {
-            document.getElementById('notificationModal').classList.add('hidden');
-        }
-
-        function updateNotificationCount() {
-            const unreadCount = notifications.filter(n => !n.read).length;
-            const badge = document.getElementById('notificationBadge');
-
-            if (unreadCount > 0) {
-                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-
-        function getNotificationIcon(type) {
-            // Only pending_approval for Captain
-            return `<div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>`;
-        }
-
-        function getNotificationBgColor(type) {
-            // Only pending_approval for Captain
-            return "bg-orange-50";
-        }
-
-        function renderNotifications() {
-            const notificationList = document.getElementById('notificationList');
-
-            if (notifications.length === 0) {
-                notificationList.innerHTML = `
-                    <div class="p-8 text-center text-gray-500">
-                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                        </svg>
-                        <p class="font-medium">No notifications</p>
-                        <p class="text-sm mt-1">You're all caught up!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            notificationList.innerHTML = notifications.map(notif => `
-                <div onclick="handleNotificationClick(${notif.id})"
-                     class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${notif.read ? '' : getNotificationBgColor(notif.type)}">
-                    <div class="flex items-start space-x-3">
-                        ${getNotificationIcon(notif.type)}
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-gray-800 ${notif.read ? '' : 'font-bold'}">${notif.title}</p>
-                            <p class="text-sm text-gray-600 mt-1">${notif.message}</p>
-                            <p class="text-xs text-gray-400 mt-2">${notif.time}</p>
-                        </div>
-                        ${!notif.read ? '<div class="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full mt-2"></div>' : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function handleNotificationClick(notifId) {
-            const notif = notifications.find(n => n.id === notifId);
-            if (!notif) return;
-
-            // Mark as read
-            notif.read = true;
-            updateNotificationCount();
-
-            // Handle pending approval notifications
-            if (notif.type === 'pending_approval' && notif.projectId) {
-                closeNotificationModal();
-                viewProjectDetails(notif.projectId);
-            }
-        }
+        // Notification modal functions removed - now handled by NotificationModal.js component
 
         // Update current date
         function updateCurrentDate() {
@@ -1969,6 +2051,272 @@
 
             console.log('SK Notification created:', notification);
         }
+
+        // Section Switching Function
+        function switchSection(sectionName) {
+            // Hide all sections
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('approvalsSection').classList.add('hidden');
+            document.getElementById('archivesSection').classList.add('hidden');
+
+            // Show selected section
+            const sectionMap = {
+                'dashboard': 'dashboardSection',
+                'approvals': 'approvalsSection',
+                'archives': 'archivesSection'
+            };
+
+            const targetSection = sectionMap[sectionName];
+            if (targetSection) {
+                document.getElementById(targetSection).classList.remove('hidden');
+            }
+
+            // Update sidebar active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active-nav', 'bg-[#2f6e4e]/10', 'text-[#2f6e4e]');
+                link.classList.add('text-gray-700');
+
+                // Update icon background
+                const iconDiv = link.querySelector('div');
+                if (iconDiv) {
+                    iconDiv.classList.remove('bg-[#2f6e4e]/20');
+                    iconDiv.classList.add('bg-gray-100');
+                }
+            });
+
+            // Add active state to clicked link
+            const activeLink = document.querySelector(`[onclick="switchSection('${sectionName}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active-nav', 'bg-[#2f6e4e]/10', 'text-[#2f6e4e]');
+                activeLink.classList.remove('text-gray-700');
+
+                // Update icon background
+                const iconDiv = activeLink.querySelector('div');
+                if (iconDiv) {
+                    iconDiv.classList.add('bg-[#2f6e4e]/20');
+                    iconDiv.classList.remove('bg-gray-100');
+                }
+            }
+
+            // Load content for specific sections
+            if (sectionName === 'dashboard' && !window.announcementsLoaded) {
+                loadAnnouncements();
+                window.announcementsLoaded = true;
+            } else if (sectionName === 'approvals' && !window.approvalsLoaded) {
+                loadProjectApprovals();
+                window.approvalsLoaded = true;
+            } else if (sectionName === 'archives' && !window.archivesLoaded) {
+                loadArchives();
+                window.archivesLoaded = true;
+            }
+        }
+
+        // ANNOUNCEMENTS LOADING
+        async function loadAnnouncements() {
+            try {
+                const { data: announcements, error } = await supabaseClient
+                    .from('Announcement_Tbl')
+                    .select('*')
+                    .order('publishedDate', { ascending: false });
+
+                if (error) throw error;
+
+                const grid = document.getElementById('announcementsGrid');
+                const empty = document.getElementById('emptyAnnouncements');
+
+                if (!announcements || announcements.length === 0) {
+                    grid.classList.add('hidden');
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                grid.classList.remove('hidden');
+                empty.classList.add('hidden');
+
+                grid.innerHTML = announcements.map(announcement => `
+                    <div class="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
+                        ${announcement.imagePathURL ? `
+                            <img src="${announcement.imagePathURL}" alt="${announcement.title}"
+                                 class="w-full h-48 object-cover rounded-lg mb-4">
+                        ` : ''}
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                ${announcement.category === 'URGENT' ? 'bg-red-100 text-red-800' :
+                                  announcement.category === 'UPDATE' ? 'bg-blue-100 text-blue-800' :
+                                  'bg-gray-100 text-gray-800'}">
+                                ${announcement.category}
+                            </span>
+                            <span class="text-xs text-gray-500">
+                                ${new Date(announcement.publishedDate).toLocaleDateString()}
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">${announcement.title}</h3>
+                        <p class="text-gray-600 text-sm line-clamp-3">${announcement.description || 'No description'}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading announcements:', error);
+                showToast('Error loading announcements', 'error');
+            }
+        }
+
+        // PROJECT APPROVALS LOADING
+        async function loadProjectApprovals() {
+            // This function triggers the existing project loading logic
+            // The project approval functionality already exists in the page
+            console.log('Project approvals section activated');
+        }
+
+        // ARCHIVES LOADING
+        async function loadArchives() {
+            console.log('Loading archives...');
+            await loadArchivedProjects();
+        }
+
+        function switchArchiveTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.archive-tab').forEach(tab => {
+                tab.classList.remove('active', 'text-[#2f6e4e]', 'border-[#2f6e4e]');
+                tab.classList.add('text-gray-500', 'border-transparent');
+            });
+
+            // Find and activate clicked tab
+            const activeTab = document.querySelector(`[onclick*="switchArchiveTab('${tabName}')"]`);
+            if (activeTab) {
+                activeTab.classList.add('active', 'text-[#2f6e4e]', 'border-[#2f6e4e]');
+                activeTab.classList.remove('text-gray-500', 'border-transparent');
+            }
+
+            // Show selected tab content
+            document.querySelectorAll('.archive-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            if (tabName === 'projects') {
+                document.getElementById('archivedProjectsTab').classList.remove('hidden');
+                if (!window.archivedProjectsLoaded) {
+                    loadArchivedProjects();
+                    window.archivedProjectsLoaded = true;
+                }
+            } else if (tabName === 'files') {
+                document.getElementById('archivedFilesTab').classList.remove('hidden');
+                if (!window.archivedFilesLoaded) {
+                    loadArchivedFiles();
+                    window.archivedFilesLoaded = true;
+                }
+            }
+        }
+
+        async function loadArchivedProjects() {
+            try {
+                const { data: projects, error } = await supabaseClient
+                    .from('Pre_Project_Tbl')
+                    .select('*, User_Tbl (firstName, lastName)')
+                    .eq('status', 'ARCHIVED')
+                    .order('submittedDate', { ascending: false });
+
+                if (error) throw error;
+
+                const grid = document.getElementById('archivedProjectsGrid');
+                const empty = document.getElementById('emptyArchivedProjects');
+                const count = document.getElementById('archivedProjectsCount');
+
+                count.textContent = `${projects?.length || 0} projects`;
+
+                if (!projects || projects.length === 0) {
+                    grid.classList.add('hidden');
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                grid.classList.remove('hidden');
+                empty.classList.add('hidden');
+
+                grid.innerHTML = projects.map(project => `
+                    <div class="bg-gray-50 rounded-lg shadow p-6 opacity-75">
+                        ${project.imagePathURL ? `
+                            <img src="${project.imagePathURL}" alt="${project.title}"
+                                 class="w-full h-40 object-cover rounded-lg mb-4 grayscale">
+                        ` : ''}
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-700">
+                                ARCHIVED
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-700 mb-2">${project.title}</h3>
+                        <p class="text-gray-600 text-sm mb-3 line-clamp-2">${project.description || ''}</p>
+                        <div class="text-xs text-gray-500">
+                            <p>Created by: ${project.User_Tbl?.firstName} ${project.User_Tbl?.lastName}</p>
+                            <p>Date: ${new Date(project.submittedDate).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading archived projects:', error);
+                showToast('Error loading archived projects', 'error');
+            }
+        }
+
+        async function loadArchivedFiles() {
+            try {
+                const { data: files, error } = await supabaseClient
+                    .from('File_Tbl')
+                    .select('*, User_Tbl (firstName, lastName)')
+                    .eq('fileStatus', 'ARCHIVED')
+                    .order('dateUploaded', { ascending: false });
+
+                if (error) throw error;
+
+                const tbody = document.getElementById('archivedFilesTableBody');
+                const empty = document.getElementById('emptyArchivedFiles');
+                const count = document.getElementById('archivedFilesCount');
+
+                count.textContent = `${files?.length || 0} files`;
+
+                if (!files || files.length === 0) {
+                    tbody.closest('table').classList.add('hidden');
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                tbody.closest('table').classList.remove('hidden');
+                empty.classList.add('hidden');
+
+                tbody.innerHTML = files.map(file => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-sm font-medium text-gray-900">${file.fileName}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                ${file.fileType}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${file.fileCategory}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${new Date(file.dateUploaded).toLocaleDateString()}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <button onclick="window.open('${file.filePath}', '_blank')"
+                                    class="text-[#2f6e4e] hover:text-[#3d8b64] font-medium">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading archived files:', error);
+                showToast('Error loading archived files', 'error');
+            }
+        }
+
     </script>
     <script src="js/mobile-nav.js"></script>
 </body>

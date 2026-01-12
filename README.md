@@ -36,7 +36,27 @@ A comprehensive web-based management system for Barangay Malanday's Sangguniang 
 
 ### Authentication
 - **Login** (login.html) - User authentication
+  - Email/Password with OTP verification
+  - Google OAuth (one-click login)
 - **Sign Up** (signup.html) - New user registration
+  - Email/Password with OTP verification
+  - Google OAuth (one-click signup)
+- **Complete Profile** (complete-profile.html) - Profile completion for OAuth users
+
+### Superadmin Management
+- **User Management** (superadmin-user-management.html) - Manage user roles and positions
+  - Promote Youth Volunteers to SK Officials or Barangay Captain
+  - Deactivate/Reactivate user accounts
+  - Remove SK Official roles
+
+**Role Promotion Constraints:**
+- **Barangay Captain:** Only ONE active Captain account allowed. Promoting a new Captain automatically deactivates the current one.
+- **SK Chairman:** Only ONE active account allowed per position
+- **SK Secretary:** Only ONE active account allowed per position
+- **SK Treasurer:** Only ONE active account allowed per position
+- **SK Kagawad:** Maximum 7 active accounts allowed
+
+**Note:** SK Auditor position has been removed from the system.
 
 ## Recent Updates
 
@@ -64,11 +84,21 @@ A comprehensive web-based management system for Barangay Malanday's Sangguniang 
 
 ## Technologies Used
 
+### Frontend
 - **HTML5** - Structure and content
 - **Tailwind CSS** - Styling framework
-- **JavaScript** - Interactivity and functionality
+- **Vanilla JavaScript** - Interactivity and functionality
 - **jsPDF & html2canvas** - PDF generation
 - **Font Awesome** - Icons
+
+### Backend & Infrastructure
+- **Supabase** - Backend-as-a-Service (BaaS)
+  - PostgreSQL Database
+  - Authentication (Email/Password + OTP)
+  - Storage (File uploads)
+  - Row Level Security (RLS)
+- **Netlify** - Frontend hosting with CI/CD
+- **Gmail API** - OTP email verification
 
 ## Database Schema
 
@@ -78,9 +108,29 @@ ER diagrams available in:
 
 ## Installation
 
+### Development Setup (Current Phase)
 1. Clone the repository
 2. Open any HTML file in a modern web browser
-3. No server setup required - runs entirely in the browser
+3. Currently in **Phase 1: Frontend Cleanup** - backend integration pending
+
+### Production Setup (Future - Phase 2+)
+1. **Supabase Setup:**
+   - Create Supabase project at [supabase.com](https://supabase.com)
+   - Run database migrations (SQL schema from CLAUDE.md)
+   - Configure Row Level Security (RLS) policies
+   - Setup storage buckets for file uploads
+
+2. **Environment Configuration:**
+   - Create `.env` file with Supabase credentials:
+     ```
+     SUPABASE_URL=your_supabase_url
+     SUPABASE_ANON_KEY=your_anon_key
+     ```
+
+3. **Netlify Deployment:**
+   - Connect GitHub repository to Netlify
+   - Configure environment variables in Netlify dashboard
+   - Deploy with automatic CI/CD on every push
 
 ## Project Structure
 

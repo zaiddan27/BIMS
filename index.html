@@ -26,7 +26,7 @@
         },
       };
     </script>
-    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/responsive.css?v=2" />
     <style>
       * {
         font-family: "Inter", system-ui, sans-serif;
@@ -112,70 +112,69 @@
     <!-- Navigation Header -->
     <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
       <div class="max-w-7xl mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-          <!-- Logo -->
-          <div class="flex items-center space-x-4">
-            <div
-              class="w-16 h-16 bg-white rounded-full flex items-center justify-center flex-shrink-0 shadow-lg overflow-hidden"
-            >
-              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
-            </div>
-            <div>
-              <h1 class="text-2xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-            </div>
-          </div>
-
-          <!-- Navigation Links -->
-          <div class="hidden md:flex items-center space-x-8">
-            <a
-              href="#home"
-              class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
-            >
-              Home
-            </a>
-            <a
-              href="#features"
-              class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
-            >
-              Features
-            </a>
-            <a
-              href="#projects"
-              class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
-            >
-              Projects
-            </a>
-            <a
-              href="#testimonials"
-              class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
-            >
-              Testimonials
-            </a>
-            <a
-              href="#transparency"
-              class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
-            >
-              Transparency
-            </a>
-          </div>
-
-          <!-- CTA Buttons -->
-          <div class="flex items-center space-x-3">
-            <a
-              href="login.html"
-              class="px-5 py-2.5 text-[#2f6e4e] hover:text-[#3d8b64] font-semibold transition"
-            >
-              Login
-            </a>
-            <a
-              href="signup.html"
-              class="px-6 py-2.5 gradient-bg text-white font-semibold rounded-lg hover:shadow-lg transition duration-200"
-            >
-              Sign Up
-            </a>
-          </div>
-        </div>
+                                                <div class="flex items-center justify-between">
+                                                  <!-- Logo -->
+                                                  <div class="flex items-center space-x-4">
+                                                    <div
+                                                      class="w-16 h-16 bg-white rounded-full flex items-center justify-center flex-shrink-0 shadow-lg overflow-hidden"
+                                                    >
+                                                      <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
+                                                    </div>
+                                                    <div>
+                                                      <h1 class="text-2xl font-black text-gray-800">BIMS</h1>
+                                                      <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
+                                                    </div>
+                                                  </div>
+                                      
+                                                  <!-- Navigation Links -->
+                                                  <div class="hidden md:flex items-center space-x-8">
+                                                    <a
+                                                      href="#home"
+                                                      class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
+                                                    >
+                                                      Home
+                                                    </a>
+                                                    <a
+                                                      href="#features"
+                                                      class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
+                                                    >
+                                                      Features
+                                                    </a>
+                                                    <a
+                                                      href="#projects"
+                                                      class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
+                                                    >
+                                                      Projects
+                                                    </a>
+                                                    <a
+                                                      href="#testimonials"
+                                                      class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
+                                                    >
+                                                      Testimonials
+                                                    </a>
+                                                    <a
+                                                      href="#transparency"
+                                                      class="text-gray-700 hover:text-[#2f6e4e] font-medium transition"
+                                                    >
+                                                      Transparency
+                                                    </a>
+                                                  </div>
+                                      
+                                                  <!-- CTA Buttons -->
+                                                  <div class="flex items-center space-x-3">
+                                                    <a
+                                                      href="login.html"
+                                                      class="px-5 py-2.5 text-[#2f6e4e] hover:text-[#3d8b64] font-semibold transition"
+                                                    >
+                                                      Login
+                                                    </a>
+                                                    <a
+                                                      href="signup.html"
+                                                      class="px-6 py-2.5 gradient-bg text-white font-semibold rounded-lg hover:shadow-lg transition duration-200"
+                                                    >
+                                                      Sign Up
+                                                    </a>
+                                                  </div>        </div>
       </div>
     </nav>
 
@@ -1590,6 +1589,19 @@
       // Load published files when page loads
       document.addEventListener('DOMContentLoaded', function() {
         loadPublishedFiles();
+      });
+    </script>
+
+    <!-- Supabase and Google OAuth Handler -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+    <script src="js/auth/google-auth-handler.js"></script>
+
+    <script>
+      // Handle Google OAuth callback on page load
+      window.addEventListener('DOMContentLoaded', async () => {
+        await handleGoogleAuthCallback();
       });
     </script>
   </body>

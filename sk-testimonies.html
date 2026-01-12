@@ -1419,22 +1419,6 @@
         renderNotifications();
       }
 
-      // Close notification modal when clicking outside
-      document.addEventListener("click", function (event) {
-        const modal = document.getElementById("notificationModal");
-        const notificationButton = event.target.closest(
-          'button[onclick="toggleNotificationModal()"]'
-        );
-
-        if (
-          !modal.contains(event.target) &&
-          !notificationButton &&
-          !modal.classList.contains("hidden")
-        ) {
-          closeNotificationModal();
-        }
-      });
-
       // Initialize notification count on page load
       updateNotificationCount();
 
@@ -1699,6 +1683,40 @@
               Save Changes
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div
+      id="notificationModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
+      onclick="closeNotificationModal()"
+    >
+      <div
+        class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col"
+        onclick="event.stopPropagation()"
+      >
+        <div class="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+          <h3 class="font-bold text-gray-800">Notifications</h3>
+          <div class="flex items-center gap-3">
+            <button
+              onclick="markAllAsRead()"
+              class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
+            >
+              Mark all as read
+            </button>
+            <button
+              onclick="closeNotificationModal()"
+              class="text-gray-400 hover:text-gray-600 transition"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <div id="notificationList" class="overflow-y-auto flex-1">
+          <!-- Notifications will be dynamically inserted here -->
         </div>
       </div>
     </div>

@@ -9,6 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
+
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- BIMS Configuration -->
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+    <script src="js/auth/auth.js"></script>
+    <script src="js/auth/session.js"></script>
+
     <script>
       tailwind.config = {
         theme: {
@@ -155,6 +165,18 @@
       #announcementPaginationDots button:focus {
         outline: 2px solid rgba(47, 110, 78, 0.3);
         outline-offset: 2px;
+      }
+
+      /* Limit announcement description to 5 lines with ellipsis */
+      .announcement-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.5;
+        height: calc(1.5em * 5); /* Fixed height for 5 lines - keeps cards consistent */
+        min-height: calc(1.5em * 5); /* Ensure minimum height even with short text */
       }
     </style>
   </head>
@@ -313,6 +335,7 @@
           <!-- Logout -->
           <div class="mt-8 pt-8 border-t border-gray-200">
             <button
+              onclick="handleLogout()"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
             >
               <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
@@ -366,7 +389,7 @@
               </div>
               <div class="flex items-center space-x-4">
                 <div class="relative">
-                  <button onclick="toggleNotificationModal()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                  <button onclick="window.notificationModal.toggle()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
@@ -403,7 +426,9 @@
                   </div>
                 </div>
                 <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Total Files</p>
-                <p class="text-4xl font-extrabold text-gray-900 mb-1">156</p>
+                <p id="totalFiles" class="text-4xl font-extrabold text-gray-900 mb-1">
+                  <span class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"></span>
+                </p>
                 <p class="text-xs text-gray-500">Uploaded documents</p>
               </div>
 
@@ -417,7 +442,9 @@
                   </div>
                 </div>
                 <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Announcements</p>
-                <p class="text-4xl font-extrabold text-gray-900 mb-1">42</p>
+                <p id="totalAnnouncements" class="text-4xl font-extrabold text-gray-900 mb-1">
+                  <span class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"></span>
+                </p>
                 <p class="text-xs text-gray-500">Active posts</p>
               </div>
 
@@ -431,7 +458,9 @@
                   </div>
                 </div>
                 <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Active Projects</p>
-                <p class="text-4xl font-extrabold text-gray-900 mb-1">18</p>
+                <p id="activeProjects" class="text-4xl font-extrabold text-gray-900 mb-1">
+                  <span class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"></span>
+                </p>
                 <p class="text-xs text-gray-500 flex items-center gap-1">
                   <svg class="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -450,7 +479,9 @@
                   </div>
                 </div>
                 <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Youth Volunteers</p>
-                <p class="text-4xl font-extrabold text-gray-900 mb-1">328</p>
+                <p id="totalVolunteers" class="text-4xl font-extrabold text-gray-900 mb-1">
+                  <span class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"></span>
+                </p>
                 <p class="text-xs text-gray-500 flex items-center gap-1">
                   <svg class="w-3 h-3 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
@@ -488,324 +519,7 @@
               </div>
 
               <div id="announcementsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Announcements will be dynamically inserted here -->
-                <!-- Announcement Card 1 -->
-                <div
-                  class="border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition"
-                >
-                  <div
-                    class="h-32 bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-16 h-16 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      ></path>
-                    </svg>
-                  </div>
-                  <div class="p-5">
-                    <div class="flex items-center justify-between mb-3">
-                      <span
-                        class="px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full"
-                        >urgent</span
-                      >
-                      <span class="text-xs text-gray-500">Nov 18, 2025</span>
-                    </div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-2">
-                      Youth Sports Festival 2025
-                    </h4>
-                    <p class="text-sm text-gray-600 mb-3">
-                      Join us for an exciting sports festival featuring
-                      basketball, volleyball, and more!
-                    </p>
-                    <div class="flex justify-end">
-                      <div class="flex space-x-2">
-                        <button
-                          onclick="viewAnnouncement(1)"
-                          class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                          title="View"
-                        >
-                          <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            ></path>
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            ></path>
-                          </svg>
-                        </button>
-                        <button
-                          onclick="openEditModal(1)"
-                          class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                          title="Edit"
-                        >
-                          <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            ></path>
-                          </svg>
-                        </button>
-                        <button
-                          onclick="confirmDelete(1)"
-                          class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                          title="Delete"
-                        >
-                          <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            ></path>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Announcement Card 2 -->
-                <div
-                  class="border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition"
-                >
-                  <div
-                    class="h-32 bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-16 h-16 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                      ></path>
-                    </svg>
-                  </div>
-                  <div class="p-5">
-                    <div class="flex items-center justify-between mb-3">
-                      <span
-                        class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full"
-                        >general</span
-                      >
-                      <span class="text-xs text-gray-500">Nov 25, 2025</span>
-                    </div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-2">
-                      Free Skills Training Workshop
-                    </h4>
-                    <p class="text-sm text-gray-600 mb-3">
-                      Learn digital marketing, graphic design, and basic
-                      programming.
-                    </p>
-                    <div class="flex justify-end">
-                      <div class="flex space-x-2">
-                        <button
-                          onclick="viewAnnouncement(2)"
-                          class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                          title="View"
-                        >
-                          <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            ></path>
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            ></path>
-                          </svg>
-                        </button>
-                        <button
-                          onclick="openEditModal(2)"
-                          class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                          title="Edit"
-                        >
-                          <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            ></path>
-                          </svg>
-                        </button>
-                        <button
-                          onclick="confirmDelete(2)"
-                          class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                          title="Delete"
-                        >
-                          <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            ></path>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Announcement Card 3 -->
-                <div
-                  class="border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition"
-                >
-                  <div
-                    class="h-32 bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-16 h-16 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      ></path>
-                    </svg>
-                  </div>
-                  <div class="p-5">
-                    <div class="flex items-center justify-between mb-3">
-                      <span
-                        class="px-3 py-1 bg-[#2f6e4e]/20 text-[#2f6e4e] text-xs font-medium rounded-full"
-                        >update</span
-                      >
-                      <span class="text-xs text-gray-500">Nov 15, 2025</span>
-                    </div>
-                    <h4 class="text-lg font-bold text-gray-800 mb-2">
-                      Scholarship Program Now Open
-                    </h4>
-                    <p class="text-sm text-gray-600 mb-3">
-                      Applications are now being accepted. Deadline: December
-                      15, 2025.
-                    </p>
-                    <div class="flex justify-end">
-                      <div class="flex space-x-2">
-                        <button
-                          onclick="viewAnnouncement(3)"
-                          class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                          title="View"
-                        >
-                          <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            ></path>
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            ></path>
-                          </svg>
-                        </button>
-                        <button
-                          onclick="openEditModal(3)"
-                          class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                          title="Edit"
-                        >
-                          <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            ></path>
-                          </svg>
-                        </button>
-                        <button
-                          onclick="confirmDelete(3)"
-                          class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                          title="Delete"
-                        >
-                          <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            ></path>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <!-- Announcements will be dynamically loaded from database -->
               </div>
 
               <!-- Pagination Dots (Center) -->
@@ -1298,35 +1012,7 @@
     </div>
 
 
-    <!-- Notification Modal -->
-    <div
-      id="notificationModal"
-      class="hidden fixed top-20 right-6 w-96 bg-white rounded-xl shadow-2xl z-50 border border-gray-200"
-    >
-      <div class="p-4 border-b border-gray-200">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-bold text-gray-800">Notifications</h3>
-          <button
-            onclick="toggleNotificationModal()"
-            class="text-gray-400 hover:text-gray-600 transition p-1 rounded-lg hover:bg-gray-100"
-            title="Close notifications"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-        <button
-          onclick="markAllAsRead()"
-          class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
-        >
-          Mark all as read
-        </button>
-      </div>
-      <div id="notificationList" class="max-h-96 overflow-y-auto">
-        <!-- Notifications will be dynamically inserted here -->
-      </div>
-    </div>
+    <!-- Notification Modal - Injected by NotificationModal.js component -->
 
     <!-- Budget Edit Modal -->
     <div id="budgetEditModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -1405,82 +1091,358 @@
       </div>
     </div>
 
-    <script>
+    <script type="module">
+      // Import NotificationModal component
+      import { NotificationModal } from './js/components/NotificationModal.js';
+
+      console.log('[SK DASHBOARD] Script loaded - starting execution');
+      console.log('[SK DASHBOARD] SessionManager available:', typeof SessionManager !== 'undefined');
+
+      // Initialize NotificationModal component
+      const notificationModal = new NotificationModal();
+      notificationModal.render();
+      console.log('[SK DASHBOARD] NotificationModal component initialized');
+
+      // Global variables
       let currentAnnouncementId = null;
+      let currentUser = null;
+      let currentUserData = null;
 
-      // Detect user role based on referrer or session
-      const userRole = (document.referrer.includes('captain-dashboard.html') ||
-                       sessionStorage.getItem('userRole') === 'captain') ? 'captain' : 'sk_official';
+      /**
+       * Initialize session and authentication
+       * Load all dashboard data in parallel for efficiency
+       *
+       * @async
+       * @returns {Promise<void>}
+       */
+      async function initializeDashboard() {
+        console.log('[SK DASHBOARD] initializeDashboard() function called');
+        try {
+          console.log('[SK DASHBOARD] Inside try block - Initializing...');
 
-      if (userRole === 'captain') {
-        sessionStorage.setItem('userRole', 'captain');
+          // Require authentication - only SK_OFFICIAL allowed
+          console.log('[SK DASHBOARD] Checking authentication...');
+          const sessionResult = await SessionManager.requireAuth(['SK_OFFICIAL']);
+
+          console.log('[SK DASHBOARD] Session result:', sessionResult);
+
+          if (!sessionResult.success) {
+            console.error('[SK DASHBOARD ERROR] Authentication failed:', sessionResult.error);
+            return; // Session manager handles redirect
+          }
+
+          console.log('[SK DASHBOARD] Authentication successful!');
+          console.log('[SK DASHBOARD] User role:', sessionResult.role);
+          console.log('[SK DASHBOARD] User data:', sessionResult.userData);
+
+          currentUser = sessionResult.user;
+          currentUserData = sessionResult.userData;
+
+          // Update user profile in header
+          updateUserProfile();
+
+          // EFFICIENCY: Load dashboard data in parallel
+          await Promise.all([
+            loadAnnouncements(),
+            loadDashboardStatistics()
+          ]);
+
+          // Load notifications after authentication completes
+          loadSKNotifications();
+          updateNotificationCount();
+
+          console.log('[SK DASHBOARD] Initialized successfully!');
+        } catch (error) {
+          console.error('[SK DASHBOARD ERROR] Initialization error:', error);
+          console.error('[SK DASHBOARD ERROR] Error details:', error.message, error.stack);
+          SessionManager.redirectToLogin('Failed to initialize dashboard');
+        }
       }
 
-      // Sample announcement data (converted to array for pagination)
-      const announcementsArray = [
-        {
-          id: 1,
-          title: "Youth Sports Festival 2025",
-          description:
-            "Join us for an exciting sports festival featuring basketball, volleyball, and more! Open to all youth aged 15-30.",
-          date: "Nov 18, 2025",
-          category: "urgent",
-        },
-        {
-          id: 2,
-          title: "Free Skills Training Workshop",
-          description:
-            "Learn digital marketing, graphic design, and basic programming. Limited slots available!",
-          date: "Nov 25, 2025",
-          category: "general",
-        },
-        {
-          id: 3,
-          title: "Scholarship Program Now Open",
-          description:
-            "Applications for the SK Scholarship Program are now being accepted. Deadline: December 15, 2025.",
-          date: "Nov 15, 2025",
-          category: "update",
-        },
-        {
-          id: 4,
-          title: "Community Clean-Up Drive",
-          description:
-            "Join us in keeping our barangay clean and green. Bring your own gloves and cleaning materials.",
-          date: "Dec 1, 2025",
-          category: "general",
-        },
-        {
-          id: 5,
-          title: "Health and Wellness Seminar",
-          description:
-            "Free health check-up and wellness seminar for all residents. First 100 participants get free vitamins!",
-          date: "Dec 8, 2025",
-          category: "urgent",
-        },
-        {
-          id: 6,
-          title: "Christmas Gift Giving Program",
-          description:
-            "SK Malanday will distribute Christmas gifts to less fortunate families. Venue: Barangay Hall.",
-          date: "Dec 20, 2025",
-          category: "update",
-        },
-        {
-          id: 7,
-          title: "New Year's Eve Countdown Event",
-          description:
-            "Ring in the new year with us! Fireworks display, games, and prizes await. Family-friendly event.",
-          date: "Dec 31, 2025",
-          category: "general",
-        }
-      ];
+      // Update user profile in header
+      function updateUserProfile() {
+        if (!currentUserData) return;
 
-      // Create backwards-compatible announcements object for existing functions
-      const announcements = {};
-      announcementsArray.forEach(ann => {
-        announcements[ann.id] = ann;
-      });
+        const nameElement = document.querySelector('header p.text-sm.font-medium');
+        const roleElement = document.querySelector('header p.text-xs.text-gray-500');
+        const initialsElement = document.querySelector('header .w-10.h-10');
+
+        if (nameElement) {
+          const fullName = `${currentUserData.firstName} ${currentUserData.middleName || ''} ${currentUserData.lastName}`.trim().replace(/\s+/g, ' ');
+          nameElement.textContent = fullName;
+        }
+
+        if (roleElement) {
+          roleElement.textContent = 'SK Official';
+        }
+
+        if (initialsElement) {
+          const initials = `${currentUserData.firstName.charAt(0)}${currentUserData.lastName.charAt(0)}`.toUpperCase();
+          initialsElement.textContent = initials;
+        }
+      }
+
+      // Call init on page load
+      console.log('[SK DASHBOARD] About to call initializeDashboard()');
+      initializeDashboard();
+
+      // ============================================
+      // SECURITY: XSS Prevention Helper
+      // ============================================
+      /**
+       * Escape HTML to prevent XSS attacks
+       * @param {string} unsafe - Unsafe string from user input or database
+       * @returns {string} - Safe HTML string
+       */
+      function escapeHTML(unsafe) {
+        if (typeof unsafe !== 'string') return '';
+        return unsafe
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // ============================================
+      // SECURITY: File Upload Validation
+      // ============================================
+      /**
+       * Validate and sanitize image uploads
+       * Checks MIME type (not just extension), file size, and type matching
+       *
+       * @param {File} file - File object to validate
+       * @returns {Object} - {valid: boolean, error: string}
+       */
+      function validateImageFile(file) {
+        // Allowed MIME types (more reliable than file extension)
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        // Debug logging
+        console.log('📎 Validating file:', {
+          name: file.name,
+          type: file.type,
+          size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+          extension: file.name.split('.').pop().toLowerCase()
+        });
+
+        // Check MIME type
+        if (!allowedTypes.includes(file.type)) {
+          const error = `Invalid file type: ${file.type}. Only JPG, PNG, GIF, and WebP images are allowed`;
+          console.error('❌', error);
+          return { valid: false, error: error };
+        }
+
+        // Check file size
+        if (file.size > maxSize) {
+          const error = `Image size (${(file.size / 1024 / 1024).toFixed(2)} MB) exceeds 5MB limit`;
+          console.error('❌', error);
+          return { valid: false, error: error };
+        }
+
+        // Check file extension matches MIME type (prevent spoofing)
+        const extension = file.name.split('.').pop().toLowerCase();
+        const mimeExtension = file.type.split('/')[1].replace('jpeg', 'jpg');
+
+        if (extension !== mimeExtension && !(extension === 'jpg' && mimeExtension === 'jpeg')) {
+          const error = `File extension (.${extension}) does not match MIME type (${file.type})`;
+          console.error('❌', error);
+          return { valid: false, error: error };
+        }
+
+        console.log('✅ File validation passed');
+        return { valid: true };
+      }
+
+      // Announcement data - loaded from Supabase
+      let announcementsArray = [];
+      let announcements = {};
+
+      /**
+       * Load announcements from Supabase database
+       * Filters for ACTIVE content and orders by published date
+       *
+       * @async
+       * @returns {Promise<void>}
+       */
+      async function loadAnnouncements() {
+        try {
+          const { data, error } = await supabaseClient
+            .from('Announcement_Tbl')
+            .select('*')
+            .order('publishedDate', { ascending: false });
+
+          if (error) throw error;
+
+          if (data && data.length > 0) {
+            console.log('📥 Raw data from database:', data);
+
+            // Convert to the format expected by the UI
+            announcementsArray = data.map(announcement => ({
+              id: announcement.announcementID,
+              title: announcement.title,
+              date: formatRelativeDate(announcement.publishedDate),
+              category: announcement.category.toLowerCase(),
+              description: announcement.description || 'No description available',
+              image: announcement.imagePathURL || '',
+              rawDate: announcement.publishedDate
+            }));
+
+            // Create object format for viewAnnouncement function
+            announcements = {};
+            announcementsArray.forEach(ann => {
+              announcements[ann.id] = ann;
+            });
+
+            console.log('📦 Processed announcements object:', announcements);
+            console.log('📋 Announcements array:', announcementsArray);
+
+            // Render announcements after loading
+            renderAnnouncements();
+            updateAnnouncementPagination();
+
+            console.log(`✅ Loaded ${announcementsArray.length} announcements`);
+          } else {
+            console.log('No announcements found');
+            announcementsArray = [];
+            renderAnnouncements();
+          }
+
+        } catch (error) {
+          console.error('Error loading announcements:', error);
+          showToast('Failed to load announcements. Please refresh the page.', 'error');
+          announcementsArray = [];
+          renderAnnouncements();
+        }
+      }
+
+      /**
+       * Load dashboard statistics from Supabase
+       * Uses count queries for efficiency (doesn't load full data)
+       * Loads all stats in parallel for performance
+       *
+       * @async
+       * @returns {Promise<void>}
+       */
+      async function loadDashboardStatistics() {
+        try {
+          console.log('📊 Loading dashboard statistics...');
+
+          // EFFICIENCY: Load all counts in parallel using Promise.all
+          const [filesResult, announcementsResult, projectsResult, volunteersResult] = await Promise.all([
+            // Total active files
+            supabaseClient
+              .from('File_Tbl')
+              .select('*', { count: 'exact', head: true })
+              .eq('fileStatus', 'ACTIVE'),
+
+            // Total announcements
+            supabaseClient
+              .from('Announcement_Tbl')
+              .select('*', { count: 'exact', head: true }),
+
+            // Active/ongoing projects
+            supabaseClient
+              .from('Pre_Project_Tbl')
+              .select('*', { count: 'exact', head: true })
+              .eq('status', 'ONGOING'),
+
+            // Active youth volunteers
+            supabaseClient
+              .from('User_Tbl')
+              .select('*', { count: 'exact', head: true })
+              .eq('role', 'YOUTH_VOLUNTEER')
+              .eq('accountStatus', 'ACTIVE')
+          ]);
+
+          // Check for errors
+          if (filesResult.error) throw new Error('Failed to load files count');
+          if (announcementsResult.error) throw new Error('Failed to load announcements count');
+          if (projectsResult.error) throw new Error('Failed to load projects count');
+          if (volunteersResult.error) throw new Error('Failed to load volunteers count');
+
+          // Update DOM with counts (fallback to 0 if null)
+          const totalFiles = filesResult.count ?? 0;
+          const totalAnnouncements = announcementsResult.count ?? 0;
+          const activeProjects = projectsResult.count ?? 0;
+          const totalVolunteers = volunteersResult.count ?? 0;
+
+          // RELIABLE: Safe DOM updates with null checks
+          const filesElement = document.getElementById('totalFiles');
+          const announcementsElement = document.getElementById('totalAnnouncements');
+          const projectsElement = document.getElementById('activeProjects');
+          const volunteersElement = document.getElementById('totalVolunteers');
+
+          if (filesElement) filesElement.textContent = totalFiles;
+          if (announcementsElement) announcementsElement.textContent = totalAnnouncements;
+          if (projectsElement) projectsElement.textContent = activeProjects;
+          if (volunteersElement) volunteersElement.textContent = totalVolunteers;
+
+          console.log('✅ Statistics loaded:', {
+            files: totalFiles,
+            announcements: totalAnnouncements,
+            projects: activeProjects,
+            volunteers: totalVolunteers
+          });
+
+        } catch (error) {
+          console.error('Error loading dashboard statistics:', error);
+
+          // RELIABLE: Show 0 instead of leaving loading animation on error
+          const defaultElements = ['totalFiles', 'totalAnnouncements', 'activeProjects', 'totalVolunteers'];
+          defaultElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = '0';
+          });
+
+          // Don't show error toast for statistics (non-critical feature)
+          console.warn('⚠️ Statistics unavailable, showing default values');
+        }
+      }
+
+      // Format date to relative format (e.g., "2 days ago")
+      function formatRelativeDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        const diffHour = Math.floor(diffMin / 60);
+        const diffDay = Math.floor(diffHour / 24);
+
+        // Less than 1 minute
+        if (diffSec < 60) {
+          return 'Just now';
+        }
+        // Less than 1 hour
+        else if (diffMin < 60) {
+          return `${diffMin} ${diffMin === 1 ? 'minute' : 'minutes'} ago`;
+        }
+        // Less than 24 hours
+        else if (diffHour < 24) {
+          return `${diffHour} ${diffHour === 1 ? 'hour' : 'hours'} ago`;
+        }
+        // Less than 7 days
+        else if (diffDay < 7) {
+          return diffDay === 1 ? 'Yesterday' : `${diffDay} days ago`;
+        }
+        // Less than 30 days
+        else if (diffDay < 30) {
+          const weeks = Math.floor(diffDay / 7);
+          return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+        }
+        // Less than 365 days
+        else if (diffDay < 365) {
+          const months = Math.floor(diffDay / 30);
+          return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+        }
+        // 365+ days
+        else {
+          const years = Math.floor(diffDay / 365);
+          return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+        }
+      }
 
       // Pagination variables
       let currentAnnouncementPage = 0;
@@ -1523,19 +1485,20 @@
           const colors = categoryColors[announcement.category] || categoryColors.general;
 
           const card = document.createElement('div');
-          card.className = 'border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition';
+          card.className = 'border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col';
+          // SECURITY: Use escapeHTML() to prevent XSS attacks
           card.innerHTML = `
             <div class="h-32 bg-gradient-to-br ${colors.gradient} flex items-center justify-center">
               ${colors.icon}
             </div>
-            <div class="p-5">
+            <div class="p-5 flex flex-col flex-1">
               <div class="flex items-center justify-between mb-3">
-                <span class="px-3 py-1 ${colors.badge} text-xs font-medium rounded-full">${announcement.category}</span>
-                <span class="text-xs text-gray-500">${announcement.date}</span>
+                <span class="px-3 py-1 ${colors.badge} text-xs font-medium rounded-full">${escapeHTML(announcement.category)}</span>
+                <span class="text-xs text-gray-500">${escapeHTML(announcement.date)}</span>
               </div>
-              <h4 class="text-lg font-bold text-gray-800 mb-2">${announcement.title}</h4>
-              <p class="text-sm text-gray-600 mb-3">${announcement.description}</p>
-              <div class="flex justify-end">
+              <h4 class="text-lg font-bold text-gray-800 mb-2">${escapeHTML(announcement.title)}</h4>
+              <p class="announcement-description text-sm text-gray-600 mb-4">${escapeHTML(announcement.description)}</p>
+              <div class="flex justify-end mt-auto">
                 <div class="flex space-x-2">
                   <button onclick="viewAnnouncement(${announcement.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="View">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1619,7 +1582,7 @@
         document.getElementById("createImage").value = "";
       }
 
-      function postAnnouncement() {
+      async function postAnnouncement() {
         const titleInput = document.getElementById("createTitle");
         const categoryInput = document.getElementById("createCategory");
         const descriptionInput = document.getElementById("createDescription");
@@ -1667,11 +1630,14 @@
           setInputState(descriptionInput, true);
         }
 
-        // Validate image
-        if (image && image.size > 5 * 1024 * 1024) {
-          setInputState(imageInput, false);
-          showToast("Image size must be less than 5MB", "error");
-          return;
+        // SECURITY: Validate image file type and size
+        if (image) {
+          const validation = validateImageFile(image);
+          if (!validation.valid) {
+            setInputState(imageInput, false);
+            showToast(validation.error, "error");
+            return;
+          }
         }
 
         if (!isValid) {
@@ -1684,10 +1650,57 @@
         button.disabled = true;
         button.innerHTML = '<div class="spinner mx-auto"></div>';
 
-        // Simulate posting delay
-        setTimeout(() => {
-          // Log activity
-          addActivityLog("created announcement", title);
+        try {
+          let imagePath = null;
+
+          // Upload image if provided
+          if (image) {
+            // SECURITY: Use MIME type for extension (don't trust client filename)
+            const fileExt = image.type.split('/')[1].replace('jpeg', 'jpg');
+            const fileName = `announcement_${Date.now()}.${fileExt}`;
+            const filePath = `announcement-images/${fileName}`;
+
+            console.log('📤 Uploading to:', filePath);
+
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage
+              .from('bims-files')
+              .upload(filePath, image, {
+                cacheControl: '3600',
+                upsert: false,
+                contentType: image.type  // Set correct MIME type
+              });
+
+            if (uploadError) {
+              console.error('❌ Upload error:', uploadError);
+              throw new Error(`Image upload failed: ${uploadError.message}`);
+            }
+
+            console.log('✅ Upload successful:', uploadData);
+
+            // Get public URL
+            const { data: urlData } = supabaseClient.storage
+              .from('bims-files')
+              .getPublicUrl(filePath);
+
+            console.log('🔗 Public URL:', urlData.publicUrl);
+
+            imagePath = urlData.publicUrl;
+          }
+
+          // Insert announcement into database
+          const { data, error } = await supabaseClient
+            .from('Announcement_Tbl')
+            .insert({
+              userID: currentUser.id,
+              title: title,
+              category: category.toUpperCase(),
+              description: description,
+              imagePathURL: imagePath,
+              publishedDate: new Date().toISOString()
+            })
+            .select();
+
+          if (error) throw error;
 
           showToast("Announcement posted successfully!", "success");
 
@@ -1696,25 +1709,57 @@
           categoryInput.value = '';
           descriptionInput.value = '';
           imageInput.value = '';
-          document.getElementById('createDescCharCount').textContent = '0/500 characters';
+          const charCounter = document.getElementById('createDescCharCount');
+          if (charCounter) charCounter.textContent = '0/500 characters';
 
           // Reset visual states
           setInputState(titleInput, null);
           setInputState(categoryInput, null);
           setInputState(descriptionInput, null);
 
+          // RELIABILITY: Reload announcements and statistics to reflect changes immediately
+          await Promise.all([
+            loadAnnouncements(),
+            loadDashboardStatistics()
+          ]);
+
+          closeCreateModal();
+
+        } catch (error) {
+          // SECURITY: Log full error for debugging (console only, not exposed to user)
+          console.error('Error posting announcement:', error);
+
+          // Show generic message to user (don't expose system details)
+          let userMessage = 'Failed to post announcement. Please try again.';
+
+          // Only show specific messages for known user errors
+          if (error.message.includes('Image upload failed')) {
+            userMessage = 'Failed to upload image. Please try a different file.';
+          } else if (error.message.includes('unique constraint')) {
+            userMessage = 'An announcement with this title already exists.';
+          }
+
+          showToast(userMessage, 'error');
+        } finally {
           // Re-enable button
           button.disabled = false;
           button.innerHTML = originalButtonText;
-
-          closeCreateModal();
-        }, 800);
+        }
       }
 
       // Edit Announcement Modal
       function openEditModal(id) {
         currentAnnouncementId = id;
         const announcement = announcements[id];
+
+        console.log('🔍 Opening edit modal for ID:', id);
+        console.log('📋 Announcement data:', announcement);
+        console.log('📦 All announcements:', announcements);
+
+        if (!announcement) {
+          showToast('Announcement not found. Please refresh the page.', 'error');
+          return;
+        }
 
         const titleInput = document.getElementById("editTitle");
         const categoryInput = document.getElementById("editCategory");
@@ -1740,7 +1785,14 @@
         currentAnnouncementId = null;
       }
 
-      function saveEdit() {
+      /**
+       * Save edited announcement to Supabase
+       * Updates existing announcement with new data and optionally new image
+       *
+       * @async
+       * @returns {Promise<void>}
+       */
+      async function saveEdit() {
         const titleInput = document.getElementById("editTitle");
         const categoryInput = document.getElementById("editCategory");
         const descriptionInput = document.getElementById("editDescription");
@@ -1788,11 +1840,14 @@
           setInputState(descriptionInput, true);
         }
 
-        // Validate image
-        if (image && image.size > 5 * 1024 * 1024) {
-          setInputState(imageInput, false);
-          showToast("Image size must be less than 5MB", "error");
-          return;
+        // SECURITY: Validate image file if provided
+        if (image) {
+          const validation = validateImageFile(image);
+          if (!validation.valid) {
+            setInputState(imageInput, false);
+            showToast(validation.error, "error");
+            return;
+          }
         }
 
         if (!isValid) {
@@ -1805,28 +1860,119 @@
         button.disabled = true;
         button.innerHTML = '<div class="spinner mx-auto"></div>';
 
-        // Simulate update delay
-        setTimeout(() => {
-          // Log activity
-          addActivityLog("edited announcement", title);
+        try {
+          let imagePath = announcements[currentAnnouncementId].image; // Keep existing image by default
 
+          // Upload new image if provided
+          if (image) {
+            // SECURITY: Use MIME type for extension (don't trust client filename)
+            const fileExt = image.type.split('/')[1].replace('jpeg', 'jpg');
+            const fileName = `announcement_${Date.now()}.${fileExt}`;
+            const filePath = `announcement-images/${fileName}`;
+
+            console.log('📤 Uploading to:', filePath);
+
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage
+              .from('bims-files')
+              .upload(filePath, image, {
+                cacheControl: '3600',
+                upsert: false,
+                contentType: image.type
+              });
+
+            if (uploadError) {
+              console.error('❌ Upload error:', uploadError);
+              throw new Error(`Image upload failed: ${uploadError.message}`);
+            }
+
+            console.log('✅ Upload successful:', uploadData);
+
+            // Get public URL
+            const { data: urlData } = supabaseClient.storage
+              .from('bims-files')
+              .getPublicUrl(filePath);
+
+            console.log('🔗 Public URL:', urlData.publicUrl);
+
+            imagePath = urlData.publicUrl;
+
+            // TODO: Delete old image from storage if it exists
+          }
+
+          // Update announcement in database
+          console.log('📤 Updating announcement in database with ID:', currentAnnouncementId);
+          console.log('📝 Update data:', { title, category: category.toUpperCase(), description, imagePathURL: imagePath });
+
+          const { data, error } = await supabaseClient
+            .from('Announcement_Tbl')
+            .update({
+              title: title,
+              category: category.toUpperCase(),
+              description: description,
+              imagePathURL: imagePath,
+              updatedAt: new Date().toISOString()
+            })
+            .eq('announcementID', currentAnnouncementId);
+
+          if (error) {
+            console.error('❌ Update error:', error);
+            throw error;
+          }
+
+          console.log('✅ Update successful:', data);
           showToast("Announcement updated successfully!", "success");
 
+          // Reset form
+          titleInput.value = '';
+          categoryInput.value = '';
+          descriptionInput.value = '';
+          imageInput.value = '';
+
+          // Reset visual states
+          setInputState(titleInput, null);
+          setInputState(categoryInput, null);
+          setInputState(descriptionInput, null);
+
+          // RELIABILITY: Reload announcements and statistics to reflect changes immediately
+          await Promise.all([
+            loadAnnouncements(),
+            loadDashboardStatistics()
+          ]);
+
+          closeEditModal();
+
+        } catch (error) {
+          // SECURITY: Log full error for debugging (console only)
+          console.error('Error updating announcement:', error);
+
+          // Show generic message to user
+          let userMessage = 'Failed to update announcement. Please try again.';
+
+          if (error.message.includes('Image upload failed')) {
+            userMessage = 'Failed to upload image. Please try a different file.';
+          }
+
+          showToast(userMessage, 'error');
+        } finally {
           // Re-enable button
           button.disabled = false;
           button.innerHTML = originalButtonText;
-
-          closeEditModal();
-        }, 800);
+        }
       }
 
-      // View Announcement Modal
+      /**
+       * View announcement details in modal
+       * Uses textContent for XSS protection
+       *
+       * @param {number} id - Announcement ID
+       * @returns {void}
+       */
       function viewAnnouncement(id) {
         const announcement = announcements[id];
 
+        // SECURITY: Using textContent (not innerHTML) to prevent XSS
         document.getElementById("viewTitle").textContent = announcement.title;
-        document.getElementById("viewDescription").textContent =
-          announcement.description;
+        document.getElementById("viewDescription").textContent = announcement.description;
         document.getElementById("viewDate").textContent = announcement.date;
 
         // Update category badge with proper styling
@@ -1855,6 +2001,14 @@
       // Delete Announcement
       function confirmDelete(id) {
         currentAnnouncementId = id;
+        console.log('🗑️ Confirming delete for ID:', id);
+        console.log('📋 Announcement to delete:', announcements[id]);
+
+        if (!announcements[id]) {
+          showToast('Announcement not found. Please refresh the page.', 'error');
+          return;
+        }
+
         document.getElementById("deleteModal").classList.remove("hidden");
       }
 
@@ -1863,14 +2017,59 @@
         currentAnnouncementId = null;
       }
 
-      function deleteAnnouncement() {
+      /**
+       * Delete announcement from Supabase
+       * Sets contentstatus to 'ARCHIVED' (soft delete) instead of hard delete
+       *
+       * @async
+       * @returns {Promise<void>}
+       */
+      async function deleteAnnouncement() {
         const announcement = announcements[currentAnnouncementId];
 
-        // Log activity
-        addActivityLog("deleted announcement", announcement.title);
+        console.log('🗑️ Deleting announcement with ID:', currentAnnouncementId);
+        console.log('📋 Announcement details:', announcement);
 
-        showToast("Announcement deleted successfully!");
-        closeDeleteModal();
+        // Show loading state on delete button
+        const deleteButton = document.querySelector('#deleteModal button[onclick="deleteAnnouncement()"]');
+        if (deleteButton) {
+          const originalText = deleteButton.innerHTML;
+          deleteButton.disabled = true;
+          deleteButton.innerHTML = '<div class="spinner mx-auto"></div>';
+
+          try {
+            // HARD DELETE: Permanently remove announcement from database
+            console.log('📤 Sending delete request to database for announcementID:', currentAnnouncementId);
+            const { data, error } = await supabaseClient
+              .from('Announcement_Tbl')
+              .delete()
+              .eq('announcementID', currentAnnouncementId);
+
+            if (error) throw error;
+
+            console.log('✅ Announcement deleted successfully');
+            showToast("Announcement deleted successfully!", "success");
+
+            // RELIABILITY: Reload announcements to reflect changes immediately
+            await loadAnnouncements();
+
+            // Also reload statistics since announcement count changed
+            await loadDashboardStatistics();
+
+            closeDeleteModal();
+
+          } catch (error) {
+            // SECURITY: Log full error for debugging (console only)
+            console.error('Error deleting announcement:', error);
+
+            // Show generic message to user
+            showToast('Failed to delete announcement. Please try again.', 'error');
+
+            // Re-enable button on error
+            deleteButton.disabled = false;
+            deleteButton.innerHTML = originalText;
+          }
+        }
       }
 
       // Toast notification
@@ -1991,469 +2190,9 @@
         }
       }
 
-      // Notification System
-      let notifications = [
-        {
-          id: 1,
-          type: "project_approved",
-          title: "Project Approved: Community Clean-Up Drive 2025",
-          message: "Your project has been approved by the Barangay Captain and is now Ongoing",
-          time: "2 hours ago",
-          read: false,
-          projectId: 1,
-          status: "approved",
-        },
-        {
-          id: 2,
-          type: "project_rejected",
-          title: "Project Rejected: International Youth Exchange Program",
-          message: "Your project has been rejected. Click to view captain's feedback and edit your proposal",
-          time: "1 day ago",
-          read: false,
-          projectId: 4,
-          status: "rejected",
-        },
-        {
-          id: 3,
-          type: "project_revision",
-          title: "Revision Requested: Scholarship Program Deadline",
-          message: "The Barangay Captain requested revisions. Click to view feedback and edit your project",
-          time: "3 hours ago",
-          read: false,
-          projectId: 3,
-          status: "revision",
-        },
-        {
-          id: 4,
-          type: "new_inquiry",
-          title: "New Inquiry: Community Clean-Up Drive 2025",
-          message: "Juan Dela Cruz posted a new inquiry on your project",
-          time: "5 minutes ago",
-          read: false,
-          projectId: 1,
-        },
-        {
-          id: 5,
-          type: "inquiry_reply",
-          title: "Inquiry Reply: Youth Sports Festival",
-          message: "Maria Santos replied to an inquiry thread",
-          time: "1 hour ago",
-          read: false,
-          projectId: 2,
-        },
-        {
-          id: 6,
-          type: "new_announcement",
-          title: "New Announcement Posted",
-          message: "Kyleen Nicdao posted a new announcement",
-          time: "2 hours ago",
-          read: false,
-          referenceId: 1,
-        },
-        {
-          id: 7,
-          type: "new_project",
-          title: "New Project: Beach Clean-Up Initiative",
-          message: "Andrea Pelias created a new project",
-          time: "3 hours ago",
-          read: false,
-          referenceId: 3,
-        },
-        {
-          id: 8,
-          type: "project_application",
-          title: "New Application: Community Clean-Up Drive 2025",
-          message: "Juan Dela Cruz applied to your project",
-          time: "30 minutes ago",
-          read: false,
-          projectId: 1,
-          applicantId: 1,
-        },
-      ];
+      // Old demo notification system removed - now using NotificationModal.js component with Supabase
 
-      function toggleNotificationModal() {
-        const modal = document.getElementById("notificationModal");
-        modal.classList.toggle("hidden");
-        if (!modal.classList.contains("hidden")) {
-          renderNotifications();
-        }
-      }
-
-      function closeNotificationModal() {
-        document.getElementById("notificationModal").classList.add("hidden");
-      }
-
-      function updateNotificationCount() {
-        // Filter notifications based on user role
-        let filteredNotifications = notifications;
-        if (userRole === 'captain') {
-          filteredNotifications = notifications.filter(n =>
-            n.type === 'pending_approval' || n.type === 'new_announcement'
-          );
-        }
-
-        const unreadCount = filteredNotifications.filter((n) => !n.read).length;
-        const badge = document.getElementById("notificationBadge");
-
-        if (unreadCount > 0) {
-          badge.textContent = unreadCount > 9 ? "9+" : unreadCount;
-          badge.classList.remove("hidden");
-        } else {
-          badge.classList.add("hidden");
-        }
-      }
-
-      function getNotificationIcon(type) {
-        // Map different type strings used across pages to unified icon categories
-        function mapToCategory(t) {
-          if (!t) return "default";
-          if (t === "new_announcement" || t === "announcement")
-            return "announcement";
-          if (
-            t === "new_inquiry" ||
-            t === "inquiry_reply" ||
-            t === "inquiry_update"
-          )
-            return "inquiry";
-          if (t === "new_project" || t === "project_posted" || t === "project")
-            return "project";
-          if (
-            t === "project_application" ||
-            t === "application_approved" ||
-            t === "application_pending"
-          )
-            return "application";
-          if (t === "pending_approval")
-            return "pending_approval";
-          if (t === "project_approved")
-            return "project_approved";
-          if (t === "project_rejected")
-            return "project_rejected";
-          if (t === "project_revision-requested")
-            return "project_revision";
-          return "default";
-        }
-
-        const cat = mapToCategory(type);
-
-        switch (cat) {
-          case "inquiry":
-            return `<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>\n              </svg>\n            </div>`;
-          case "announcement":
-            return `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"></path>\n              </svg>\n            </div>`;
-          case "project":
-            return `<div class="w-10 h-10 bg-[#2f6e4e]/20 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>\n              </svg>\n            </div>`;
-          case "application":
-            return `<div class="w-10 h-10 bg-[#2f6e4e]/20 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n              </svg>\n            </div>`;
-          case "pending_approval":
-            return `<div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n              </svg>\n            </div>`;
-          case "project_approved":
-            return `<div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n              </svg>\n            </div>`;
-          case "project_rejected":
-            return `<div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n              </svg>\n            </div>`;
-          case "project_revision":
-            return `<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>\n              </svg>\n            </div>`;
-          default:
-            return `<div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659"></path>\n              </svg>\n            </div>`;
-        }
-      }
-
-      function getNotificationBgColor(type) {
-        switch (type) {
-          case "new_inquiry":
-            return "bg-yellow-50";
-          case "inquiry_reply":
-            return "bg-yellow-50";
-          case "new_announcement":
-            return "bg-blue-50";
-          case "new_project":
-            return "bg-[#2f6e4e]/10";
-          case "project_application":
-            return "bg-[#2f6e4e]/10";
-          case "pending_approval":
-            return "bg-orange-50";
-          default:
-            return "bg-gray-50";
-        }
-      }
-
-      function renderNotifications() {
-        const notificationList = document.getElementById("notificationList");
-
-        // Filter notifications based on user role
-        let filteredNotifications = notifications;
-        if (userRole === 'captain') {
-          // Captain only sees: pending project submissions and new announcements
-          filteredNotifications = notifications.filter(n =>
-            n.type === 'pending_approval' || n.type === 'new_announcement'
-          );
-        }
-
-        if (filteredNotifications.length === 0) {
-          notificationList.innerHTML = `
-            <div class="p-8 text-center text-gray-500">
-              <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-              </svg>
-              <p class="font-medium">No notifications</p>
-              <p class="text-sm mt-1">You're all caught up!</p>
-            </div>
-          `;
-          return;
-        }
-
-        notificationList.innerHTML = filteredNotifications
-          .map(
-            (notif) => `
-          <div
-            onclick="handleNotificationClick(${notif.id})"
-            class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
-              !notif.read ? getNotificationBgColor(notif.type) : ""
-            }"
-          >
-            <div class="flex items-start space-x-3">
-              ${getNotificationIcon(notif.type)}
-              <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between">
-                  <p class="text-sm font-semibold text-gray-800 truncate ${
-                    !notif.read ? "font-bold" : ""
-                  }">
-                    ${notif.title}
-                  </p>
-                  ${
-                    !notif.read
-                      ? '<span class="w-2 h-2 bg-[#2f6e4e] rounded-full flex-shrink-0 ml-2 mt-1"></span>'
-                      : ""
-                  }
-                </div>
-                <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
-                <p class="text-xs text-gray-400 mt-2">${notif.time}</p>
-              </div>
-            </div>
-          </div>
-        `
-          )
-          .join("");
-      }
-
-      function handleNotificationClick(notifId) {
-        const notif = notifications.find((n) => n.id === notifId);
-        if (!notif) return;
-
-        notif.read = true;
-        updateNotificationCount();
-        closeNotificationModal();
-
-        // Route to appropriate page based on notification type
-        if (notif.type === "new_inquiry" || notif.type === "inquiry_reply") {
-          window.location.href = `sk-projects.html?projectId=${notif.projectId}&tab=inquiries`;
-        } else if (notif.type === "new_announcement") {
-          // View the announcement on dashboard
-          viewAnnouncement(notif.referenceId);
-        } else if (notif.type === "new_project") {
-          window.location.href = `sk-projects.html?projectId=${notif.referenceId}`;
-        } else if (notif.type === "project_application") {
-          window.location.href = `sk-projects.html?projectId=${notif.projectId}&tab=applications&applicantId=${notif.applicantId}`;
-        } else if (notif.type === "project_approved" || notif.type === "project_rejected" || notif.type === "project_revision-requested") {
-          // Show modal with captain's decision and comments
-          showDecisionModal(notif);
-        }
-      }
-
-      // Show modal for project decision notifications
-      function showDecisionModal(notif) {
-        const decision = notif.decision;
-        const comments = notif.comments || 'No comments provided.';
-
-        let icon = '';
-        let iconBg = '';
-        let title = '';
-
-        if (decision === 'approved') {
-          icon = '✓';
-          iconBg = 'bg-green-100 text-green-600';
-          title = 'Project Approved';
-        } else if (decision === 'rejected') {
-          icon = '✗';
-          iconBg = 'bg-red-100 text-red-600';
-          title = 'Project Rejected';
-        } else if (decision === 'revision-requested') {
-          icon = '✎';
-          iconBg = 'bg-yellow-100 text-yellow-600';
-          title = 'Revision Requested';
-        }
-
-        const modalHTML = `
-          <div id="decisionModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onclick="closeDecisionModal()">
-            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full" onclick="event.stopPropagation()">
-              <div class="p-6">
-                <div class="flex items-center justify-center mb-4">
-                  <div class="w-16 h-16 ${iconBg} rounded-full flex items-center justify-center text-3xl font-bold">
-                    ${icon}
-                  </div>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-800 text-center mb-2">${title}</h2>
-                <p class="text-center text-gray-600 mb-4">${notif.projectName}</p>
-
-                <div class="bg-gray-50 rounded-lg p-4 mb-6">
-                  <h3 class="text-sm font-semibold text-gray-700 mb-2">Barangay Captain's Comments:</h3>
-                  <p class="text-gray-700 whitespace-pre-wrap">${comments}</p>
-                </div>
-
-                <div class="flex gap-3">
-                  <button onclick="closeDecisionModal()" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
-                    Close
-                  </button>
-                  <button onclick="closeDecisionModal(); window.location.href='sk-projects.html'" class="flex-1 px-4 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] transition font-medium">
-                    View Projects
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        // Remove existing modal if any
-        const existingModal = document.getElementById('decisionModal');
-        if (existingModal) existingModal.remove();
-
-        // Add modal to body
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-      }
-
-      function closeDecisionModal() {
-        const modal = document.getElementById('decisionModal');
-        if (modal) modal.remove();
-      }
-
-      function markAllAsRead() {
-        notifications.forEach((n) => (n.read = true));
-        updateNotificationCount();
-        renderNotifications();
-      }
-
-      // Close notification modal when clicking outside
-      document.addEventListener("click", function (event) {
-        const modal = document.getElementById("notificationModal");
-        const notificationButton = event.target.closest(
-          'button[onclick="toggleNotificationModal()"]'
-        );
-
-        if (
-          !modal.contains(event.target) &&
-          !notificationButton &&
-          !modal.classList.contains("hidden")
-        ) {
-          closeNotificationModal();
-        }
-      });
-
-      // Load SK notifications from localStorage
-      function loadSKNotifications() {
-        const skNotifications = JSON.parse(localStorage.getItem('skNotifications') || '[]');
-
-        // Add SK notifications to the notifications array
-        skNotifications.forEach(skNotif => {
-          // Check if notification already exists
-          const exists = notifications.find(n => n.id === skNotif.id);
-          if (!exists) {
-            notifications.unshift(skNotif);
-          }
-        });
-      }
-
-      // Initialize demo notifications (run once)
-      function initializeDemoNotifications() {
-        // Check if demo already initialized
-        if (localStorage.getItem('demoNotificationsInitialized')) {
-          return;
-        }
-
-        // Create demo notifications
-        const demoNotifications = [
-          {
-            id: Date.now() - 3000,
-            projectId: 1,
-            projectName: "New Year Community Festival 2026",
-            type: "project_approved",
-            decision: "approved",
-            comments: "Great initiative! The project proposal is well-structured and the budget is reasonable. Approved for implementation. Please ensure all safety protocols are followed during the event.",
-            timestamp: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
-            timeAgo: "2 hours ago",
-            read: false,
-            title: "Project Approved: New Year Community Festival 2026",
-            message: "Your project has been approved by the Barangay Captain"
-          },
-          {
-            id: Date.now() - 2000,
-            projectId: 2,
-            projectName: "Youth Skills Training Program",
-            type: "project_revision-requested",
-            decision: "revision-requested",
-            comments: "The project concept is good, but please revise the following:\n\n1. Reduce the budget from ₱42,000 to ₱35,000\n2. Add more details on the training modules and instructors\n3. Include a monitoring and evaluation plan\n4. Provide certificates sample design\n\nPlease resubmit within 5 working days.",
-            timestamp: new Date(Date.now() - 1800000).toISOString(), // 30 minutes ago
-            timeAgo: "30 minutes ago",
-            read: false,
-            title: "Revision Requested: Youth Skills Training Program",
-            message: "The Barangay Captain has requested revisions to your project"
-          },
-          {
-            id: Date.now() - 1000,
-            projectId: 8,
-            projectName: "International Youth Exchange Program",
-            type: "project_rejected",
-            decision: "rejected",
-            comments: "After careful review, this project cannot be approved due to:\n\n1. Budget of ₱250,000 exceeds our Q1 allocation\n2. Not aligned with current barangay priorities\n3. Limited direct benefit to the community\n\nWe suggest focusing on local programs that can benefit more residents. You may consider a local cultural exchange with nearby barangays instead.",
-            timestamp: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
-            timeAgo: "1 hour ago",
-            read: false,
-            title: "Project Rejected: International Youth Exchange Program",
-            message: "Your project has been rejected by the Barangay Captain"
-          }
-        ];
-
-        // Save to localStorage
-        localStorage.setItem('skNotifications', JSON.stringify(demoNotifications));
-        localStorage.setItem('demoNotificationsInitialized', 'true');
-
-        console.log('Demo notifications initialized');
-      }
-
-      // Reset demo notifications function
-      function resetDemoNotifications() {
-        showConfirm(
-          'Reset Notifications',
-          'This will reset all demo notifications. Continue?',
-          () => {
-            localStorage.removeItem('demoNotificationsInitialized');
-            localStorage.removeItem('skNotifications');
-
-            // Clear current notifications
-            notifications = notifications.filter(n =>
-              !n.type.startsWith('project_approved') &&
-              !n.type.startsWith('project_rejected') &&
-              !n.type.startsWith('project_revision')
-            );
-
-            // Reinitialize demo
-            initializeDemoNotifications();
-            loadSKNotifications();
-            updateNotificationCount();
-            renderNotifications();
-
-            showToast('Demo notifications reset! You should now see 3 new notifications.', 'success');
-          },
-          'Reset',
-          'yellow'
-        );
-      }
-
-      // Initialize demo notifications
-      initializeDemoNotifications();
-
-      // Initialize notification count on page load
-      loadSKNotifications();
-      updateNotificationCount();
+      // Notification modal functions removed - now handled by NotificationModal.js component
 
       // Update current date
       function updateCurrentDate() {
@@ -2678,10 +2417,20 @@
         showToast('Budget history feature coming soon!', 'info');
       }
 
-      // Initialize on page load
+      // Logout function
+      async function handleLogout() {
+        try {
+          await SessionManager.logout();
+        } catch (error) {
+          console.error('Logout error:', error);
+          // Force logout even if there's an error
+          window.location.href = 'login.html';
+        }
+      }
+
+      // Initialize other page components on load (budget and project metrics are loaded separately from auth)
       loadBudgetData();
       loadProjectMetrics();
-      renderAnnouncements();
     </script>
     <script src="js/mobile-nav.js"></script>
   </body>

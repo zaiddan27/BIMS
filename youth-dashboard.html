@@ -171,6 +171,79 @@
         outline: 2px solid rgba(47, 110, 78, 0.3);
         outline-offset: 2px;
       }
+
+      /* Limit announcement description to 5 lines with ellipsis */
+      .announcement-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.5;
+        height: calc(1.5em * 5); /* Fixed height for 5 lines - keeps cards consistent */
+        min-height: calc(1.5em * 5); /* Ensure minimum height even with short text */
+      }
+    </style>
+
+    <!-- Mobile Header Fix - Maximum Specificity to Override Tailwind CDN -->
+    <style>
+      /* Small Phones (< 430px) */
+      @media (max-width: 429px) {
+        /* Header container - reduce right padding */
+        header.bg-gradient-to-r > div.px-8.py-6 {
+          padding-left: 1rem !important;
+          padding-right: 0.5rem !important;
+          padding-top: 1rem !important;
+          padding-bottom: 1rem !important;
+        }
+
+        /* Actions section - remove extra spacing */
+        header.bg-gradient-to-r div.space-x-4 {
+          gap: 0.5rem !important;
+          padding-right: 0 !important;
+          margin-right: 0 !important;
+        }
+
+        /* Profile section - remove padding */
+        header.bg-gradient-to-r .space-x-3.px-3.py-2 {
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+
+        /* Notification button - compact */
+        header.bg-gradient-to-r button[onclick*="Notification"] {
+          padding: 0.375rem !important;
+        }
+      }
+
+      /* Large Phones (430px - 767px) */
+      @media (min-width: 430px) and (max-width: 767px) {
+        /* Header container - reduce right padding */
+        header.bg-gradient-to-r > div.px-8.py-6 {
+          padding-left: 1.25rem !important;
+          padding-right: 0.75rem !important;
+          padding-top: 1.25rem !important;
+          padding-bottom: 1.25rem !important;
+        }
+
+        /* Actions section - remove extra spacing */
+        header.bg-gradient-to-r div.space-x-4 {
+          gap: 0.5rem !important;
+          padding-right: 0 !important;
+          margin-right: 0 !important;
+        }
+
+        /* Profile section - remove padding */
+        header.bg-gradient-to-r .space-x-3.px-3.py-2 {
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+
+        /* Notification button - compact */
+        header.bg-gradient-to-r button[onclick*="Notification"] {
+          padding: 0.5rem !important;
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-50">
@@ -197,7 +270,7 @@
           <nav class="space-y-2">
             <a
               href="youth-dashboard.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group"
+              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group w-full"
             >
               <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
                 <svg
@@ -219,11 +292,11 @@
 
             <a
               href="youth-files.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
             >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition">
+              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
                 <svg
-                  class="w-5 h-5 group-hover:text-blue-600 transition"
+                  class="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -241,11 +314,11 @@
 
             <a
               href="youth-projects.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
             >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-purple-50 transition">
+              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
                 <svg
-                  class="w-5 h-5 group-hover:text-purple-600 transition"
+                  class="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -263,11 +336,11 @@
 
             <a
               href="youth-calendar.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
             >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-50 transition">
+              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
                 <svg
-                  class="w-5 h-5 group-hover:text-orange-600 transition"
+                  class="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -285,11 +358,11 @@
 
             <a
               href="youth-certificates.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
+              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
             >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition">
+              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
                 <svg
-                  class="w-5 h-5 group-hover:text-green-600 transition"
+                  class="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -311,6 +384,7 @@
           <!-- Logout -->
           <div class="mt-8 pt-8 border-t border-gray-200">
             <button
+              onclick="handleLogout()"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
             >
               <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
@@ -347,20 +421,20 @@
               </div>
               <div class="flex items-center space-x-4">
                 <div class="relative">
-                  <button id="notificationBtn" onclick="toggleNotificationModal()" class="notification-icon p-2.5 text-gray-600 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-xl transition-all duration-300" title="Notifications">
+                  <button onclick="window.notificationModal.toggle()" class="notification-icon p-2.5 text-gray-600 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-xl transition-all duration-300" title="Notifications">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
-                    <span id="notificationCount" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">0</span>
+                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
                   </button>
                 </div>
                 <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="openProfileModal()">
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Juan Dela Cruz</p>
-                    <p class="text-xs text-gray-500">Youth Volunteer</p>
+                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition" id="headerUserName">Youth Volunteer</p>
+                    <p class="text-xs text-gray-500">Volunteer</p>
                   </div>
-                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">
-                    JV
+                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition" id="headerAvatar">
+                    YV
                   </div>
                 </div>
               </div>
@@ -706,35 +780,7 @@
     </div>
 
     <!-- Notification Modal -->
-    <div
-      id="notificationModal"
-      class="hidden fixed top-20 right-6 w-96 bg-white rounded-xl shadow-2xl z-50 border border-gray-200"
-    >
-      <div class="p-4 border-b border-gray-200">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-bold text-gray-800">Notifications</h3>
-          <button
-            onclick="toggleNotificationModal()"
-            class="text-gray-400 hover:text-gray-600 transition p-1 rounded-lg hover:bg-gray-100"
-            title="Close notifications"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        </div>
-        <button
-          onclick="markAllAsRead()"
-          class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
-        >
-          Mark all as read
-        </button>
-      </div>
-
-      <div id="notificationList" class="max-h-96 overflow-y-auto">
-        <!-- Notifications will be dynamically inserted here -->
-      </div>
-    </div>
+    <!-- Notification Modal - Injected by NotificationModal.js component -->
 
     <!-- Application Details Drawer (right) -->
     <div
@@ -919,20 +965,132 @@
       </div>
     </div>
 
-    <script>
-      // User profile data
-      const userProfile = {
-        firstName: "Juan",
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+    <script src="js/auth/session.js"></script>
+
+    <script type="module">
+      // Import NotificationModal component
+      import { NotificationModal } from './js/components/NotificationModal.js';
+
+      // Initialize NotificationModal component
+      const notificationModal = new NotificationModal();
+      notificationModal.render();
+      console.log('[YOUTH DASHBOARD] NotificationModal component initialized');
+
+      // User profile data (will be loaded from Supabase)
+      let userProfile = {
+        firstName: "",
         middleName: "",
-        lastName: "Dela Cruz",
-        email: "juan.delacruz@example.com",
+        lastName: "",
+        email: "",
         position: "Youth Volunteer",
-        address: "123 Malanday Street, Marikina City",
-        contact: "09171234567",
-        gender: "Male",
-        birthday: "2000-05-15",
+        address: "",
+        contact: "",
+        gender: "",
+        birthday: "",
         profilePicture: ""
       };
+
+      // Load user data from Supabase on page load
+      async function loadUserProfile() {
+        try {
+          // Check authentication
+          const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+
+          if (sessionError) throw sessionError;
+
+          if (!session) {
+            window.location.href = 'login.html';
+            return;
+          }
+
+          const user = session.user;
+
+          // Fetch user data from User_Tbl
+          const { data: userData, error: userError } = await supabaseClient
+            .from('User_Tbl')
+            .select('*')
+            .eq('userID', user.id)
+            .single();
+
+          if (userError) throw userError;
+
+          if (!userData) {
+            console.error('User not found in database');
+            showToast('Profile not found. Please contact support.', 'error');
+            return;
+          }
+
+          // Check if user role is YOUTH_VOLUNTEER
+          if (userData.role !== 'YOUTH_VOLUNTEER') {
+            window.location.href = SessionManager.getRoleDashboard(userData.role);
+            return;
+          }
+
+          // Update userProfile object with real data
+          userProfile = {
+            firstName: userData.firstName || "",
+            middleName: userData.middleName || "",
+            lastName: userData.lastName || "",
+            email: userData.email || "",
+            position: "Youth Volunteer",
+            address: userData.address || "",
+            contact: userData.contactNumber || "",
+            gender: userData.gender || "",
+            birthday: userData.birthday || "",
+            profilePicture: userData.imagePathURL || ""
+          };
+
+          // Update UI with loaded data
+          updateProfileUI();
+
+        } catch (error) {
+          console.error('Error loading user profile:', error);
+          showToast('Error loading profile. Please refresh the page.', 'error');
+        }
+      }
+
+      // Update the profile UI with loaded data
+      function updateProfileUI() {
+        // Update header profile display - name
+        const fullName = `${userProfile.firstName} ${userProfile.middleName ? userProfile.middleName + ' ' : ''}${userProfile.lastName}`.trim();
+
+        // Update header name using element ID
+        const nameElement = document.getElementById('headerUserName');
+        if (nameElement) {
+          nameElement.textContent = fullName || 'Youth Volunteer';
+        }
+
+        // Update profile picture/initials if needed
+        updateProfilePicture();
+      }
+
+      // Update profile picture/initials in the UI
+      function updateProfilePicture() {
+        const firstInitial = userProfile.firstName ? userProfile.firstName.charAt(0).toUpperCase() : 'Y';
+        const lastInitial = userProfile.lastName ? userProfile.lastName.charAt(0).toUpperCase() : 'V';
+
+        // Update header avatar using element ID
+        const headerAvatarDiv = document.getElementById('headerAvatar');
+        if (headerAvatarDiv) {
+          if (userProfile.profilePicture) {
+            // Show profile picture
+            headerAvatarDiv.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
+          } else {
+            // Show initials
+            headerAvatarDiv.innerHTML = `<span class="text-white font-semibold">${firstInitial}${lastInitial}</span>`;
+          }
+        }
+      }
+
+      // Call loadUserProfile and loadAnnouncements when page loads
+      window.addEventListener('DOMContentLoaded', async () => {
+        await loadUserProfile();
+        await loadAnnouncements();
+      });
 
       // Profile Modal Functions
       function openProfileModal() {
@@ -964,7 +1122,7 @@
         document.getElementById('profileModal').classList.add('hidden');
       }
 
-      function handleProfilePictureChange(event) {
+      async function handleProfilePictureChange(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -980,131 +1138,264 @@
           return;
         }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const imageData = e.target.result;
+        try {
+          // Get current user session
+          const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
 
-          // Store in profile
-          userProfile.profilePicture = imageData;
+          if (sessionError) throw sessionError;
+          if (!session) {
+            showToast('Please log in again', 'error');
+            return;
+          }
+
+          // Show loading state
+          showToast('Uploading profile picture...', 'info');
+
+          // Create unique filename: userid_timestamp.extension
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${session.user.id}_${Date.now()}.${fileExt}`;
+          const filePath = `${session.user.id}/${fileName}`;
+
+          // Upload to Supabase Storage (user-avatars bucket)
+          const { data: uploadData, error: uploadError } = await supabaseClient
+            .storage
+            .from('user-avatars')
+            .upload(filePath, file, {
+              cacheControl: '3600',
+              upsert: true
+            });
+
+          if (uploadError) throw uploadError;
+
+          // Get public URL
+          const { data: { publicUrl } } = supabaseClient
+            .storage
+            .from('user-avatars')
+            .getPublicUrl(filePath);
+
+          // Update database with new image URL
+          const { error: updateError } = await supabaseClient
+            .from('User_Tbl')
+            .update({
+              imagePathURL: publicUrl,
+              updatedAt: new Date().toISOString()
+            })
+            .eq('userID', session.user.id);
+
+          if (updateError) throw updateError;
+
+          // Update local profile
+          userProfile.profilePicture = publicUrl;
 
           // Update modal preview
           const previewDiv = document.getElementById('profilePicturePreview');
-          previewDiv.innerHTML = `<img src="${imageData}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
+          previewDiv.innerHTML = `<img src="${publicUrl}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
 
           // Update header avatar
-          updateHeaderAvatar();
+          updateProfilePicture();
 
-          showToast('Profile picture uploaded successfully!');
-        };
-        reader.readAsDataURL(file);
-      }
+          showToast('Profile picture uploaded successfully!', 'success');
 
-      function updateHeaderAvatar() {
-        const headerAvatar = document.querySelector('header .w-10.h-10.bg-[#2f6e4e]');
-        if (!headerAvatar) return;
-
-        if (userProfile.profilePicture) {
-          headerAvatar.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
-        } else {
-          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
-          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-          headerAvatar.innerHTML = `<span class="text-white font-semibold">${firstInitial}${lastInitial}</span>`;
+        } catch (error) {
+          console.error('Error uploading profile picture:', error);
+          showToast('Failed to upload profile picture. Please try again.', 'error');
         }
       }
 
-      function saveProfile() {
-        // Get form values
-        userProfile.firstName = document.getElementById('profileFirstName').value;
-        userProfile.middleName = document.getElementById('profileMiddleName').value;
-        userProfile.lastName = document.getElementById('profileLastName').value;
-        userProfile.address = document.getElementById('profileAddress').value;
-        userProfile.contact = document.getElementById('profileContact').value;
-        userProfile.gender = document.getElementById('profileGender').value;
-        userProfile.birthday = document.getElementById('profileBirthday').value;
+      async function saveProfile() {
+        try {
+          // Get form values
+          const firstName = document.getElementById('profileFirstName').value.trim();
+          const middleName = document.getElementById('profileMiddleName').value.trim();
+          const lastName = document.getElementById('profileLastName').value.trim();
+          const address = document.getElementById('profileAddress').value.trim();
+          const contact = document.getElementById('profileContact').value.trim();
+          const birthday = document.getElementById('profileBirthday').value;
+          const gender = document.getElementById('profileGender').value.trim();
 
-        // Validation
-        if (!userProfile.firstName || !userProfile.lastName) {
-          showToast('First name and last name are required', 'warning');
-          return;
+          // Validation
+          if (!firstName || !lastName) {
+            showToast('First name and last name are required', 'error');
+            return;
+          }
+
+          if (!address || address.length < 10) {
+            showToast('Please enter your complete address', 'error');
+            return;
+          }
+
+          if (!contact || contact.length !== 11 || !contact.startsWith('09')) {
+            showToast('Please enter a valid 11-digit mobile number starting with 09', 'error');
+            return;
+          }
+
+          if (!birthday) {
+            showToast('Birthday is required', 'error');
+            return;
+          }
+
+          // Check age (must be at least 15)
+          const birthDate = new Date(birthday);
+          const today = new Date();
+          let age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+          }
+
+          if (age < 15) {
+            showToast('You must be at least 15 years old', 'error');
+            return;
+          }
+
+          // Get current user session
+          const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+
+          if (sessionError) throw sessionError;
+          if (!session) {
+            showToast('Please log in again', 'error');
+            window.location.href = 'login.html';
+            return;
+          }
+
+          // Format names to Title Case
+          const formatName = (name) => {
+            if (!name) return '';
+            return name
+              .split(' ')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+              .join(' ');
+          };
+
+          // Update database
+          const { error: updateError } = await supabaseClient
+            .from('User_Tbl')
+            .update({
+              firstName: formatName(firstName),
+              middleName: middleName ? formatName(middleName) : null,
+              lastName: formatName(lastName),
+              address: address,
+              contactNumber: contact,
+              birthday: birthday,
+              gender: gender || null,
+              updatedAt: new Date().toISOString()
+            })
+            .eq('userID', session.user.id);
+
+          if (updateError) {
+            console.error('Database update error:', updateError);
+            console.error('Error details:', {
+              message: updateError.message,
+              code: updateError.code,
+              details: updateError.details,
+              hint: updateError.hint
+            });
+            throw updateError;
+          }
+
+          // Update local userProfile object
+          userProfile.firstName = formatName(firstName);
+          userProfile.middleName = middleName ? formatName(middleName) : '';
+          userProfile.lastName = formatName(lastName);
+          userProfile.address = address;
+          userProfile.contact = contact;
+          userProfile.birthday = birthday;
+          userProfile.gender = gender;
+
+          // Update UI
+          updateProfileUI();
+
+          showToast('Profile updated successfully!', 'success');
+          closeProfileModal();
+
+        } catch (error) {
+          console.error('Error saving profile:', error);
+          showToast('Failed to save profile. Please try again.', 'error');
         }
-
-        // In production, this would save to the server
-        console.log('Profile saved:', userProfile);
-
-        // Update header display
-        const middleInitial = userProfile.middleName ? ` ${userProfile.middleName.charAt(0)}.` : '';
-        const fullName = `${userProfile.firstName}${middleInitial} ${userProfile.lastName}`;
-        document.querySelector('header .text-sm.font-medium').textContent = fullName;
-
-        // Update header avatar
-        updateHeaderAvatar();
-
-        showToast('Profile updated successfully!');
-        closeProfileModal();
       }
 
       // Old showToast function removed - using modern version below
 
-      // sample announcements (client-side)
-      const announcements = {
-        1: {
-          title: "Youth Sports Festival 2025",
-          date: "Nov 18, 2025",
-          category: "urgent",
-          description:
-            "Join us for basketball, volleyball, and more. Open to youth aged 15–30.",
-          image: "/mnt/data/Screenshot 2025-11-20 205421.png",
-        },
-        2: {
-          title: "Free Skills Training Workshop",
-          date: "Nov 25, 2025",
-          category: "general",
-          description:
-            "Digital marketing, design, and programming basics. Limited slots.",
-          image: "",
-        },
-        3: {
-          title: "Scholarship Program Now Open",
-          date: "Nov 15, 2025",
-          category: "update",
-          description: "Apply now — deadline Dec 15, 2025.",
-          image: "",
-        },
-        4: {
-          title: "Community Clean-Up Drive",
-          date: "Dec 5, 2025",
-          category: "urgent",
-          description: "Help clean up our community parks and rivers. Volunteers needed!",
-          image: "",
-        },
-        5: {
-          title: "Youth Leadership Summit 2025",
-          date: "Dec 10, 2025",
-          category: "general",
-          description: "Develop your leadership skills at our annual summit.",
-          image: "",
-        },
-        6: {
-          title: "Christmas Gift-Giving Project",
-          date: "Dec 20, 2025",
-          category: "urgent",
-          description: "Bring joy to children this Christmas. Donate or volunteer!",
-          image: "",
-        },
-        7: {
-          title: "New Year Planning Meeting",
-          date: "Jan 3, 2026",
-          category: "update",
-          description: "Plan activities for the upcoming year with fellow volunteers.",
-          image: "",
-        },
-      };
+      // Announcements will be loaded from Supabase
+      let announcements = {};
+      let announcementsArray = [];
 
-      // Convert announcements to array for pagination
-      const announcementsArray = Object.keys(announcements).map(key => ({
-        id: parseInt(key),
-        ...announcements[key]
-      }));
+      // Helper function to format relative date
+      function formatRelativeDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        const diffHour = Math.floor(diffMin / 60);
+        const diffDay = Math.floor(diffHour / 24);
+
+        // Less than 1 minute
+        if (diffSec < 60) {
+          return 'Just now';
+        }
+        // Less than 1 hour
+        else if (diffMin < 60) {
+          return `${diffMin} ${diffMin === 1 ? 'minute' : 'minutes'} ago`;
+        }
+        // Less than 24 hours
+        else if (diffHour < 24) {
+          return `${diffHour} ${diffHour === 1 ? 'hour' : 'hours'} ago`;
+        }
+        // Less than 7 days
+        else if (diffDay < 7) {
+          return `${diffDay} ${diffDay === 1 ? 'day' : 'days'} ago`;
+        }
+        // 7 days or more - show actual date
+        else {
+          return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          });
+        }
+      }
+
+      // Load announcements from Supabase
+      async function loadAnnouncements() {
+        try {
+          const { data, error } = await supabaseClient
+            .from('Announcement_Tbl')
+            .select('*')
+            .order('publishedDate', { ascending: false });
+
+          if (error) throw error;
+
+          if (data && data.length > 0) {
+            // Convert to the format expected by the UI
+            announcementsArray = data.map(announcement => ({
+              id: announcement.announcementID,
+              title: announcement.title,
+              date: formatRelativeDate(announcement.publishedDate),
+              category: announcement.category.toLowerCase(),
+              description: announcement.description || 'No description available',
+              image: announcement.imagePathURL || ''
+            }));
+
+            // Also create the object format for viewAnnouncement function
+            announcements = {};
+            announcementsArray.forEach(ann => {
+              announcements[ann.id] = ann;
+            });
+
+            // Render announcements after loading
+            renderAnnouncements();
+          } else {
+            console.log('No announcements found');
+            announcementsArray = [];
+          }
+
+        } catch (error) {
+          console.error('Error loading announcements:', error);
+          showToast('Failed to load announcements', 'error');
+          announcementsArray = [];
+        }
+      }
 
       // Announcement pagination variables
       let currentAnnouncementPage = 0;
@@ -1155,7 +1446,7 @@
                 <span class="text-xs text-gray-500">${announcement.date}</span>
               </div>
               <h4 class="text-lg font-bold text-gray-800 mb-2">${announcement.title}</h4>
-              <p class="text-sm text-gray-600 mb-4">${announcement.description}</p>
+              <p class="announcement-description text-sm text-gray-600 mb-4">${announcement.description}</p>
               <div class="flex justify-end mt-auto">
                 <button onclick="viewAnnouncement(${announcement.id})" class="px-4 py-2 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg text-sm font-medium transition">
                   View
@@ -1248,233 +1539,9 @@
         },
       };
 
-      // Notification system
-      let notifications = [
-        {
-          id: 1,
-          type: "announcement",
-          title: "New Announcement: Youth Sports Festival 2025",
-          message: "A new announcement has been posted",
-          timestamp: "2 hours ago",
-          read: false,
-          referenceId: 1, // references announcement id
-        },
-        {
-          id: 2,
-          type: "inquiry_update",
-          title: "Inquiry Update: Community Clean-Up Drive 2025",
-          message: "Andrea Pelias replied to your inquiry",
-          timestamp: "5 hours ago",
-          read: false,
-          referenceId: 101, // references inquiry id
-          projectId: 1, // references project id (Community Clean-Up Drive)
-          projectName:
-            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-        },
-        {
-          id: 3,
-          type: "project_posted",
-          title: "New Project: Youth Sports Festival 2025",
-          message: "SK Officers posted a new volunteer project",
-          timestamp: "1 day ago",
-          read: false,
-          referenceId: 2, // references project id
-        },
-        {
-          id: 4,
-          type: "application_approved",
-          title: "Application Approved: Community Clean-Up Drive 2025",
-          message: "Your application has been approved",
-          timestamp: "30 minutes ago",
-          read: false,
-          projectId: 1,
-          projectName:
-            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-        },
-        {
-          id: 5,
-          type: "application_pending",
-          title: "Application Pending: Youth Sports Festival 2025",
-          message: "Your application is pending review",
-          timestamp: "1 hour ago",
-          read: false,
-          projectId: 2,
-          projectName: "Youth Sports Festival 2025",
-        },
-        {
-          id: 6,
-          type: "announcement",
-          title: "New Announcement: Free Skills Training Workshop",
-          message: "Check out the new skills training workshop announcement",
-          timestamp: "3 hours ago",
-          read: false,
-          referenceId: 2,
-        },
-        {
-          id: 7,
-          type: "project_posted",
-          title: "New Project: Beach Clean-Up Initiative",
-          message: "SK Officers posted a new volunteer opportunity",
-          timestamp: "2 days ago",
-          read: false,
-          referenceId: 3,
-        },
-        {
-          id: 8,
-          type: "application_approved",
-          title: "Application Approved: Youth Sports Festival 2025",
-          message: "Congratulations! Your application has been approved",
-          timestamp: "4 hours ago",
-          read: false,
-          projectId: 2,
-          projectName: "Youth Sports Festival 2025",
-        },
-      ];
+      // Old demo notification system removed - now using NotificationModal.js component with Supabase
 
-      // Initialize notification count on page load
-      function updateNotificationCount() {
-        const unreadCount = notifications.filter((n) => !n.read).length;
-        const countBadge = document.getElementById("notificationCount");
-
-        if (unreadCount > 0) {
-          countBadge.textContent = unreadCount;
-          countBadge.classList.remove("hidden");
-        } else {
-          countBadge.classList.add("hidden");
-        }
-      }
-
-      // Unified icon helper (maps various type strings to the same icon categories)
-      function getNotificationIcon(type) {
-        function mapToCategory(t) {
-          if (!t) return "default";
-          if (t === "new_announcement" || t === "announcement")
-            return "announcement";
-          if (
-            t === "new_inquiry" ||
-            t === "inquiry_reply" ||
-            t === "inquiry_update"
-          )
-            return "inquiry";
-          if (t === "new_project" || t === "project_posted" || t === "project")
-            return "project";
-          if (
-            t === "project_application" ||
-            t === "application_approved" ||
-            t === "application_pending"
-          )
-            return "application";
-          return "default";
-        }
-        const cat = mapToCategory(type);
-        switch (cat) {
-          case "inquiry":
-            return `<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>\n              </svg>\n            </div>`;
-          case "announcement":
-            return `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"></path>\n              </svg>\n            </div>`;
-          case "project":
-            return `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>\n              </svg>\n            </div>`;
-          case "application":
-            return `<div class="w-10 h-10 bg-[#2f6e4e]/20 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n              </svg>\n            </div>`;
-          default:
-            return `<div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">\n              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659"></path>\n              </svg>\n            </div>`;
-        }
-      }
-
-      // Render notifications in the modal
-      function renderNotifications() {
-        const notificationList = document.getElementById("notificationList");
-
-        if (notifications.length === 0) {
-          notificationList.innerHTML = `
-          <div class="p-8 text-center text-gray-500">
-            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1"></path>
-            </svg>
-            <p class="text-sm">No notifications</p>
-          </div>
-        `;
-          return;
-        }
-
-        notificationList.innerHTML = notifications
-          .map((notif) => {
-            const unreadClass = !notif.read ? "bg-[#2f6e4e]/10" : "bg-white";
-            const unreadDot = !notif.read
-              ? '<span class="w-2 h-2 bg-[#2f6e4e] rounded-full"></span>'
-              : "";
-
-            // Use unified icon helper
-            const icon = getNotificationIcon(notif.type);
-
-            return `
-          <div onclick="handleNotificationClick(${notif.id})" class="${unreadClass} p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition">
-            <div class="flex items-start space-x-3">
-              ${icon}
-              <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between">
-                  <p class="text-sm font-semibold text-gray-800 truncate">${notif.title}</p>
-                  ${unreadDot}
-                </div>
-                <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
-                <p class="text-xs text-gray-400 mt-2">${notif.timestamp}</p>
-              </div>
-            </div>
-          </div>
-        `;
-          })
-          .join("");
-      }
-
-      // Toggle notification modal
-      function toggleNotificationModal() {
-        const modal = document.getElementById("notificationModal");
-        modal.classList.toggle("hidden");
-
-        if (!modal.classList.contains("hidden")) {
-          renderNotifications();
-        }
-      }
-
-      // Close notification modal
-      function closeNotificationModal() {
-        document.getElementById("notificationModal").classList.add("hidden");
-      }
-
-      // Handle notification click
-      function handleNotificationClick(notifId) {
-        const notif = notifications.find((n) => n.id === notifId);
-        if (!notif) return;
-
-        // Mark as read
-        notif.read = true;
-        updateNotificationCount();
-        closeNotificationModal();
-
-        // Route to appropriate page based on notification type
-        if (notif.type === "announcement") {
-          // Open announcement modal with the specific announcement
-          viewAnnouncement(notif.referenceId);
-        } else if (notif.type === "inquiry_update") {
-          // Redirect to youth-projects.html with project ID and open inquiries tab
-          window.location.href = `youth-projects.html?projectId=${notif.projectId}&tab=inquiries`;
-        } else if (notif.type === "project_posted") {
-          // Redirect to youth-projects.html and highlight the specific project
-          window.location.href = `youth-projects.html?projectId=${notif.referenceId}`;
-        }
-      }
-
-      // Mark all notifications as read
-      function markAllAsRead() {
-        notifications.forEach((n) => (n.read = true));
-        updateNotificationCount();
-        renderNotifications();
-      }
-
-      // Initialize on page load
-      document.addEventListener("DOMContentLoaded", function () {
-        updateNotificationCount();
-      });
+      // Notification modal functions removed - now handled by NotificationModal.js component
 
       // Announcement modal handlers
       function viewAnnouncement(id) {
@@ -1741,7 +1808,7 @@
 
         modal.classList.remove('hidden');
 
-        const handleConfirm = () => {
+        const handleConfirm = async () => {
           modal.classList.add('hidden');
 
           // Show loading state
@@ -1749,10 +1816,32 @@
           submitButton.disabled = true;
           submitButton.innerHTML = '<div class="spinner mx-auto"></div>';
 
-          // Simulate submission delay
-          setTimeout(() => {
-            // In a real application, this would send to the backend
-            console.log("Testimony submitted:", { testimony, satisfactionScore: rating });
+          try {
+            // Get current user session
+            const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+
+            if (sessionError) throw sessionError;
+            if (!session) {
+              showToast('Please log in to submit a testimony', 'error');
+              submitButton.disabled = false;
+              submitButton.innerHTML = originalButtonText;
+              return;
+            }
+
+            // Save testimony to database with rating
+            const { error: insertError } = await supabaseClient
+              .from('Testimonies_Tbl')
+              .insert({
+                userID: session.user.id,
+                message: testimony,
+                rating: rating, // Star rating (1-5)
+                isFiltered: false, // Will be reviewed by SK Officials
+                timeStamp: new Date().toISOString()
+              });
+
+            if (insertError) throw insertError;
+
+            console.log("Testimony submitted successfully:", { testimony, rating });
 
             // Show success message
             showToast("Thank you for sharing your experience! Your testimony has been submitted for review.", "success");
@@ -1764,10 +1853,14 @@
             setInputState(testimonyInput, null);
             document.getElementById('testimonyCharCount').textContent = '0/500 characters';
 
+          } catch (error) {
+            console.error('Error submitting testimony:', error);
+            showToast('Failed to submit testimony. Please try again.', 'error');
+          } finally {
             // Re-enable button
             submitButton.disabled = false;
             submitButton.innerHTML = originalButtonText;
-          }, 1000);
+          }
 
           cleanup();
         };
@@ -1811,6 +1904,17 @@
         }
       }
       updateCurrentDate();
+
+      // Logout function
+      async function handleLogout() {
+        try {
+          await SessionManager.logout();
+        } catch (error) {
+          console.error('Logout error:', error);
+          // Force logout even if there's an error
+          window.location.href = 'login.html';
+        }
+      }
     </script>
 
     <!-- Profile Modal -->
@@ -1906,11 +2010,10 @@
                 <div>
                   <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
                   <select id="profileGender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
-                    <option value="">Select gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="non-binary">Non-binary / Gender Neutral</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 
