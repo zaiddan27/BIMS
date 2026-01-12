@@ -378,81 +378,53 @@ Application_Tbl (1) ←→ (M) Certificate_Tbl
 
 ## ROW LEVEL SECURITY (RLS) POLICIES
 
-**All tables use RLS for role-based access control.** Policies are enforced at the database level using Supabase/PostgreSQL.
+**Status:** ✅ All 20 tables verified (2026-01-12)
 
-### Helper Functions
+All tables use **Row Level Security (RLS)** for role-based access control enforced at the database level.
 
-```sql
-is_sk_official()           -- Checks if user is SK Official
-is_captain()               -- Checks if user is Captain
-is_sk_official_or_captain() -- Checks if user is SK Official OR Captain
-is_superadmin()            -- Checks if user is Superadmin
-```
+### 📖 Complete RLS Documentation
 
-### Role-Based Access Summary
+**Full policy reference:** `DATABASE_TABLE_COLUMN_REFERENCE.md` (Row Level Security section)
 
-| Feature | Captain | SK Official | Youth Volunteer | Public |
-|---------|---------|-------------|----------------|--------|
-| **Announcements** | View all | Full CRUD | View active | View active |
-| **Files** | View all | Full CRUD | View/Download | View active |
-| **Projects (Proposals)** | Approve/Reject/Revise | Full CRUD | View approved | View approved |
-| **Projects (Completed)** | View | Full CRUD | View | View |
-| **Applications** | None | View/Update | Own CRUD | None |
-| **Inquiries** | None | View all | Own CRUD | None |
-| **Replies** | None | Create/View | View own | None |
-| **Testimonies** | View unfiltered | Filter/View all | Submit | View unfiltered |
-| **Certificates** | None | Create/View | View own | None |
-| **Evaluations** | None | View all | Submit own | None |
-| **Budget/Expenses** | None | Full CRUD | None | View approved |
-| **Notifications** | Own CRUD | Own CRUD | Own CRUD | None |
-| **User Profiles** | View all | View all | View own/Update | View active |
+This comprehensive documentation includes:
+- System status (80 policies across 20 tables)
+- Helper functions (is_sk_official, is_captain, etc.)
+- Complete role permission matrix (PUBLIC, YOUTH_VOLUNTEER, CAPTAIN, SK_OFFICIAL, SUPERADMIN)
+- Policy patterns and examples
+- Table-specific policies for all 20 tables
+- Verification commands
+- Policy count summary
 
-### Key Permission Rules
+**SQL Implementation:** `supabase/rls-policies.sql`
+**Verification Script:** `supabase/verification/verify_rls_policies.sql`
+**Latest Verification Report:** `RLS_POLICIES_FINAL_VERIFICATION_2026-01-12.md`
 
-**Captain (Governance/Oversight Role)**
-- ✅ View all announcements (active + archived)
-- ✅ View all files (active + archived)
-- ✅ View all projects (any status)
+### Quick Reference: Key Permission Rules
+
+**Captain (Governance/Oversight)**
+- ✅ View all content (announcements, files, projects)
 - ✅ Approve/Reject/Request Revision on projects
-- ❌ NO CRUD on announcements
-- ❌ NO CRUD on files
-- ❌ NO CRUD on projects
-- ❌ NO access to testimonies filtering
+- ❌ NO CRUD operations (view + approve only)
+- ❌ NO access to testimony moderation
 - ❌ NO access to applications/inquiries
 
 **SK Officials (Administrator)**
-- ✅ Full CRUD on announcements
-- ✅ Full CRUD on files
-- ✅ Full CRUD on projects
+- ✅ Full CRUD on all content (announcements, files, projects)
 - ✅ Manage applications, inquiries, replies
 - ✅ Filter/moderate testimonies
-- ✅ Create certificates
-- ✅ View all evaluations
+- ✅ Create certificates, view evaluations
 - ✅ Manage budgets and expenses
 
 **Youth Volunteers (User)**
-- ✅ View approved projects only
-- ✅ Apply to projects
-- ✅ Create inquiries
-- ✅ Submit testimonies
-- ✅ Submit evaluations
+- ✅ View approved content only
+- ✅ Apply to projects, create inquiries, submit testimonies/evaluations
 - ✅ Update own profile
 - ❌ NO access to pending/rejected projects
 - ❌ NO access to other users' data
 
 **Public (No Account)**
-- ✅ View active announcements
-- ✅ View active files
-- ✅ View approved projects
-- ✅ View unfiltered testimonies
-- ✅ View active user profiles
+- ✅ View active/approved content only
 - ❌ NO write access to anything
-
-### RLS Implementation File
-
-Complete RLS policies stored in: `supabase/rls-policies.sql`
-
-All policies use table names in Title Case (`User_Tbl`) and column names in camelCase (`userID`).
 
 ---
 

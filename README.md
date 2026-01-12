@@ -169,12 +169,27 @@ BIMS/
 │   └── docs/                  # Documentation
 │
 ├── Documentation
-│   ├── README.md              # Project overview
-│   ├── PROGRESS.md            # Development progress tracking
-│   ├── CLAUDE.md              # Development guidelines
-│   ├── CHANGELOG.md           # Version history
-│   ├── RESPONSIVE-GUIDE.md    # Responsive design documentation
-│   └── PROJECT DOCUMENTS/     # SE requirements & specifications
+│   ├── Core References (8 files)
+│   │   ├── README.md                              # Project overview
+│   │   ├── CLAUDE.md                              # Development specification
+│   │   ├── DATABASE_TABLE_COLUMN_REFERENCE.md     # Complete schema + RLS policies
+│   │   ├── PROGRESS.md                            # Project phase tracking
+│   │   ├── CHANGELOG.md                           # Version history
+│   │   ├── AUTH-SETUP.md                          # Authentication configuration
+│   │   ├── SUPABASE-SETUP.md                      # Supabase setup & deployment
+│   │   └── TESTING_GUIDE.md                       # Testing procedures
+│   │
+│   ├── Database
+│   │   ├── supabase/rls-policies.sql              # RLS policy implementations
+│   │   ├── supabase/migrations/*.sql              # Database migrations
+│   │   └── supabase/verification/*.sql            # Verification scripts
+│   │
+│   ├── Verification & Cleanup (3 files)
+│   │   ├── RLS_POLICIES_FINAL_VERIFICATION_2026-01-12.md  # RLS verification report
+│   │   ├── MARKDOWN_CLEANUP_CONSOLIDATION_PLAN.md         # Cleanup strategy
+│   │   └── CLEANUP_SUMMARY.md                             # Executive summary
+│   │
+│   └── PROJECT DOCUMENTS/                         # SE requirements & specifications
 │
 └── Test Files
     ├── test-projects.html     # Project testing page
