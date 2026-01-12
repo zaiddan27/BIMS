@@ -499,6 +499,98 @@ All development must adhere to these fundamental principles:
 
 ---
 
+## DOCUMENTATION MANAGEMENT
+
+### 📁 Markdown File Organization
+
+**CRITICAL**: All markdown (.md) files MUST be created in the appropriate `docs/` subfolder. NEVER create .md files in the project root.
+
+### Folder Structure
+
+```
+docs/
+├── core/                    # Core project documentation
+│   ├── CLAUDE.md           # This file - Development specification
+│   ├── README.md           # Detailed project overview
+│   ├── PROGRESS.md         # Project phase tracking
+│   └── CHANGELOG.md        # Version history
+│
+├── database/               # Database documentation
+│   ├── DATABASE_TABLE_COLUMN_REFERENCE.md  # Complete schema + RLS
+│   ├── AUTH-SETUP.md       # Authentication configuration
+│   └── SUPABASE-SETUP.md   # Supabase setup guide
+│
+├── verification/           # Testing & verification
+│   ├── RLS_POLICIES_FINAL_VERIFICATION_2026-01-12.md
+│   └── TESTING_GUIDE.md    # Testing procedures
+│
+└── archive/                # Historical documentation
+    ├── CLEANUP_SUMMARY.md
+    ├── MARKDOWN_CLEANUP_CONSOLIDATION_PLAN.md
+    └── SQL_CLEANUP_PLAN.md
+```
+
+### Rules for Creating Markdown Files
+
+1. **NEVER create .md files in project root** - always use `docs/` subfolders
+2. **Choose the appropriate subfolder:**
+   - **`docs/core/`** - Project specifications, progress tracking, changelogs
+   - **`docs/database/`** - Database schemas, RLS policies, backend setup
+   - **`docs/verification/`** - Test reports, verification results, QA documentation
+   - **`docs/archive/`** - Historical docs, cleanup plans, deprecated guides
+
+3. **File naming conventions:**
+   - Use **UPPER_CASE** for major documents (e.g., `CLAUDE.md`, `README.md`)
+   - Use **Title_Case** for specific reports (e.g., `RLS_Policies_Final_Verification.md`)
+   - Use **kebab-case** for guides (e.g., `user-management-guide.md`)
+   - Include dates for time-sensitive docs (e.g., `_YYYY-MM-DD.md` suffix)
+
+4. **Before creating a new .md file:**
+   - Check if a relevant file already exists
+   - If updating existing content, edit the existing file instead of creating new
+   - If creating verification/audit reports, use `docs/verification/`
+   - If creating historical/cleanup docs, use `docs/archive/`
+
+### Examples
+
+```bash
+# ✅ CORRECT - Create in appropriate subfolder
+docs/database/NEW_FEATURE_SETUP.md
+docs/verification/API_TEST_REPORT_2026-01-15.md
+docs/archive/MIGRATION_CLEANUP_PLAN.md
+
+# ❌ INCORRECT - Never in root
+NEW_FEATURE_SETUP.md
+API_TEST_REPORT.md
+CLEANUP_PLAN.md
+```
+
+### SQL File Organization
+
+**SQL files should be organized as follows:**
+
+```
+supabase/
+├── migrations/              # Database migrations (sequential)
+│   ├── 001_create_schema.sql
+│   ├── 002_create_storage_buckets.sql
+│   └── ...
+│   └── archived/           # Archived/redundant migrations
+│
+├── verification/           # SQL verification scripts
+│   └── verify_rls_policies.sql
+│
+└── rls-policies.sql        # Complete RLS policy definitions
+```
+
+**Rules:**
+- Keep `supabase/migrations/` clean - only essential migrations
+- Archive redundant migrations to `supabase/migrations/archived/`
+- Use `supabase/verification/` for verification scripts only
+- NEVER create SQL files in project root
+
+---
+
 ## SKILLS USAGE (Auto-Invoke)
 
 ### Development Workflow

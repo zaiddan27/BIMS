@@ -1,213 +1,156 @@
 # BIMS - Barangay Information Management System
 
-A comprehensive web-based management system for Barangay Malanday's Sangguniang Kabataan (SK) operations.
+**Sangguniang Kabataan Malanday, Marikina City**
 
-## Features
+A comprehensive web-based management system for SK operations, volunteer management, and community project tracking.
 
-### Main Dashboard (index.html)
-- Hero section with background image and transparent overlay
-- 2025 Budget Allocation display with **edit functionality**
-- Project success metrics
-- Featured projects carousel
-- Volunteer testimonials slider
+---
 
-### Project Management
-- **SK Project Management** (skproject.html) - Create and manage SK projects
-- **Youth Project Management** (youthproject.html) - Youth-focused project tracking
-- **Project Archive** (sk-archive.html) - View completed projects with multi-format export (PDF, CSV, TXT)
+## 🚀 Quick Links
 
-### Document Management
-- **SK Files** (skfiles.html) - Document storage and organization
-- **Youth Files** (youtfiles.html) - Youth-specific document management
+- **📖 Complete Documentation:** [`docs/`](./docs/)
+- **🔧 Development Guide:** [`docs/core/CLAUDE.md`](./docs/core/CLAUDE.md)
+- **📊 Project Status:** [`docs/core/PROGRESS.md`](./docs/core/PROGRESS.md)
+- **💾 Database Reference:** [`docs/database/DATABASE_TABLE_COLUMN_REFERENCE.md`](./docs/database/DATABASE_TABLE_COLUMN_REFERENCE.md)
 
-### Calendar & Scheduling
-- **SK Calendar** (skcalendar.html) - Event scheduling and management
-- **Youth Calendar** (youthcal.html) - Youth event tracking
+---
 
-### Testimonials & Certificates
-- **Testimonies** (sk-testimonies.html) - Volunteer feedback with delete functionality
-- **Youth Certificates** (youth-certificates.html) - Generate and download participation certificates
-
-### Dashboards
-- **Main Dashboard** (index.html) - Overview and statistics
-- **Captain Dashboard** (captain-dashboard.html) - SK Captain's control panel
-- **Youth Dashboard** (youtbDashboard.html) - Youth volunteer interface
-- **Admin Dashboard** (dashb.html) - Administrative controls
-
-### Authentication
-- **Login** (login.html) - User authentication
-  - Email/Password with OTP verification
-  - Google OAuth (one-click login)
-- **Sign Up** (signup.html) - New user registration
-  - Email/Password with OTP verification
-  - Google OAuth (one-click signup)
-- **Complete Profile** (complete-profile.html) - Profile completion for OAuth users
-
-### Superadmin Management
-- **User Management** (superadmin-user-management.html) - Manage user roles and positions
-  - Promote Youth Volunteers to SK Officials or Barangay Captain
-  - Deactivate/Reactivate user accounts
-  - Remove SK Official roles
-
-**Role Promotion Constraints:**
-- **Barangay Captain:** Only ONE active Captain account allowed. Promoting a new Captain automatically deactivates the current one.
-- **SK Chairman:** Only ONE active account allowed per position
-- **SK Secretary:** Only ONE active account allowed per position
-- **SK Treasurer:** Only ONE active account allowed per position
-- **SK Kagawad:** Maximum 7 active accounts allowed
-
-**Note:** SK Auditor position has been removed from the system.
-
-## Recent Updates
-
-### Budget Management
-- Added edit button to 2025 Budget Allocation section
-- Modal interface for updating budget values
-- Real-time calculation of total budget
-- Automatic progress bar updates
-- Input validation for budget amounts
-
-### Archive Page
-- Removed redundant filter checkboxes
-- Added multi-format export options (PDF, CSV, Text)
-- Text export with professional box-drawing character formatting
-
-### Certificates
-- Enhanced certificate design with decorative elements
-- Fixed PDF alignment issues
-- Improved spacing and typography
-
-### Testimonials
-- Simplified interface (removed pending/approved sections)
-- Single delete functionality for testimonials
-- Streamlined workflow
-
-## Technologies Used
-
-### Frontend
-- **HTML5** - Structure and content
-- **Tailwind CSS** - Styling framework
-- **Vanilla JavaScript** - Interactivity and functionality
-- **jsPDF & html2canvas** - PDF generation
-- **Font Awesome** - Icons
-
-### Backend & Infrastructure
-- **Supabase** - Backend-as-a-Service (BaaS)
-  - PostgreSQL Database
-  - Authentication (Email/Password + OTP)
-  - Storage (File uploads)
-  - Row Level Security (RLS)
-- **Netlify** - Frontend hosting with CI/CD
-- **Gmail API** - OTP email verification
-
-## Database Schema
-
-ER diagrams available in:
-- `BIMS_ER_Diagram.puml`
-- `BIMS_ER_Diagram_CORRECTED.puml`
-
-## Installation
-
-### Development Setup (Current Phase)
-1. Clone the repository
-2. Open any HTML file in a modern web browser
-3. Currently in **Phase 1: Frontend Cleanup** - backend integration pending
-
-### Production Setup (Future - Phase 2+)
-1. **Supabase Setup:**
-   - Create Supabase project at [supabase.com](https://supabase.com)
-   - Run database migrations (SQL schema from CLAUDE.md)
-   - Configure Row Level Security (RLS) policies
-   - Setup storage buckets for file uploads
-
-2. **Environment Configuration:**
-   - Create `.env` file with Supabase credentials:
-     ```
-     SUPABASE_URL=your_supabase_url
-     SUPABASE_ANON_KEY=your_anon_key
-     ```
-
-3. **Netlify Deployment:**
-   - Connect GitHub repository to Netlify
-   - Configure environment variables in Netlify dashboard
-   - Deploy with automatic CI/CD on every push
-
-## Project Structure
+## 📂 Documentation Structure
 
 ```
-BIMS/
-├── index.html                  # Main landing page
-├── login.html                  # Authentication
-├── signup.html                 # User registration
+docs/
+├── core/                    # Core project documentation
+│   ├── CLAUDE.md           # Development specification & guidelines
+│   ├── README.md           # Detailed project overview
+│   ├── PROGRESS.md         # Project phase tracking
+│   └── CHANGELOG.md        # Version history
 │
-├── SK Official Pages
-│   ├── sk-dashboard.html       # SK Officials dashboard
-│   ├── sk-projects.html        # Project monitoring & management
-│   ├── sk-files.html           # File management
-│   ├── sk-calendar.html        # Event calendar
-│   ├── sk-testimonies.html     # Testimonials management
-│   └── sk-archive.html         # Completed projects archive
+├── database/               # Database documentation
+│   ├── DATABASE_TABLE_COLUMN_REFERENCE.md  # Complete schema + RLS
+│   ├── AUTH-SETUP.md       # Authentication configuration
+│   └── SUPABASE-SETUP.md   # Supabase setup guide
 │
-├── Youth Volunteer Pages
-│   ├── youth-dashboard.html    # Youth volunteer dashboard
-│   ├── youth-projects.html     # Browse & apply to projects
-│   ├── youth-files.html        # Access files & documents
-│   ├── youth-calendar.html     # View events & schedules
-│   └── youth-certificates.html # Download certificates
+├── verification/           # Testing & verification
+│   ├── RLS_POLICIES_FINAL_VERIFICATION_2026-01-12.md
+│   └── TESTING_GUIDE.md
 │
-├── Captain Pages
-│   └── captain-dashboard.html  # Barangay Captain dashboard
-│
-├── Assets & Resources
-│   ├── asset/                  # Images and media files
-│   │   ├── hero.jpg           # Landing page background
-│   │   └── logo.svg           # BIMS logo
-│   ├── css/
-│   │   └── responsive.css     # Mobile/tablet responsive styles
-│   ├── js/
-│   │   └── mobile-nav.js      # Mobile navigation functionality
-│   └── docs/                  # Documentation
-│
-├── Documentation
-│   ├── Core References (8 files)
-│   │   ├── README.md                              # Project overview
-│   │   ├── CLAUDE.md                              # Development specification
-│   │   ├── DATABASE_TABLE_COLUMN_REFERENCE.md     # Complete schema + RLS policies
-│   │   ├── PROGRESS.md                            # Project phase tracking
-│   │   ├── CHANGELOG.md                           # Version history
-│   │   ├── AUTH-SETUP.md                          # Authentication configuration
-│   │   ├── SUPABASE-SETUP.md                      # Supabase setup & deployment
-│   │   └── TESTING_GUIDE.md                       # Testing procedures
-│   │
-│   ├── Database
-│   │   ├── supabase/rls-policies.sql              # RLS policy implementations
-│   │   ├── supabase/migrations/*.sql              # Database migrations
-│   │   └── supabase/verification/*.sql            # Verification scripts
-│   │
-│   ├── Verification & Cleanup (3 files)
-│   │   ├── RLS_POLICIES_FINAL_VERIFICATION_2026-01-12.md  # RLS verification report
-│   │   ├── MARKDOWN_CLEANUP_CONSOLIDATION_PLAN.md         # Cleanup strategy
-│   │   └── CLEANUP_SUMMARY.md                             # Executive summary
-│   │
-│   └── PROJECT DOCUMENTS/                         # SE requirements & specifications
-│
-└── Test Files
-    ├── test-projects.html     # Project testing page
-    └── DEMO_INSTRUCTIONS.html # Demo usage guide
+└── archive/                # Historical documentation
+    └── cleanup plans & verification reports
 ```
 
-## Browser Compatibility
+---
 
-- Chrome (Recommended)
-- Firefox
-- Edge
-- Safari
+## 🛠️ Tech Stack
 
-## License
+- **Frontend:** HTML, Tailwind CSS, Vanilla JavaScript
+- **Backend:** Supabase (PostgreSQL, Authentication, Storage)
+- **Deployment:** Netlify (CI/CD)
+- **Database:** PostgreSQL with Row Level Security (RLS)
+- **Auth:** Email/Password + OTP via Gmail API
 
-© 2025 BIMS - Barangay Information Management System. All rights reserved.
+---
 
-## Contact
+## 👥 User Roles
 
-- Email: info@malandaybims.ph
-- Phone: (02) 8xxx-xxxx
+| Role | Access Level | Description |
+|------|--------------|-------------|
+| **Barangay Captain** | Approval | Review & approve project proposals |
+| **SK Officials** | Administrator | Full CRUD on projects, files, announcements |
+| **Youth Volunteers** | User | View projects, apply, submit testimonials |
+| **Visitors** | Public | View landing page, projects, testimonials |
+
+---
+
+## 🚦 Getting Started
+
+### For Developers
+
+1. **Read the Development Guide**
+   ```bash
+   docs/core/CLAUDE.md
+   ```
+
+2. **Check Current Phase**
+   ```bash
+   docs/core/PROGRESS.md
+   ```
+
+3. **Setup Authentication**
+   ```bash
+   docs/database/AUTH-SETUP.md
+   ```
+
+4. **Configure Supabase**
+   ```bash
+   docs/database/SUPABASE-SETUP.md
+   ```
+
+### For Database Work
+
+- **Schema Reference:** `docs/database/DATABASE_TABLE_COLUMN_REFERENCE.md`
+- **RLS Policies:** `supabase/rls-policies.sql`
+- **Verification Script:** `supabase/verification/verify_rls_policies.sql`
+
+---
+
+## 🔒 Security
+
+- ✅ All 20 tables protected with Row Level Security (RLS)
+- ✅ 80 policies enforced at database level
+- ✅ Role-based access control (PUBLIC, YOUTH_VOLUNTEER, CAPTAIN, SK_OFFICIAL, SUPERADMIN)
+- ✅ 100% RLS verification passed (2026-01-12)
+
+**Full Security Documentation:** [`docs/database/DATABASE_TABLE_COLUMN_REFERENCE.md`](./docs/database/DATABASE_TABLE_COLUMN_REFERENCE.md) (RLS section)
+
+---
+
+## 📊 Project Status
+
+**Current Phase:** Phase 3 - Core Features Implementation
+
+| Phase | Status |
+|-------|--------|
+| Phase 1: Frontend Cleanup | ✅ Complete |
+| Phase 2: Supabase Setup | ✅ Complete |
+| Phase 3: Core Features | 🔄 In Progress |
+| Phase 4: Testing & QA | ⏳ Not Started |
+| Phase 5: Production Deployment | ⏳ Not Started |
+
+**Detailed Progress:** [`docs/core/PROGRESS.md`](./docs/core/PROGRESS.md)
+
+---
+
+## 📝 Recent Updates
+
+- **2026-01-12:** Documentation restructured, RLS policies consolidated
+- **2026-01-12:** SQL files cleaned up (16 files removed/archived)
+- **2026-01-12:** All markdown files organized into `docs/` folder
+- **2026-01-12:** RLS verification complete (20/20 checks passed)
+
+**Full Changelog:** [`docs/core/CHANGELOG.md`](./docs/core/CHANGELOG.md)
+
+---
+
+## 🤝 Contributing
+
+1. Read [`docs/core/CLAUDE.md`](./docs/core/CLAUDE.md) for development guidelines
+2. Follow naming conventions (Table: `Title_Case`, Column: `camelCase`)
+3. Always create markdown files in appropriate `docs/` subfolder
+4. Test RLS policies before committing database changes
+
+---
+
+## 📧 Contact
+
+- **Email:** info@malandaybims.ph
+- **Location:** Barangay Malanday, Marikina City
+
+---
+
+## 📄 License
+
+© 2026 BIMS - Barangay Information Management System. All rights reserved.
+
+---
+
+**For complete documentation, visit the [`docs/`](./docs/) folder.**
