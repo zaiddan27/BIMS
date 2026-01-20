@@ -11,6 +11,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+    <script src="js/auth/auth.js"></script>
+    <script src="js/auth/session.js"></script>
+
+    <!-- PDF.js for PDF Preview -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -127,7 +137,7 @@
 
           <!-- Logout -->
           <div class="mt-8 pt-8 border-t border-gray-200">
-            <button class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group">
+            <button onclick="handleLogout()" class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group">
               <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -152,14 +162,14 @@
               </div>
               <div class="flex items-center space-x-4">
                 <div class="relative">
-                  <button onclick="toggleNotificationModal()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                  <button onclick="window.notificationModal.toggle()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
                     <span id="notificationCount" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
                   </button>
                 </div>
-                <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="openProfileModal()">
+                <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="window.profileModal.open()">
                   <div class="text-right">
                     <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Juan Dela Cruz</p>
                     <p class="text-xs text-gray-500">Youth Volunteer</p>
@@ -264,11 +274,21 @@
             id="viewFilePreview"
             class="h-80 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden"
           >
+            <!-- Loading Indicator -->
+            <div id="previewLoading" class="flex items-center justify-center">
+              <svg class="animate-spin h-8 w-8 text-[#2f6e4e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            <!-- Image Preview -->
             <img
               id="viewFileImg"
               src=""
               class="object-contain h-full w-full hidden"
             />
+            <!-- PDF Preview Canvas -->
+            <canvas id="pdfPreviewCanvas" class="hidden max-h-full max-w-full"></canvas>
           </div>
 
           <div>
@@ -300,279 +320,27 @@
       </div>
     </div>
 
-    <!-- Notification Modal -->
-    <div
-      id="notificationModal"
-      class="hidden fixed top-20 right-6 w-96 bg-white rounded-xl shadow-2xl z-50 border border-gray-200"
-    >
-      <div
-        class="p-4 border-b border-gray-200 flex items-center justify-between"
-      >
-        <h3 class="font-bold text-gray-800">Notifications</h3>
-        <button
-          onclick="markAllAsRead()"
-          class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
-        >
-          Mark all as read
-        </button>
-      </div>
+    <!-- NotificationModal component will be dynamically rendered here -->
 
-      <div id="notificationList" class="max-h-96 overflow-y-auto">
-        <!-- Notifications will be dynamically inserted here -->
-      </div>
-    </div>
+    <!-- ProfileModal component will be dynamically rendered here -->
 
-    <!-- Profile Modal -->
-    <div id="profileModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50">
-      <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
-          <!-- Header -->
-          <div class="bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] text-white p-6 rounded-t-2xl">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <div class="relative">
-                  <div id="profilePicturePreview" class="w-20 h-20 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-2xl overflow-hidden">
-                    JD
-                  </div>
-                  <label for="profilePictureInput" class="absolute bottom-0 right-0 bg-white text-[#2f6e4e] rounded-full p-2 cursor-pointer hover:bg-[#2f6e4e]/10 transition shadow-lg">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                  </label>
-                  <input type="file" id="profilePictureInput" class="hidden" accept="image/*" onchange="handleProfilePictureChange(event)" />
-                </div>
-                <div>
-                  <h2 class="text-2xl font-bold">Profile Settings</h2>
-                  <p class="text-[#2f6e4e]/20 text-sm">Manage your account information</p>
-                </div>
-              </div>
-              <button onclick="closeProfileModal()" class="text-white hover:bg-white/10 rounded-lg p-2 transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
+    <script type="module">
+      // Import components
+      import { NotificationModal } from './js/components/NotificationModal.js';
+      import { ProfileModal } from './js/components/ProfileModal.js';
 
-          <!-- Form Content -->
-          <div class="p-6 max-h-[calc(100vh-300px)] overflow-y-auto">
-            <form id="profileForm" class="space-y-6">
-              <!-- Personal Information -->
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                  </svg>
-                  Personal Information
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
-                    <input type="text" id="profileFirstName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" required />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
-                    <input type="text" id="profileMiddleName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
-                    <input type="text" id="profileLastName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" required />
-                  </div>
-                </div>
-              </div>
+      // =========================================
+      // INITIALIZE COMPONENTS
+      // =========================================
+      // Initialize NotificationModal component
+      const notificationModal = new NotificationModal();
+      notificationModal.render();
+      window.notificationModal = notificationModal;
 
-              <!-- Contact Information -->
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                  </svg>
-                  Contact Information
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <input type="email" id="profileEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" disabled />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
-                    <input type="text" id="profilePosition" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" disabled />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
-                    <input type="tel" id="profileContact" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                    <input type="text" id="profileAddress" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                  </div>
-                </div>
-              </div>
-
-              <!-- Additional Details -->
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                  Additional Details
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                    <select id="profileGender" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
-                      <option value="">Select Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Birthday</label>
-                    <input type="date" id="profileBirthday" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-
-          <!-- Footer -->
-          <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end gap-3">
-            <button type="button" onclick="closeProfileModal()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium">
-              Cancel
-            </button>
-            <button type="button" onclick="saveProfile()" class="px-6 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] transition font-medium shadow-lg shadow-[#2f6e4e]/30">
-              Save Changes
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      // User profile data
-      const userProfile = {
-        firstName: "Juan",
-        middleName: "",
-        lastName: "Dela Cruz",
-        email: "juan.delacruz@example.com",
-        position: "Youth Volunteer",
-        address: "123 Malanday Street, Marikina City",
-        contact: "09171234567",
-        gender: "Male",
-        birthday: "2000-05-15",
-        profilePicture: ""
-      };
-
-      // Profile Modal Functions
-      function openProfileModal() {
-        // Load profile data into form
-        document.getElementById('profileFirstName').value = userProfile.firstName;
-        document.getElementById('profileMiddleName').value = userProfile.middleName;
-        document.getElementById('profileLastName').value = userProfile.lastName;
-        document.getElementById('profileEmail').value = userProfile.email;
-        document.getElementById('profilePosition').value = userProfile.position;
-        document.getElementById('profileAddress').value = userProfile.address;
-        document.getElementById('profileContact').value = userProfile.contact;
-        document.getElementById('profileGender').value = userProfile.gender;
-        document.getElementById('profileBirthday').value = userProfile.birthday;
-
-        // Load profile picture preview
-        const previewDiv = document.getElementById('profilePicturePreview');
-        if (userProfile.profilePicture) {
-          previewDiv.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
-        } else {
-          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
-          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-          previewDiv.innerHTML = `<span id="profileInitials" class="text-white font-bold text-2xl">${firstInitial}${lastInitial}</span>`;
-        }
-
-        document.getElementById('profileModal').classList.remove('hidden');
-      }
-
-      function closeProfileModal() {
-        document.getElementById('profileModal').classList.add('hidden');
-      }
-
-      function handleProfilePictureChange(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-          showToast('Please upload an image file', 'error');
-          return;
-        }
-
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          showToast('Image size should be less than 5MB', 'error');
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const imageData = e.target.result;
-
-          // Store in profile
-          userProfile.profilePicture = imageData;
-
-          // Update modal preview
-          const previewDiv = document.getElementById('profilePicturePreview');
-          previewDiv.innerHTML = `<img src="${imageData}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
-
-          // Update header avatar
-          updateHeaderAvatar();
-
-          showToast('Profile picture uploaded successfully!');
-        };
-        reader.readAsDataURL(file);
-      }
-
-      function updateHeaderAvatar() {
-        const headerAvatar = document.querySelector('header .w-10.h-10.bg-[#2f6e4e]');
-        if (!headerAvatar) return;
-
-        if (userProfile.profilePicture) {
-          headerAvatar.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
-        } else {
-          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
-          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-          headerAvatar.innerHTML = `<span class="text-white font-semibold">${firstInitial}${lastInitial}</span>`;
-        }
-      }
-
-      function saveProfile() {
-        // Get form values
-        userProfile.firstName = document.getElementById('profileFirstName').value;
-        userProfile.middleName = document.getElementById('profileMiddleName').value;
-        userProfile.lastName = document.getElementById('profileLastName').value;
-        userProfile.address = document.getElementById('profileAddress').value;
-        userProfile.contact = document.getElementById('profileContact').value;
-        userProfile.gender = document.getElementById('profileGender').value;
-        userProfile.birthday = document.getElementById('profileBirthday').value;
-
-        // Validation
-        if (!userProfile.firstName || !userProfile.lastName) {
-          showToast('First name and last name are required', 'warning');
-          return;
-        }
-
-        // In production, this would save to the server
-        console.log('Profile saved:', userProfile);
-
-        // Update header display
-        const middleInitial = userProfile.middleName ? ` ${userProfile.middleName.charAt(0)}.` : '';
-        const fullName = `${userProfile.firstName}${middleInitial} ${userProfile.lastName}`;
-        document.querySelector('header .text-sm.font-medium').textContent = fullName;
-
-        // Update header avatar
-        updateHeaderAvatar();
-
-        showToast('Profile updated successfully!');
-        closeProfileModal();
-      }
+      // Initialize ProfileModal component
+      const profileModal = new ProfileModal();
+      profileModal.render();
+      window.profileModal = profileModal;
 
       function showToast(message, type = 'success') {
         const existingToast = document.querySelector('.toast');
@@ -664,152 +432,176 @@
         }, 4000);
       }
 
-      /* SIMULATED DATA */
-      let fileStore = [
-        {
-          id: 1,
-          name: "Budget_Report_2023.pdf",
-          type: "pdf",
-          uploaded: "Jan 20, 2023",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 2,
-          name: "Budget_Report_2024.pdf",
-          type: "pdf",
-          uploaded: "Jan 15, 2024",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 3,
-          name: "Budget_Report_2025.pdf",
-          type: "pdf",
-          uploaded: "Jan 10, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 4,
-          name: "Youth_Database_2025.xlsx",
-          type: "xlsx",
-          uploaded: "Nov 25, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 5,
-          name: "SK_Guidelines_2025.pdf",
-          type: "pdf",
-          uploaded: "Nov 20, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 6,
-          name: "Annual_Event_Schedule_2025.pdf",
-          type: "pdf",
-          uploaded: "Nov 18, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 7,
-          name: "Meeting_Minutes_November.pdf",
-          type: "pdf",
-          uploaded: "Nov 15, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 8,
-          name: "Barangay_Youth_Profile.xlsx",
-          type: "xlsx",
-          uploaded: "Nov 12, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 9,
-          name: "Community_Clean-Up_Project_Proposal.pdf",
-          type: "pdf",
-          uploaded: "Nov 10, 2025",
-          category: "project",
-          url: "",
-        },
-        {
-          id: 10,
-          name: "Sports_Festival_Project_Plan.pdf",
-          type: "pdf",
-          uploaded: "Oct 28, 2025",
-          category: "project",
-          url: "",
-        },
-        {
-          id: 11,
-          name: "Volunteer_Registration_Form.xlsx",
-          type: "xlsx",
-          uploaded: "Oct 20, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 12,
-          name: "Barangay_Activity_Photos.jpg",
-          type: "jpg",
-          uploaded: "Oct 15, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 13,
-          name: "Monthly_Report_September.pdf",
-          type: "pdf",
-          uploaded: "Oct 5, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 14,
-          name: "Training_Materials_2025.pdf",
-          type: "pdf",
-          uploaded: "Sep 30, 2025",
-          category: "general",
-          url: "",
-        },
-        {
-          id: 15,
-          name: "Project_Impact_Assessment.xlsx",
-          type: "xlsx",
-          uploaded: "Sep 25, 2025",
-          category: "project",
-          url: "",
-        },
-      ];
+      // =========================================
+      // YOUTH FILES - SUPABASE BACKEND (READ-ONLY)
+      // =========================================
 
+      // Security: XSS Prevention
+      function escapeHTML(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function sanitizeFileURL(url) {
+        if (!url) return null;
+        try {
+          const parsed = new URL(url);
+          const allowedHosts = ['supabase.co', 'supabase.com'];
+          if (allowedHosts.some(host => parsed.hostname.endsWith(host))) {
+            return url;
+          }
+        } catch (e) {
+          console.warn('Invalid URL:', url);
+        }
+        return null;
+      }
+
+      // Constants
+      const FILES_PER_PAGE = 6;
+
+      // State
+      let fileStore = [];
+      let currentPage = 0;
+      let currentUser = null;
+
+      // DOM Elements
       const filesGrid = document.getElementById("filesGrid");
       const searchInput = document.getElementById("fileSearch");
       const filterCategory = document.getElementById("filterCategory");
 
-      // Pagination variables
-      let currentPage = 0;
-      const filesPerPage = 6;
+      // =========================================
+      // SESSION & INITIALIZATION
+      // =========================================
+      async function initializePage() {
+        try {
+          // Initialize session for Youth Volunteers
+          const sessionResult = await SessionManager.init(['YOUTH_VOLUNTEER', 'SK_OFFICIAL', 'CAPTAIN', 'SUPERADMIN']);
 
-      /* RENDER FILES */
+          if (!sessionResult.success) {
+            return; // SessionManager handles redirect
+          }
+
+          currentUser = sessionResult.user;
+
+          // Update header with user info
+          updateHeaderUserInfo(sessionResult);
+
+          // Load files from Supabase
+          await loadFiles();
+
+        } catch (error) {
+          console.error('Page initialization error:', error);
+          showToast('Failed to initialize page. Please refresh.', 'error');
+        }
+      }
+
+      // Logout handler
+      async function handleLogout() {
+        try {
+          await SessionManager.logout();
+          // SessionManager handles redirect to login page
+        } catch (error) {
+          console.error('Logout error:', error);
+          showToast('Failed to logout. Please try again.', 'error');
+        }
+      }
+      window.handleLogout = handleLogout;
+
+      function updateHeaderUserInfo(sessionResult) {
+        const nameEl = document.querySelector('header .text-sm.font-medium');
+        const roleEl = document.querySelector('header .text-xs.text-gray-500');
+
+        if (nameEl && sessionResult.userData) {
+          const firstName = sessionResult.userData.firstName || '';
+          const lastName = sessionResult.userData.lastName || '';
+          nameEl.textContent = `${firstName} ${lastName}`.trim() || 'Youth Volunteer';
+        }
+
+        if (roleEl) {
+          const roleDisplay = {
+            'YOUTH_VOLUNTEER': 'Youth Volunteer',
+            'SK_OFFICIAL': 'SK Official',
+            'CAPTAIN': 'Barangay Captain',
+            'SUPERADMIN': 'Administrator'
+          };
+          roleEl.textContent = roleDisplay[sessionResult.role] || sessionResult.role;
+        }
+      }
+
+      // =========================================
+      // FILE LOADING FROM SUPABASE (READ-ONLY)
+      // =========================================
+      async function loadFiles() {
+        try {
+          // Query File_Tbl for ACTIVE files only (Youth can only see active files)
+          const { data, error } = await supabaseClient
+            .from('File_Tbl')
+            .select('*')
+            .eq('fileStatus', 'ACTIVE')
+            .order('dateUploaded', { ascending: false });
+
+          if (error) {
+            console.error('Error loading files:', error);
+            showToast('Failed to load files. Please try again.', 'error');
+            fileStore = [];
+          } else {
+            // Transform data to match frontend structure
+            fileStore = (data || []).map(file => ({
+              id: file.fileID,
+              name: file.fileName,
+              type: file.fileType?.toLowerCase() || 'file',
+              uploaded: formatDate(file.dateUploaded),
+              uploadedDate: new Date(file.dateUploaded),
+              category: file.fileCategory?.toLowerCase() || 'general',
+              url: file.filePath
+            }));
+          }
+
+          renderFiles(fileStore);
+
+        } catch (err) {
+          console.error('Load files exception:', err);
+          showToast('An error occurred while loading files.', 'error');
+          fileStore = [];
+          renderFiles([]);
+        }
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return 'Unknown';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+      }
+
+      // =========================================
+      // FILE RENDERING
+      // =========================================
       function renderFiles(list) {
         filesGrid.innerHTML = "";
 
         if (!list.length) {
-          filesGrid.innerHTML = `<p class="text-gray-500">No files found.</p>`;
+          filesGrid.innerHTML = `
+            <div class="col-span-full text-center py-12">
+              <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <p class="text-gray-500 font-medium">No files available</p>
+              <p class="text-gray-400 text-sm mt-1">Check back later for new files</p>
+            </div>`;
           document.getElementById('filePaginationNav').classList.add('hidden');
           document.getElementById('filePaginationDots').classList.add('hidden');
           return;
         }
 
         // Calculate pagination
-        const startIndex = currentPage * filesPerPage;
-        const endIndex = startIndex + filesPerPage;
+        const startIndex = currentPage * FILES_PER_PAGE;
+        const endIndex = startIndex + FILES_PER_PAGE;
         const filesToShow = list.slice(startIndex, endIndex);
 
         // Update pagination controls
@@ -824,23 +616,30 @@
             {
               pdf: "bg-red-100 text-red-600",
               xlsx: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
-              png: "bg-blue-100 text-blue-600",
-              jpg: "bg-blue-100 text-blue-600",
+              xls: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
+              doc: "bg-blue-100 text-blue-600",
+              docx: "bg-blue-100 text-blue-600",
+              png: "bg-purple-100 text-purple-600",
+              jpg: "bg-purple-100 text-purple-600",
+              jpeg: "bg-purple-100 text-purple-600",
             }[file.type] || "bg-gray-100 text-gray-700";
+
+          // Use escapeHTML for security
+          const safeName = escapeHTML(file.name);
+          const safeType = escapeHTML(file.type);
+          const safeUploaded = escapeHTML(file.uploaded);
 
           card.innerHTML = `
                 <div class="flex items-center mb-3">
-                    <div class="w-10 h-10 ${iconColor} rounded-lg flex items-center justify-center font-bold">
-                        ${file.type.toUpperCase()}
+                    <div class="w-10 h-10 ${iconColor} rounded-lg flex items-center justify-center font-bold text-xs">
+                        ${safeType.toUpperCase()}
                     </div>
-                    <div class="ml-3">
-                        <p class="font-semibold text-gray-800">${file.name}</p>
-                        <p class="text-xs text-gray-500">Uploaded: ${
-                          file.uploaded
-                        }</p>
+                    <div class="ml-3 min-w-0 flex-1">
+                        <p class="font-semibold text-gray-800 truncate" title="${safeName}">${safeName}</p>
+                        <p class="text-xs text-gray-500">Uploaded: ${safeUploaded}</p>
                     </div>
                 </div>
-                <button onclick="viewFile(${file.id})"
+                <button onclick="viewFile('${file.id}')"
                         class="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
                     View
                 </button>
@@ -848,8 +647,6 @@
           filesGrid.appendChild(card);
         });
       }
-
-      renderFiles(fileStore);
 
       /* SEARCH + FILTER */
       function applyFilters() {
@@ -872,7 +669,7 @@
 
       // Pagination functions
       function updateFilePagination(totalFiles) {
-        const totalPages = Math.ceil(totalFiles / filesPerPage);
+        const totalPages = Math.ceil(totalFiles / FILES_PER_PAGE);
         const dotsContainer = document.getElementById('filePaginationDots');
         const navContainer = document.getElementById('filePaginationNav');
 
@@ -905,7 +702,7 @@
             (!q || f.name.toLowerCase().includes(q))
         );
 
-        const totalPages = Math.ceil(filtered.length / filesPerPage);
+        const totalPages = Math.ceil(filtered.length / FILES_PER_PAGE);
         currentPage += direction;
 
         // Wrap around
@@ -930,241 +727,141 @@
         renderFiles(filtered);
       }
 
-      /* MODAL VIEW */
-      function viewFile(id) {
-        const file = fileStore.find((f) => f.id === id);
+      /* MODAL VIEW WITH PDF SUPPORT */
+      async function viewFile(id) {
+        const fileId = typeof id === 'string' ? parseInt(id, 10) : id;
+        const file = fileStore.find((f) => f.id === fileId);
         if (!file) return;
 
-        document.getElementById("viewFileTitle").textContent = file.name;
-        document.getElementById("viewFilename").textContent = file.name;
-        document.getElementById("viewFileDate").textContent = file.uploaded;
+        document.getElementById("viewFileTitle").textContent = escapeHTML(file.name);
+        document.getElementById("viewFilename").textContent = escapeHTML(file.name);
+        document.getElementById("viewFileDate").textContent = escapeHTML(file.uploaded);
 
+        const previewContainer = document.getElementById("viewFilePreview");
         const img = document.getElementById("viewFileImg");
+        const pdfCanvas = document.getElementById("pdfPreviewCanvas");
+        const loadingIndicator = document.getElementById("previewLoading");
+        const downloadLink = document.getElementById("downloadLink");
 
-        if (file.url) {
-          img.src = file.url;
-          img.classList.remove("hidden");
-        } else {
-          img.classList.add("hidden");
+        // Reset preview state
+        img.classList.add("hidden");
+        pdfCanvas.classList.add("hidden");
+        loadingIndicator.classList.remove("hidden");
+
+        // Sanitize and validate URL
+        const safeUrl = sanitizeFileURL(file.url);
+
+        if (!safeUrl) {
+          loadingIndicator.innerHTML = `
+            <div class="text-center text-gray-500">
+              <svg class="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+              <p>File preview unavailable</p>
+            </div>`;
+          downloadLink.href = "#";
+          downloadLink.classList.add("pointer-events-none", "opacity-50");
+          document.getElementById("viewFileModal").classList.remove("hidden");
+          return;
         }
 
-        document.getElementById("downloadLink").href = file.url || "#";
+        downloadLink.href = safeUrl;
+        downloadLink.classList.remove("pointer-events-none", "opacity-50");
+
+        // Check file type and render accordingly
+        const fileType = file.type.toLowerCase();
+
+        if (fileType === 'pdf') {
+          // PDF Preview using PDF.js
+          try {
+            await renderPDFPreview(safeUrl, pdfCanvas);
+            loadingIndicator.classList.add("hidden");
+            pdfCanvas.classList.remove("hidden");
+          } catch (err) {
+            console.error('PDF preview error:', err);
+            loadingIndicator.innerHTML = `
+              <div class="text-center text-gray-500">
+                <svg class="w-16 h-16 mx-auto mb-3 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <p class="font-medium">PDF Preview</p>
+                <p class="text-sm mt-1">Click Download to view the PDF</p>
+              </div>`;
+          }
+        } else if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(fileType)) {
+          // Image preview
+          img.onload = function() {
+            loadingIndicator.classList.add("hidden");
+            img.classList.remove("hidden");
+          };
+          img.onerror = function() {
+            loadingIndicator.innerHTML = `
+              <div class="text-center text-gray-500">
+                <svg class="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <p>Image preview unavailable</p>
+              </div>`;
+          };
+          img.src = safeUrl;
+        } else {
+          // Other file types (xlsx, doc, etc.)
+          loadingIndicator.innerHTML = `
+            <div class="text-center text-gray-500">
+              <svg class="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <p class="font-medium">${escapeHTML(fileType.toUpperCase())} File</p>
+              <p class="text-sm mt-1">Click Download to view this file</p>
+            </div>`;
+        }
 
         document.getElementById("viewFileModal").classList.remove("hidden");
       }
 
+      // PDF Preview using PDF.js
+      async function renderPDFPreview(url, canvas) {
+        // Set PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const loadingTask = pdfjsLib.getDocument(url);
+        const pdf = await loadingTask.promise;
+
+        // Render first page
+        const page = await pdf.getPage(1);
+        const scale = 1.5;
+        const viewport = page.getViewport({ scale });
+
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport
+        };
+
+        await page.render(renderContext).promise;
+      }
+
       function closeFileModal() {
         document.getElementById("viewFileModal").classList.add("hidden");
+        // Reset loading indicator
+        const loadingIndicator = document.getElementById("previewLoading");
+        loadingIndicator.classList.remove("hidden");
+        loadingIndicator.innerHTML = `
+          <div class="flex items-center justify-center">
+            <svg class="animate-spin h-8 w-8 text-[#2f6e4e]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>`;
       }
 
-      /* NOTIFICATION SYSTEM */
-      let notifications = [
-        {
-          id: 1,
-          type: "announcement",
-          title: "New Announcement: Youth Sports Festival 2025",
-          message: "A new announcement has been posted",
-          timestamp: "2 hours ago",
-          read: false,
-          referenceId: 1,
-        },
-        {
-          id: 2,
-          type: "inquiry_update",
-          title: "Inquiry Update: Community Clean-Up Drive 2025",
-          message: "Andrea Pelias replied to your inquiry",
-          timestamp: "5 hours ago",
-          read: false,
-          referenceId: 101,
-          projectId: 1,
-          projectName:
-            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-        },
-        {
-          id: 3,
-          type: "project_posted",
-          title: "New Project: Youth Sports Festival 2025",
-          message: "SK Officers posted a new volunteer project",
-          timestamp: "1 day ago",
-          read: false,
-          referenceId: 2,
-        },
-        {
-          id: 4,
-          type: "application_approved",
-          title: "Application Approved: Community Clean-Up Drive 2025",
-          message: "Your application has been approved",
-          timestamp: "30 minutes ago",
-          read: false,
-          projectId: 1,
-          projectName:
-            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-        },
-        {
-          id: 5,
-          type: "application_pending",
-          title: "Application Pending: Youth Sports Festival 2025",
-          message: "Your application is pending review",
-          timestamp: "1 hour ago",
-          read: false,
-          projectId: 2,
-          projectName: "Youth Sports Festival 2025",
-        },
-        {
-          id: 6,
-          type: "announcement",
-          title: "New Announcement: Free Skills Training Workshop",
-          message: "Check out the new skills training workshop announcement",
-          timestamp: "3 hours ago",
-          read: false,
-          referenceId: 2,
-        },
-        {
-          id: 7,
-          type: "project_posted",
-          title: "New Project: Beach Clean-Up Initiative",
-          message: "SK Officers posted a new volunteer opportunity",
-          timestamp: "2 days ago",
-          read: false,
-          referenceId: 3,
-        },
-        {
-          id: 8,
-          type: "application_approved",
-          title: "Application Approved: Youth Sports Festival 2025",
-          message: "Congratulations! Your application has been approved",
-          timestamp: "4 hours ago",
-          read: false,
-          projectId: 2,
-          projectName: "Youth Sports Festival 2025",
-        },
-      ];
-
-      function updateNotificationCount() {
-        const unreadCount = notifications.filter((n) => !n.read).length;
-        const countBadge = document.getElementById("notificationCount");
-
-        if (unreadCount > 0) {
-          countBadge.textContent = unreadCount;
-          countBadge.classList.remove("hidden");
-        } else {
-          countBadge.classList.add("hidden");
-        }
-      }
-
-      function renderNotifications() {
-        const notificationList = document.getElementById("notificationList");
-
-        if (notifications.length === 0) {
-          notificationList.innerHTML = `
-                <div class="p-8 text-center text-gray-500">
-                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1"></path>
-                    </svg>
-                    <p class="text-sm">No notifications</p>
-                </div>
-            `;
-          return;
-        }
-
-        notificationList.innerHTML = notifications
-          .map((notif) => {
-            const unreadClass = !notif.read ? "bg-[#2f6e4e]/10" : "bg-white";
-            const unreadDot = !notif.read
-              ? '<span class="w-2 h-2 bg-[#2f6e4e] rounded-full"></span>'
-              : "";
-
-            let icon = "";
-            if (notif.type === "announcement") {
-              icon = `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
-                    </svg>
-                </div>`;
-            } else if (notif.type === "inquiry_update") {
-              icon = `<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                    </svg>
-                </div>`;
-            } else if (notif.type === "project_posted") {
-              icon = `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                    </svg>
-                </div>`;
-            } else if (notif.type === "application_approved") {
-              icon = `<div class="w-10 h-10 bg-[#2f6e4e]/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>`;
-            } else if (notif.type === "application_pending") {
-              icon = `<div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>`;
-            }
-
-            return `
-                <div onclick="handleNotificationClick(${notif.id})" class="${unreadClass} p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition">
-                    <div class="flex items-start space-x-3">
-                        ${icon}
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-start justify-between">
-                                <p class="text-sm font-semibold text-gray-800 truncate">${notif.title}</p>
-                                ${unreadDot}
-                            </div>
-                            <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
-                            <p class="text-xs text-gray-400 mt-2">${notif.timestamp}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-          })
-          .join("");
-      }
-
-      function toggleNotificationModal() {
-        const modal = document.getElementById("notificationModal");
-        modal.classList.toggle("hidden");
-
-        if (!modal.classList.contains("hidden")) {
-          renderNotifications();
-        }
-      }
-
-      function closeNotificationModal() {
-        document.getElementById("notificationModal").classList.add("hidden");
-      }
-
-      function handleNotificationClick(notifId) {
-        const notif = notifications.find((n) => n.id === notifId);
-        if (!notif) return;
-
-        notif.read = true;
-        updateNotificationCount();
-        closeNotificationModal();
-
-        if (notif.type === "announcement") {
-          window.location.href = `youth-dashboard.html`;
-        } else if (notif.type === "inquiry_update") {
-          window.location.href = `youth-projects.html?projectId=${notif.projectId}&tab=inquiries`;
-        } else if (notif.type === "project_posted") {
-          window.location.href = `youth-projects.html?projectId=${notif.referenceId}`;
-        }
-      }
-
-      function markAllAsRead() {
-        notifications.forEach((n) => (n.read = true));
-        updateNotificationCount();
-        renderNotifications();
-      }
-
-      // Initialize notification count on page load
+      // Initialize page on load
       document.addEventListener("DOMContentLoaded", function () {
-        updateNotificationCount();
+        // Initialize Supabase session and load files
+        initializePage();
       });
 
       // Update current date
