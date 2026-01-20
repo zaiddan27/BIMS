@@ -55,7 +55,7 @@ const SessionManager = {
             // Get user role and status from user_tbl (DATABASE, not metadata)
             const { data: userData, error: userError } = await supabaseClient
                 .from('User_Tbl')
-                .select('role, accountStatus, firstName, lastName, middleName')
+                .select('role, accountStatus, firstName, lastName, middleName, contactNumber, address, gender, birthday, imagePathURL')
                 .eq('userID', user.id)
                 .single();
 

@@ -198,6 +198,70 @@
   }
 }
 
+
+/* ========================================
+   MOBILE HEADER FIXES
+   Overrides for mobile header to ensure proper alignment and spacing.
+======================================== */
+
+/* Small Phones (< 430px) */
+@media (max-width: 429px) {
+  /* Header container - reduce right padding */
+  header.bg-gradient-to-r > div.px-8.py-6 {
+    padding-left: 1rem !important;
+    padding-right: 0.5rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  /* Actions section - remove extra spacing */
+  header.bg-gradient-to-r div.space-x-4 {
+    gap: 0.5rem !important;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Profile section - remove padding */
+  header.bg-gradient-to-r .space-x-3.px-3.py-2 {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Notification button - compact */
+  header.bg-gradient-to-r button[onclick*="Notification"] {
+    padding: 0.375rem !important;
+  }
+}
+
+/* Large Phones (430px - 767px) */
+@media (min-width: 430px) and (max-width: 767px) {
+  /* Header container - reduce right padding */
+  header.bg-gradient-to-r > div.px-8.py-6 {
+    padding-left: 1.25rem !important;
+    padding-right: 0.75rem !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+
+  /* Actions section - remove extra spacing */
+  header.bg-gradient-to-r div.space-x-4 {
+    gap: 0.5rem !important;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Profile section - remove padding */
+  header.bg-gradient-to-r .space-x-3.px-3.py-2 {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Notification button - compact */
+  header.bg-gradient-to-r button[onclick*="Notification"] {
+    padding: 0.5rem !important;
+  }
+}
+
 /* ========================================
    TABLET STYLES (768px - 1023px)
 ======================================== */
@@ -1067,6 +1131,57 @@ button,
     grid-template-columns: 1fr !important;
   }
 
+  /* FIX 5.1: Profile Modal Grid - Force Single Column on Mobile */
+  #profileModal .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* FIX 5.2: Profile Modal content padding and spacing for mobile */
+  #profileModal .p-6 {
+    padding: 1rem !important; /* Reduce overall padding */
+  }
+
+  #profileModal #profileForm.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.75rem !important; /* Reduce vertical spacing between sections */
+  }
+
+  #profileModal .grid.gap-4 {
+    gap: 0.75rem !important; /* Reduce grid item spacing */
+  }
+
+  /* FIX 5.4: Ensure labels are left-aligned within profile modal on mobile */
+  #profileModal label {
+    text-align: left !important;
+  }
+
+  /* FIX 5.5: Further ensure even spacing and alignment for all form elements within profile modal */
+  #profileModal label,
+  #profileModal input,
+  #profileModal select,
+  #profileModal textarea,
+  #profileModal button {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important; /* Ensure consistent box model */
+  }
+
+  #profileModal input,
+  #profileModal select,
+  #profileModal textarea {
+    padding-left: 0.75rem !important; /* Standardize input padding */
+    padding-right: 0.75rem !important;
+  }
+
+  /* FIX 5.2: Profile Modal content padding on mobile */
+  #profileModal .p-6 {
+    padding: 1rem !important; /* Reduced from 1.5rem (p-6) to 1rem (p-4 equivalent) */
+  }
+
+  /* FIX 5.3: Profile Modal form spacing on mobile */
+  #profileModal #profileForm.space-y-6 {
+    margin-top: 1rem !important; /* Reduced from 1.5rem (space-y-6) to 1rem (space-y-4 equivalent) */
+  }
+
   /* FIX 6: File Cards/Lists - Prevent Overflow */
   /* File name truncation */
   [class*="file" i] .text-sm,
@@ -1319,15 +1434,17 @@ button,
   }
 
   /* FIX 14: Modal Footer Buttons (Cancel + Submit) */
-  /* Ensure buttons stack on very small screens */
-  .p-6.border-t.flex.justify-end.gap-3 {
-    flex-direction: column !important;
-    gap: 0.75rem !important;
-  }
+  /* Ensure buttons stack on ALL phone screens (up to 767px) */
+  @media (max-width: 767px) {
+    .p-6.border-t.flex.justify-end.gap-3 {
+      flex-direction: column !important;
+      gap: 0.75rem !important;
+    }
 
-  .p-6.border-t.flex.justify-end.gap-3 button {
-    width: 100% !important;
-    justify-content: center !important;
+    .p-6.border-t.flex.justify-end.gap-3 button {
+      width: 100% !important;
+      justify-content: center !important;
+    }
   }
 
   /* FIX 15: SK Archive - Generate Bulk Reports Section */

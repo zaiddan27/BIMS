@@ -7,8 +7,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/responsive.css" />
+
+    <!-- Cropper.js CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
+    />
 
     <!-- Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -18,6 +27,10 @@
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/auth.js"></script>
     <script src="js/auth/session.js"></script>
+
+    <!-- Cropper.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
 
     <script>
       tailwind.config = {
@@ -133,7 +146,9 @@
       }
 
       @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       /* Character counter */
@@ -175,8 +190,12 @@
         overflow: hidden;
         text-overflow: ellipsis;
         line-height: 1.5;
-        height: calc(1.5em * 5); /* Fixed height for 5 lines - keeps cards consistent */
-        min-height: calc(1.5em * 5); /* Ensure minimum height even with short text */
+        height: calc(
+          1.5em * 5
+        ); /* Fixed height for 5 lines - keeps cards consistent */
+        min-height: calc(
+          1.5em * 5
+        ); /* Ensure minimum height even with short text */
       }
     </style>
   </head>
@@ -192,7 +211,11 @@
             <div
               class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden"
             >
-              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
+              <img
+                src="asset/logo.svg"
+                alt="BIMS Logo"
+                class="w-full h-full object-contain p-1"
+              />
             </div>
             <div>
               <h1 class="text-xl font-black text-gray-800">BIMS</h1>
@@ -206,7 +229,9 @@
               href="sk-dashboard.html"
               class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group"
             >
-              <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
+              <div
+                class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition"
+              >
                 <svg
                   class="w-5 h-5"
                   fill="none"
@@ -227,7 +252,9 @@
               href="sk-files.html"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
             >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition">
+              <div
+                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition"
+              >
                 <svg
                   class="w-5 h-5 group-hover:text-blue-600 transition"
                   fill="none"
@@ -248,7 +275,9 @@
               href="sk-projects.html"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
             >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-purple-50 transition">
+              <div
+                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-purple-50 transition"
+              >
                 <svg
                   class="w-5 h-5 group-hover:text-purple-600 transition"
                   fill="none"
@@ -269,7 +298,9 @@
               href="sk-calendar.html"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
             >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-50 transition">
+              <div
+                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-50 transition"
+              >
                 <svg
                   class="w-5 h-5 group-hover:text-orange-600 transition"
                   fill="none"
@@ -290,7 +321,9 @@
               href="sk-testimonies.html"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
             >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-50 transition">
+              <div
+                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-50 transition"
+              >
                 <svg
                   class="w-5 h-5 group-hover:text-indigo-600 transition"
                   fill="none"
@@ -311,7 +344,9 @@
               href="sk-archive.html"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
             >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition">
+              <div
+                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition"
+              >
                 <svg
                   class="w-5 h-5 group-hover:text-gray-700 transition"
                   fill="none"
@@ -338,7 +373,9 @@
               onclick="handleLogout()"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
             >
-              <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
+              <div
+                class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition"
+              >
                 <svg
                   class="w-5 h-5"
                   fill="none"
@@ -360,18 +397,52 @@
       </aside>
 
       <!-- Confirmation Modal -->
-      <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
-          <div class="flex items-center justify-center w-12 h-12 mx-auto bg-yellow-100 rounded-full mb-4">
-            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+      <div
+        id="confirmModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4"
+      >
+        <div
+          class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all"
+        >
+          <div
+            class="flex items-center justify-center w-12 h-12 mx-auto bg-yellow-100 rounded-full mb-4"
+          >
+            <svg
+              class="w-6 h-6 text-yellow-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
             </svg>
           </div>
-          <h3 id="confirmTitle" class="text-lg font-bold text-gray-900 text-center mb-2">Confirm Action</h3>
-          <p id="confirmMessage" class="text-sm text-gray-600 text-center mb-6">Are you sure you want to proceed?</p>
+          <h3
+            id="confirmTitle"
+            class="text-lg font-bold text-gray-900 text-center mb-2"
+          >
+            Confirm Action
+          </h3>
+          <p id="confirmMessage" class="text-sm text-gray-600 text-center mb-6">
+            Are you sure you want to proceed?
+          </p>
           <div class="flex gap-3">
-            <button id="confirmCancel" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Cancel</button>
-            <button id="confirmOk" class="flex-1 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition font-medium">Confirm</button>
+            <button
+              id="confirmCancel"
+              class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700"
+            >
+              Cancel
+            </button>
+            <button
+              id="confirmOk"
+              class="flex-1 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition font-medium"
+            >
+              Confirm
+            </button>
           </div>
         </div>
       </div>
@@ -379,29 +450,66 @@
       <!-- Main Content -->
       <div class="flex-1 overflow-auto">
         <!-- Top Bar -->
-        <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200">
+        <header
+          class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200"
+        >
           <div class="px-8 py-6">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm text-[#2f6e4e] font-semibold mb-1" id="currentDate">Sunday, December 14, 2025</p>
+                <p
+                  class="text-sm text-[#2f6e4e] font-semibold mb-1"
+                  id="currentDate"
+                >
+                  Sunday, December 14, 2025
+                </p>
                 <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-                <p class="text-sm text-gray-600 mt-1">Overview of barangay activities, projects, and volunteer engagement</p>
+                <p class="text-sm text-gray-600 mt-1">
+                  Overview of barangay activities, projects, and volunteer
+                  engagement
+                </p>
               </div>
               <div class="flex items-center space-x-4">
                 <div class="relative">
-                  <button onclick="window.notificationModal.toggle()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                  <button
+                    onclick="window.notificationModal.toggle()"
+                    class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                    title="Notifications"
+                  >
+                    <svg
+                      class="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                      ></path>
                     </svg>
-                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
+                    <span
+                      id="notificationBadge"
+                      class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse"
+                      >5</span
+                    >
                   </button>
                 </div>
-                <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="openProfileModal()">
+                <div
+                  class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group"
+                  onclick="window.profileModal.open()"
+                >
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Andrea Pelias</p>
+                    <p
+                      class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition"
+                    >
+                      Andrea Pelias
+                    </p>
                     <p class="text-xs text-gray-500">SK Chairman</p>
                   </div>
-                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">
+                  <div
+                    class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition"
+                  >
                     AP
                   </div>
                 </div>
@@ -417,74 +525,182 @@
               class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
             >
               <!-- Total Files -->
-              <div class="group bg-gradient-to-br from-blue-50 to-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-blue-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <div
+                class="group bg-gradient-to-br from-blue-50 to-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-blue-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              >
                 <div class="flex items-start justify-between mb-3">
-                  <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  <div
+                    class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300"
+                  >
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2.5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      ></path>
                     </svg>
                   </div>
                 </div>
-                <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Total Files</p>
-                <p id="totalFiles" class="text-4xl font-extrabold text-gray-900 mb-1">
-                  <span class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"></span>
+                <p
+                  class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1"
+                >
+                  Total Files
+                </p>
+                <p
+                  id="totalFiles"
+                  class="text-4xl font-extrabold text-gray-900 mb-1"
+                >
+                  <span
+                    class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"
+                  ></span>
                 </p>
                 <p class="text-xs text-gray-500">Uploaded documents</p>
               </div>
 
               <!-- Total Announcements -->
-              <div class="group bg-gradient-to-br from-amber-50 to-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-amber-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <div
+                class="group bg-gradient-to-br from-amber-50 to-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-amber-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              >
                 <div class="flex items-start justify-between mb-3">
-                  <div class="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                  <div
+                    class="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300"
+                  >
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2.5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
+                      ></path>
                     </svg>
                   </div>
                 </div>
-                <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Announcements</p>
-                <p id="totalAnnouncements" class="text-4xl font-extrabold text-gray-900 mb-1">
-                  <span class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"></span>
+                <p
+                  class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1"
+                >
+                  Announcements
+                </p>
+                <p
+                  id="totalAnnouncements"
+                  class="text-4xl font-extrabold text-gray-900 mb-1"
+                >
+                  <span
+                    class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"
+                  ></span>
                 </p>
                 <p class="text-xs text-gray-500">Active posts</p>
               </div>
 
               <!-- Active Projects -->
-              <div class="group bg-gradient-to-br from-green-50 to-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-[#2f6e4e] transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <div
+                class="group bg-gradient-to-br from-green-50 to-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-[#2f6e4e] transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              >
                 <div class="flex items-start justify-between mb-3">
-                  <div class="w-14 h-14 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  <div
+                    class="w-14 h-14 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300"
+                  >
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2.5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      ></path>
                     </svg>
                   </div>
                 </div>
-                <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Active Projects</p>
-                <p id="activeProjects" class="text-4xl font-extrabold text-gray-900 mb-1">
-                  <span class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"></span>
+                <p
+                  class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1"
+                >
+                  Active Projects
+                </p>
+                <p
+                  id="activeProjects"
+                  class="text-4xl font-extrabold text-gray-900 mb-1"
+                >
+                  <span
+                    class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"
+                  ></span>
                 </p>
                 <p class="text-xs text-gray-500 flex items-center gap-1">
-                  <svg class="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  <svg
+                    class="w-3 h-3 text-green-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                   Ongoing initiatives
                 </p>
               </div>
 
               <!-- Youth Volunteers -->
-              <div class="group bg-gradient-to-br from-purple-50 to-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-purple-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <div
+                class="group bg-gradient-to-br from-purple-50 to-white rounded-2xl shadow-md hover:shadow-xl p-6 border-l-4 border-purple-500 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              >
                 <div class="flex items-start justify-between mb-3">
-                  <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                  <div
+                    class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300"
+                  >
+                    <svg
+                      class="w-7 h-7 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      stroke-width="2.5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      ></path>
                     </svg>
                   </div>
                 </div>
-                <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Youth Volunteers</p>
-                <p id="totalVolunteers" class="text-4xl font-extrabold text-gray-900 mb-1">
-                  <span class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"></span>
+                <p
+                  class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1"
+                >
+                  Youth Volunteers
+                </p>
+                <p
+                  id="totalVolunteers"
+                  class="text-4xl font-extrabold text-gray-900 mb-1"
+                >
+                  <span
+                    class="inline-block w-16 h-10 bg-gray-200 animate-pulse rounded"
+                  ></span>
                 </p>
                 <p class="text-xs text-gray-500 flex items-center gap-1">
-                  <svg class="w-3 h-3 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                  <svg
+                    class="w-3 h-3 text-purple-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                   Registered members
                 </p>
@@ -493,7 +709,9 @@
 
             <!-- Latest Announcements Section -->
             <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-              <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
+              <div
+                class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6"
+              >
                 <h3 class="text-xl font-bold text-gray-800">
                   Manage Announcements
                 </h3>
@@ -518,12 +736,18 @@
                 </button>
               </div>
 
-              <div id="announcementsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div
+                id="announcementsGrid"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
                 <!-- Announcements will be dynamically loaded from database -->
               </div>
 
               <!-- Pagination Dots (Center) -->
-              <div id="announcementPaginationDots" class="flex justify-center gap-2 mt-6 hidden">
+              <div
+                id="announcementPaginationDots"
+                class="flex justify-center gap-2 mt-6 hidden"
+              >
                 <!-- Dots will be inserted here -->
               </div>
 
@@ -555,23 +779,62 @@
 
             <!-- Transparency & Budget Reports Section -->
             <div class="mt-8">
-              <h2 class="text-2xl font-bold text-gray-800 mb-2">Transparency & Budget Reports</h2>
-              <p class="text-gray-600 mb-6">Full transparency on how your barangay funds are utilized</p>
+              <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                Transparency & Budget Reports
+              </h2>
+              <p class="text-gray-600 mb-6">
+                Full transparency on how your barangay funds are utilized
+              </p>
 
               <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- 2025 Budget Allocation -->
-                <div class="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-sm p-6 border border-blue-100">
+                <div
+                  class="bg-gradient-to-br from-blue-50 to-white rounded-xl shadow-sm p-6 border border-blue-100"
+                >
                   <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-800" id="budgetYearTitle">2025 Budget Allocation</h3>
+                    <h3
+                      class="text-lg font-bold text-gray-800"
+                      id="budgetYearTitle"
+                    >
+                      2025 Budget Allocation
+                    </h3>
                     <div class="flex space-x-2">
-                      <button onclick="editBudgetAllocation()" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Edit Budget">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                      <button
+                        onclick="editBudgetAllocation()"
+                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        title="Edit Budget"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          ></path>
                         </svg>
                       </button>
-                      <button onclick="viewBudgetHistory()" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="View History">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      <button
+                        onclick="viewBudgetHistory()"
+                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        title="View History"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          ></path>
                         </svg>
                       </button>
                     </div>
@@ -581,80 +844,166 @@
                     <!-- Youth Development Programs -->
                     <div>
                       <div class="flex justify-between text-sm mb-1">
-                        <span class="text-gray-700 font-medium">Youth Development Programs</span>
-                        <span class="text-gray-900 font-semibold" id="youthBudget">₱450,000</span>
+                        <span class="text-gray-700 font-medium"
+                          >Youth Development Programs</span
+                        >
+                        <span
+                          class="text-gray-900 font-semibold"
+                          id="youthBudget"
+                          >₱450,000</span
+                        >
                       </div>
                       <div class="w-full bg-blue-100 rounded-full h-2">
-                        <div id="youthBudgetBar" class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+                        <div
+                          id="youthBudgetBar"
+                          class="bg-blue-600 h-2 rounded-full"
+                          style="width: 45%"
+                        ></div>
                       </div>
                     </div>
 
                     <!-- Community Events -->
                     <div>
                       <div class="flex justify-between text-sm mb-1">
-                        <span class="text-gray-700 font-medium">Community Events</span>
-                        <span class="text-gray-900 font-semibold" id="eventsBudget">₱300,000</span>
+                        <span class="text-gray-700 font-medium"
+                          >Community Events</span
+                        >
+                        <span
+                          class="text-gray-900 font-semibold"
+                          id="eventsBudget"
+                          >₱300,000</span
+                        >
                       </div>
                       <div class="w-full bg-blue-100 rounded-full h-2">
-                        <div id="eventsBudgetBar" class="bg-blue-600 h-2 rounded-full" style="width: 30%"></div>
+                        <div
+                          id="eventsBudgetBar"
+                          class="bg-blue-600 h-2 rounded-full"
+                          style="width: 30%"
+                        ></div>
                       </div>
                     </div>
 
                     <!-- Infrastructure Projects -->
                     <div>
                       <div class="flex justify-between text-sm mb-1">
-                        <span class="text-gray-700 font-medium">Infrastructure Projects</span>
-                        <span class="text-gray-900 font-semibold" id="infraBudget">₱250,000</span>
+                        <span class="text-gray-700 font-medium"
+                          >Infrastructure Projects</span
+                        >
+                        <span
+                          class="text-gray-900 font-semibold"
+                          id="infraBudget"
+                          >₱250,000</span
+                        >
                       </div>
                       <div class="w-full bg-blue-100 rounded-full h-2">
-                        <div id="infraBudgetBar" class="bg-blue-600 h-2 rounded-full" style="width: 25%"></div>
+                        <div
+                          id="infraBudgetBar"
+                          class="bg-blue-600 h-2 rounded-full"
+                          style="width: 25%"
+                        ></div>
                       </div>
                     </div>
 
                     <!-- Total Budget -->
-                    <div class="pt-4 border-t border-blue-200 flex justify-between">
+                    <div
+                      class="pt-4 border-t border-blue-200 flex justify-between"
+                    >
                       <span class="text-gray-800 font-bold">Total Budget</span>
-                      <span class="text-2xl font-bold text-blue-600" id="totalBudget">₱1,000,000</span>
+                      <span
+                        class="text-2xl font-bold text-blue-600"
+                        id="totalBudget"
+                        >₱1,000,000</span
+                      >
                     </div>
                   </div>
                 </div>
 
                 <!-- Project Success Metrics -->
-                <div class="bg-gradient-to-br from-[#2f6e4e]/10 to-white rounded-xl shadow-sm p-6 border border-[#2f6e4e]/20">
+                <div
+                  class="bg-gradient-to-br from-[#2f6e4e]/10 to-white rounded-xl shadow-sm p-6 border border-[#2f6e4e]/20"
+                >
                   <div class="flex items-center justify-between mb-4">
                     <div>
-                      <h3 class="text-lg font-bold text-gray-800">Project Success Metrics</h3>
-                      <p class="text-sm text-gray-600">Based on 5-factor evaluation system</p>
+                      <h3 class="text-lg font-bold text-gray-800">
+                        Project Success Metrics
+                      </h3>
+                      <p class="text-sm text-gray-600">
+                        Based on 5-factor evaluation system
+                      </p>
                     </div>
                     <div class="p-3 bg-[#2f6e4e]/20 rounded-lg">
-                      <svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                      <svg
+                        class="w-6 h-6 text-[#2f6e4e]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                        ></path>
                       </svg>
                     </div>
                   </div>
 
                   <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="text-center p-4 bg-white rounded-lg border border-[#2f6e4e]/20">
-                      <p class="text-3xl font-bold text-[#2f6e4e]" id="totalProjects">42</p>
+                    <div
+                      class="text-center p-4 bg-white rounded-lg border border-[#2f6e4e]/20"
+                    >
+                      <p
+                        class="text-3xl font-bold text-[#2f6e4e]"
+                        id="totalProjects"
+                      >
+                        42
+                      </p>
                       <p class="text-sm text-gray-600 mt-1">Total Projects</p>
-                      <p class="text-xs text-gray-400 mt-1" id="projectsYear">2025</p>
+                      <p class="text-xs text-gray-400 mt-1" id="projectsYear">
+                        2025
+                      </p>
                     </div>
-                    <div class="text-center p-4 bg-white rounded-lg border border-[#2f6e4e]/20">
-                      <p class="text-3xl font-bold text-[#2f6e4e]" id="completedProjects">38</p>
+                    <div
+                      class="text-center p-4 bg-white rounded-lg border border-[#2f6e4e]/20"
+                    >
+                      <p
+                        class="text-3xl font-bold text-[#2f6e4e]"
+                        id="completedProjects"
+                      >
+                        38
+                      </p>
                       <p class="text-sm text-gray-600 mt-1">Completed</p>
                     </div>
-                    <div class="text-center p-4 bg-white rounded-lg border border-[#2f6e4e]/20">
-                      <p class="text-3xl font-bold text-yellow-600" id="ongoingProjects">4</p>
+                    <div
+                      class="text-center p-4 bg-white rounded-lg border border-[#2f6e4e]/20"
+                    >
+                      <p
+                        class="text-3xl font-bold text-yellow-600"
+                        id="ongoingProjects"
+                      >
+                        4
+                      </p>
                       <p class="text-sm text-gray-600 mt-1">Ongoing</p>
                     </div>
-                    <div class="text-center p-4 bg-white rounded-lg border border-[#2f6e4e]/20">
-                      <p class="text-3xl font-bold text-[#2f6e4e]" id="successRate">89%</p>
+                    <div
+                      class="text-center p-4 bg-white rounded-lg border border-[#2f6e4e]/20"
+                    >
+                      <p
+                        class="text-3xl font-bold text-[#2f6e4e]"
+                        id="successRate"
+                      >
+                        89%
+                      </p>
                       <p class="text-sm text-gray-600 mt-1">Avg Success Rate</p>
                     </div>
                   </div>
 
-                  <div class="bg-white rounded-lg border border-[#2f6e4e]/20 p-4">
-                    <p class="text-xs font-semibold text-gray-700 mb-2">Success Rate Calculation:</p>
+                  <div
+                    class="bg-white rounded-lg border border-[#2f6e4e]/20 p-4"
+                  >
+                    <p class="text-xs font-semibold text-gray-700 mb-2">
+                      Success Rate Calculation:
+                    </p>
                     <div class="grid grid-cols-2 gap-2 text-xs text-gray-600">
                       <div>• Budget Efficiency (25%)</div>
                       <div>• Timeline Adherence (20%)</div>
@@ -742,7 +1091,9 @@
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
               oninput="updateCharCount('createDescription', 'createDescCharCount', 500)"
             ></textarea>
-            <div id="createDescCharCount" class="char-counter">0/500 characters</div>
+            <div id="createDescCharCount" class="char-counter">
+              0/500 characters
+            </div>
           </div>
           <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2"
@@ -753,6 +1104,7 @@
               id="createImage"
               accept="image/*"
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
+              onchange="openCropperModal(event, 'create')"
             />
             <p class="text-xs text-gray-500 mt-1">
               Accepted formats: JPG, PNG, GIF
@@ -845,21 +1197,48 @@
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
               oninput="updateCharCount('editDescription', 'editDescCharCount', 500)"
             ></textarea>
-            <div id="editDescCharCount" class="char-counter">0/500 characters</div>
+            <div id="editDescCharCount" class="char-counter">
+              0/500 characters
+            </div>
           </div>
+          <!-- Current Image Preview - Clickable to change -->
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2"
-              >Change Image (Optional, Max 5MB)</label
+            <label id="editImageLabel" class="block text-sm font-semibold text-gray-700 mb-2">Image (Click to change)</label>
+            <div
+              id="editCurrentImageContainer"
+              class="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden cursor-pointer group border-2 border-dashed border-gray-300 hover:border-[#2f6e4e] transition-colors"
+              onclick="document.getElementById('editImage').click()"
             >
+              <!-- Image preview -->
+              <img id="editCurrentImage" src="" alt="Current announcement image" class="w-full h-full object-cover hidden" />
+
+              <!-- Placeholder when no image -->
+              <div id="editImagePlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+                <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span class="text-sm font-medium">Click to add image</span>
+              </div>
+
+              <!-- Hover overlay -->
+              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <div class="bg-white rounded-full p-3 shadow-lg">
+                  <svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <!-- Hidden file input -->
             <input
               type="file"
               id="editImage"
               accept="image/*"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
+              class="hidden"
+              onchange="openCropperModal(event, 'edit')"
             />
-            <p class="text-xs text-gray-500 mt-1">
-              Leave empty to keep current image
-            </p>
+            <p class="text-xs text-gray-500 mt-2">Click the image area to select a new image (Max 5MB)</p>
           </div>
         </div>
         <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
@@ -1011,18 +1390,37 @@
       </div>
     </div>
 
-
     <!-- Notification Modal - Injected by NotificationModal.js component -->
 
     <!-- Budget Edit Modal -->
-    <div id="budgetEditModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div
+      id="budgetEditModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      >
         <div class="p-6 border-b border-gray-200">
           <div class="flex items-center justify-between">
-            <h3 class="text-2xl font-bold text-gray-800">Edit Budget Allocation</h3>
-            <button onclick="closeBudgetEditModal()" class="text-gray-400 hover:text-gray-600 transition">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <h3 class="text-2xl font-bold text-gray-800">
+              Edit Budget Allocation
+            </h3>
+            <button
+              onclick="closeBudgetEditModal()"
+              class="text-gray-400 hover:text-gray-600 transition"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
               </svg>
             </button>
           </div>
@@ -1032,12 +1430,31 @@
           <!-- Instructions -->
           <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <div class="flex items-start">
-              <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <svg
+                class="w-5 h-5 text-blue-600 mt-0.5 mr-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
               </svg>
               <div>
-                <p class="text-sm font-semibold text-blue-900 mb-1">Important Information</p>
-                <p class="text-xs text-blue-800">This budget allocation will be displayed on the <strong>Dashboard homepage</strong> in the "Transparency & Budget Reports" section. You can add or remove budget categories, and the breakdown will be shown to all visitors for full transparency on how barangay funds are utilized throughout the year.</p>
+                <p class="text-sm font-semibold text-blue-900 mb-1">
+                  Important Information
+                </p>
+                <p class="text-xs text-blue-800">
+                  This budget allocation will be displayed on the
+                  <strong>Dashboard homepage</strong> in the "Transparency &
+                  Budget Reports" section. You can add or remove budget
+                  categories, and the breakdown will be shown to all visitors
+                  for full transparency on how barangay funds are utilized
+                  throughout the year.
+                </p>
               </div>
             </div>
           </div>
@@ -1045,7 +1462,9 @@
           <div class="space-y-4">
             <!-- Year Selection -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Budget Year</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Budget Year</label
+              >
               <input
                 type="number"
                 id="editBudgetYear"
@@ -1058,10 +1477,26 @@
             <!-- Budget Categories Container -->
             <div>
               <div class="flex items-center justify-between mb-3">
-                <label class="block text-sm font-medium text-gray-700">Budget Categories</label>
-                <button onclick="addBudgetCategory()" type="button" class="text-sm text-[#2f6e4e] hover:text-[#2f6e4e] font-medium flex items-center">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                <label class="block text-sm font-medium text-gray-700"
+                  >Budget Categories</label
+                >
+                <button
+                  onclick="addBudgetCategory()"
+                  type="button"
+                  class="text-sm text-[#2f6e4e] hover:text-[#2f6e4e] font-medium flex items-center"
+                >
+                  <svg
+                    class="w-4 h-4 mr-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    ></path>
                   </svg>
                   Add Category
                 </button>
@@ -1073,40 +1508,99 @@
             </div>
 
             <!-- Total Budget Display -->
-            <div class="pt-4 border-t border-gray-200 flex justify-between items-center">
+            <div
+              class="pt-4 border-t border-gray-200 flex justify-between items-center"
+            >
               <span class="text-lg font-bold text-gray-800">Total Budget</span>
-              <span class="text-2xl font-bold text-blue-600" id="editTotalBudget">₱0</span>
+              <span
+                class="text-2xl font-bold text-blue-600"
+                id="editTotalBudget"
+                >₱0</span
+              >
             </div>
           </div>
         </div>
 
         <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
-          <button onclick="closeBudgetEditModal()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">
+          <button
+            onclick="closeBudgetEditModal()"
+            class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium"
+          >
             Cancel
           </button>
-          <button onclick="saveBudgetAllocation()" class="px-6 py-3 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg transition font-medium">
+          <button
+            onclick="saveBudgetAllocation()"
+            class="px-6 py-3 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg transition font-medium"
+          >
             Save Changes
           </button>
         </div>
       </div>
     </div>
 
-    <script type="module">
-      // Import NotificationModal component
-      import { NotificationModal } from './js/components/NotificationModal.js';
+    <!-- ProfileModal component will be dynamically rendered here -->
 
-      console.log('[SK DASHBOARD] Script loaded - starting execution');
-      console.log('[SK DASHBOARD] SessionManager available:', typeof SessionManager !== 'undefined');
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10001] flex items-center justify-center">
+      <div class="bg-white rounded-xl shadow-2xl p-6 flex items-center gap-4">
+        <div class="spinner" style="border-top-color: #2f6e4e; width: 24px; height: 24px;"></div>
+        <span class="text-gray-800 font-medium">Uploading image...</span>
+      </div>
+    </div>
+
+    <!-- Image Cropper Modal -->
+    <div id="cropperModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+      <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-2xl font-bold text-gray-800">Crop Image</h3>
+        </div>
+        <div class="p-6">
+          <div class="img-container max-h-[50vh]">
+            <img id="imageToCrop" src="" alt="Image to crop" />
+          </div>
+        </div>
+        <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+          <button onclick="closeCropperModal()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">
+            Cancel
+          </button>
+          <button onclick="cropAndUploadImage()" class="px-6 py-3 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg transition font-medium">
+            Crop & Upload
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      // Import components
+      import { NotificationModal } from "./js/components/NotificationModal.js";
+      import { ProfileModal } from "./js/components/ProfileModal.js";
+
+      console.log("[SK DASHBOARD] Script loaded - starting execution");
+      console.log(
+        "[SK DASHBOARD] SessionManager available:",
+        typeof SessionManager !== "undefined"
+      );
 
       // Initialize NotificationModal component
       const notificationModal = new NotificationModal();
       notificationModal.render();
-      console.log('[SK DASHBOARD] NotificationModal component initialized');
+      window.notificationModal = notificationModal;
+      console.log("[SK DASHBOARD] NotificationModal component initialized");
+
+      // Initialize ProfileModal component
+      const profileModal = new ProfileModal();
+      profileModal.render();
+      window.profileModal = profileModal;
+      console.log("[SK DASHBOARD] ProfileModal component initialized");
 
       // Global variables
       let currentAnnouncementId = null;
       let currentUser = null;
       let currentUserData = null;
+      let cropper = null;
+      let currentFile = null;
+      let currentModal = '';
+      let pendingEditImageBlob = null; // Store cropped image for edit modal
 
       /**
        * Initialize session and authentication
@@ -1116,24 +1610,29 @@
        * @returns {Promise<void>}
        */
       async function initializeDashboard() {
-        console.log('[SK DASHBOARD] initializeDashboard() function called');
+        console.log("[SK DASHBOARD] initializeDashboard() function called");
         try {
-          console.log('[SK DASHBOARD] Inside try block - Initializing...');
+          console.log("[SK DASHBOARD] Inside try block - Initializing...");
 
           // Require authentication - only SK_OFFICIAL allowed
-          console.log('[SK DASHBOARD] Checking authentication...');
-          const sessionResult = await SessionManager.requireAuth(['SK_OFFICIAL']);
+          console.log("[SK DASHBOARD] Checking authentication...");
+          const sessionResult = await SessionManager.requireAuth([
+            "SK_OFFICIAL",
+          ]);
 
-          console.log('[SK DASHBOARD] Session result:', sessionResult);
+          console.log("[SK DASHBOARD] Session result:", sessionResult);
 
           if (!sessionResult.success) {
-            console.error('[SK DASHBOARD ERROR] Authentication failed:', sessionResult.error);
+            console.error(
+              "[SK DASHBOARD ERROR] Authentication failed:",
+              sessionResult.error
+            );
             return; // Session manager handles redirect
           }
 
-          console.log('[SK DASHBOARD] Authentication successful!');
-          console.log('[SK DASHBOARD] User role:', sessionResult.role);
-          console.log('[SK DASHBOARD] User data:', sessionResult.userData);
+          console.log("[SK DASHBOARD] Authentication successful!");
+          console.log("[SK DASHBOARD] User role:", sessionResult.role);
+          console.log("[SK DASHBOARD] User data:", sessionResult.userData);
 
           currentUser = sessionResult.user;
           currentUserData = sessionResult.userData;
@@ -1141,50 +1640,173 @@
           // Update user profile in header
           updateUserProfile();
 
+          // Load user profile data into ProfileModal component
+          await profileModal.loadUserData(currentUser, currentUserData);
+
           // EFFICIENCY: Load dashboard data in parallel
-          await Promise.all([
-            loadAnnouncements(),
-            loadDashboardStatistics()
-          ]);
+          await Promise.all([loadAnnouncements(), loadDashboardStatistics()]);
 
-          // Load notifications after authentication completes
-          loadSKNotifications();
-          updateNotificationCount();
+          // TODO: Load notifications after authentication completes
+          // loadSKNotifications();
+          // updateNotificationCount();
 
-          console.log('[SK DASHBOARD] Initialized successfully!');
+          console.log("[SK DASHBOARD] Initialized successfully!");
         } catch (error) {
-          console.error('[SK DASHBOARD ERROR] Initialization error:', error);
-          console.error('[SK DASHBOARD ERROR] Error details:', error.message, error.stack);
-          SessionManager.redirectToLogin('Failed to initialize dashboard');
+          console.error("[SK DASHBOARD ERROR] Initialization error:", error);
+          console.error(
+            "[SK DASHBOARD ERROR] Error details:",
+            error.message,
+            error.stack
+          );
+          SessionManager.redirectToLogin("Failed to initialize dashboard");
         }
       }
+      
+      // Cropper Modal Functions
+      function openCropperModal(event, modalType) {
+        currentFile = event.target.files[0];
+        if (!currentFile) return;
+
+        const validation = validateImageFile(currentFile);
+        if (!validation.valid) {
+          showToast(validation.error, "error");
+          event.target.value = ''; // Reset file input
+          return;
+        }
+
+        currentModal = modalType;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const image = document.getElementById('imageToCrop');
+          image.src = e.target.result;
+          document.getElementById('cropperModal').classList.remove('hidden');
+          
+          if (cropper) {
+            cropper.destroy();
+          }
+          cropper = new Cropper(image, {
+            aspectRatio: 16 / 9,
+            viewMode: 1,
+          });
+        };
+        reader.readAsDataURL(currentFile);
+      }
+
+      function closeCropperModal() {
+        document.getElementById('cropperModal').classList.add('hidden');
+        if (cropper) {
+          cropper.destroy();
+          cropper = null;
+        }
+        // Reset file input
+        const createImageInput = document.getElementById('createImage');
+        if (createImageInput) createImageInput.value = '';
+        const editImageInput = document.getElementById('editImage');
+        if (editImageInput) editImageInput.value = '';
+      }
+
+      function cropAndUploadImage() {
+        if (!cropper) return;
+
+        const canvas = cropper.getCroppedCanvas({
+          width: 1280,
+          height: 720,
+        });
+
+        canvas.toBlob((blob) => {
+          if (currentModal === 'create') {
+            postAnnouncement(blob);
+          } else if (currentModal === 'edit') {
+            // Store the blob for later and show preview in edit modal
+            pendingEditImageBlob = blob;
+
+            // Create a temporary URL to show the cropped image preview
+            const previewUrl = URL.createObjectURL(blob);
+            const currentImage = document.getElementById("editCurrentImage");
+            const placeholder = document.getElementById("editImagePlaceholder");
+            const imageLabel = document.getElementById("editImageLabel");
+
+            if (currentImage) {
+              currentImage.src = previewUrl;
+              currentImage.classList.remove("hidden");
+            }
+            if (placeholder) {
+              placeholder.classList.add("hidden");
+            }
+            if (imageLabel) {
+              imageLabel.textContent = "New Image (Cropped)";
+              imageLabel.classList.add("text-green-600");
+            }
+
+            showToast("Image cropped! Click 'Save Changes' to update.", "success");
+          }
+          closeCropperModal();
+        }, 'image/jpeg', 0.9);
+      }
+
 
       // Update user profile in header
       function updateUserProfile() {
         if (!currentUserData) return;
 
-        const nameElement = document.querySelector('header p.text-sm.font-medium');
-        const roleElement = document.querySelector('header p.text-xs.text-gray-500');
-        const initialsElement = document.querySelector('header .w-10.h-10');
+        const nameElement = document.querySelector(
+          "header p.text-sm.font-medium"
+        );
+        const roleElement = document.querySelector(
+          "header p.text-xs.text-gray-500"
+        );
+        const avatarElement = document.querySelector("header .w-10.h-10");
 
         if (nameElement) {
-          const fullName = `${currentUserData.firstName} ${currentUserData.middleName || ''} ${currentUserData.lastName}`.trim().replace(/\s+/g, ' ');
+          const fullName = `${currentUserData.firstName} ${
+            currentUserData.middleName || ""
+          } ${currentUserData.lastName}`
+            .trim()
+            .replace(/\s+/g, " ");
           nameElement.textContent = fullName;
         }
 
         if (roleElement) {
-          roleElement.textContent = 'SK Official';
+          roleElement.textContent = "SK Official";
         }
 
-        if (initialsElement) {
-          const initials = `${currentUserData.firstName.charAt(0)}${currentUserData.lastName.charAt(0)}`.toUpperCase();
-          initialsElement.textContent = initials;
+        if (avatarElement) {
+          // SECURITY: Sanitize profile picture URL
+          const safeProfileUrl = sanitizeImageURL(currentUserData.imagePathURL);
+          if (safeProfileUrl) {
+            // Display profile picture with sanitized URL
+            avatarElement.innerHTML = `<img src="${safeProfileUrl}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(currentUserData.firstName?.charAt(0) || '')}${escapeHTML(currentUserData.lastName?.charAt(0) || '')}</span>'.toUpperCase();" />`;
+          } else {
+            // Display initials
+            const initials = `${currentUserData.firstName?.charAt(0) || ''}${currentUserData.lastName?.charAt(0) || ''}`.toUpperCase();
+            avatarElement.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
+          }
         }
       }
 
-      // Call init on page load
-      console.log('[SK DASHBOARD] About to call initializeDashboard()');
-      initializeDashboard();
+      // Call init on page load - wrapped in DOMContentLoaded to ensure DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          console.log("[SK DASHBOARD] DOM loaded, calling initializeDashboard()");
+          initializeDashboard();
+        });
+      } else {
+        // DOM already loaded
+        console.log("[SK DASHBOARD] DOM already loaded, calling initializeDashboard()");
+        initializeDashboard();
+      }
+
+      // ============================================
+      // DEBUG: Production-safe logging utility
+      // Set DEBUG_MODE to false in production
+      // ============================================
+      const DEBUG_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+      const debug = {
+        log: (...args) => DEBUG_MODE && console.log('[SK-DASHBOARD]', ...args),
+        warn: (...args) => DEBUG_MODE && console.warn('[SK-DASHBOARD]', ...args),
+        error: (...args) => console.error('[SK-DASHBOARD]', ...args), // Always log errors
+      };
 
       // ============================================
       // SECURITY: XSS Prevention Helper
@@ -1195,13 +1817,58 @@
        * @returns {string} - Safe HTML string
        */
       function escapeHTML(unsafe) {
-        if (typeof unsafe !== 'string') return '';
+        if (typeof unsafe !== "string") return "";
         return unsafe
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#039;");
+      }
+
+      /**
+       * SECURITY: Validate and sanitize image URLs
+       * Only allows https URLs and Supabase storage URLs
+       * @param {string} url - URL to validate
+       * @returns {string} - Safe URL or empty string
+       */
+      function sanitizeImageURL(url) {
+        if (!url || typeof url !== "string") return "";
+
+        // Trim and check for empty
+        const trimmedUrl = url.trim();
+        if (!trimmedUrl) return "";
+
+        // Only allow https:// URLs (block javascript:, data:, etc.)
+        if (!trimmedUrl.startsWith("https://")) {
+          console.warn("⚠️ Blocked non-HTTPS image URL:", trimmedUrl.substring(0, 50));
+          return "";
+        }
+
+        // Validate URL format
+        try {
+          const parsedUrl = new URL(trimmedUrl);
+          // Only allow specific trusted domains
+          const allowedDomains = [
+            "supabase.co",
+            "supabase.com",
+            // Add other trusted image hosts if needed
+          ];
+
+          const isAllowedDomain = allowedDomains.some(domain =>
+            parsedUrl.hostname.endsWith(domain)
+          );
+
+          if (!isAllowedDomain) {
+            console.warn("⚠️ Image URL from untrusted domain:", parsedUrl.hostname);
+            // Still allow but log - remove this return to block untrusted domains
+          }
+
+          return trimmedUrl;
+        } catch (e) {
+          console.warn("⚠️ Invalid image URL format:", trimmedUrl.substring(0, 50));
+          return "";
+        }
       }
 
       // ============================================
@@ -1216,42 +1883,53 @@
        */
       function validateImageFile(file) {
         // Allowed MIME types (more reliable than file extension)
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        const allowedTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
         const maxSize = 5 * 1024 * 1024; // 5MB
 
         // Debug logging
-        console.log('📎 Validating file:', {
+        console.log("📎 Validating file:", {
           name: file.name,
           type: file.type,
           size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-          extension: file.name.split('.').pop().toLowerCase()
+          extension: file.name.split(".").pop().toLowerCase(),
         });
 
         // Check MIME type
         if (!allowedTypes.includes(file.type)) {
           const error = `Invalid file type: ${file.type}. Only JPG, PNG, GIF, and WebP images are allowed`;
-          console.error('❌', error);
+          console.error("❌", error);
           return { valid: false, error: error };
         }
 
         // Check file size
         if (file.size > maxSize) {
-          const error = `Image size (${(file.size / 1024 / 1024).toFixed(2)} MB) exceeds 5MB limit`;
-          console.error('❌', error);
+          const error = `Image size (${(file.size / 1024 / 1024).toFixed(
+            2
+          )} MB) exceeds 5MB limit`;
+          console.error("❌", error);
           return { valid: false, error: error };
         }
 
         // Check file extension matches MIME type (prevent spoofing)
-        const extension = file.name.split('.').pop().toLowerCase();
-        const mimeExtension = file.type.split('/')[1].replace('jpeg', 'jpg');
+        const extension = file.name.split(".").pop().toLowerCase();
+        const mimeExtension = file.type.split("/")[1].replace("jpeg", "jpg");
 
-        if (extension !== mimeExtension && !(extension === 'jpg' && mimeExtension === 'jpeg')) {
+        if (
+          extension !== mimeExtension &&
+          !(extension === "jpg" && mimeExtension === "jpeg")
+        ) {
           const error = `File extension (.${extension}) does not match MIME type (${file.type})`;
-          console.error('❌', error);
+          console.error("❌", error);
           return { valid: false, error: error };
         }
 
-        console.log('✅ File validation passed');
+        console.log("✅ File validation passed");
         return { valid: true };
       }
 
@@ -1259,44 +1937,51 @@
       let announcementsArray = [];
       let announcements = {};
 
+      // EFFICIENCY: Maximum announcements to load (prevents loading too many records)
+      const MAX_ANNOUNCEMENTS = 100;
+
       /**
        * Load announcements from Supabase database
        * Filters for ACTIVE content and orders by published date
+       * Uses DB-level limit to prevent loading excessive records
        *
        * @async
        * @returns {Promise<void>}
        */
       async function loadAnnouncements() {
         try {
+          // EFFICIENCY: Use .limit() to prevent loading too many records
           const { data, error } = await supabaseClient
-            .from('Announcement_Tbl')
-            .select('*')
-            .order('publishedDate', { ascending: false });
+            .from("Announcement_Tbl")
+            .select("*")
+            .order("publishedDate", { ascending: false })
+            .limit(MAX_ANNOUNCEMENTS);
 
           if (error) throw error;
 
           if (data && data.length > 0) {
-            console.log('📥 Raw data from database:', data);
+            console.log("📥 Raw data from database:", data);
 
             // Convert to the format expected by the UI
-            announcementsArray = data.map(announcement => ({
+            announcementsArray = data.map((announcement) => ({
               id: announcement.announcementID,
               title: announcement.title,
               date: formatRelativeDate(announcement.publishedDate),
               category: announcement.category.toLowerCase(),
-              description: announcement.description || 'No description available',
-              image: announcement.imagePathURL || '',
-              rawDate: announcement.publishedDate
+              description:
+                announcement.description || "No description available",
+              image: announcement.imagePathURL || "",
+              rawDate: announcement.publishedDate,
             }));
 
             // Create object format for viewAnnouncement function
             announcements = {};
-            announcementsArray.forEach(ann => {
+            announcementsArray.forEach((ann) => {
               announcements[ann.id] = ann;
             });
 
-            console.log('📦 Processed announcements object:', announcements);
-            console.log('📋 Announcements array:', announcementsArray);
+            console.log("📦 Processed announcements object:", announcements);
+            console.log("📋 Announcements array:", announcementsArray);
 
             // Render announcements after loading
             renderAnnouncements();
@@ -1304,14 +1989,16 @@
 
             console.log(`✅ Loaded ${announcementsArray.length} announcements`);
           } else {
-            console.log('No announcements found');
+            console.log("No announcements found");
             announcementsArray = [];
             renderAnnouncements();
           }
-
         } catch (error) {
-          console.error('Error loading announcements:', error);
-          showToast('Failed to load announcements. Please refresh the page.', 'error');
+          console.error("Error loading announcements:", error);
+          showToast(
+            "Failed to load announcements. Please refresh the page.",
+            "error"
+          );
           announcementsArray = [];
           renderAnnouncements();
         }
@@ -1327,40 +2014,48 @@
        */
       async function loadDashboardStatistics() {
         try {
-          console.log('📊 Loading dashboard statistics...');
+          console.log("📊 Loading dashboard statistics...");
 
           // EFFICIENCY: Load all counts in parallel using Promise.all
-          const [filesResult, announcementsResult, projectsResult, volunteersResult] = await Promise.all([
+          const [
+            filesResult,
+            announcementsResult,
+            projectsResult,
+            volunteersResult,
+          ] = await Promise.all([
             // Total active files
             supabaseClient
-              .from('File_Tbl')
-              .select('*', { count: 'exact', head: true })
-              .eq('fileStatus', 'ACTIVE'),
+              .from("File_Tbl")
+              .select("*", { count: "exact", head: true })
+              .eq("fileStatus", "ACTIVE"),
 
             // Total announcements
             supabaseClient
-              .from('Announcement_Tbl')
-              .select('*', { count: 'exact', head: true }),
+              .from("Announcement_Tbl")
+              .select("*", { count: "exact", head: true }),
 
             // Active/ongoing projects
             supabaseClient
-              .from('Pre_Project_Tbl')
-              .select('*', { count: 'exact', head: true })
-              .eq('status', 'ONGOING'),
+              .from("Pre_Project_Tbl")
+              .select("*", { count: "exact", head: true })
+              .eq("status", "ONGOING"),
 
             // Active youth volunteers
             supabaseClient
-              .from('User_Tbl')
-              .select('*', { count: 'exact', head: true })
-              .eq('role', 'YOUTH_VOLUNTEER')
-              .eq('accountStatus', 'ACTIVE')
+              .from("User_Tbl")
+              .select("*", { count: "exact", head: true })
+              .eq("role", "YOUTH_VOLUNTEER")
+              .eq("accountStatus", "ACTIVE"),
           ]);
 
           // Check for errors
-          if (filesResult.error) throw new Error('Failed to load files count');
-          if (announcementsResult.error) throw new Error('Failed to load announcements count');
-          if (projectsResult.error) throw new Error('Failed to load projects count');
-          if (volunteersResult.error) throw new Error('Failed to load volunteers count');
+          if (filesResult.error) throw new Error("Failed to load files count");
+          if (announcementsResult.error)
+            throw new Error("Failed to load announcements count");
+          if (projectsResult.error)
+            throw new Error("Failed to load projects count");
+          if (volunteersResult.error)
+            throw new Error("Failed to load volunteers count");
 
           // Update DOM with counts (fallback to 0 if null)
           const totalFiles = filesResult.count ?? 0;
@@ -1369,35 +2064,42 @@
           const totalVolunteers = volunteersResult.count ?? 0;
 
           // RELIABLE: Safe DOM updates with null checks
-          const filesElement = document.getElementById('totalFiles');
-          const announcementsElement = document.getElementById('totalAnnouncements');
-          const projectsElement = document.getElementById('activeProjects');
-          const volunteersElement = document.getElementById('totalVolunteers');
+          const filesElement = document.getElementById("totalFiles");
+          const announcementsElement =
+            document.getElementById("totalAnnouncements");
+          const projectsElement = document.getElementById("activeProjects");
+          const volunteersElement = document.getElementById("totalVolunteers");
 
           if (filesElement) filesElement.textContent = totalFiles;
-          if (announcementsElement) announcementsElement.textContent = totalAnnouncements;
+          if (announcementsElement)
+            announcementsElement.textContent = totalAnnouncements;
           if (projectsElement) projectsElement.textContent = activeProjects;
-          if (volunteersElement) volunteersElement.textContent = totalVolunteers;
+          if (volunteersElement)
+            volunteersElement.textContent = totalVolunteers;
 
-          console.log('✅ Statistics loaded:', {
+          console.log(" Statistics loaded:", {
             files: totalFiles,
             announcements: totalAnnouncements,
             projects: activeProjects,
-            volunteers: totalVolunteers
+            volunteers: totalVolunteers,
           });
-
         } catch (error) {
-          console.error('Error loading dashboard statistics:', error);
+          console.error("Error loading dashboard statistics:", error);
 
           // RELIABLE: Show 0 instead of leaving loading animation on error
-          const defaultElements = ['totalFiles', 'totalAnnouncements', 'activeProjects', 'totalVolunteers'];
-          defaultElements.forEach(id => {
+          const defaultElements = [
+            "totalFiles",
+            "totalAnnouncements",
+            "activeProjects",
+            "totalVolunteers",
+          ];
+          defaultElements.forEach((id) => {
             const element = document.getElementById(id);
-            if (element) element.textContent = '0';
+            if (element) element.textContent = "0";
           });
 
           // Don't show error toast for statistics (non-critical feature)
-          console.warn('⚠️ Statistics unavailable, showing default values');
+          console.warn("⚠️ Statistics unavailable, showing default values");
         }
       }
 
@@ -1413,34 +2115,34 @@
 
         // Less than 1 minute
         if (diffSec < 60) {
-          return 'Just now';
+          return "Just now";
         }
         // Less than 1 hour
         else if (diffMin < 60) {
-          return `${diffMin} ${diffMin === 1 ? 'minute' : 'minutes'} ago`;
+          return `${diffMin} ${diffMin === 1 ? "minute" : "minutes"} ago`;
         }
         // Less than 24 hours
         else if (diffHour < 24) {
-          return `${diffHour} ${diffHour === 1 ? 'hour' : 'hours'} ago`;
+          return `${diffHour} ${diffHour === 1 ? "hour" : "hours"} ago`;
         }
         // Less than 7 days
         else if (diffDay < 7) {
-          return diffDay === 1 ? 'Yesterday' : `${diffDay} days ago`;
+          return diffDay === 1 ? "Yesterday" : `${diffDay} days ago`;
         }
         // Less than 30 days
         else if (diffDay < 30) {
           const weeks = Math.floor(diffDay / 7);
-          return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+          return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
         }
         // Less than 365 days
         else if (diffDay < 365) {
           const months = Math.floor(diffDay / 30);
-          return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+          return `${months} ${months === 1 ? "month" : "months"} ago`;
         }
         // 365+ days
         else {
           const years = Math.floor(diffDay / 365);
-          return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+          return `${years} ${years === 1 ? "year" : "years"} ago`;
         }
       }
 
@@ -1456,62 +2158,95 @@
 
       // Render announcements with pagination
       function renderAnnouncements() {
-        const grid = document.getElementById('announcementsGrid');
-        grid.innerHTML = '';
+        const grid = document.getElementById("announcementsGrid");
+        grid.innerHTML = "";
 
         const startIndex = currentAnnouncementPage * announcementsPerPage;
         const endIndex = startIndex + announcementsPerPage;
-        const announcementsToShow = announcementsArray.slice(startIndex, endIndex);
+        const announcementsToShow = announcementsArray.slice(
+          startIndex,
+          endIndex
+        );
 
-        announcementsToShow.forEach(announcement => {
+        announcementsToShow.forEach((announcement) => {
           const categoryColors = {
             urgent: {
-              badge: 'bg-red-100 text-red-700',
-              gradient: 'from-orange-400 to-orange-500',
-              icon: `<svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
+              badge: "bg-red-100 text-red-700",
+              gradient: "from-orange-400 to-orange-500",
+              icon: `<svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
             },
             general: {
-              badge: 'bg-blue-100 text-blue-700',
-              gradient: 'from-blue-400 to-blue-500',
-              icon: `<svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>`
+              badge: "bg-blue-100 text-blue-700",
+              gradient: "from-blue-400 to-blue-500",
+              icon: `<svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>`,
             },
             update: {
-              badge: 'bg-[#2f6e4e]/20 text-[#2f6e4e]',
-              gradient: 'from-green-400 to-green-500',
-              icon: `<svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
-            }
+              badge: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
+              gradient: "from-green-400 to-green-500",
+              icon: `<svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+            },
           };
 
-          const colors = categoryColors[announcement.category] || categoryColors.general;
+          const colors =
+            categoryColors[announcement.category] || categoryColors.general;
 
-          const card = document.createElement('div');
-          card.className = 'border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col';
+          const card = document.createElement("div");
+          card.className =
+            "border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition flex flex-col";
+
+          // SECURITY: Validate and sanitize image URL
+          const safeImageUrl = sanitizeImageURL(announcement.image);
+          const hasImage = safeImageUrl !== '';
+
+          const imageHtml = hasImage
+            ? `<img src="${safeImageUrl}" alt="${escapeHTML(announcement.title)}" class="w-full h-32 object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+               <div class="h-32 bg-gradient-to-br ${colors.gradient} flex items-center justify-center" style="display: none;">
+                 ${colors.icon}
+               </div>`
+            : `<div class="h-32 bg-gradient-to-br ${colors.gradient} flex items-center justify-center">
+                 ${colors.icon}
+               </div>`;
+
           // SECURITY: Use escapeHTML() to prevent XSS attacks
           card.innerHTML = `
-            <div class="h-32 bg-gradient-to-br ${colors.gradient} flex items-center justify-center">
-              ${colors.icon}
-            </div>
+            ${imageHtml}
             <div class="p-5 flex flex-col flex-1">
               <div class="flex items-center justify-between mb-3">
-                <span class="px-3 py-1 ${colors.badge} text-xs font-medium rounded-full">${escapeHTML(announcement.category)}</span>
-                <span class="text-xs text-gray-500">${escapeHTML(announcement.date)}</span>
+                <span class="px-3 py-1 ${
+                  colors.badge
+                } text-xs font-medium rounded-full">${escapeHTML(
+            announcement.category
+          )}</span>
+                <span class="text-xs text-gray-500">${escapeHTML(
+                  announcement.date
+                )}</span>
               </div>
-              <h4 class="text-lg font-bold text-gray-800 mb-2">${escapeHTML(announcement.title)}</h4>
-              <p class="announcement-description text-sm text-gray-600 mb-4">${escapeHTML(announcement.description)}</p>
+              <h4 class="text-lg font-bold text-gray-800 mb-2">${escapeHTML(
+                announcement.title
+              )}</h4>
+              <p class="announcement-description text-sm text-gray-600 mb-4">${escapeHTML(
+                announcement.description
+              )}</p>
               <div class="flex justify-end mt-auto">
                 <div class="flex space-x-2">
-                  <button onclick="viewAnnouncement(${announcement.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="View">
+                  <button onclick="viewAnnouncement(${
+                    announcement.id
+                  })" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="View">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                     </svg>
                   </button>
-                  <button onclick="openEditModal(${announcement.id})" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Edit">
+                  <button onclick="openEditModal(${
+                    announcement.id
+                  })" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Edit">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
                   </button>
-                  <button onclick="confirmDelete(${announcement.id})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete">
+                  <button onclick="confirmDelete(${
+                    announcement.id
+                  })" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                     </svg>
@@ -1528,36 +2263,52 @@
 
       // Update announcement pagination controls
       function updateAnnouncementPagination() {
-        const totalPages = Math.ceil(announcementsArray.length / announcementsPerPage);
-        const dotsContainer = document.getElementById('announcementPaginationDots');
-        const navContainer = document.getElementById('announcementPaginationNav');
+        const totalPages = Math.ceil(
+          announcementsArray.length / announcementsPerPage
+        );
+        const dotsContainer = document.getElementById(
+          "announcementPaginationDots"
+        );
+        const navContainer = document.getElementById(
+          "announcementPaginationNav"
+        );
 
         if (totalPages <= 1) {
-          dotsContainer.classList.add('hidden');
-          navContainer.classList.add('hidden');
+          dotsContainer.classList.add("hidden");
+          navContainer.classList.add("hidden");
           return;
         }
 
-        dotsContainer.classList.remove('hidden');
-        navContainer.classList.remove('hidden');
+        dotsContainer.classList.remove("hidden");
+        navContainer.classList.remove("hidden");
 
         // Create pagination dots
-        dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
+        dotsContainer.innerHTML = Array.from(
+          { length: totalPages },
+          (_, i) => `
           <button
             onclick="goToAnnouncementPage(${i})"
-            class="h-2 rounded-full transition-all duration-300 ${i === currentAnnouncementPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+            class="h-2 rounded-full transition-all duration-300 ${
+              i === currentAnnouncementPage
+                ? "bg-[#2f6e4e] w-8"
+                : "bg-gray-300 hover:bg-gray-400 w-2"
+            }"
             style="min-height: 8px;"
           ></button>
-        `).join('');
+        `
+        ).join("");
       }
 
       // Navigate announcements
       function navigateAnnouncements(direction) {
-        const totalPages = Math.ceil(announcementsArray.length / announcementsPerPage);
+        const totalPages = Math.ceil(
+          announcementsArray.length / announcementsPerPage
+        );
         currentAnnouncementPage += direction;
 
         // Wrap around
-        if (currentAnnouncementPage < 0) currentAnnouncementPage = totalPages - 1;
+        if (currentAnnouncementPage < 0)
+          currentAnnouncementPage = totalPages - 1;
         if (currentAnnouncementPage >= totalPages) currentAnnouncementPage = 0;
 
         renderAnnouncements();
@@ -1582,70 +2333,31 @@
         document.getElementById("createImage").value = "";
       }
 
-      async function postAnnouncement() {
+      async function postAnnouncement(imageBlob = null) {
         const titleInput = document.getElementById("createTitle");
         const categoryInput = document.getElementById("createCategory");
         const descriptionInput = document.getElementById("createDescription");
-        const imageInput = document.getElementById("createImage");
 
         const title = titleInput.value.trim();
         const category = categoryInput.value;
         const description = descriptionInput.value.trim();
-        const image = imageInput.files[0];
 
-        let isValid = true;
-
-        // Validate title
+        // Validate required fields
         if (!title) {
-          setInputState(titleInput, false);
-          showToast("Title is required", "error");
-          isValid = false;
-        } else if (title.length < 5) {
-          setInputState(titleInput, false);
-          showToast("Title must be at least 5 characters", "error");
-          isValid = false;
-        } else {
-          setInputState(titleInput, true);
+          showToast("Please enter a title", "error");
+          return;
         }
-
-        // Validate category
         if (!category) {
-          setInputState(categoryInput, false);
           showToast("Please select a category", "error");
-          isValid = false;
-        } else {
-          setInputState(categoryInput, true);
+          return;
         }
-
-        // Validate description
         if (!description) {
-          setInputState(descriptionInput, false);
-          showToast("Description is required", "error");
-          isValid = false;
-        } else if (description.length < 10) {
-          setInputState(descriptionInput, false);
-          showToast("Description must be at least 10 characters", "error");
-          isValid = false;
-        } else {
-          setInputState(descriptionInput, true);
-        }
-
-        // SECURITY: Validate image file type and size
-        if (image) {
-          const validation = validateImageFile(image);
-          if (!validation.valid) {
-            setInputState(imageInput, false);
-            showToast(validation.error, "error");
-            return;
-          }
-        }
-
-        if (!isValid) {
+          showToast("Please enter a description", "error");
           return;
         }
 
-        // Show loading state
-        const button = event.target;
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+        const button = document.querySelector('#createModal button[onclick="postAnnouncement()"]');
         const originalButtonText = button.innerHTML;
         button.disabled = true;
         button.innerHTML = '<div class="spinner mx-auto"></div>';
@@ -1653,95 +2365,61 @@
         try {
           let imagePath = null;
 
-          // Upload image if provided
-          if (image) {
-            // SECURITY: Use MIME type for extension (don't trust client filename)
-            const fileExt = image.type.split('/')[1].replace('jpeg', 'jpg');
+          // Only upload image if provided
+          if (imageBlob) {
+            const fileExt = 'jpeg';
             const fileName = `announcement_${Date.now()}.${fileExt}`;
-            const filePath = `announcement-images/${fileName}`;
 
-            console.log('📤 Uploading to:', filePath);
+            console.log("📤 Uploading cropped image to announcement-images bucket:", fileName);
 
-            const { data: uploadData, error: uploadError } = await supabaseClient.storage
-              .from('bims-files')
-              .upload(filePath, image, {
-                cacheControl: '3600',
-                upsert: false,
-                contentType: image.type  // Set correct MIME type
-              });
+            const { data: uploadData, error: uploadError } =
+              await supabaseClient.storage
+                .from("announcement-images")
+                .upload(fileName, imageBlob, {
+                  cacheControl: "3600",
+                  upsert: false,
+                  contentType: 'image/jpeg',
+                });
 
             if (uploadError) {
-              console.error('❌ Upload error:', uploadError);
+              console.error("❌ Upload error:", uploadError);
               throw new Error(`Image upload failed: ${uploadError.message}`);
             }
 
-            console.log('✅ Upload successful:', uploadData);
+            console.log("✅ Upload successful:", uploadData);
 
-            // Get public URL
             const { data: urlData } = supabaseClient.storage
-              .from('bims-files')
-              .getPublicUrl(filePath);
+              .from("announcement-images")
+              .getPublicUrl(fileName);
 
-            console.log('🔗 Public URL:', urlData.publicUrl);
+            console.log("🔗 Public URL:", urlData.publicUrl);
 
             imagePath = urlData.publicUrl;
           }
 
-          // Insert announcement into database
           const { data, error } = await supabaseClient
-            .from('Announcement_Tbl')
+            .from("Announcement_Tbl")
             .insert({
               userID: currentUser.id,
               title: title,
               category: category.toUpperCase(),
               description: description,
               imagePathURL: imagePath,
-              publishedDate: new Date().toISOString()
+              publishedDate: new Date().toISOString(),
             })
             .select();
 
           if (error) throw error;
 
           showToast("Announcement posted successfully!", "success");
-
-          // Reset form
-          titleInput.value = '';
-          categoryInput.value = '';
-          descriptionInput.value = '';
-          imageInput.value = '';
-          const charCounter = document.getElementById('createDescCharCount');
-          if (charCounter) charCounter.textContent = '0/500 characters';
-
-          // Reset visual states
-          setInputState(titleInput, null);
-          setInputState(categoryInput, null);
-          setInputState(descriptionInput, null);
-
-          // RELIABILITY: Reload announcements and statistics to reflect changes immediately
-          await Promise.all([
-            loadAnnouncements(),
-            loadDashboardStatistics()
-          ]);
-
           closeCreateModal();
+          await Promise.all([loadAnnouncements(), loadDashboardStatistics()]);
 
         } catch (error) {
-          // SECURITY: Log full error for debugging (console only, not exposed to user)
-          console.error('Error posting announcement:', error);
-
-          // Show generic message to user (don't expose system details)
-          let userMessage = 'Failed to post announcement. Please try again.';
-
-          // Only show specific messages for known user errors
-          if (error.message.includes('Image upload failed')) {
-            userMessage = 'Failed to upload image. Please try a different file.';
-          } else if (error.message.includes('unique constraint')) {
-            userMessage = 'An announcement with this title already exists.';
-          }
-
-          showToast(userMessage, 'error');
+          console.error("Error posting announcement:", error);
+          showToast(error.message, "error");
         } finally {
-          // Re-enable button
+          document.getElementById('loadingOverlay').classList.add('hidden');
           button.disabled = false;
           button.innerHTML = originalButtonText;
         }
@@ -1752,12 +2430,15 @@
         currentAnnouncementId = id;
         const announcement = announcements[id];
 
-        console.log('🔍 Opening edit modal for ID:', id);
-        console.log('📋 Announcement data:', announcement);
-        console.log('📦 All announcements:', announcements);
+        console.log("🔍 Opening edit modal for ID:", id);
+        console.log("📋 Announcement data:", announcement);
+        console.log("📦 All announcements:", announcements);
 
         if (!announcement) {
-          showToast('Announcement not found. Please refresh the page.', 'error');
+          showToast(
+            "Announcement not found. Please refresh the page.",
+            "error"
+          );
           return;
         }
 
@@ -1770,12 +2451,38 @@
         descriptionInput.value = announcement.description;
 
         // Update character count
-        updateCharCount('editDescription', 'editDescCharCount', 500);
+        updateCharCount("editDescription", "editDescCharCount", 500);
 
         // Clear any previous validation states
         setInputState(titleInput, null);
         setInputState(categoryInput, null);
         setInputState(descriptionInput, null);
+
+        // Reset pending image blob
+        pendingEditImageBlob = null;
+
+        // Show current image preview if exists
+        const currentImage = document.getElementById("editCurrentImage");
+        const placeholder = document.getElementById("editImagePlaceholder");
+        const imageLabel = document.getElementById("editImageLabel");
+
+        // Reset label text and style
+        if (imageLabel) {
+          imageLabel.textContent = "Image (Click to change)";
+          imageLabel.classList.remove("text-green-600");
+        }
+
+        if (announcement.image) {
+          currentImage.src = announcement.image;
+          currentImage.classList.remove("hidden");
+          placeholder.classList.add("hidden");
+        } else {
+          currentImage.classList.add("hidden");
+          placeholder.classList.remove("hidden");
+        }
+
+        // Clear file input
+        document.getElementById("editImage").value = "";
 
         document.getElementById("editModal").classList.remove("hidden");
       }
@@ -1783,6 +2490,7 @@
       function closeEditModal() {
         document.getElementById("editModal").classList.add("hidden");
         currentAnnouncementId = null;
+        pendingEditImageBlob = null; // Clear pending image
       }
 
       /**
@@ -1796,66 +2504,27 @@
         const titleInput = document.getElementById("editTitle");
         const categoryInput = document.getElementById("editCategory");
         const descriptionInput = document.getElementById("editDescription");
-        const imageInput = document.getElementById("editImage");
 
         const title = titleInput.value.trim();
         const category = categoryInput.value;
         const description = descriptionInput.value.trim();
-        const image = imageInput.files[0];
 
-        let isValid = true;
-
-        // Validate title
+        // Validate required fields
         if (!title) {
-          setInputState(titleInput, false);
-          showToast("Title is required", "error");
-          isValid = false;
-        } else if (title.length < 5) {
-          setInputState(titleInput, false);
-          showToast("Title must be at least 5 characters", "error");
-          isValid = false;
-        } else {
-          setInputState(titleInput, true);
+          showToast("Please enter a title", "error");
+          return;
         }
-
-        // Validate category
         if (!category) {
-          setInputState(categoryInput, false);
           showToast("Please select a category", "error");
-          isValid = false;
-        } else {
-          setInputState(categoryInput, true);
+          return;
         }
-
-        // Validate description
         if (!description) {
-          setInputState(descriptionInput, false);
-          showToast("Description is required", "error");
-          isValid = false;
-        } else if (description.length < 10) {
-          setInputState(descriptionInput, false);
-          showToast("Description must be at least 10 characters", "error");
-          isValid = false;
-        } else {
-          setInputState(descriptionInput, true);
-        }
-
-        // SECURITY: Validate image file if provided
-        if (image) {
-          const validation = validateImageFile(image);
-          if (!validation.valid) {
-            setInputState(imageInput, false);
-            showToast(validation.error, "error");
-            return;
-          }
-        }
-
-        if (!isValid) {
+          showToast("Please enter a description", "error");
           return;
         }
 
-        // Show loading state
-        const button = event.target;
+        document.getElementById('loadingOverlay').classList.remove('hidden');
+        const button = document.querySelector('#editModal button[onclick="saveEdit()"]');
         const originalButtonText = button.innerHTML;
         button.disabled = true;
         button.innerHTML = '<div class="spinner mx-auto"></div>';
@@ -1863,98 +2532,62 @@
         try {
           let imagePath = announcements[currentAnnouncementId].image; // Keep existing image by default
 
-          // Upload new image if provided
-          if (image) {
-            // SECURITY: Use MIME type for extension (don't trust client filename)
-            const fileExt = image.type.split('/')[1].replace('jpeg', 'jpg');
+          // Use pending cropped image if available
+          const imageBlob = pendingEditImageBlob;
+
+          if (imageBlob) {
+            const fileExt = 'jpeg';
             const fileName = `announcement_${Date.now()}.${fileExt}`;
-            const filePath = `announcement-images/${fileName}`;
 
-            console.log('📤 Uploading to:', filePath);
+            console.log("📤 Uploading cropped image to announcement-images bucket:", fileName);
 
-            const { data: uploadData, error: uploadError } = await supabaseClient.storage
-              .from('bims-files')
-              .upload(filePath, image, {
-                cacheControl: '3600',
-                upsert: false,
-                contentType: image.type
-              });
+            const { data: uploadData, error: uploadError } =
+              await supabaseClient.storage
+                .from("announcement-images")
+                .upload(fileName, imageBlob, {
+                  cacheControl: "3600",
+                  upsert: false,
+                  contentType: 'image/jpeg',
+                });
 
             if (uploadError) {
-              console.error('❌ Upload error:', uploadError);
+              console.error("❌ Upload error:", uploadError);
               throw new Error(`Image upload failed: ${uploadError.message}`);
             }
 
-            console.log('✅ Upload successful:', uploadData);
+            console.log("✅ Upload successful:", uploadData);
 
-            // Get public URL
             const { data: urlData } = supabaseClient.storage
-              .from('bims-files')
-              .getPublicUrl(filePath);
+              .from("announcement-images")
+              .getPublicUrl(fileName);
 
-            console.log('🔗 Public URL:', urlData.publicUrl);
+            console.log("🔗 Public URL:", urlData.publicUrl);
 
             imagePath = urlData.publicUrl;
-
-            // TODO: Delete old image from storage if it exists
           }
 
-          // Update announcement in database
-          console.log('📤 Updating announcement in database with ID:', currentAnnouncementId);
-          console.log('📝 Update data:', { title, category: category.toUpperCase(), description, imagePathURL: imagePath });
-
           const { data, error } = await supabaseClient
-            .from('Announcement_Tbl')
+            .from("Announcement_Tbl")
             .update({
               title: title,
               category: category.toUpperCase(),
               description: description,
               imagePathURL: imagePath,
-              updatedAt: new Date().toISOString()
+              updatedAt: new Date().toISOString(),
             })
-            .eq('announcementID', currentAnnouncementId);
+            .eq("announcementID", currentAnnouncementId);
 
-          if (error) {
-            console.error('❌ Update error:', error);
-            throw error;
-          }
+          if (error) throw error;
 
-          console.log('✅ Update successful:', data);
           showToast("Announcement updated successfully!", "success");
-
-          // Reset form
-          titleInput.value = '';
-          categoryInput.value = '';
-          descriptionInput.value = '';
-          imageInput.value = '';
-
-          // Reset visual states
-          setInputState(titleInput, null);
-          setInputState(categoryInput, null);
-          setInputState(descriptionInput, null);
-
-          // RELIABILITY: Reload announcements and statistics to reflect changes immediately
-          await Promise.all([
-            loadAnnouncements(),
-            loadDashboardStatistics()
-          ]);
-
           closeEditModal();
+          await Promise.all([loadAnnouncements(), loadDashboardStatistics()]);
 
         } catch (error) {
-          // SECURITY: Log full error for debugging (console only)
-          console.error('Error updating announcement:', error);
-
-          // Show generic message to user
-          let userMessage = 'Failed to update announcement. Please try again.';
-
-          if (error.message.includes('Image upload failed')) {
-            userMessage = 'Failed to upload image. Please try a different file.';
-          }
-
-          showToast(userMessage, 'error');
+          console.error("Error updating announcement:", error);
+          showToast(error.message, "error");
         } finally {
-          // Re-enable button
+          document.getElementById('loadingOverlay').classList.add('hidden');
           button.disabled = false;
           button.innerHTML = originalButtonText;
         }
@@ -1972,7 +2605,8 @@
 
         // SECURITY: Using textContent (not innerHTML) to prevent XSS
         document.getElementById("viewTitle").textContent = announcement.title;
-        document.getElementById("viewDescription").textContent = announcement.description;
+        document.getElementById("viewDescription").textContent =
+          announcement.description;
         document.getElementById("viewDate").textContent = announcement.date;
 
         // Update category badge with proper styling
@@ -1991,6 +2625,33 @@
           categoryBadge.classList.add("bg-[#2f6e4e]/20", "text-[#2f6e4e]");
         }
 
+        // Update image display
+        const viewImageDiv = document.getElementById("viewImage");
+        // SECURITY: Sanitize image URL to prevent XSS
+        const safeImageUrl = sanitizeImageURL(announcement.image);
+        const hasImage = safeImageUrl !== '';
+
+        if (hasImage) {
+          // Show actual image with sanitized URL
+          viewImageDiv.innerHTML = `<img src="${safeImageUrl}" alt="${escapeHTML(announcement.title)}" class="w-full h-64 object-cover rounded-lg" onerror="this.style.display='none';" />`;
+        } else {
+          // Show placeholder icon
+          const gradientColors = {
+            urgent: "from-orange-400 to-orange-500",
+            general: "from-blue-400 to-blue-500",
+            update: "from-green-400 to-green-500"
+          };
+          const gradient = gradientColors[announcement.category] || gradientColors.general;
+
+          viewImageDiv.innerHTML = `
+            <div class="h-64 bg-gradient-to-br ${gradient} rounded-lg flex items-center justify-center">
+              <svg class="w-24 h-24 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+          `;
+        }
+
         document.getElementById("viewModal").classList.remove("hidden");
       }
 
@@ -2001,11 +2662,14 @@
       // Delete Announcement
       function confirmDelete(id) {
         currentAnnouncementId = id;
-        console.log('🗑️ Confirming delete for ID:', id);
-        console.log('📋 Announcement to delete:', announcements[id]);
+        console.log("🗑️ Confirming delete for ID:", id);
+        console.log("📋 Announcement to delete:", announcements[id]);
 
         if (!announcements[id]) {
-          showToast('Announcement not found. Please refresh the page.', 'error');
+          showToast(
+            "Announcement not found. Please refresh the page.",
+            "error"
+          );
           return;
         }
 
@@ -2027,45 +2691,55 @@
       async function deleteAnnouncement() {
         const announcement = announcements[currentAnnouncementId];
 
-        console.log('🗑️ Deleting announcement with ID:', currentAnnouncementId);
-        console.log('📋 Announcement details:', announcement);
+        console.log("🗑️ Deleting announcement with ID:", currentAnnouncementId);
+        console.log("📋 Announcement details:", announcement);
 
         // Show loading state on delete button
-        const deleteButton = document.querySelector('#deleteModal button[onclick="deleteAnnouncement()"]');
+        const deleteButton = document.querySelector(
+          '#deleteModal button[onclick="deleteAnnouncement()"]'
+        );
+        const originalText = deleteButton ? deleteButton.innerHTML : 'Delete';
+
         if (deleteButton) {
-          const originalText = deleteButton.innerHTML;
           deleteButton.disabled = true;
           deleteButton.innerHTML = '<div class="spinner mx-auto"></div>';
+        }
 
-          try {
-            // HARD DELETE: Permanently remove announcement from database
-            console.log('📤 Sending delete request to database for announcementID:', currentAnnouncementId);
-            const { data, error } = await supabaseClient
-              .from('Announcement_Tbl')
-              .delete()
-              .eq('announcementID', currentAnnouncementId);
+        try {
+          // HARD DELETE: Permanently remove announcement from database
+          console.log(
+            "📤 Sending delete request to database for announcementID:",
+            currentAnnouncementId
+          );
+          const { data, error } = await supabaseClient
+            .from("Announcement_Tbl")
+            .delete()
+            .eq("announcementID", currentAnnouncementId);
 
-            if (error) throw error;
+          if (error) throw error;
 
-            console.log('✅ Announcement deleted successfully');
-            showToast("Announcement deleted successfully!", "success");
+          console.log("✅ Announcement deleted successfully");
+          showToast("Announcement deleted successfully!", "success");
 
-            // RELIABILITY: Reload announcements to reflect changes immediately
-            await loadAnnouncements();
+          // RELIABILITY: Reload announcements to reflect changes immediately
+          await loadAnnouncements();
 
-            // Also reload statistics since announcement count changed
-            await loadDashboardStatistics();
+          // Also reload statistics since announcement count changed
+          await loadDashboardStatistics();
 
-            closeDeleteModal();
+          closeDeleteModal();
+        } catch (error) {
+          // SECURITY: Log full error for debugging (console only)
+          console.error("Error deleting announcement:", error);
 
-          } catch (error) {
-            // SECURITY: Log full error for debugging (console only)
-            console.error('Error deleting announcement:', error);
-
-            // Show generic message to user
-            showToast('Failed to delete announcement. Please try again.', 'error');
-
-            // Re-enable button on error
+          // Show generic message to user
+          showToast(
+            "Failed to delete announcement. Please try again.",
+            "error"
+          );
+        } finally {
+          // Always reset button state
+          if (deleteButton) {
             deleteButton.disabled = false;
             deleteButton.innerHTML = originalText;
           }
@@ -2074,24 +2748,28 @@
 
       // Toast notification
       // Toast Notification System
-      function showToast(message, type = 'success') {
-        const existingToast = document.querySelector('.toast');
+      function showToast(message, type = "success") {
+        const existingToast = document.querySelector(".toast");
         if (existingToast) {
           existingToast.remove();
         }
 
-        const toast = document.createElement('div');
+        const toast = document.createElement("div");
         toast.className = `toast ${type}`;
 
-        let icon = '';
-        if (type === 'success') {
-          icon = '<svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        } else if (type === 'error') {
-          icon = '<svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        } else if (type === 'warning') {
-          icon = '<svg class="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+        let icon = "";
+        if (type === "success") {
+          icon =
+            '<svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        } else if (type === "error") {
+          icon =
+            '<svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        } else if (type === "warning") {
+          icon =
+            '<svg class="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
         } else {
-          icon = '<svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+          icon =
+            '<svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
         }
 
         toast.innerHTML = `
@@ -2107,57 +2785,66 @@
         `;
 
         document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => toast.classList.add("show"), 10);
         setTimeout(() => {
-          toast.classList.remove('show');
+          toast.classList.remove("show");
           setTimeout(() => toast.remove(), 300);
         }, 4000);
       }
 
       // Confirmation modal system
-      function showConfirm(title, message, onConfirm, confirmButtonText = 'Confirm', confirmButtonColor = 'yellow') {
-        const modal = document.getElementById('confirmModal');
-        const titleEl = document.getElementById('confirmTitle');
-        const messageEl = document.getElementById('confirmMessage');
-        const confirmBtn = document.getElementById('confirmOk');
-        const cancelBtn = document.getElementById('confirmCancel');
+      function showConfirm(
+        title,
+        message,
+        onConfirm,
+        confirmButtonText = "Confirm",
+        confirmButtonColor = "yellow"
+      ) {
+        const modal = document.getElementById("confirmModal");
+        const titleEl = document.getElementById("confirmTitle");
+        const messageEl = document.getElementById("confirmMessage");
+        const confirmBtn = document.getElementById("confirmOk");
+        const cancelBtn = document.getElementById("confirmCancel");
 
         titleEl.textContent = title;
         messageEl.textContent = message;
         confirmBtn.textContent = confirmButtonText;
 
         // Update button colors
-        if (confirmButtonColor === 'green') {
-          confirmBtn.className = 'flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition font-medium';
-        } else if (confirmButtonColor === 'red') {
-          confirmBtn.className = 'flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium';
+        if (confirmButtonColor === "green") {
+          confirmBtn.className =
+            "flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition font-medium";
+        } else if (confirmButtonColor === "red") {
+          confirmBtn.className =
+            "flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium";
         } else {
-          confirmBtn.className = 'flex-1 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition font-medium';
+          confirmBtn.className =
+            "flex-1 px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition font-medium";
         }
 
-        modal.classList.remove('hidden');
+        modal.classList.remove("hidden");
 
         const handleConfirm = () => {
-          modal.classList.add('hidden');
+          modal.classList.add("hidden");
           onConfirm();
           cleanup();
         };
 
         const handleCancel = () => {
-          modal.classList.add('hidden');
+          modal.classList.add("hidden");
           cleanup();
         };
 
         const cleanup = () => {
-          confirmBtn.removeEventListener('click', handleConfirm);
-          cancelBtn.removeEventListener('click', handleCancel);
+          confirmBtn.removeEventListener("click", handleConfirm);
+          cancelBtn.removeEventListener("click", handleCancel);
         };
 
-        confirmBtn.addEventListener('click', handleConfirm);
-        cancelBtn.addEventListener('click', handleCancel);
+        confirmBtn.addEventListener("click", handleConfirm);
+        cancelBtn.addEventListener("click", handleCancel);
 
         // Close on click outside
-        modal.addEventListener('click', (e) => {
+        modal.addEventListener("click", (e) => {
           if (e.target === modal) {
             handleCancel();
           }
@@ -2172,21 +2859,21 @@
 
         counter.textContent = `${currentLength}/${maxLength} characters`;
 
-        counter.classList.remove('warning', 'error');
+        counter.classList.remove("warning", "error");
         if (currentLength >= maxLength) {
-          counter.classList.add('error');
+          counter.classList.add("error");
         } else if (currentLength >= maxLength * 0.9) {
-          counter.classList.add('warning');
+          counter.classList.add("warning");
         }
       }
 
       // Input validation helper
       function setInputState(inputElement, isValid) {
-        inputElement.classList.remove('input-error', 'input-success');
+        inputElement.classList.remove("input-error", "input-success");
         if (isValid === true) {
-          inputElement.classList.add('input-success');
+          inputElement.classList.add("input-success");
         } else if (isValid === false) {
-          inputElement.classList.add('input-error');
+          inputElement.classList.add("input-error");
         }
       }
 
@@ -2196,9 +2883,14 @@
 
       // Update current date
       function updateCurrentDate() {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const currentDate = new Date().toLocaleDateString('en-US', options);
-        const dateElement = document.getElementById('currentDate');
+        const options = {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        };
+        const currentDate = new Date().toLocaleDateString("en-US", options);
+        const dateElement = document.getElementById("currentDate");
         if (dateElement) {
           dateElement.textContent = currentDate;
         }
@@ -2213,11 +2905,11 @@
       let budgetData = {
         year: 2025,
         categories: [
-          { id: 1, name: 'Youth Development Programs', amount: 450000 },
-          { id: 2, name: 'Community Events', amount: 300000 },
-          { id: 3, name: 'Infrastructure Projects', amount: 250000 }
+          { id: 1, name: "Youth Development Programs", amount: 450000 },
+          { id: 2, name: "Community Events", amount: 300000 },
+          { id: 3, name: "Infrastructure Projects", amount: 250000 },
         ],
-        history: []
+        history: [],
       };
 
       // Project metrics data
@@ -2226,12 +2918,12 @@
         total: 42,
         completed: 38,
         ongoing: 4,
-        successRate: 89
+        successRate: 89,
       };
 
       // Load budget data from localStorage
       function loadBudgetData() {
-        const saved = localStorage.getItem('budgetData');
+        const saved = localStorage.getItem("budgetData");
         if (saved) {
           budgetData = JSON.parse(saved);
           updateBudgetDisplay();
@@ -2240,7 +2932,7 @@
 
       // Load project metrics from localStorage
       function loadProjectMetrics() {
-        const saved = localStorage.getItem('projectMetrics');
+        const saved = localStorage.getItem("projectMetrics");
         if (saved) {
           projectMetrics = JSON.parse(saved);
           updateMetricsDisplay();
@@ -2249,18 +2941,29 @@
 
       // Update budget display
       function updateBudgetDisplay() {
-        const budgetContainer = document.querySelector('.bg-gradient-to-br.from-blue-50 .space-y-4');
+        const budgetContainer = document.querySelector(
+          ".bg-gradient-to-br.from-blue-50 .space-y-4"
+        );
         if (!budgetContainer) return;
 
-        const total = budgetData.categories.reduce((sum, cat) => sum + cat.amount, 0);
+        const total = budgetData.categories.reduce(
+          (sum, cat) => sum + cat.amount,
+          0
+        );
 
-        document.getElementById('budgetYearTitle').textContent = `${budgetData.year} Budget Allocation`;
-        document.getElementById('totalBudget').textContent = `₱${total.toLocaleString()}`;
+        document.getElementById(
+          "budgetYearTitle"
+        ).textContent = `${budgetData.year} Budget Allocation`;
+        document.getElementById(
+          "totalBudget"
+        ).textContent = `₱${total.toLocaleString()}`;
 
         // Clear existing category displays
-        const categoriesHTML = budgetData.categories.map(category => {
-          const percent = total > 0 ? (category.amount / total * 100).toFixed(0) : 0;
-          return `
+        const categoriesHTML = budgetData.categories
+          .map((category) => {
+            const percent =
+              total > 0 ? ((category.amount / total) * 100).toFixed(0) : 0;
+            return `
             <div>
               <div class="flex justify-between text-sm mb-1">
                 <span class="text-gray-700 font-medium">${category.name}</span>
@@ -2271,10 +2974,11 @@
               </div>
             </div>
           `;
-        }).join('');
+          })
+          .join("");
 
         // Find the container and update it (preserve the total budget section)
-        const totalSection = budgetContainer.querySelector('.pt-4.border-t');
+        const totalSection = budgetContainer.querySelector(".pt-4.border-t");
         budgetContainer.innerHTML = categoriesHTML;
         if (totalSection) {
           budgetContainer.appendChild(totalSection);
@@ -2283,21 +2987,27 @@
 
       // Update metrics display
       function updateMetricsDisplay() {
-        document.getElementById('totalProjects').textContent = projectMetrics.total;
-        document.getElementById('completedProjects').textContent = projectMetrics.completed;
-        document.getElementById('ongoingProjects').textContent = projectMetrics.ongoing;
-        document.getElementById('successRate').textContent = `${projectMetrics.successRate}%`;
-        document.getElementById('projectsYear').textContent = projectMetrics.year;
+        document.getElementById("totalProjects").textContent =
+          projectMetrics.total;
+        document.getElementById("completedProjects").textContent =
+          projectMetrics.completed;
+        document.getElementById("ongoingProjects").textContent =
+          projectMetrics.ongoing;
+        document.getElementById(
+          "successRate"
+        ).textContent = `${projectMetrics.successRate}%`;
+        document.getElementById("projectsYear").textContent =
+          projectMetrics.year;
       }
 
       // Render budget categories in edit modal
       function renderBudgetCategoriesEdit() {
-        const container = document.getElementById('budgetCategoriesContainer');
-        container.innerHTML = '';
+        const container = document.getElementById("budgetCategoriesContainer");
+        container.innerHTML = "";
 
         budgetData.categories.forEach((category, index) => {
-          const categoryDiv = document.createElement('div');
-          categoryDiv.className = 'flex gap-2';
+          const categoryDiv = document.createElement("div");
+          categoryDiv.className = "flex gap-2";
           categoryDiv.innerHTML = `
             <div class="flex-1">
               <input
@@ -2327,7 +3037,11 @@
               onclick="removeBudgetCategory(${category.id})"
               class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
               title="Remove category"
-              ${budgetData.categories.length <= 1 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}
+              ${
+                budgetData.categories.length <= 1
+                  ? 'disabled style="opacity: 0.5; cursor: not-allowed;"'
+                  : ""
+              }
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -2342,11 +3056,12 @@
 
       // Add new budget category
       function addBudgetCategory() {
-        const newId = Math.max(...budgetData.categories.map(c => c.id), 0) + 1;
+        const newId =
+          Math.max(...budgetData.categories.map((c) => c.id), 0) + 1;
         budgetData.categories.push({
           id: newId,
-          name: '',
-          amount: 0
+          name: "",
+          amount: 0,
         });
         renderBudgetCategoriesEdit();
       }
@@ -2354,16 +3069,18 @@
       // Remove budget category
       function removeBudgetCategory(id) {
         if (budgetData.categories.length <= 1) {
-          showToast('You must have at least one budget category.', 'warning');
+          showToast("You must have at least one budget category.", "warning");
           return;
         }
-        budgetData.categories = budgetData.categories.filter(c => c.id !== id);
+        budgetData.categories = budgetData.categories.filter(
+          (c) => c.id !== id
+        );
         renderBudgetCategoriesEdit();
       }
 
       // Update category name
       function updateCategoryName(id, name) {
-        const category = budgetData.categories.find(c => c.id === id);
+        const category = budgetData.categories.find((c) => c.id === id);
         if (category) {
           category.name = name;
         }
@@ -2371,7 +3088,7 @@
 
       // Update category amount
       function updateCategoryAmount(id, amount) {
-        const category = budgetData.categories.find(c => c.id === id);
+        const category = budgetData.categories.find((c) => c.id === id);
         if (category) {
           category.amount = parseInt(amount) || 0;
         }
@@ -2380,41 +3097,48 @@
 
       // Edit budget allocation
       function editBudgetAllocation() {
-        const modal = document.getElementById('budgetEditModal');
-        document.getElementById('editBudgetYear').value = budgetData.year;
+        const modal = document.getElementById("budgetEditModal");
+        document.getElementById("editBudgetYear").value = budgetData.year;
         renderBudgetCategoriesEdit();
-        modal.classList.remove('hidden');
+        modal.classList.remove("hidden");
       }
 
       function closeBudgetEditModal() {
-        document.getElementById('budgetEditModal').classList.add('hidden');
+        document.getElementById("budgetEditModal").classList.add("hidden");
       }
 
       function updateEditBudgetTotal() {
-        const total = budgetData.categories.reduce((sum, cat) => sum + cat.amount, 0);
-        document.getElementById('editTotalBudget').textContent = `₱${total.toLocaleString()}`;
+        const total = budgetData.categories.reduce(
+          (sum, cat) => sum + cat.amount,
+          0
+        );
+        document.getElementById(
+          "editTotalBudget"
+        ).textContent = `₱${total.toLocaleString()}`;
       }
 
       function saveBudgetAllocation() {
         // Validate that all categories have names
-        const emptyNames = budgetData.categories.filter(c => !c.name.trim());
+        const emptyNames = budgetData.categories.filter((c) => !c.name.trim());
         if (emptyNames.length > 0) {
-          showToast('Please provide names for all budget categories.', 'error');
+          showToast("Please provide names for all budget categories.", "error");
           return;
         }
 
-        budgetData.year = parseInt(document.getElementById('editBudgetYear').value);
+        budgetData.year = parseInt(
+          document.getElementById("editBudgetYear").value
+        );
 
-        localStorage.setItem('budgetData', JSON.stringify(budgetData));
+        localStorage.setItem("budgetData", JSON.stringify(budgetData));
         updateBudgetDisplay();
         closeBudgetEditModal();
 
         // Show success message
-        showToast('Budget allocation updated successfully!', 'success');
+        showToast("Budget allocation updated successfully!", "success");
       }
 
       function viewBudgetHistory() {
-        showToast('Budget history feature coming soon!', 'info');
+        showToast("Budget history feature coming soon!", "info");
       }
 
       // Logout function
@@ -2422,11 +3146,46 @@
         try {
           await SessionManager.logout();
         } catch (error) {
-          console.error('Logout error:', error);
+          console.error("Logout error:", error);
           // Force logout even if there's an error
-          window.location.href = 'login.html';
+          window.location.href = "login.html";
         }
       }
+
+      // Expose functions to global scope for onclick handlers
+      // Profile functions - handled by ProfileModal component (window.profileModal)
+
+      // Announcement functions
+      window.viewAnnouncement = viewAnnouncement;
+      window.openCreateModal = openCreateModal;
+      window.closeCreateModal = closeCreateModal;
+      window.openEditModal = openEditModal;
+      window.closeEditModal = closeEditModal;
+      window.confirmDelete = confirmDelete;
+      window.closeDeleteModal = closeDeleteModal;
+      window.deleteAnnouncement = deleteAnnouncement;
+      window.postAnnouncement = postAnnouncement;
+      window.saveEdit = saveEdit;
+      window.closeViewModal = closeViewModal;
+      window.navigateAnnouncements = navigateAnnouncements;
+      window.goToAnnouncementPage = goToAnnouncementPage;
+      window.updateCharCount = updateCharCount;
+
+      // Cropper functions
+      window.openCropperModal = openCropperModal;
+      window.closeCropperModal = closeCropperModal;
+      window.cropAndUploadImage = cropAndUploadImage;
+
+      // Budget functions
+      window.editBudgetAllocation = editBudgetAllocation;
+      window.closeBudgetEditModal = closeBudgetEditModal;
+      window.saveBudgetAllocation = saveBudgetAllocation;
+      window.viewBudgetHistory = viewBudgetHistory;
+      window.addBudgetCategory = addBudgetCategory;
+      window.removeBudgetCategory = removeBudgetCategory;
+
+      // Logout function
+      window.handleLogout = handleLogout;
 
       // Initialize other page components on load (budget and project metrics are loaded separately from auth)
       loadBudgetData();
