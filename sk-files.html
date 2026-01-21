@@ -961,6 +961,7 @@
       function updateHeaderUserInfo(sessionResult) {
         const nameEl = document.querySelector('header .text-sm.font-medium');
         const roleEl = document.querySelector('header .text-xs.text-gray-500');
+        const avatarEl = document.querySelector('header .w-10.h-10');
 
         if (nameEl && sessionResult.userData) {
           const firstName = sessionResult.userData.firstName || '';
@@ -975,7 +976,41 @@
           };
           roleEl.textContent = roleDisplay[sessionResult.role] || sessionResult.role;
         }
+
+        // Update avatar with profile image
+        if (avatarEl && sessionResult.userData) {
+          const imageUrl = sessionResult.userData.imagePathURL;
+          const firstName = sessionResult.userData.firstName || '';
+          const lastName = sessionResult.userData.lastName || '';
+          const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+
+          if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('https://')) {
+            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+          } else {
+            avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
+          }
+        }
       }
+
+      // Listen for profile updates from ProfileModal
+      window.addEventListener('profileUpdated', (event) => {
+        const profile = event.detail;
+        const nameEl = document.querySelector('header .text-sm.font-medium');
+        const avatarEl = document.querySelector('header .w-10.h-10');
+
+        if (nameEl) {
+          nameEl.textContent = `${profile.firstName} ${profile.lastName}`.trim();
+        }
+
+        if (avatarEl) {
+          const initials = `${profile.firstName?.charAt(0) || ''}${profile.lastName?.charAt(0) || ''}`.toUpperCase();
+          if (profile.profilePicture && profile.profilePicture.startsWith('https://')) {
+            avatarEl.innerHTML = `<img src="${escapeHTML(profile.profilePicture)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+          } else {
+            avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
+          }
+        }
+      });
 
       // =========================================
       // FILE LOADING FROM SUPABASE

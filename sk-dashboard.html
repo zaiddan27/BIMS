@@ -1784,6 +1784,28 @@
         }
       }
 
+      // Listen for profile updates from ProfileModal
+      window.addEventListener('profileUpdated', (event) => {
+        const profile = event.detail;
+
+        // Update currentUserData with new values
+        if (currentUserData) {
+          currentUserData.firstName = profile.firstName;
+          currentUserData.middleName = profile.middleName || '';
+          currentUserData.lastName = profile.lastName;
+          currentUserData.address = profile.address;
+          currentUserData.contactNumber = profile.contact;
+          currentUserData.birthday = profile.birthday;
+          currentUserData.gender = profile.gender;
+          if (profile.profilePicture) {
+            currentUserData.imagePathURL = profile.profilePicture;
+          }
+        }
+
+        // Update header UI
+        updateUserProfile();
+      });
+
       // Call init on page load - wrapped in DOMContentLoaded to ensure DOM is ready
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {

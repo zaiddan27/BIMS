@@ -939,6 +939,26 @@
         await loadAnnouncements();
       });
 
+      // Listen for profile updates from ProfileModal
+      window.addEventListener('profileUpdated', (event) => {
+        const profile = event.detail;
+
+        // Update local userProfile object
+        userProfile.firstName = profile.firstName;
+        userProfile.middleName = profile.middleName || '';
+        userProfile.lastName = profile.lastName;
+        userProfile.address = profile.address;
+        userProfile.contact = profile.contact;
+        userProfile.birthday = profile.birthday;
+        userProfile.gender = profile.gender;
+        if (profile.profilePicture) {
+          userProfile.profilePicture = profile.profilePicture;
+        }
+
+        // Update header UI
+        updateProfileUI();
+      });
+
       // Profile functions - handled by ProfileModal component (window.profileModal)
 
       // Helper function to show field error state
