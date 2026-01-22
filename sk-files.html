@@ -946,6 +946,9 @@
           // Update header with user info
           updateHeaderUserInfo(sessionResult);
 
+          // Load profile modal data
+          await profileModal.loadUserData(currentUser, sessionResult.userData);
+
           // Load files from Supabase
           await loadFiles();
 
@@ -1709,6 +1712,15 @@
         }
       }
       window.handleLogout = handleLogout;
+      window.viewFile = viewFile;
+      window.archiveFile = archiveFile;
+      window.closeFileModal = closeFileModal;
+      window.closeArchiveFileModal = closeArchiveFileModal;
+      window.closeDeleteFileModal = closeDeleteFileModal;
+      window.closeUploadModal = closeUploadModal;
+      window.openUploadModal = openUploadModal;
+      window.navigateFiles = navigateFiles;
+      window.goToFilePage = goToFilePage;
 
       // =========================================
       // INITIALIZE ON PAGE LOAD

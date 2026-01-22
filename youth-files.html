@@ -488,6 +488,9 @@
           // Update header with user info
           updateHeaderUserInfo(sessionResult);
 
+          // Load profile modal data
+          await profileModal.loadUserData(currentUser, sessionResult.userData);
+
           // Load files from Supabase
           await loadFiles();
 
@@ -508,6 +511,10 @@
         }
       }
       window.handleLogout = handleLogout;
+      window.viewFile = viewFile;
+      window.closeFileModal = closeFileModal;
+      window.navigateFiles = navigateFiles;
+      window.goToFilePage = goToFilePage;
 
       function updateHeaderUserInfo(sessionResult) {
         const nameEl = document.querySelector('header .text-sm.font-medium');
