@@ -9,6 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+    <script src="js/auth/auth.js"></script>
+    <script src="js/auth/session.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
@@ -248,6 +253,7 @@
           <!-- Logout -->
           <div class="mt-8 pt-8 border-t border-gray-200">
             <button
+              onclick="handleLogout()"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
             >
               <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
@@ -288,15 +294,15 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
-                    <span id="notificationCount" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
+                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
                   </button>
                 </div>
                 <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="openProfileModal()">
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Juan Dela Cruz</p>
-                    <p class="text-xs text-gray-500">Youth Volunteer</p>
+                    <p id="headerUserName" class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Loading...</p>
+                    <p id="headerUserRole" class="text-xs text-gray-500">Youth Volunteer</p>
                   </div>
-                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">JV</div>
+                  <div id="headerUserAvatar" class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">--</div>
                 </div>
               </div>
             </div>
@@ -363,6 +369,9 @@
       </div>
     </div>
 
+    <div id="notificationModalContainer"></div>
+    <div id="profileModalContainer"></div>
+
     <!-- SATISFACTION SURVEY MODAL -->
     <div id="surveyModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50">
       <div class="flex items-center justify-center min-h-screen px-4">
@@ -383,14 +392,14 @@
                 1. How satisfied were you with this volunteer experience overall?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q1" min="1" max="4" value="4"
+                <input type="range" id="q1" min="1" max="5" value="5"
                        oninput="document.getElementById('q1Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q1Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">4</span>
+                <span id="q1Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">5</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - Very Unsatisfied</span>
-                <span>4 - Very Satisfied</span>
+                <span>5 - Very Satisfied</span>
               </div>
             </div>
 
@@ -400,14 +409,14 @@
                 2. Did you learn new skills or gain valuable experience?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q2" min="1" max="4" value="4"
+                <input type="range" id="q2" min="1" max="5" value="5"
                        oninput="document.getElementById('q2Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q2Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">4</span>
+                <span id="q2Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">5</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - No Learning</span>
-                <span>4 - Learned a Lot</span>
+                <span>5 - Learned a Lot</span>
               </div>
             </div>
 
@@ -417,14 +426,14 @@
                 3. How well did you work with other volunteers and project leaders?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q3" min="1" max="4" value="4"
+                <input type="range" id="q3" min="1" max="5" value="5"
                        oninput="document.getElementById('q3Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q3Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">4</span>
+                <span id="q3Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">5</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - Poor Teamwork</span>
-                <span>4 - Excellent Teamwork</span>
+                <span>5 - Excellent Teamwork</span>
               </div>
             </div>
 
@@ -434,14 +443,14 @@
                 4. Do you feel this project made a positive impact on the community?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q4" min="1" max="4" value="4"
+                <input type="range" id="q4" min="1" max="5" value="5"
                        oninput="document.getElementById('q4Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q4Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">4</span>
+                <span id="q4Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">5</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - No Impact</span>
-                <span>4 - Major Impact</span>
+                <span>5 - Major Impact</span>
               </div>
             </div>
 
@@ -451,14 +460,14 @@
                 5. Would you recommend this volunteer opportunity to others?
               </label>
               <div class="flex items-center gap-4">
-                <input type="range" id="q5" min="1" max="4" value="4"
+                <input type="range" id="q5" min="1" max="5" value="5"
                        oninput="document.getElementById('q5Value').textContent = this.value; calculateAverage()"
                        class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                <span id="q5Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">4</span>
+                <span id="q5Value" class="text-2xl font-bold text-[#2f6e4e] w-8 text-center">5</span>
               </div>
               <div class="flex justify-between text-xs text-gray-500">
                 <span>1 - Definitely Not</span>
-                <span>4 - Definitely Yes</span>
+                <span>5 - Definitely Yes</span>
               </div>
             </div>
 
@@ -466,7 +475,7 @@
             <div class="bg-[#2f6e4e]/10 border-2 border-[#3d8b64]/50 rounded-lg p-4">
               <div class="flex items-center justify-between">
                 <span class="text-sm font-semibold text-[#0f2418]">Your Average Score:</span>
-                <span id="avgScore" class="text-3xl font-black text-[#2f6e4e]">4.0</span>
+                <span id="avgScore" class="text-3xl font-black text-[#2f6e4e]">5.0</span>
               </div>
               <div class="mt-2 h-3 bg-[#2f6e4e]/30 rounded-full overflow-hidden">
                 <div id="avgBar" class="h-full bg-[#2f6e4e] rounded-full transition-all duration-300" style="width: 100%"></div>
@@ -699,76 +708,180 @@
       </div>
     </div>
 
-    <script>
-      // Sample data - in real app, this comes from backend
-      const currentUser = {
-        id: 1,
-        name: "Juan Dela Cruz",
-      };
+    <script type="module">
+      import { NotificationModal } from './js/components/NotificationModal.js';
+      import { ProfileModal } from './js/components/ProfileModal.js';
 
-      // Note: In production, this would fetch from the server based on logged-in user
-      // Only includes projects where the volunteer was marked as "attended"
-      const completedProjects = [
-        {
-          id: 1,
-          title: "Community Clean-Up Drive 2025",
-          completedDate: "2025-11-20",
-          surveyCompleted: false,
-          satisfactionScore: null,
-          attended: true // Volunteer was marked as attended by SK official
-        },
-        {
-          id: 2,
-          title: "Youth Sports Festival",
-          completedDate: "2025-10-15",
-          surveyCompleted: true,
-          satisfactionScore: 3.8,
-          attended: true
-        },
-        {
-          id: 3,
-          title: "Tree Planting Initiative",
-          completedDate: "2025-09-05",
-          surveyCompleted: true,
-          satisfactionScore: 3.6,
-          attended: true
-        },
-        {
-          id: 4,
-          title: "Feeding Program for Children",
-          completedDate: "2025-08-12",
-          surveyCompleted: true,
-          satisfactionScore: 4.0,
-          attended: true
-        },
-        {
-          id: 5,
-          title: "Community Health Fair",
-          completedDate: "2025-07-28",
-          surveyCompleted: false,
-          satisfactionScore: null,
-          attended: true
-        },
-        {
-          id: 6,
-          title: "Environmental Awareness Campaign",
-          completedDate: "2025-06-15",
-          surveyCompleted: true,
-          satisfactionScore: 3.9,
-          attended: true
+      // =========================================
+      // XSS PREVENTION HELPERS
+      // =========================================
+      function escapeHTML(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      function sanitizeImageURL(url) {
+        if (!url) return '';
+        try {
+          const parsed = new URL(url);
+          if (['http:', 'https:'].includes(parsed.protocol)) {
+            return parsed.href;
+          }
+        } catch (e) {}
+        return '';
+      }
+
+      // =========================================
+      // AUTHENTICATION
+      // =========================================
+      let currentUser = null;
+
+      try {
+        const session = await SessionManager.requireAuth(['YOUTH_VOLUNTEER']);
+        currentUser = session.user;
+
+        const userMeta = currentUser.user_metadata || {};
+        const firstName = userMeta.firstName || '';
+        const lastName = userMeta.lastName || '';
+        const fullName = `${firstName} ${lastName}`.trim() || 'Youth Volunteer';
+        const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || '--';
+
+        const headerName = document.getElementById('headerUserName');
+        const headerAvatar = document.getElementById('headerUserAvatar');
+        if (headerName) headerName.textContent = escapeHTML(fullName);
+        if (headerAvatar) {
+          const profileImageUrl = sanitizeImageURL(userMeta.profileImageUrl);
+          if (profileImageUrl) {
+            headerAvatar.innerHTML = `<img src="${profileImageUrl}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
+          } else {
+            headerAvatar.textContent = initials;
+          }
         }
-      ];
+      } catch (error) {
+        console.error('Auth error:', error);
+        throw error;
+      }
+
+      // =========================================
+      // LOAD COMPLETED PROJECTS FROM DATABASE
+      // =========================================
+      let completedProjects = [];
+
+      async function loadCompletedProjects() {
+        try {
+          // Get user's approved applications for completed projects
+          const { data: applications, error: appError } = await supabaseClient
+            .from('Application_Tbl')
+            .select(`
+              applicationID,
+              preProjectID,
+              applicationStatus,
+              Pre_Project_Tbl (
+                preProjectID,
+                title,
+                status,
+                endDateTime
+              )
+            `)
+            .eq('userID', currentUser.id)
+            .eq('applicationStatus', 'APPROVED');
+
+          if (appError) {
+            console.error('Error loading applications:', appError);
+            return;
+          }
+
+          // Filter to only completed projects
+          const completedApps = (applications || []).filter(
+            app => app.Pre_Project_Tbl && app.Pre_Project_Tbl.status === 'COMPLETED'
+          );
+
+          if (completedApps.length === 0) {
+            completedProjects = [];
+            renderProjects();
+            return;
+          }
+
+          // Get post-project data for completed projects
+          const preProjectIds = completedApps.map(a => a.Pre_Project_Tbl.preProjectID);
+          const { data: postProjects, error: postError } = await supabaseClient
+            .from('Post_Project_Tbl')
+            .select('postProjectID, preProjectID')
+            .in('preProjectID', preProjectIds);
+
+          if (postError) {
+            console.error('Error loading post projects:', postError);
+          }
+
+          // Get evaluation data for user's applications
+          const applicationIds = completedApps.map(a => a.applicationID);
+          const { data: evaluations, error: evalError } = await supabaseClient
+            .from('Evaluation_Tbl')
+            .select('evaluationID, postProjectID, applicationID, q1, q2, q3, q4, q5, hasCertificate')
+            .in('applicationID', applicationIds);
+
+          if (evalError) {
+            console.error('Error loading evaluations:', evalError);
+          }
+
+          // Build completed projects array
+          completedProjects = completedApps.map(app => {
+            const project = app.Pre_Project_Tbl;
+            const postProject = (postProjects || []).find(pp => pp.preProjectID === project.preProjectID);
+            const evaluation = (evaluations || []).find(ev => ev.applicationID === app.applicationID);
+
+            let satisfactionScore = null;
+            if (evaluation) {
+              satisfactionScore = parseFloat(((evaluation.q1 + evaluation.q2 + evaluation.q3 + evaluation.q4 + evaluation.q5) / 5).toFixed(1));
+            }
+
+            return {
+              id: project.preProjectID,
+              applicationID: app.applicationID,
+              postProjectID: postProject ? postProject.postProjectID : null,
+              title: project.title,
+              completedDate: project.endDateTime,
+              surveyCompleted: !!evaluation,
+              satisfactionScore: satisfactionScore,
+              hasCertificate: evaluation ? evaluation.hasCertificate : false,
+              attended: true
+            };
+          });
+
+          completedProjects.sort((a, b) => new Date(b.completedDate) - new Date(a.completedDate));
+
+        } catch (error) {
+          console.error('Error loading completed projects:', error);
+        }
+
+        renderProjects();
+      }
 
       let currentProjectId = null;
 
       // Pagination variables
       let currentProjectPage = 0;
-      const projectsPerPage = 4; // 2x2 grid
+      const projectsPerPage = 4;
 
       // Render projects with pagination
       function renderProjects() {
         const grid = document.getElementById('projectsGrid');
         grid.innerHTML = '';
+
+        if (completedProjects.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-2 text-center py-16 text-gray-500">
+              <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+              </svg>
+              <p class="font-medium text-lg mb-1">No Certificates Yet</p>
+              <p class="text-sm">Complete volunteer projects to earn certificates of participation.</p>
+            </div>
+          `;
+          return;
+        }
 
         const startIndex = currentProjectPage * projectsPerPage;
         const endIndex = startIndex + projectsPerPage;
@@ -778,11 +891,16 @@
           const card = document.createElement('div');
           card.className = 'bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition';
 
+          const safeTitle = escapeHTML(project.title);
+          const completedDate = project.completedDate
+            ? new Date(project.completedDate).toLocaleDateString()
+            : 'N/A';
+
           card.innerHTML = `
             <div class="flex items-start justify-between mb-4">
               <div class="flex-1">
-                <h3 class="text-lg font-bold text-gray-800 mb-2">${project.title}</h3>
-                <p class="text-sm text-gray-600">Completed: ${new Date(project.completedDate).toLocaleDateString()}</p>
+                <h3 class="text-lg font-bold text-gray-800 mb-2">${safeTitle}</h3>
+                <p class="text-sm text-gray-600">Completed: ${completedDate}</p>
               </div>
               ${project.surveyCompleted
                 ? '<span class="px-3 py-1 bg-[#2f6e4e]/20 text-[#2f6e4e] text-xs font-semibold rounded-full">Survey Complete</span>'
@@ -795,14 +913,14 @@
                 <div class="mb-4 p-3 bg-[#2f6e4e]/10 rounded-lg">
                   <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-semibold text-[#1a3d2a]">Your Satisfaction Score</span>
-                    <span class="text-2xl font-bold text-[#2f6e4e]">${project.satisfactionScore}/4</span>
+                    <span class="text-2xl font-bold text-[#2f6e4e]">${project.satisfactionScore}/5</span>
                   </div>
                   <div class="h-2 bg-[#2f6e4e]/30 rounded-full overflow-hidden">
-                    <div class="h-full bg-[#2f6e4e] rounded-full" style="width: ${(project.satisfactionScore/4)*100}%"></div>
+                    <div class="h-full bg-[#2f6e4e] rounded-full" style="width: ${(project.satisfactionScore/5)*100}%"></div>
                   </div>
                 </div>
                 <button onclick="viewCertificate(${project.id})"
-                        class="w-full px-4 py-3 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] font-semibold flex items-center justify-center gap-2">
+                        class="w-full px-4 py-3 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#3d8b64] font-semibold flex items-center justify-center gap-2">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
                   </svg>
@@ -842,7 +960,6 @@
         dotsContainer.classList.remove('hidden');
         navContainer.classList.remove('hidden');
 
-        // Create pagination dots
         dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
           <button
             onclick="goToProjectPage(${i})"
@@ -852,19 +969,14 @@
         `).join('');
       }
 
-      // Navigate projects
       function navigateProjects(direction) {
         const totalPages = Math.ceil(completedProjects.length / projectsPerPage);
         currentProjectPage += direction;
-
-        // Wrap around
         if (currentProjectPage < 0) currentProjectPage = totalPages - 1;
         if (currentProjectPage >= totalPages) currentProjectPage = 0;
-
         renderProjects();
       }
 
-      // Go to specific project page
       function goToProjectPage(pageIndex) {
         currentProjectPage = pageIndex;
         renderProjects();
@@ -874,8 +986,13 @@
       function openSurveyModal(projectId) {
         currentProjectId = projectId;
         const project = completedProjects.find(p => p.id === projectId);
-        document.getElementById('surveyProjectTitle').textContent = project.title;
+        document.getElementById('surveyProjectTitle').textContent = escapeHTML(project.title);
         document.getElementById('surveyModal').classList.remove('hidden');
+        // Reset sliders
+        for (let i = 1; i <= 5; i++) {
+          document.getElementById(`q${i}`).value = 5;
+          document.getElementById(`q${i}Value`).textContent = '5';
+        }
         calculateAverage();
       }
 
@@ -893,31 +1010,65 @@
 
         const avg = ((q1 + q2 + q3 + q4 + q5) / 5).toFixed(1);
         document.getElementById('avgScore').textContent = avg;
-        document.getElementById('avgBar').style.width = `${(avg / 4) * 100}%`;
+        document.getElementById('avgBar').style.width = `${(avg / 5) * 100}%`;
       }
 
-      function submitSurvey() {
-        const avg = parseFloat(document.getElementById('avgScore').textContent);
+      async function submitSurvey() {
+        const q1 = parseInt(document.getElementById('q1').value);
+        const q2 = parseInt(document.getElementById('q2').value);
+        const q3 = parseInt(document.getElementById('q3').value);
+        const q4 = parseInt(document.getElementById('q4').value);
+        const q5 = parseInt(document.getElementById('q5').value);
         const comments = document.getElementById('comments').value;
 
-        // Update project
         const project = completedProjects.find(p => p.id === currentProjectId);
-        project.surveyCompleted = true;
-        project.satisfactionScore = avg;
+        if (!project) return;
 
-        console.log('Survey submitted:', {
-          projectId: currentProjectId,
-          score: avg,
-          comments: comments
-        });
+        try {
+          // Insert evaluation into database
+          const { data, error } = await supabaseClient
+            .from('Evaluation_Tbl')
+            .insert({
+              postProjectID: project.postProjectID,
+              applicationID: project.applicationID,
+              q1: q1,
+              q2: q2,
+              q3: q3,
+              q4: q4,
+              q5: q5,
+              message: comments || null,
+              hasCertificate: true,
+              timeStamp: new Date().toISOString(),
+              createdAt: new Date().toISOString()
+            })
+            .select()
+            .single();
 
-        closeSurveyModal();
-        renderProjects();
+          if (error) {
+            console.error('Error submitting survey:', error);
+            showToast('Failed to submit survey. Please try again.', 'error');
+            return;
+          }
 
-        // Auto-show certificate
-        setTimeout(() => {
-          viewCertificate(currentProjectId);
-        }, 300);
+          // Update local data
+          const avg = parseFloat(((q1 + q2 + q3 + q4 + q5) / 5).toFixed(1));
+          project.surveyCompleted = true;
+          project.satisfactionScore = avg;
+          project.hasCertificate = true;
+
+          showToast('Survey submitted successfully!', 'success');
+          closeSurveyModal();
+          renderProjects();
+
+          // Auto-show certificate
+          setTimeout(() => {
+            viewCertificate(currentProjectId);
+          }, 500);
+
+        } catch (error) {
+          console.error('Error submitting survey:', error);
+          showToast('Failed to submit survey. Please try again.', 'error');
+        }
       }
 
       // Certificate Modal with Zoom Functionality
@@ -927,15 +1078,16 @@
       let startY = 0;
       let scrollLeft = 0;
       let scrollTop = 0;
-
-      // Touch gesture variables
       let initialDistance = 0;
       let initialZoom = 1;
 
       function viewCertificate(projectId) {
         const project = completedProjects.find(p => p.id === projectId);
-        document.getElementById('certName').textContent = currentUser.name;
-        document.getElementById('certProject').textContent = project.title;
+        const userMeta = currentUser.user_metadata || {};
+        const fullName = `${userMeta.firstName || ''} ${userMeta.lastName || ''}`.trim() || 'Youth Volunteer';
+
+        document.getElementById('certName').textContent = escapeHTML(fullName);
+        document.getElementById('certProject').textContent = escapeHTML(project.title);
         document.getElementById('certDate').textContent = new Date().toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
@@ -943,13 +1095,9 @@
         });
         document.getElementById('certificateModal').classList.remove('hidden');
 
-        // Reset zoom when opening
         resetZoom();
-
-        // Initialize zoom controls
         initializeZoomControls();
 
-        // Show touch hint on mobile for 2 seconds
         if ('ontouchstart' in window) {
           showTouchHint();
         }
@@ -962,17 +1110,11 @@
 
       function initializeZoomControls() {
         const viewport = document.getElementById('certificateViewport');
-        const container = document.getElementById('certificateContainer');
 
-        // Mouse wheel zoom
         viewport.addEventListener('wheel', handleWheel, { passive: false });
-
-        // Touch gestures for pinch-to-zoom
         viewport.addEventListener('touchstart', handleTouchStart, { passive: false });
         viewport.addEventListener('touchmove', handleTouchMove, { passive: false });
         viewport.addEventListener('touchend', handleTouchEnd, { passive: false });
-
-        // Pan functionality
         viewport.addEventListener('mousedown', handleMouseDown);
         viewport.addEventListener('mousemove', handleMouseMove);
         viewport.addEventListener('mouseup', handleMouseUp);
@@ -988,12 +1130,10 @@
 
       function handleTouchStart(e) {
         if (e.touches.length === 2) {
-          // Pinch gesture started
           e.preventDefault();
           initialDistance = getDistance(e.touches[0], e.touches[1]);
           initialZoom = currentZoom;
         } else if (e.touches.length === 1 && currentZoom > 1) {
-          // Pan gesture for zoomed certificate
           isPanning = true;
           const viewport = document.getElementById('certificateViewport');
           startX = e.touches[0].pageX - viewport.offsetLeft;
@@ -1006,30 +1146,25 @@
 
       function handleTouchMove(e) {
         if (e.touches.length === 2) {
-          // Pinch zoom
           e.preventDefault();
           const currentDistance = getDistance(e.touches[0], e.touches[1]);
           const scale = currentDistance / initialDistance;
           currentZoom = Math.max(0.5, Math.min(3, initialZoom * scale));
           applyZoom();
         } else if (isPanning && e.touches.length === 1) {
-          // Pan
           e.preventDefault();
           const viewport = document.getElementById('certificateViewport');
           const x = e.touches[0].pageX - viewport.offsetLeft;
           const y = e.touches[0].pageY - viewport.offsetTop;
-          const walkX = (x - startX) * 2;
-          const walkY = (y - startY) * 2;
-          viewport.scrollLeft = scrollLeft - walkX;
-          viewport.scrollTop = scrollTop - walkY;
+          viewport.scrollLeft = scrollLeft - (x - startX) * 2;
+          viewport.scrollTop = scrollTop - (y - startY) * 2;
         }
       }
 
       function handleTouchEnd(e) {
         if (e.touches.length < 2) {
           isPanning = false;
-          const viewport = document.getElementById('certificateViewport');
-          viewport.style.cursor = 'grab';
+          document.getElementById('certificateViewport').style.cursor = 'grab';
         }
       }
 
@@ -1051,16 +1186,13 @@
         const viewport = document.getElementById('certificateViewport');
         const x = e.pageX - viewport.offsetLeft;
         const y = e.pageY - viewport.offsetTop;
-        const walkX = (x - startX) * 2;
-        const walkY = (y - startY) * 2;
-        viewport.scrollLeft = scrollLeft - walkX;
-        viewport.scrollTop = scrollTop - walkY;
+        viewport.scrollLeft = scrollLeft - (x - startX) * 2;
+        viewport.scrollTop = scrollTop - (y - startY) * 2;
       }
 
       function handleMouseUp() {
         isPanning = false;
-        const viewport = document.getElementById('certificateViewport');
-        viewport.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
+        document.getElementById('certificateViewport').style.cursor = 'grab';
       }
 
       function getDistance(touch1, touch2) {
@@ -1083,30 +1215,31 @@
         currentZoom = 1;
         applyZoom();
         const viewport = document.getElementById('certificateViewport');
-        viewport.scrollLeft = 0;
-        viewport.scrollTop = 0;
+        if (viewport) {
+          viewport.scrollLeft = 0;
+          viewport.scrollTop = 0;
+        }
       }
 
       function applyZoom() {
         const container = document.getElementById('certificateContainer');
         const viewport = document.getElementById('certificateViewport');
+        if (!container) return;
 
         container.style.transform = `scale(${currentZoom})`;
         container.style.transition = 'transform 0.2s ease-out';
 
-        // Update zoom level display
-        document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+        const zoomLevel = document.getElementById('zoomLevel');
+        if (zoomLevel) zoomLevel.textContent = Math.round(currentZoom * 100) + '%';
 
-        // Update cursor based on zoom level
-        viewport.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
+        if (viewport) viewport.style.cursor = currentZoom > 1 ? 'grab' : 'grab';
       }
 
       function showTouchHint() {
         const hint = document.getElementById('touchHint');
+        if (!hint) return;
         hint.style.opacity = '1';
-        setTimeout(() => {
-          hint.style.opacity = '0';
-        }, 2500);
+        setTimeout(() => { hint.style.opacity = '0'; }, 2500);
       }
 
       async function downloadCertificate() {
@@ -1115,7 +1248,6 @@
         const certProject = document.getElementById('certProject').textContent;
 
         try {
-          // Show loading state
           const downloadBtn = event.target.closest('button');
           const originalText = downloadBtn.innerHTML;
           downloadBtn.innerHTML = `
@@ -1127,19 +1259,14 @@
           `;
           downloadBtn.disabled = true;
 
-          // Save current zoom level
           const savedZoom = currentZoom;
-
-          // Temporarily reset zoom for screenshot
           currentZoom = 1;
           const container = document.getElementById('certificateContainer');
           container.style.transform = 'scale(1)';
           container.style.transition = 'none';
 
-          // Wait for render
           await new Promise(resolve => setTimeout(resolve, 100));
 
-          // Convert certificate to canvas with high quality
           const canvas = await html2canvas(certificateElement, {
             scale: 2,
             useCORS: true,
@@ -1149,7 +1276,6 @@
             height: certificateElement.offsetHeight
           });
 
-          // Create PDF in A4 landscape orientation (297mm x 210mm)
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF({
             orientation: 'landscape',
@@ -1157,22 +1283,16 @@
             format: 'a4'
           });
 
-          // A4 landscape dimensions: 297mm x 210mm
           const imgData = canvas.toDataURL('image/png');
           pdf.addImage(imgData, 'PNG', 0, 0, 297, 210);
 
-          // Generate filename
           const filename = `Certificate_${certName.replace(/\s+/g, '_')}_${certProject.replace(/\s+/g, '_').substring(0, 30)}.pdf`;
-
-          // Download the PDF
           pdf.save(filename);
 
-          // Restore zoom level
           currentZoom = savedZoom;
           container.style.transition = 'transform 0.2s ease-out';
           applyZoom();
 
-          // Restore button
           downloadBtn.innerHTML = originalText;
           downloadBtn.disabled = false;
 
@@ -1182,38 +1302,32 @@
           console.error('Error generating PDF:', error);
           showToast('Failed to generate PDF. Please try again.', 'error');
 
-          // Restore button on error
           const downloadBtn = event.target.closest('button');
-          downloadBtn.innerHTML = `
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-            </svg>
-            Download
-          `;
-          downloadBtn.disabled = false;
+          if (downloadBtn) {
+            downloadBtn.innerHTML = `
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+              Download
+            `;
+            downloadBtn.disabled = false;
+          }
         }
       }
-
-      // Initialize
-      renderProjects();
 
       // Update current date
       function updateCurrentDate() {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const currentDate = new Date().toLocaleDateString('en-US', options);
         const dateElement = document.getElementById('currentDate');
-        if (dateElement) {
-          dateElement.textContent = currentDate;
-        }
+        if (dateElement) dateElement.textContent = currentDate;
       }
       updateCurrentDate();
 
       // Toast Notification System
       function showToast(message, type = 'success') {
         const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-          existingToast.remove();
-        }
+        if (existingToast) existingToast.remove();
 
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
@@ -1230,336 +1344,120 @@
           <div class="toast-message">${message}</div>
         `;
 
-        const styles = document.createElement('style');
         if (!document.getElementById('toast-styles')) {
+          const styles = document.createElement('style');
           styles.id = 'toast-styles';
           styles.textContent = `
             .toast {
-              position: fixed;
-              top: 24px;
-              right: 24px;
-              min-width: 300px;
-              max-width: 500px;
-              padding: 16px;
-              border-radius: 12px;
-              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-              display: flex;
-              align-items: center;
-              gap: 12px;
-              z-index: 10000;
-              transform: translateX(400px);
+              position: fixed; top: 24px; right: 24px;
+              min-width: 300px; max-width: 500px; padding: 16px;
+              border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+              display: flex; align-items: center; gap: 12px;
+              z-index: 10000; transform: translateX(400px);
               transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
               font-family: 'Inter', sans-serif;
             }
-            .toast.show {
-              transform: translateX(0);
-            }
-            .toast.success {
-              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-              color: white;
-            }
-            .toast.error {
-              background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-              color: white;
-            }
-            .toast.warning {
-              background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-              color: white;
-            }
-            .toast.info {
-              background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-              color: white;
-            }
-            .toast-icon {
-              flex-shrink: 0;
-              width: 20px;
-              height: 20px;
-            }
-            .toast-message {
-              flex: 1;
-              font-size: 14px;
-              font-weight: 500;
-              line-height: 1.5;
-            }
+            .toast.show { transform: translateX(0); }
+            .toast.success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+            .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+            .toast.warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+            .toast.info { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+            .toast-icon { flex-shrink: 0; width: 20px; height: 20px; }
+            .toast-message { flex: 1; font-size: 14px; font-weight: 500; line-height: 1.5; }
           `;
           document.head.appendChild(styles);
         }
 
         document.body.appendChild(toast);
-
-        setTimeout(() => {
-          toast.classList.add('show');
-        }, 10);
-
+        setTimeout(() => { toast.classList.add('show'); }, 10);
         setTimeout(() => {
           toast.classList.remove('show');
-          setTimeout(() => {
-            toast.remove();
-          }, 300);
+          setTimeout(() => { toast.remove(); }, 300);
         }, 4000);
       }
 
-      // Notification System
-      let notifications = [
-        {
-          id: 1,
-          type: "announcement",
-          title: "New Announcement: Youth Sports Festival 2025",
-          message: "A new announcement has been posted",
-          timestamp: "2 hours ago",
-          read: false,
-          referenceId: 1,
-        },
-        {
-          id: 2,
-          type: "inquiry_update",
-          title: "Inquiry Update: Community Clean-Up Drive 2025",
-          message: "Andrea Pelias replied to your inquiry",
-          timestamp: "5 hours ago",
-          read: false,
-          referenceId: 101,
-          projectId: 1,
-          projectName:
-            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-        },
-        {
-          id: 3,
-          type: "project_posted",
-          title: "New Project: Youth Sports Festival 2025",
-          message: "SK Officers posted a new volunteer project",
-          timestamp: "1 day ago",
-          read: false,
-          referenceId: 2,
-        },
-        {
-          id: 4,
-          type: "application_approved",
-          title: "Application Approved: Community Clean-Up Drive 2025",
-          message: "Your application has been approved",
-          timestamp: "30 minutes ago",
-          read: false,
-          projectId: 1,
-          projectName:
-            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-        },
-        {
-          id: 5,
-          type: "application_pending",
-          title: "Application Pending: Youth Sports Festival 2025",
-          message: "Your application is pending review",
-          timestamp: "1 hour ago",
-          read: false,
-          projectId: 2,
-          projectName: "Youth Sports Festival 2025",
-        },
-        {
-          id: 6,
-          type: "announcement",
-          title: "New Announcement: Free Skills Training Workshop",
-          message: "Check out the new skills training workshop announcement",
-          timestamp: "3 hours ago",
-          read: false,
-          referenceId: 2,
-        },
-        {
-          id: 7,
-          type: "project_posted",
-          title: "New Project: Beach Clean-Up Initiative",
-          message: "SK Officers posted a new volunteer opportunity",
-          timestamp: "2 days ago",
-          read: false,
-          referenceId: 3,
-        },
-        {
-          id: 8,
-          type: "application_approved",
-          title: "Application Approved: Youth Sports Festival 2025",
-          message: "Congratulations! Your application has been approved",
-          timestamp: "4 hours ago",
-          read: false,
-          projectId: 2,
-          projectName: "Youth Sports Festival 2025",
-        },
-      ];
+      // =========================================
+      // INITIALIZE COMPONENTS
+      // =========================================
+      const notificationModal = new NotificationModal();
+      notificationModal.render();
+      window.notificationModal = notificationModal;
+      window.toggleNotificationModal = () => notificationModal.toggle();
 
-      function toggleNotificationModal() {
-        const modal = document.getElementById("notificationModal");
-        modal.classList.toggle("hidden");
-        if (!modal.classList.contains("hidden")) {
-          renderNotifications();
+      const profileModal = new ProfileModal();
+      profileModal.render();
+      window.profileModal = profileModal;
+      window.openProfileModal = () => profileModal.open();
+
+      // Load profile data into ProfileModal
+      try {
+        const { data: userData } = await supabaseClient
+          .from('User_Tbl')
+          .select('*')
+          .eq('userID', currentUser.id)
+          .single();
+
+        if (userData) {
+          await profileModal.loadUserData(currentUser, userData);
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      }
+
+      // Listen for profile updates
+      document.addEventListener('profileUpdated', (e) => {
+        const p = e.detail;
+        const fullName = `${p.firstName || ''} ${p.lastName || ''}`.trim() || 'Youth Volunteer';
+        const initials = `${(p.firstName || '').charAt(0)}${(p.lastName || '').charAt(0)}`.toUpperCase() || '--';
+
+        const headerName = document.getElementById('headerUserName');
+        const headerAvatar = document.getElementById('headerUserAvatar');
+        if (headerName) headerName.textContent = fullName;
+        if (headerAvatar) {
+          const profileImageUrl = sanitizeImageURL(p.profileImageUrl);
+          if (profileImageUrl) {
+            headerAvatar.innerHTML = `<img src="${profileImageUrl}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
+          } else {
+            headerAvatar.textContent = initials;
+          }
+        }
+      });
+
+      // =========================================
+      // LOGOUT HANDLER
+      // =========================================
+      async function handleLogout() {
+        try {
+          await SessionManager.logout();
+        } catch (error) {
+          console.error('Logout error:', error);
+          showToast('Failed to logout. Please try again.', 'error');
         }
       }
 
-      function closeNotificationModal() {
-        document.getElementById("notificationModal").classList.add("hidden");
-      }
+      // =========================================
+      // EXPOSE FUNCTIONS TO WINDOW
+      // =========================================
+      window.renderProjects = renderProjects;
+      window.navigateProjects = navigateProjects;
+      window.goToProjectPage = goToProjectPage;
+      window.openSurveyModal = openSurveyModal;
+      window.closeSurveyModal = closeSurveyModal;
+      window.calculateAverage = calculateAverage;
+      window.submitSurvey = submitSurvey;
+      window.viewCertificate = viewCertificate;
+      window.closeCertificateModal = closeCertificateModal;
+      window.downloadCertificate = downloadCertificate;
+      window.zoomIn = zoomIn;
+      window.zoomOut = zoomOut;
+      window.resetZoom = resetZoom;
+      window.handleLogout = handleLogout;
 
-      function updateNotificationCount() {
-        const unreadCount = notifications.filter((n) => !n.read).length;
-        const countBadge = document.getElementById("notificationCount");
-
-        if (unreadCount > 0) {
-          countBadge.textContent = unreadCount;
-          countBadge.classList.remove("hidden");
-        } else {
-          countBadge.classList.add("hidden");
-        }
-      }
-
-      function getNotificationIcon(type) {
-        function mapToCategory(t) {
-          if (!t) return "default";
-          if (t === "new_announcement" || t === "announcement")
-            return "announcement";
-          if (
-            t === "new_inquiry" ||
-            t === "inquiry_reply" ||
-            t === "inquiry_update"
-          )
-            return "inquiry";
-          if (t === "new_project" || t === "project_posted" || t === "project")
-            return "project";
-          if (
-            t === "project_application" ||
-            t === "application_approved" ||
-            t === "application_pending"
-          )
-            return "application";
-          return "default";
-        }
-        const cat = mapToCategory(type);
-        switch (cat) {
-          case "inquiry":
-            return `<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-              </svg>
-            </div>`;
-          case "announcement":
-            return `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6"></path>
-              </svg>
-            </div>`;
-          case "project":
-            return `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>
-              </svg>
-            </div>`;
-          case "application":
-            return `<div class="w-10 h-10 bg-[#2f6e4e]/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>`;
-          default:
-            return `<div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659"></path>
-              </svg>
-            </div>`;
-        }
-      }
-
-      function renderNotifications() {
-        const notificationList = document.getElementById("notificationList");
-
-        if (notifications.length === 0) {
-          notificationList.innerHTML = `
-            <div class="p-8 text-center text-gray-500">
-              <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-              </svg>
-              <p class="font-medium">No notifications</p>
-              <p class="text-sm mt-1">You're all caught up!</p>
-            </div>
-          `;
-          return;
-        }
-
-        notificationList.innerHTML = notifications
-          .map(
-            (n) => `
-          <div onclick="handleNotificationClick(${n.id})" class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${!n.read ? 'bg-blue-50' : ''}">
-            <div class="flex items-start space-x-3">
-              ${getNotificationIcon(n.type)}
-              <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between">
-                  <p class="text-sm font-semibold text-gray-800 ${!n.read ? 'font-bold' : ''}">${n.title}</p>
-                  ${!n.read ? '<span class="w-2 h-2 bg-[#2f6e4e] rounded-full flex-shrink-0 ml-2 mt-1"></span>' : ''}
-                </div>
-                <p class="text-xs text-gray-600 mt-1">${n.message}</p>
-                <p class="text-xs text-gray-400 mt-2">${n.timestamp}</p>
-              </div>
-            </div>
-          </div>
-        `
-          )
-          .join("");
-      }
-
-      function handleNotificationClick(notifId) {
-        const notif = notifications.find((n) => n.id === notifId);
-        if (!notif) return;
-
-        notif.read = true;
-        updateNotificationCount();
-        closeNotificationModal();
-
-        if (notif.type === "announcement" || notif.type === "new_announcement") {
-          window.location.href = "youth-dashboard.html";
-        } else if (notif.type === "inquiry_update" || notif.type === "inquiry_reply") {
-          window.location.href = `youth-projects.html?projectId=${notif.projectId}`;
-        } else if (notif.type === "project_posted" || notif.type === "new_project") {
-          window.location.href = "youth-projects.html";
-        } else if (notif.type === "application_approved" || notif.type === "application_pending") {
-          window.location.href = "youth-projects.html";
-        }
-      }
-
-      function markAllAsRead() {
-        notifications.forEach((n) => (n.read = true));
-        updateNotificationCount();
-        renderNotifications();
-      }
-
-      updateNotificationCount();
+      // =========================================
+      // INITIALIZE
+      // =========================================
+      await loadCompletedProjects();
     </script>
-
-    <!-- Notification Modal -->
-    <div
-      id="notificationModal"
-      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
-      onclick="closeNotificationModal()"
-    >
-      <div
-        class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col"
-        onclick="event.stopPropagation()"
-      >
-        <div class="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-          <h3 class="font-bold text-gray-800">Notifications</h3>
-          <div class="flex items-center gap-3">
-            <button
-              onclick="markAllAsRead()"
-              class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
-            >
-              Mark all as read
-            </button>
-            <button
-              onclick="closeNotificationModal()"
-              class="text-gray-400 hover:text-gray-600 transition"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <div id="notificationList" class="overflow-y-auto flex-1">
-          <!-- Notifications will be dynamically inserted here -->
-        </div>
-      </div>
-    </div>
-      <script src="js/mobile-nav.js"></script>
+    <script src="js/mobile-nav.js"></script>
   </body>
 </html>

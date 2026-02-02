@@ -10,6 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+    <script src="js/auth/auth.js"></script>
+    <script src="js/auth/session.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -342,6 +349,7 @@
                 <!-- Logout -->
                 <div class="mt-8 pt-8 border-t border-gray-200">
                     <button
+                        onclick="handleLogout()"
                         class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
                     >
                         <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
@@ -387,11 +395,11 @@
                             </div>
                             <button onclick="openProfileModal()" class="flex items-center space-x-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
                                 <div class="text-right">
-                                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Andrea Pelias</p>
-                                    <p class="text-xs text-gray-500">SK Chairman</p>
+                                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Loading...</p>
+                                    <p class="text-xs text-gray-500">SK Official</p>
                                 </div>
                                 <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">
-                                    AP
+                                    --
                                 </div>
                             </button>
                         </div>
@@ -432,7 +440,7 @@
                             </div>
                         </div>
                         <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Archived Projects</p>
-                        <p class="text-4xl font-extrabold text-gray-900 mb-1">38</p>
+                        <p class="text-4xl font-extrabold text-gray-900 mb-1" id="archivedProjectsCount">38</p>
                         <p class="text-xs text-gray-500">Completed & stored</p>
                     </div>
 
@@ -446,7 +454,7 @@
                             </div>
                         </div>
                         <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Total Budget</p>
-                        <p class="text-4xl font-extrabold text-gray-900 mb-1">₱1.2M</p>
+                        <p class="text-4xl font-extrabold text-gray-900 mb-1" id="totalBudgetAmount">₱1.2M</p>
                         <p class="text-xs text-gray-500">Allocated funds</p>
                     </div>
 
@@ -460,7 +468,7 @@
                             </div>
                         </div>
                         <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Volunteers</p>
-                        <p class="text-4xl font-extrabold text-gray-900 mb-1">287</p>
+                        <p class="text-4xl font-extrabold text-gray-900 mb-1" id="volunteersCount">287</p>
                         <p class="text-xs text-gray-500">Active participants</p>
                     </div>
 
@@ -474,7 +482,7 @@
                             </div>
                         </div>
                         <p class="text-sm text-gray-600 font-semibold uppercase tracking-wide mb-1">Success Rate</p>
-                        <p class="text-4xl font-extrabold text-gray-900 mb-1">89%</p>
+                        <p class="text-4xl font-extrabold text-gray-900 mb-1" id="successRateValue">89%</p>
                         <p class="text-xs text-gray-500 flex items-center gap-1">
                             <svg class="w-3 h-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -798,14 +806,14 @@
                                         <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                         </svg>
-                                        <input type="text" id="fileSearchInput" placeholder="Search by file name..."
+                                        <input type="text" id="fileSearchInput" placeholder="Search by file name..." oninput="applyFileFilters()"
                                             class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
                                     </div>
                                 </div>
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">File Type</label>
-                                    <select id="fileTypeFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
+                                    <select id="fileTypeFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" onchange="applyFileFilters()">
                                         <option value="all">All Types</option>
                                         <option value="pdf">PDF</option>
                                         <option value="xlsx">Excel (XLSX)</option>
@@ -817,11 +825,8 @@
 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
-                                    <select id="fileYearFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
-                                        <option value="all">All Years</option>
-                                        <option value="2025" selected>2025</option>
-                                        <option value="2024">2024</option>
-                                        <option value="2023">2023</option>
+                                    <select id="fileYearFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" onchange="applyFileFilters()">
+                                        <option value="all" selected>All Years</option>
                                     </select>
                                 </div>
                             </div>
@@ -1513,157 +1518,620 @@
         </div>
     </div>
 
-    <script>
-        // Sample archived projects data
-        const archivedProjects = [
-            {
-                id: 1,
-                name: "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-                quarter: "Q4",
-                year: 2025,
-                category: "Environment",
-                period: "Dec 2, 2025 – Dec 2, 2025",
-                startDate: "2025-12-02",
-                budget: 30000,
-                spent: 29400,
-                volunteers: 38,
-                totalApplicants: 40,
-                approvedVolunteers: 38,
-                pendingReview: 2,
-                successRate: 98,
-                budgetScore: 98,
-                participationScore: 95,
-                timelineScore: 100,
-                impactScore: 96,
-                feedbackScore: 97,
-                feedbackSubmitted: 36,
-                avgSatisfaction: 4.9,
-                targetBeneficiaries: 200,
-                actualBeneficiaries: 240,
-                communityEngagement: "High",
-                location: "Malanday River and surrounding areas",
-                heads: ["Andrea Pelias", "Kyleen Nicdao"],
-                description: "A comprehensive environmental initiative focused on rehabilitating the Malanday River system through organized clean-up operations, waste segregation education, tree-planting activities, and active community participation. The project aimed to promote environmental responsibility among residents while addressing long-standing waste accumulation issues along the riverbanks.",
-                achievements: ["Collected 2 tons of waste", "Engaged 38 active volunteers", "Cleaned entire Malanday River stretch", "240 community members benefited", "Volunteers reported excellent coordination"],
-                budgetBreakdown: [
-                    { id: 1, description: "Cleaning supplies and equipment", cost: 7000 },
-                    { id: 2, description: "Trash bags and waste bins", cost: 3000 },
-                    { id: 3, description: "Refreshments for volunteers", cost: 4500 },
-                    { id: 4, description: "Tree saplings and planting materials", cost: 6500 },
-                    { id: 5, description: "Signage and educational materials", cost: 3500 },
-                    { id: 6, description: "First aid supplies", cost: 1800 },
-                    { id: 7, description: "Transportation and logistics", cost: 2600 },
-                    { id: 8, description: "Documentation (photos/videos)", cost: 1500 }
-                ],
-                volunteerList: [
-                    { name: "Juan Dela Cruz", age: 19, contact: "0912-345-6789" },
-                    { name: "Maria Santos", age: 21, contact: "0923-456-7890" },
-                    { name: "Pedro Garcia", age: 18, contact: "0934-567-8901" },
-                    { name: "Ana Reyes", age: 20, contact: "0945-678-9012" },
-                    { name: "Miguel Torres", age: 22, contact: "0956-789-0123" },
-                    { name: "Sofia Ramos", age: 19, contact: "0967-890-1234" },
-                    { name: "Carlos Mendoza", age: 21, contact: "0978-901-2345" },
-                    { name: "Isabel Cruz", age: 18, contact: "0989-012-3456" },
-                    { name: "Diego Lopez", age: 20, contact: "0910-123-4567" },
-                    { name: "Camila Flores", age: 19, contact: "0921-234-5678" },
-                    { name: "Lucas Rivera", age: 22, contact: "0932-345-6789" },
-                    { name: "Valentina Morales", age: 21, contact: "0943-456-7890" },
-                    { name: "Mateo Castillo", age: 19, contact: "0954-567-8901" },
-                    { name: "Emma Navarro", age: 20, contact: "0965-678-9012" },
-                    { name: "Gabriel Herrera", age: 18, contact: "0976-789-0123" },
-                    { name: "Olivia Jimenez", age: 21, contact: "0987-890-1234" },
-                    { name: "Sebastian Ruiz", age: 19, contact: "0998-901-2345" },
-                    { name: "Mia Gutierrez", age: 22, contact: "0909-012-3456" },
-                    { name: "Daniel Ortiz", age: 20, contact: "0920-123-4567" },
-                    { name: "Luna Diaz", age: 19, contact: "0931-234-5678" },
-                    { name: "Adrian Vargas", age: 21, contact: "0942-345-6789" },
-                    { name: "Zoe Fernandez", age: 18, contact: "0953-456-7890" },
-                    { name: "Ethan Ramirez", age: 20, contact: "0964-567-8901" },
-                    { name: "Chloe Martinez", age: 19, contact: "0975-678-9012" },
-                    { name: "Ryan Alvarez", age: 22, contact: "0986-789-0123" },
-                    { name: "Lily Sanchez", age: 21, contact: "0997-890-1234" },
-                    { name: "Nathan Gomez", age: 19, contact: "0908-901-2345" },
-                    { name: "Grace Perez", age: 20, contact: "0919-012-3456" },
-                    { name: "Aaron Tan", age: 18, contact: "0930-123-4567" },
-                    { name: "Hannah Lim", age: 21, contact: "0941-234-5678" },
-                    { name: "Joshua Ong", age: 19, contact: "0952-345-6789" },
-                    { name: "Sarah Lee", age: 22, contact: "0963-456-7890" },
-                    { name: "David Chua", age: 20, contact: "0974-567-8901" },
-                    { name: "Rachel Sy", age: 19, contact: "0985-678-9012" },
-                    { name: "Matthew Go", age: 21, contact: "0996-789-0123" },
-                    { name: "Jessica Uy", age: 18, contact: "0907-890-1234" },
-                    { name: "Andrew Yap", age: 20, contact: "0918-901-2345" },
-                    { name: "Nicole Dy", age: 19, contact: "0929-012-3456" }
-                ]
-            },
-            {
-                id: 2,
-                name: "Youth Leadership Summit",
-                quarter: "Q4",
-                year: 2025,
-                period: "Oct 20-22, 2025",
-                budget: 45000,
-                spent: 42000,
-                volunteers: 60,
-                successRate: 92,
-                budgetScore: 93,
-                participationScore: 95,
-                timelineScore: 90,
-                impactScore: 88,
-                feedbackScore: 94,
-                description: "Three-day leadership training for SK officers and youth leaders.",
-                achievements: ["Trained 60 youth leaders", "5 expert speakers", "Leadership certification", "92% completion rate"]
-            },
-            {
-                id: 3,
-                name: "Sports Fest 2025: Malanday Interbarangay Games",
-                quarter: "Q3",
-                year: 2025,
-                period: "Sep 15-17, 2025",
-                budget: 55000,
-                spent: 53200,
-                volunteers: 45,
-                successRate: 89,
-                budgetScore: 97,
-                participationScore: 90,
-                timelineScore: 85,
-                impactScore: 92,
-                feedbackScore: 88,
-                description: "Three-day sports festival featuring basketball, volleyball, badminton, and chess tournaments for youth.",
-                achievements: ["150+ youth participants", "8 sports categories", "Inter-barangay champions crowned", "Community engagement boosted"]
-            },
-            {
-                id: 4,
-                name: "Mental Health Awareness Campaign",
-                quarter: "Q2",
-                year: 2025,
-                period: "Jun 5-7, 2025",
-                budget: 25000,
-                spent: 24100,
-                volunteers: 28,
-                successRate: 94,
-                budgetScore: 96,
-                participationScore: 93,
-                timelineScore: 95,
-                impactScore: 93,
-                feedbackScore: 96,
-                description: "Mental health awareness workshops, free counseling sessions, and stress management activities for youth.",
-                achievements: ["Reached 200+ youth", "Free counseling for 50 participants", "Mental health resource distribution", "High satisfaction rate"]
-            }
-        ];
+    <!-- Generic Confirmation Modal -->
+    <div id="confirmModal" class="hidden fixed inset-0 z-[70] overflow-y-auto bg-black bg-opacity-75">
+        <div class="min-h-screen px-4 py-6 sm:py-12 flex items-center justify-center">
+            <div class="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-md w-full my-8">
+                <!-- Header -->
+                <div id="confirmModalHeader" class="bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] p-4 sm:p-6 rounded-t-xl sm:rounded-t-2xl">
+                    <div class="flex items-center gap-3">
+                        <div id="confirmModalIconWrap" class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg id="confirmModalIcon" class="w-5 h-5 sm:w-6 sm:h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="min-w-0">
+                            <h3 id="confirmModalTitle" class="text-lg sm:text-xl font-bold text-white">Confirm Action</h3>
+                            <p id="confirmModalSubtitle" class="text-white/80 text-xs sm:text-sm">Please confirm to proceed</p>
+                        </div>
+                    </div>
+                </div>
 
-        let currentQuarter = 'Q4';
-        let filteredProjects = [...archivedProjects];
+                <!-- Content -->
+                <div class="p-4 sm:p-6">
+                    <p id="confirmModalMessage" class="text-gray-700 mb-6 text-sm sm:text-base"></p>
+
+                    <div class="flex flex-col-reverse sm:flex-row gap-3">
+                        <button
+                            onclick="closeConfirmModal()"
+                            class="w-full sm:w-auto flex-1 px-4 sm:px-6 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium text-sm sm:text-base text-gray-700"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            id="confirmModalOkBtn"
+                            class="w-full sm:w-auto flex-1 px-4 sm:px-6 py-2.5 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white rounded-lg hover:shadow-md transition-all duration-200 font-medium text-sm sm:text-base flex items-center justify-center gap-2"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span id="confirmModalOkText">Confirm</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // =========================================
+        // BIMS SK ARCHIVE - SUPABASE BACKEND
+        // =========================================
+
+        import { NotificationModal } from './js/components/NotificationModal.js';
+        import { ProfileModal } from './js/components/ProfileModal.js';
+
+        // Security: XSS Prevention
+        function escapeHTML(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // =========================================
+        // COMPONENT INITIALIZATION
+        // =========================================
+        const notificationModal = new NotificationModal();
+        notificationModal.render();
+        window.notificationModal = notificationModal;
+        window.toggleNotificationModal = () => notificationModal.toggle();
+
+        const profileModal = new ProfileModal();
+        profileModal.render();
+        window.profileModal = profileModal;
+        window.openProfileModal = () => profileModal.open();
+
+        // =========================================
+        // STATE
+        // =========================================
+        let archivedProjects = [];
+        let currentUser = null;
+        let currentUserData = null;
+
+        let currentQuarter = 'all';
+        let filteredProjects = [];
 
         // Pagination variables for projects
         let currentProjectPage = 0;
         const projectsPerPage = 3;
 
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            renderProjects();
-            attachFilterListeners();
+        // =========================================
+        // SESSION & INITIALIZATION
+        // =========================================
+        async function initializePage() {
+            try {
+                const sessionResult = await SessionManager.init(['SK_OFFICIAL', 'SUPERADMIN']);
+
+                if (!sessionResult.success) {
+                    return;
+                }
+
+                currentUser = sessionResult.user;
+                currentUserData = sessionResult.userData;
+
+                updateHeaderUserInfo(sessionResult);
+
+                await profileModal.loadUserData(currentUser, sessionResult.userData);
+                await notificationModal.loadNotifications();
+
+                // Load data from Supabase
+                await Promise.all([
+                    loadArchivedProjects(),
+                    loadArchivedFiles()
+                ]);
+
+                loadArchiveStats();
+                populateYearFilter();
+                updateCurrentDate();
+                attachFilterListeners();
+
+            } catch (error) {
+                console.error('Page initialization error:', error);
+                showToast('Failed to initialize page. Please refresh.', 'error');
+            }
+        }
+
+        function updateHeaderUserInfo(sessionResult) {
+            const nameEl = document.querySelector('header .text-sm.font-medium');
+            const roleEl = document.querySelector('header .text-xs.text-gray-500');
+            const avatarEl = document.querySelector('header .w-10.h-10');
+
+            if (nameEl && sessionResult.userData) {
+                const firstName = sessionResult.userData.firstName || '';
+                const lastName = sessionResult.userData.lastName || '';
+                nameEl.textContent = `${firstName} ${lastName}`.trim() || 'SK Official';
+            }
+
+            if (roleEl) {
+                const roleDisplay = {
+                    'SK_OFFICIAL': 'SK Official',
+                    'SUPERADMIN': 'Administrator'
+                };
+                roleEl.textContent = roleDisplay[sessionResult.role] || sessionResult.role;
+            }
+
+            if (avatarEl && sessionResult.userData) {
+                const imageUrl = sessionResult.userData.imagePathURL;
+                const firstName = sessionResult.userData.firstName || '';
+                const lastName = sessionResult.userData.lastName || '';
+                const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+
+                if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('https://')) {
+                    avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+                } else {
+                    avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
+                }
+            }
+        }
+
+        // Listen for profile updates
+        window.addEventListener('profileUpdated', (event) => {
+            const profile = event.detail;
+            const nameEl = document.querySelector('header .text-sm.font-medium');
+            const avatarEl = document.querySelector('header .w-10.h-10');
+
+            if (nameEl) {
+                nameEl.textContent = `${profile.firstName} ${profile.lastName}`.trim();
+            }
+
+            if (avatarEl) {
+                const initials = `${profile.firstName?.charAt(0) || ''}${profile.lastName?.charAt(0) || ''}`.toUpperCase();
+                if (profile.profilePicture && profile.profilePicture.startsWith('https://')) {
+                    avatarEl.innerHTML = `<img src="${escapeHTML(profile.profilePicture)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+                } else {
+                    avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
+                }
+            }
+
+            if (currentUserData) {
+                currentUserData.firstName = profile.firstName;
+                currentUserData.lastName = profile.lastName;
+                currentUserData.imagePathURL = profile.profilePicture;
+            }
         });
+
+        // =========================================
+        // DATA FETCHING - ARCHIVED PROJECTS
+        // =========================================
+        async function loadArchivedProjects() {
+            try {
+                // Step 1: Fetch completed+approved projects with SK head info
+                const { data: projects, error } = await supabaseClient
+                    .from('Pre_Project_Tbl')
+                    .select(`
+                        *,
+                        SK_Tbl (
+                            User_Tbl (
+                                firstName,
+                                lastName
+                            )
+                        )
+                    `)
+                    .in('status', ['COMPLETED', 'CANCELLED'])
+                    .order('createdAt', { ascending: false });
+
+                if (error) {
+                    console.error('Error loading archived projects:', error);
+                    showToast('Failed to load archived projects.', 'error');
+                    return;
+                }
+
+                // Step 2: For each project, load related data in parallel
+                archivedProjects = await Promise.all((projects || []).map(async (project) => {
+                    const pid = project.preProjectID;
+
+                    // Load all related data in parallel
+                    const [budgetData, appData, postData] = await Promise.all([
+                        loadProjectBudget(pid),
+                        loadProjectApplications(pid),
+                        loadPostProjectData(pid)
+                    ]);
+
+                    // Load evaluations and expenses if post-project exists
+                    let evaluations = [];
+                    let expenses = [];
+                    if (postData) {
+                        const [evalData, expData] = await Promise.all([
+                            loadProjectEvaluations(postData.postProjectID),
+                            loadProjectExpenses(pid)
+                        ]);
+                        evaluations = evalData;
+                        expenses = expData;
+                    }
+
+                    return transformProjectData(project, budgetData, appData, postData, evaluations, expenses);
+                }));
+
+                filteredProjects = [...archivedProjects];
+
+                // Update tab count
+                const countEl = document.getElementById('projectsCount');
+                const countMobileEl = document.getElementById('projectsCountMobile');
+                if (countEl) countEl.textContent = archivedProjects.length;
+                if (countMobileEl) countMobileEl.textContent = archivedProjects.length;
+
+                renderProjects();
+            } catch (err) {
+                console.error('loadArchivedProjects exception:', err);
+                showToast('Failed to load archived projects.', 'error');
+            }
+        }
+
+        async function loadProjectBudget(preProjectID) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('BudgetBreakdown_Tbl')
+                    .select('*')
+                    .eq('preProjectID', preProjectID);
+                if (error) { console.error('Budget load error:', error); return []; }
+                return data || [];
+            } catch (err) { return []; }
+        }
+
+        async function loadProjectApplications(preProjectID) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('Application_Tbl')
+                    .select(`
+                        *,
+                        User_Tbl (
+                            firstName,
+                            lastName,
+                            birthday,
+                            contactNumber
+                        )
+                    `)
+                    .eq('preProjectID', preProjectID);
+                if (error) { console.error('Applications load error:', error); return []; }
+                return data || [];
+            } catch (err) { return []; }
+        }
+
+        async function loadPostProjectData(preProjectID) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('Post_Project_Tbl')
+                    .select('*')
+                    .eq('preProjectID', preProjectID)
+                    .maybeSingle();
+                if (error) { console.error('Post-project load error:', error); return null; }
+                return data;
+            } catch (err) { return null; }
+        }
+
+        async function loadProjectEvaluations(postProjectID) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('Evaluation_Tbl')
+                    .select('evaluationID, q1, q2, q3, q4, q5')
+                    .eq('postProjectID', postProjectID);
+                if (error) { console.error('Evaluations load error:', error); return []; }
+                return data || [];
+            } catch (err) { return []; }
+        }
+
+        async function loadProjectExpenses(preProjectID) {
+            try {
+                // Expenses are linked via BudgetBreakdown_Tbl
+                const { data: breakdowns } = await supabaseClient
+                    .from('BudgetBreakdown_Tbl')
+                    .select('breakdownID')
+                    .eq('preProjectID', preProjectID);
+
+                if (!breakdowns || breakdowns.length === 0) return [];
+
+                const breakdownIDs = breakdowns.map(b => b.breakdownID);
+                const { data, error } = await supabaseClient
+                    .from('Expenses_Tbl')
+                    .select('expenseID, breakdownID, actualCost')
+                    .in('breakdownID', breakdownIDs);
+                if (error) { console.error('Expenses load error:', error); return []; }
+                return data || [];
+            } catch (err) { return []; }
+        }
+
+        function transformProjectData(p, budgetRows, applicationRows, postData, evaluations, expenseRows) {
+            // Pre_Project_Tbl columns: title, description, category, budget, volunteers,
+            // beneficiaries, startDateTime, endDateTime, location, status, approvalStatus
+            const startDate = p.startDateTime ? new Date(p.startDateTime) : null;
+            const endDate = p.endDateTime ? new Date(p.endDateTime) : null;
+
+            // Determine quarter from start date
+            let quarter = 'Q1';
+            let year = new Date().getFullYear();
+            if (startDate) {
+                const month = startDate.getMonth();
+                if (month < 3) quarter = 'Q1';
+                else if (month < 6) quarter = 'Q2';
+                else if (month < 9) quarter = 'Q3';
+                else quarter = 'Q4';
+                year = startDate.getFullYear();
+            }
+
+            // Format period
+            const fmtDate = (d) => d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+            const period = startDate && endDate
+                ? `${fmtDate(startDate)} – ${fmtDate(endDate)}`
+                : fmtDate(startDate) || 'N/A';
+
+            // Project head names from SK_Tbl join
+            const heads = [];
+            if (p.SK_Tbl) {
+                const skData = Array.isArray(p.SK_Tbl) ? p.SK_Tbl : [p.SK_Tbl];
+                skData.forEach(sk => {
+                    if (sk.User_Tbl) {
+                        heads.push(`${sk.User_Tbl.firstName || ''} ${sk.User_Tbl.lastName || ''}`.trim());
+                    }
+                });
+            }
+
+            // Budget breakdown (columns: breakdownID, description, cost)
+            const budgetBreakdown = (budgetRows || []).map((b, idx) => ({
+                id: b.breakdownID || idx + 1,
+                description: b.description || 'Item',
+                cost: b.cost || 0
+            }));
+            // Use the project's budget column as the planned budget
+            const budget = p.budget || budgetBreakdown.reduce((sum, b) => sum + b.cost, 0);
+
+            // Actual expenses (columns: expenseID, breakdownID, actualCost)
+            const spent = (expenseRows || []).reduce((sum, e) => sum + (parseFloat(e.actualCost) || 0), 0);
+
+            // Post-project data
+            const actualVolunteers = postData?.actualVolunteer || 0;
+            const targetVolunteers = p.volunteers || 1;
+            const actualBeneficiaries = postData?.beneficiariesReached || 0;
+            const targetBeneficiaries = p.beneficiaries || 1;
+
+            // Timeline adherence is a VARCHAR enum - convert to score
+            const timelineMap = {
+                'Completed_On_Time': 100,
+                'Slightly_Delayed': 80,
+                'Delayed': 50,
+                'Significantly_Delayed': 20
+            };
+            const timelineScore = timelineMap[postData?.timelineAdherence] || 0;
+
+            // Volunteer list from approved applications
+            const volunteerList = (applicationRows || [])
+                .filter(a => a.applicationStatus === 'APPROVED')
+                .map(a => {
+                    const user = a.User_Tbl;
+                    let age = 'N/A';
+                    if (user?.birthday) {
+                        const bday = new Date(user.birthday);
+                        const today = new Date();
+                        age = today.getFullYear() - bday.getFullYear();
+                        const m = today.getMonth() - bday.getMonth();
+                        if (m < 0 || (m === 0 && today.getDate() < bday.getDate())) age--;
+                    }
+                    return {
+                        name: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : 'Unknown',
+                        age: age,
+                        contact: user?.contactNumber || 'N/A'
+                    };
+                });
+
+            const totalApplicants = (applicationRows || []).length;
+            const approvedVolunteers = volunteerList.length;
+            const pendingReview = (applicationRows || []).filter(a => a.applicationStatus === 'PENDING').length;
+
+            // Evaluation feedback scores (q1-q5 are 1-5 ratings)
+            let avgFeedback = 0;
+            if (evaluations && evaluations.length > 0) {
+                const totalScore = evaluations.reduce((sum, e) => {
+                    const scores = [e.q1, e.q2, e.q3, e.q4, e.q5].filter(s => s != null);
+                    return sum + (scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0);
+                }, 0);
+                avgFeedback = totalScore / evaluations.length;
+            }
+
+            // Compute 5-factor weighted success rate
+            const budgetScore = budget > 0 ? Math.min(100, Math.round((1 - Math.abs(budget - spent) / budget) * 100)) : 0;
+            const participationScore = targetVolunteers > 0 ? Math.min(100, Math.round((actualVolunteers / targetVolunteers) * 100)) : 0;
+            const impactScore = targetBeneficiaries > 0 ? Math.min(100, Math.round((actualBeneficiaries / targetBeneficiaries) * 100)) : 0;
+            const feedbackScore = Math.min(100, Math.round((avgFeedback / 5) * 100));
+
+            const successRate = Math.round(
+                budgetScore * 0.25 +
+                participationScore * 0.20 +
+                timelineScore * 0.20 +
+                impactScore * 0.20 +
+                feedbackScore * 0.15
+            );
+
+            return {
+                id: p.preProjectID,
+                name: p.title || 'Untitled Project',
+                quarter,
+                year,
+                category: p.category || 'General',
+                period,
+                startDate: p.startDateTime,
+                budget,
+                spent,
+                volunteers: actualVolunteers || approvedVolunteers,
+                totalApplicants: totalApplicants || actualVolunteers,
+                approvedVolunteers: approvedVolunteers || actualVolunteers,
+                pendingReview,
+                successRate,
+                budgetScore,
+                participationScore,
+                timelineScore,
+                impactScore,
+                feedbackScore,
+                feedbackSubmitted: evaluations ? evaluations.length : 0,
+                avgSatisfaction: avgFeedback > 0 ? (avgFeedback).toFixed(1) : 'N/A',
+                targetBeneficiaries: p.beneficiaries || 'N/A',
+                actualBeneficiaries: actualBeneficiaries || 'N/A',
+                communityEngagement: actualBeneficiaries >= targetBeneficiaries ? 'High' : actualBeneficiaries >= targetBeneficiaries * 0.7 ? 'Medium' : 'Low',
+                location: p.location || 'Barangay Malanday',
+                heads: heads.length > 0 ? heads : ['N/A'],
+                description: p.description || 'No description available.',
+                achievements: postData?.projectAchievement ? postData.projectAchievement.split('\n').filter(a => a.trim()) : [],
+                budgetBreakdown,
+                volunteerList
+            };
+        }
+
+        // =========================================
+        // DATA FETCHING - ARCHIVED FILES
+        // =========================================
+        async function loadArchivedFiles() {
+            try {
+                // File_Tbl columns: fileID, userID, fileName, fileType, fileStatus, filePath, fileCategory, dateUploaded, createdAt
+                const { data: files, error } = await supabaseClient
+                    .from('File_Tbl')
+                    .select(`
+                        fileID,
+                        fileName,
+                        fileType,
+                        filePath,
+                        fileStatus,
+                        fileCategory,
+                        dateUploaded,
+                        createdAt,
+                        userID,
+                        User_Tbl (
+                            firstName,
+                            lastName
+                        )
+                    `)
+                    .eq('fileStatus', 'ARCHIVED')
+                    .order('dateUploaded', { ascending: false });
+
+                console.log('[SK ARCHIVE] Archived files query result:', { data: files, error });
+
+                if (error) {
+                    console.error('Error loading archived files:', error);
+                    return;
+                }
+
+                archivedFiles = (files || []).map(f => {
+                    const uploadDate = f.dateUploaded ? new Date(f.dateUploaded) : (f.createdAt ? new Date(f.createdAt) : null);
+                    // fileType is stored as uppercase in DB (PDF, XLSX, JPG, PNG, DOC)
+                    const ext = (f.fileType || '').toLowerCase();
+
+                    return {
+                        id: f.fileID,
+                        name: f.fileName || 'Unknown File',
+                        type: ext,
+                        filePath: f.filePath,
+                        uploaded: uploadDate ? uploadDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
+                        uploadedDate: f.dateUploaded || f.createdAt,
+                        archivedDate: uploadDate ? uploadDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A',
+                        uploader: f.User_Tbl ? `${f.User_Tbl.firstName || ''} ${f.User_Tbl.lastName || ''}`.trim() : 'Unknown'
+                    };
+                });
+
+                console.log('[SK ARCHIVE] Mapped archivedFiles:', archivedFiles.length, archivedFiles);
+                updateFilesCount();
+                populateFileYearFilter();
+                if (currentArchiveType === 'files') {
+                    renderArchivedFiles();
+                }
+            } catch (err) {
+                console.error('loadArchivedFiles exception:', err);
+            }
+        }
+
+        // Populate file year filter from actual data
+        function populateFileYearFilter() {
+            const yearSelect = document.getElementById('fileYearFilter');
+            if (!yearSelect) return;
+
+            const years = new Set();
+            archivedFiles.forEach(file => {
+                if (file.uploadedDate) {
+                    const year = new Date(file.uploadedDate).getFullYear();
+                    if (!isNaN(year)) years.add(year);
+                }
+            });
+
+            const sortedYears = [...years].sort((a, b) => b - a);
+            yearSelect.innerHTML = '<option value="all" selected>All Years</option>';
+            sortedYears.forEach(year => {
+                yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+            });
+        }
+
+        // =========================================
+        // STATS CARDS
+        // =========================================
+        function loadArchiveStats() {
+            const projectCount = archivedProjects.length;
+            const fileCount = archivedFiles.length;
+            const totalReports = projectCount + fileCount;
+            const totalBudget = archivedProjects.reduce((sum, p) => sum + (p.budget || 0), 0);
+            const totalVolunteers = archivedProjects.reduce((sum, p) => sum + (p.volunteers || 0), 0);
+            const avgSuccessRate = projectCount > 0
+                ? Math.round(archivedProjects.reduce((sum, p) => sum + (p.successRate || 0), 0) / projectCount)
+                : 0;
+
+            // Format budget
+            let budgetDisplay;
+            if (totalBudget >= 1000000) {
+                budgetDisplay = `₱${(totalBudget / 1000000).toFixed(1)}M`;
+            } else if (totalBudget >= 1000) {
+                budgetDisplay = `₱${(totalBudget / 1000).toFixed(0)}K`;
+            } else {
+                budgetDisplay = `₱${totalBudget.toLocaleString()}`;
+            }
+
+            const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+            el('totalReportsCount', totalReports);
+            el('archivedProjectsCount', projectCount);
+            el('totalBudgetAmount', budgetDisplay);
+            el('volunteersCount', totalVolunteers.toLocaleString());
+            el('successRateValue', avgSuccessRate + '%');
+        }
+
+        // =========================================
+        // DYNAMIC YEAR FILTER
+        // =========================================
+        function populateYearFilter() {
+            const yearSet = new Set();
+            archivedProjects.forEach(p => yearSet.add(p.year));
+
+            const yearFilter = document.getElementById('yearFilter');
+            if (!yearFilter) return;
+
+            const currentYear = new Date().getFullYear();
+            yearFilter.innerHTML = '<option value="all">All Years</option>';
+
+            const years = Array.from(yearSet).sort((a, b) => b - a);
+            if (years.length === 0) years.push(currentYear);
+
+            years.forEach(y => {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                yearFilter.appendChild(opt);
+            });
+        }
+
+        // =========================================
+        // LOGOUT
+        // =========================================
+        async function handleLogout() {
+            try {
+                await SessionManager.logout();
+            } catch (error) {
+                console.error('Logout error:', error);
+                showToast('Failed to logout. Please try again.', 'error');
+            }
+        }
 
         function renderProjects() {
             const projectsList = document.getElementById('projectsList');
@@ -2019,7 +2487,7 @@
 
         function resetFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('yearFilter').value = '2025';
+            document.getElementById('yearFilter').value = 'all';
             document.getElementById('quarterFilter').value = 'all';
             applyFilters();
         }
@@ -2027,7 +2495,7 @@
         function resetFileFilters() {
             document.getElementById('fileSearchInput').value = '';
             document.getElementById('fileTypeFilter').value = 'all';
-            document.getElementById('fileYearFilter').value = '2025';
+            document.getElementById('fileYearFilter').value = 'all';
             applyFileFilters();
         }
 
@@ -2206,7 +2674,7 @@
             document.getElementById('deleteErrorMsg').classList.add('hidden');
         }
 
-        function executeDelete() {
+        async function executeDelete() {
             // Collect all characters
             let userInput = '';
             for (let i = 0; i < 6; i++) {
@@ -2217,17 +2685,36 @@
 
             if (userInput === 'DELETE') {
                 const projectName = currentProjectForExport.name;
+                const projectId = currentProjectForExport.id;
 
-                // Remove from array
-                const index = archivedProjects.findIndex(p => p.id === currentProjectForExport.id);
-                if (index !== -1) {
-                    archivedProjects.splice(index, 1);
+                try {
+                    // Delete from Supabase
+                    const { error } = await supabaseClient
+                        .from('Pre_Project_Tbl')
+                        .delete()
+                        .eq('preProjectID', projectId);
+
+                    if (error) {
+                        console.error('Error deleting project:', error);
+                        showToast('Failed to delete project from database.', 'error');
+                        return;
+                    }
+
+                    // Remove from local array
+                    const index = archivedProjects.findIndex(p => p.id === projectId);
+                    if (index !== -1) {
+                        archivedProjects.splice(index, 1);
+                    }
+
                     closeDeleteModal();
                     closeModal();
-                    filterProjects();
+                    applyFilters();
+                    loadArchiveStats();
 
-                    // Show success message
                     showToast(`Project "${projectName}" has been permanently deleted.`, 'success');
+                } catch (err) {
+                    console.error('Delete project exception:', err);
+                    showToast('Failed to delete project.', 'error');
                 }
             } else {
                 // Show error message
@@ -3466,7 +3953,7 @@
 
             showConfirm(
                 'Download Reports',
-                `Generate and download ${selectedProjects.length} PDF report(s)?`,
+                `Generate and download ${selectedProjects.length} PDF report(s)? Each selected project will be exported as a separate PDF file.`,
                 async () => {
                     const { jsPDF } = window.jspdf;
 
@@ -3527,7 +4014,8 @@
 
                     showToast(`${selectedProjectsList.length} report(s) downloaded successfully!`, 'success');
                     deselectAll();
-                }
+                },
+                { subtitle: 'Export selected projects as PDF', confirmText: 'Download' }
             );
         }
 
@@ -3540,129 +4028,8 @@
                 dateElement.textContent = currentDate;
             }
         }
-        updateCurrentDate();
 
-        // User profile data (in production, this would be fetched from server)
-        let userProfile = {
-            firstName: "Andrea",
-            middleName: "",
-            lastName: "Pelias",
-            email: "andrea.pelias@malanday.gov.ph",
-            position: "SK Chairman",
-            address: "",
-            contact: "",
-            gender: "",
-            birthday: ""
-        };
-
-        // Profile Modal Functions
-        function openProfileModal() {
-            // Load profile data into form
-            document.getElementById('profileFirstName').value = userProfile.firstName;
-            document.getElementById('profileMiddleName').value = userProfile.middleName;
-            document.getElementById('profileLastName').value = userProfile.lastName;
-            document.getElementById('profileEmail').value = userProfile.email;
-            document.getElementById('profilePosition').value = userProfile.position;
-            document.getElementById('profileAddress').value = userProfile.address;
-            document.getElementById('profileContact').value = userProfile.contact;
-            document.getElementById('profileGender').value = userProfile.gender;
-            document.getElementById('profileBirthday').value = userProfile.birthday;
-
-            // Load profile picture preview
-            const previewDiv = document.getElementById('profilePicturePreview');
-            if (userProfile.profilePicture) {
-                previewDiv.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
-            } else {
-                const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
-                const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-                previewDiv.innerHTML = `<span id="profileInitials" class="text-white font-bold text-2xl">${firstInitial}${lastInitial}</span>`;
-            }
-
-            document.getElementById('profileModal').classList.remove('hidden');
-        }
-
-        function closeProfileModal() {
-            document.getElementById('profileModal').classList.add('hidden');
-        }
-
-        function handleProfilePictureChange(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            // Validate file type
-            if (!file.type.startsWith('image/')) {
-                showToast('Please upload an image file', 'error');
-                return;
-            }
-
-            // Validate file size (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                showToast('Image size should be less than 5MB', 'error');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const imageData = e.target.result;
-
-                // Store in profile
-                userProfile.profilePicture = imageData;
-
-                // Update modal preview
-                const previewDiv = document.getElementById('profilePicturePreview');
-                previewDiv.innerHTML = `<img src="${imageData}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
-
-                // Update header avatar
-                updateHeaderAvatar();
-
-                showToast('Profile picture uploaded successfully!');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function updateHeaderAvatar() {
-            const headerAvatar = document.querySelector('header .w-10.h-10.bg-[#2f6e4e]');
-            if (!headerAvatar) return;
-
-            if (userProfile.profilePicture) {
-                headerAvatar.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
-            } else {
-                const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
-                const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-                headerAvatar.innerHTML = `<span class="text-white font-bold">${firstInitial}${lastInitial}</span>`;
-            }
-        }
-
-        function saveProfile() {
-            // Get form values
-            userProfile.firstName = document.getElementById('profileFirstName').value;
-            userProfile.middleName = document.getElementById('profileMiddleName').value;
-            userProfile.lastName = document.getElementById('profileLastName').value;
-            userProfile.address = document.getElementById('profileAddress').value;
-            userProfile.contact = document.getElementById('profileContact').value;
-            userProfile.gender = document.getElementById('profileGender').value;
-            userProfile.birthday = document.getElementById('profileBirthday').value;
-
-            // Validation
-            if (!userProfile.firstName || !userProfile.lastName) {
-                showToast('First name and last name are required', 'warning');
-                return;
-            }
-
-            // In production, this would save to the server
-            console.log('Profile saved:', userProfile);
-
-            // Update header display
-            const middleInitial = userProfile.middleName ? ` ${userProfile.middleName.charAt(0)}.` : '';
-            const fullName = `${userProfile.firstName}${middleInitial} ${userProfile.lastName}`;
-            document.querySelector('header .text-sm.font-medium').textContent = fullName;
-
-            // Update header avatar
-            updateHeaderAvatar();
-
-            showToast('Profile updated successfully!');
-            closeProfileModal();
-        }
+        // (Profile handled by ProfileModal component)
 
         // ===========================
         // ARCHIVED FILES FUNCTIONALITY
@@ -3675,28 +4042,7 @@
         let currentFilePage = 0;
         const filesPerPage = 6;
 
-        // Load archived files from localStorage
-        function loadArchivedFiles() {
-            const saved = localStorage.getItem('archivedFiles');
-            if (saved) {
-                archivedFiles = JSON.parse(saved);
-                updateFilesCount();
-            } else {
-                // Initialize with sample data for demonstration
-                archivedFiles = [
-                    { id: 1, name: 'Annual_Budget_Report_2023.pdf', type: 'pdf', uploaded: 'Jan 15, 2023', uploadedDate: '2023-01-15', archivedDate: 'Dec 1, 2025' },
-                    { id: 2, name: 'Community_Survey_Results.xlsx', type: 'xlsx', uploaded: 'Mar 20, 2023', uploadedDate: '2023-03-20', archivedDate: 'Dec 1, 2025' },
-                    { id: 3, name: 'SK_Event_Photos_2023.jpg', type: 'jpg', uploaded: 'May 10, 2023', uploadedDate: '2023-05-10', archivedDate: 'Dec 1, 2025' },
-                    { id: 4, name: 'Volunteer_Certificates_2023.pdf', type: 'pdf', uploaded: 'Jul 8, 2023', uploadedDate: '2023-07-08', archivedDate: 'Dec 1, 2025' },
-                    { id: 5, name: 'Project_Proposal_Template.xlsx', type: 'xlsx', uploaded: 'Feb 12, 2024', uploadedDate: '2024-02-12', archivedDate: 'Dec 1, 2025' },
-                    { id: 6, name: 'Youth_Summit_Flyer.png', type: 'png', uploaded: 'Apr 5, 2024', uploadedDate: '2024-04-05', archivedDate: 'Dec 1, 2025' },
-                    { id: 7, name: 'Financial_Statement_Q1.pdf', type: 'pdf', uploaded: 'Jun 18, 2024', uploadedDate: '2024-06-18', archivedDate: 'Dec 1, 2025' },
-                    { id: 8, name: 'Attendance_Sheet_2024.xlsx', type: 'xlsx', uploaded: 'Aug 22, 2024', uploadedDate: '2024-08-22', archivedDate: 'Dec 1, 2025' },
-                    { id: 9, name: 'SK_Logo_Old_Version.png', type: 'png', uploaded: 'Oct 10, 2024', uploadedDate: '2024-10-10', archivedDate: 'Dec 1, 2025' }
-                ];
-                updateFilesCount();
-            }
-        }
+        // (loadArchivedFiles is defined above in the data fetching section)
 
         // Update files count badge
         function updateFilesCount() {
@@ -3928,10 +4274,24 @@
             renderArchivedFiles();
         }
 
-        // View archived file (basic implementation)
-        function viewArchivedFile(id) {
+        // View archived file
+        async function viewArchivedFile(id) {
             const file = archivedFiles.find(f => f.id === id);
             if (!file) return;
+
+            if (file.filePath) {
+                try {
+                    // Determine bucket from filePath (format: bucket/path or just path)
+                    const bucket = file.filePath.startsWith('project') ? 'project-files' : 'general-files';
+                    const { data } = supabaseClient.storage.from(bucket).getPublicUrl(file.filePath);
+                    if (data?.publicUrl) {
+                        window.open(data.publicUrl, '_blank');
+                        return;
+                    }
+                } catch (err) {
+                    console.error('Error getting file URL:', err);
+                }
+            }
             showToast(`File: ${file.name} | Type: ${file.type} | Uploaded: ${file.uploaded} | Archived: ${file.archivedDate}`, 'info');
         }
 
@@ -3952,25 +4312,33 @@
             pendingRestoreFileId = null;
         }
 
-        function confirmRestoreFile() {
+        async function confirmRestoreFile() {
             if (!pendingRestoreFileId) return;
 
             const file = archivedFiles.find(f => f.id === pendingRestoreFileId);
             if (!file) return;
 
-            // Remove from archived files
-            archivedFiles = archivedFiles.filter(f => f.id !== pendingRestoreFileId);
-            localStorage.setItem('archivedFiles', JSON.stringify(archivedFiles));
+            try {
+                const { error } = await supabaseClient
+                    .from('File_Tbl')
+                    .update({ fileStatus: 'ACTIVE' })
+                    .eq('fileID', pendingRestoreFileId);
 
-            // Add back to file store
-            delete file.archivedDate;
-            let fileStore = JSON.parse(localStorage.getItem('fileStore') || '[]');
-            fileStore.push(file);
-            localStorage.setItem('fileStore', JSON.stringify(fileStore));
+                if (error) {
+                    console.error('Error restoring file:', error);
+                    showToast('Failed to restore file.', 'error');
+                    return;
+                }
 
-            updateFilesCount();
-            renderArchivedFiles();
-            showToast('File restored successfully!');
+                archivedFiles = archivedFiles.filter(f => f.id !== pendingRestoreFileId);
+                updateFilesCount();
+                loadArchiveStats();
+                renderArchivedFiles();
+                showToast('File restored successfully!');
+            } catch (err) {
+                console.error('Restore file exception:', err);
+                showToast('Failed to restore file.', 'error');
+            }
             closeRestoreFileModal();
         }
 
@@ -3991,427 +4359,154 @@
             pendingDeleteFileId = null;
         }
 
-        function confirmDeleteArchivedFile() {
+        async function confirmDeleteArchivedFile() {
             if (!pendingDeleteFileId) return;
 
-            archivedFiles = archivedFiles.filter(f => f.id !== pendingDeleteFileId);
-            localStorage.setItem('archivedFiles', JSON.stringify(archivedFiles));
-            updateFilesCount();
-            renderArchivedFiles();
-            showToast('File deleted permanently', 'success');
+            const file = archivedFiles.find(f => f.id === pendingDeleteFileId);
+
+            try {
+                // Remove from storage if file path exists
+                if (file?.filePath) {
+                    const bucket = file.filePath.startsWith('project') ? 'project-files' : 'general-files';
+                    await supabaseClient.storage.from(bucket).remove([file.filePath]);
+                }
+
+                // Delete from database
+                const { error } = await supabaseClient
+                    .from('File_Tbl')
+                    .delete()
+                    .eq('fileID', pendingDeleteFileId);
+
+                if (error) {
+                    console.error('Error deleting file:', error);
+                    showToast('Failed to delete file.', 'error');
+                    return;
+                }
+
+                archivedFiles = archivedFiles.filter(f => f.id !== pendingDeleteFileId);
+                updateFilesCount();
+                loadArchiveStats();
+                renderArchivedFiles();
+                showToast('File deleted permanently', 'success');
+            } catch (err) {
+                console.error('Delete file exception:', err);
+                showToast('Failed to delete file.', 'error');
+            }
             closeDeleteArchivedFileModal();
         }
 
-        // Initialize archived files on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadArchivedFiles();
-        });
+        // (Notifications handled by NotificationModal component)
 
-        // Notification System
-        let notifications = [
-          {
-            id: 1,
-            type: "project_approved",
-            title: "Project Approved: Community Clean-Up Drive 2025",
-            message: "Your project has been approved by the Barangay Captain and is now Ongoing",
-            time: "2 hours ago",
-            read: false,
-            projectId: 1,
-            status: "approved",
-          },
-          {
-            id: 2,
-            type: "project_rejected",
-            title: "Project Rejected: International Youth Exchange Program",
-            message: "Your project has been rejected. Click to view captain's feedback and edit your proposal",
-            time: "1 day ago",
-            read: false,
-            projectId: 4,
-            status: "rejected",
-          },
-          {
-            id: 3,
-            type: "project_revision",
-            title: "Revision Requested: Scholarship Program Deadline",
-            message: "The Barangay Captain requested revisions. Click to view feedback and edit your project",
-            time: "3 hours ago",
-            read: false,
-            projectId: 3,
-            status: "revision",
-          },
-          {
-            id: 4,
-            type: "new_inquiry",
-            title: "New Inquiry: Community Clean-Up Drive 2025",
-            message: "Juan Dela Cruz posted a new inquiry on your project",
-            time: "5 minutes ago",
-            read: false,
-            projectId: 1,
-          },
-          {
-            id: 5,
-            type: "inquiry_reply",
-            title: "Inquiry Reply: Youth Sports Festival",
-            message: "Maria Santos replied to an inquiry thread",
-            time: "1 hour ago",
-            read: false,
-            projectId: 2,
-          },
-          {
-            id: 6,
-            type: "new_announcement",
-            title: "New Announcement Posted",
-            message: "Kyleen Nicdao posted a new announcement",
-            time: "2 hours ago",
-            read: false,
-            referenceId: 1,
-          },
-          {
-            id: 7,
-            type: "new_project",
-            title: "New Project: Beach Clean-Up Initiative",
-            message: "Andrea Pelias created a new project",
-            time: "3 hours ago",
-            read: false,
-            referenceId: 3,
-          },
-          {
-            id: 8,
-            type: "project_application",
-            title: "New Application: Community Clean-Up Drive 2025",
-            message: "Juan Dela Cruz applied to your project",
-            time: "30 minutes ago",
-            read: false,
-            projectId: 1,
-            applicantId: 1,
-          },
-        ];
+        // =========================================
+        // CONFIRM DIALOG (styled modal)
+        // =========================================
+        let confirmModalCallback = null;
 
-        function toggleNotificationModal() {
-          const modal = document.getElementById("notificationModal");
-          modal.classList.toggle("hidden");
-          if (!modal.classList.contains("hidden")) {
-            renderNotifications();
-          }
+        function showConfirm(title, message, onConfirm, options = {}) {
+            const modal = document.getElementById('confirmModal');
+            const titleEl = document.getElementById('confirmModalTitle');
+            const subtitleEl = document.getElementById('confirmModalSubtitle');
+            const messageEl = document.getElementById('confirmModalMessage');
+            const okTextEl = document.getElementById('confirmModalOkText');
+            const headerEl = document.getElementById('confirmModalHeader');
+            const iconEl = document.getElementById('confirmModalIcon');
+            const iconWrapEl = document.getElementById('confirmModalIconWrap');
+            const okBtn = document.getElementById('confirmModalOkBtn');
+
+            titleEl.textContent = title;
+            subtitleEl.textContent = options.subtitle || 'Please confirm to proceed';
+            messageEl.textContent = message;
+            okTextEl.textContent = options.confirmText || 'Confirm';
+
+            // Apply theme color (default green)
+            const color = options.color || 'green';
+            if (color === 'red') {
+                headerEl.setAttribute('class', 'bg-gradient-to-r from-red-600 to-red-700 p-4 sm:p-6 rounded-t-xl sm:rounded-t-2xl');
+                iconEl.setAttribute('class', 'w-5 h-5 sm:w-6 sm:h-6 text-red-600');
+                okBtn.setAttribute('class', okBtn.getAttribute('class').replace(/from-\[#2f6e4e\] to-\[#3d8b64\]/g, 'from-red-600 to-red-700'));
+            } else {
+                headerEl.setAttribute('class', 'bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] p-4 sm:p-6 rounded-t-xl sm:rounded-t-2xl');
+                iconEl.setAttribute('class', 'w-5 h-5 sm:w-6 sm:h-6 text-[#2f6e4e]');
+                okBtn.setAttribute('class', okBtn.getAttribute('class').replace(/from-red-600 to-red-700/g, 'from-[#2f6e4e] to-[#3d8b64]'));
+            }
+
+            confirmModalCallback = onConfirm;
+            modal.classList.remove('hidden');
+
+            // One-time click handler for OK button
+            const handleOk = () => {
+                modal.classList.add('hidden');
+                okBtn.removeEventListener('click', handleOk);
+                if (confirmModalCallback) {
+                    confirmModalCallback();
+                    confirmModalCallback = null;
+                }
+            };
+            okBtn.addEventListener('click', handleOk);
         }
 
-        function closeNotificationModal() {
-          document.getElementById("notificationModal").classList.add("hidden");
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+            confirmModalCallback = null;
         }
 
-        function updateNotificationCount() {
-          const unreadCount = notifications.filter((n) => !n.read).length;
-          const badge = document.getElementById("notificationBadge");
+        // =========================================
+        // WINDOW FUNCTION EXPOSURE
+        // =========================================
+        window.handleLogout = handleLogout;
+        window.renderProjects = renderProjects;
+        window.viewProject = viewProject;
+        window.closeModal = closeModal;
+        window.confirmPermanentDelete = confirmPermanentDelete;
+        window.closeDeleteModal = closeDeleteModal;
+        window.executeDelete = executeDelete;
+        window.updateDeleteButtonState = updateDeleteButtonState;
+        window.toggleDownloadMenu = toggleDownloadMenu;
+        window.selectFileType = selectFileType;
+        window.changeFileFormat = changeFileFormat;
+        window.handleDownloadClick = handleDownloadClick;
+        window.exportProject = exportProject;
+        window.exportAsPDF = exportAsPDF;
+        window.exportAsCSV = exportAsCSV;
+        window.exportAsText = exportAsText;
+        window.switchQuarter = switchQuarter;
+        window.applyFilters = applyFilters;
+        window.resetFilters = resetFilters;
+        window.resetFileFilters = resetFileFilters;
+        window.navigateProjects = navigateProjects;
+        window.goToProjectPage = goToProjectPage;
+        window.navigateFiles = navigateFiles;
+        window.goToFilePage = goToFilePage;
+        window.toggleProjectSelection = toggleProjectSelection;
+        window.selectAllFiltered = selectAllFiltered;
+        window.deselectAll = deselectAll;
+        window.generateBulkReports = generateBulkReports;
+        window.switchArchiveType = switchArchiveType;
+        window.viewArchivedFile = viewArchivedFile;
+        window.restoreFile = restoreFile;
+        window.closeRestoreFileModal = closeRestoreFileModal;
+        window.confirmRestoreFile = confirmRestoreFile;
+        window.deleteArchivedFile = deleteArchivedFile;
+        window.closeDeleteArchivedFileModal = closeDeleteArchivedFileModal;
+        window.confirmDeleteArchivedFile = confirmDeleteArchivedFile;
+        window.applyFileFilters = applyFileFilters;
+        window.showToast = showToast;
+        window.showConfirm = showConfirm;
+        window.closeConfirmModal = closeConfirmModal;
 
-          if (unreadCount > 0) {
-            badge.textContent = unreadCount > 9 ? "9+" : unreadCount;
-            badge.classList.remove("hidden");
-          } else {
-            badge.classList.add("hidden");
-          }
+        // =========================================
+        // INITIALIZE ON PAGE LOAD
+        // =========================================
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                initializePage();
+            });
+        } else {
+            initializePage();
         }
-
-        function getNotificationIcon(type) {
-          switch (type) {
-            case "new_inquiry":
-              return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>`;
-            case "inquiry_reply":
-              return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-              </svg>`;
-            case "new_announcement":
-              return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
-              </svg>`;
-            case "new_project":
-              return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-              </svg>`;
-            case "project_application":
-              return `<svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-              </svg>`;
-            default:
-              return "";
-          }
-        }
-
-        function getNotificationBgColor(type) {
-          switch (type) {
-            case "new_inquiry":
-              return "bg-yellow-50";
-            case "inquiry_reply":
-              return "bg-yellow-50";
-            case "new_announcement":
-              return "bg-blue-50";
-            case "new_project":
-              return "bg-blue-50";
-            case "project_application":
-              return "bg-[#2f6e4e]/10";
-            default:
-              return "bg-gray-50";
-          }
-        }
-
-        function renderNotifications() {
-          const notificationList = document.getElementById("notificationList");
-
-          if (notifications.length === 0) {
-            notificationList.innerHTML = `
-              <div class="p-8 text-center text-gray-500">
-                <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                </svg>
-                <p class="font-medium">No notifications</p>
-                <p class="text-sm mt-1">You're all caught up!</p>
-              </div>
-            `;
-            return;
-          }
-
-          notificationList.innerHTML = notifications
-            .map(
-              (notif) => `
-            <div
-              onclick="handleNotificationClick(${notif.id})"
-              class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
-                !notif.read ? getNotificationBgColor(notif.type) : ""
-              }"
-            >
-              <div class="flex items-start space-x-3">
-                <div class="flex-shrink-0">
-                  ${getNotificationIcon(notif.type)}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between">
-                    <p class="text-sm font-semibold text-gray-800 truncate ${
-                      !notif.read ? "font-bold" : ""
-                    }">
-                      ${notif.title}
-                    </p>
-                    ${
-                      !notif.read
-                        ? '<span class="w-2 h-2 bg-[#2f6e4e] rounded-full flex-shrink-0 ml-2 mt-1"></span>'
-                        : ""
-                    }
-                  </div>
-                  <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
-                  <p class="text-xs text-gray-400 mt-2">${notif.time}</p>
-                </div>
-              </div>
-            </div>
-          `
-            )
-            .join("");
-        }
-
-        function handleNotificationClick(notifId) {
-          const notif = notifications.find((n) => n.id === notifId);
-          if (!notif) return;
-
-          notif.read = true;
-          updateNotificationCount();
-          closeNotificationModal();
-
-          // Route to appropriate page based on notification type
-          if (notif.type === "new_inquiry" || notif.type === "inquiry_reply") {
-            window.location.href = `sk-projects.html?projectId=${notif.projectId}&tab=inquiries`;
-          } else if (notif.type === "new_announcement") {
-            window.location.href = `sk-dashboard.html`;
-          } else if (notif.type === "new_project") {
-            window.location.href = `sk-projects.html?projectId=${notif.referenceId}`;
-          } else if (notif.type === "project_application") {
-            window.location.href = `sk-projects.html?projectId=${notif.projectId}&tab=applications&applicantId=${notif.applicantId}`;
-          }
-        }
-
-        function markAllAsRead() {
-          notifications.forEach((n) => (n.read = true));
-          updateNotificationCount();
-          renderNotifications();
-        }
-
-        // Close notification modal when clicking outside
-        document.addEventListener("click", function (event) {
-          const modal = document.getElementById("notificationModal");
-          const notificationButton = event.target.closest(
-            'button[onclick="toggleNotificationModal()"]'
-          );
-
-          if (
-            !modal.contains(event.target) &&
-            !notificationButton &&
-            !modal.classList.contains("hidden")
-          ) {
-            closeNotificationModal();
-          }
-        });
-
-        // Initialize notification count on page load
-        updateNotificationCount();
     </script>
 
-    <!-- Profile Modal -->
-    <div id="profileModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50">
-        <div class="min-h-screen px-4 py-6 sm:py-12 flex items-center justify-center">
-            <div class="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-2xl w-full max-h-[calc(100vh-3rem)] sm:max-h-[calc(100vh-6rem)] overflow-hidden flex flex-col">
-                <!-- Header -->
-                <div class="bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white p-4 sm:p-6 rounded-t-xl sm:rounded-t-2xl flex-shrink-0">
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                            <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-2xl flex-shrink-0">
-                                AP
-                            </div>
-                            <div class="min-w-0">
-                                <h2 class="text-lg sm:text-2xl font-bold">My Profile</h2>
-                                <p class="text-white/80 text-xs sm:text-sm">Manage your account information</p>
-                            </div>
-                        </div>
-                        <button onclick="closeProfileModal()" class="flex-shrink-0 w-11 h-11 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-white/30 hover:bg-white/40 active:bg-white/50 text-white transition-all duration-200 text-2xl sm:text-xl font-bold leading-none">
-                        ✕
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Body (Scrollable) -->
-                <div class="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1">
-                    <!-- Account Info Section -->
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                            Account Information
-                        </h3>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
-                                <input type="text" id="profileFirstName" value="Andrea"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Middle Name</label>
-                                <input type="text" id="profileMiddleName" placeholder="Optional"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
-                                <input type="text" id="profileLastName" value="Pelias"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                            </div>
-                        </div>
-
-                        <div class="mt-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                            <input type="email" id="profileEmail" value="andrea.pelias@malanday.gov.ph"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                                   readonly />
-                            <p class="text-xs text-gray-500 mt-1">Email cannot be changed. Contact admin if needed.</p>
-                        </div>
-
-                        <div class="mt-4">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Position</label>
-                            <input type="text" id="profilePosition" value="SK Chairman"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                                   readonly />
-                        </div>
-                    </div>
-
-                    <!-- Personal Info Section -->
-                    <div class="pt-6 border-t border-gray-200">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                            </svg>
-                            Personal Information
-                        </h3>
-
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Complete Address</label>
-                                <textarea id="profileAddress" rows="3" placeholder="Enter your complete address"
-                                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"></textarea>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Number</label>
-                                <input type="tel" id="profileContact" placeholder="e.g., 09171234567"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
-                                <select id="profileGender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
-                                    <option value="">Select gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="non-binary">Non-binary / Gender Neutral</option>
-                                    <option value="prefer-not-to-say">Prefer not to say</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Birthday</label>
-                                <input type="date" id="profileBirthday"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end gap-3 border-t">
-                    <button onclick="closeProfileModal()"
-                            class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition">
-                        Cancel
-                    </button>
-                    <button onclick="saveProfile()"
-                            class="px-6 py-3 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg font-medium transition flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Save Changes
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Modal -->
-    <div
-      id="notificationModal"
-      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
-      onclick="closeNotificationModal()"
-    >
-      <div
-        class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col"
-        onclick="event.stopPropagation()"
-      >
-        <div class="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-          <h3 class="font-bold text-gray-800">Notifications</h3>
-          <div class="flex items-center gap-3">
-            <button
-              onclick="markAllAsRead()"
-              class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
-            >
-              Mark all as read
-            </button>
-            <button
-              onclick="closeNotificationModal()"
-              class="text-gray-400 hover:text-gray-600 transition"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <div id="notificationList" class="overflow-y-auto flex-1">
-          <!-- Notifications will be dynamically inserted here -->
-        </div>
-      </div>
-    </div>
+    <!-- Profile Modal and Notification Modal are rendered by their respective components -->
     <script src="js/mobile-nav.js"></script>
   </body>
 </html>

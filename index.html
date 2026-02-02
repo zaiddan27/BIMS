@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -196,7 +196,7 @@
             <!-- Badge with animation -->
             <div class="hero-fade-in-1 mb-6">
               <div class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold hero-text-shadow border border-white/20">
-                <span class="text-lg">🌟</span>
+                <span class="text-lg">ðŸŒŸ</span>
                 <span class="tracking-wide">Open to All Youth of Barangay Malanday</span>
               </div>
             </div>
@@ -247,19 +247,19 @@
             <!-- Stats -->
             <div class="hero-fade-in-6 grid grid-cols-3 gap-6 md:gap-8 pt-8 border-t border-white/20">
               <div class="group">
-                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;">328<span class="text-3xl md:text-4xl lg:text-5xl">+</span></div>
+                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;"><span id="heroVolunteers">328</span><span class="text-3xl md:text-4xl lg:text-5xl">+</span></div>
                 <div class="text-white/95 text-xs md:text-sm font-semibold uppercase tracking-wider hero-text-shadow">
                   Active Volunteers
                 </div>
               </div>
               <div class="group">
-                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;">42</div>
+                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;"><span id="heroProjects">42</span></div>
                 <div class="text-white/95 text-xs md:text-sm font-semibold uppercase tracking-wider hero-text-shadow">
                   Community Projects
                 </div>
               </div>
               <div class="group">
-                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;">89<span class="text-3xl md:text-4xl lg:text-5xl">%</span></div>
+                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;"><span id="heroSuccessRate">89</span><span class="text-3xl md:text-4xl lg:text-5xl">%</span></div>
                 <div class="text-white/95 text-xs md:text-sm font-semibold uppercase tracking-wider hero-text-shadow">
                   Avg Success Rate
                 </div>
@@ -538,168 +538,11 @@
           </div>
         </div>
 
-        <!-- Projects Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Project 1 -->
-          <div
-            class="project-card group cursor-pointer"
-            data-status="completed"
-          >
-            <div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1">
-              <div class="relative h-44 gradient-bg flex items-center justify-center overflow-hidden">
-                <!-- Subtle overlay for depth -->
-                <div class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>
-
-                <svg
-                  class="relative w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z"
-                  ></path>
-                </svg>
-
-                <!-- Refined status badge -->
-                <div class="absolute top-3 right-3">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full text-[10px] font-semibold tracking-wide text-emerald-600 shadow-sm">
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                    COMPLETED
-                  </span>
-                </div>
-              </div>
-
-              <div class="p-7">
-                <h3 class="text-xl font-bold text-gray-900 mb-2.5 group-hover:text-[#2f6e4e] transition-colors">
-                  Community Clean-Up Drive 2025
-                </h3>
-                <p class="text-gray-600 text-[15px] leading-relaxed mb-5">
-                  Successfully organized a barangay-wide clean-up initiative with
-                  over 150 youth volunteers.
-                </p>
-                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span class="text-sm text-gray-500 font-medium">Jan 15, 2025</span>
-                  <span class="text-sm font-semibold text-[#2f6e4e] flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
-                    </svg>
-                    156
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 2 -->
-          <div
-            class="project-card group cursor-pointer"
-            data-status="ongoing"
-          >
-            <div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1">
-              <div class="relative h-44 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center overflow-hidden">
-                <!-- Subtle overlay for depth -->
-                <div class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>
-
-                <svg
-                  class="relative w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                  ></path>
-                </svg>
-
-                <!-- Refined status badge -->
-                <div class="absolute top-3 right-3">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full text-[10px] font-semibold tracking-wide text-amber-600 shadow-sm">
-                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
-                    ONGOING
-                  </span>
-                </div>
-              </div>
-
-              <div class="p-7">
-                <h3 class="text-xl font-bold text-gray-900 mb-2.5 group-hover:text-[#2f6e4e] transition-colors">
-                  Free Skills Training Workshop
-                </h3>
-                <p class="text-gray-600 text-[15px] leading-relaxed mb-5">
-                  Digital marketing, graphic design, and programming courses for
-                  youth development.
-                </p>
-                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span class="text-sm text-gray-500 font-medium">Feb 1 - Mar 15, 2025</span>
-                  <span class="text-sm font-semibold text-[#2f6e4e] flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
-                    </svg>
-                    89
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Project 3 -->
-          <div
-            class="project-card group cursor-pointer"
-            data-status="completed"
-          >
-            <div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1">
-              <div class="relative h-44 bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center overflow-hidden">
-                <!-- Subtle overlay for depth -->
-                <div class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>
-
-                <svg
-                  class="relative w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-
-                <!-- Refined status badge -->
-                <div class="absolute top-3 right-3">
-                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full text-[10px] font-semibold tracking-wide text-emerald-600 shadow-sm">
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                    COMPLETED
-                  </span>
-                </div>
-              </div>
-
-              <div class="p-7">
-                <h3 class="text-xl font-bold text-gray-900 mb-2.5 group-hover:text-[#2f6e4e] transition-colors">
-                  Youth Sports Festival 2024
-                </h3>
-                <p class="text-gray-600 text-[15px] leading-relaxed mb-5">
-                  Basketball, volleyball, and other sports events promoting youth
-                  fitness and teamwork.
-                </p>
-                <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span class="text-sm text-gray-500 font-medium">Dec 10, 2024</span>
-                  <span class="text-sm font-semibold text-[#2f6e4e] flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
-                    </svg>
-                    243
-                  </span>
-                </div>
-              </div>
-            </div>
+        <!-- Projects Grid (Dynamic from Supabase) -->
+        <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="col-span-full text-center py-12">
+            <div class="inline-block w-8 h-8 border-4 border-[#2f6e4e] border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-500">Loading projects...</p>
           </div>
         </div>
 
@@ -799,7 +642,7 @@
               <div class="mb-8">
                 <div class="flex items-start justify-between mb-2">
                   <div>
-                    <h3 class="text-2xl font-bold text-gray-900">
+                    <h3 id="budgetYearTitle" class="text-2xl font-bold text-gray-900">
                       2025 Budget Allocation
                     </h3>
                   </div>
@@ -812,7 +655,7 @@
               </div>
 
               <!-- Budget Items -->
-              <div class="space-y-6 flex-1">
+              <div id="budgetItemsContainer" class="space-y-6 flex-1">
                 <!-- Youth Development -->
                 <div class="budget-item" style="animation: slideInFromLeft 0.5s ease-out 0.1s both;">
                   <div class="flex justify-between items-baseline mb-3">
@@ -822,7 +665,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-xs text-gray-500">45%</span>
-                      <span id="youthBudgetDisplay" class="text-lg font-bold text-gray-900">₱450,000</span>
+                      <span id="youthBudgetDisplay" class="text-lg font-bold text-gray-900">â‚±450,000</span>
                     </div>
                   </div>
                   <div class="relative h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -839,7 +682,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-xs text-gray-500">30%</span>
-                      <span id="communityBudgetDisplay" class="text-lg font-bold text-gray-900">₱300,000</span>
+                      <span id="communityBudgetDisplay" class="text-lg font-bold text-gray-900">â‚±300,000</span>
                     </div>
                   </div>
                   <div class="relative h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -856,7 +699,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-xs text-gray-500">25%</span>
-                      <span id="infrastructureBudgetDisplay" class="text-lg font-bold text-gray-900">₱250,000</span>
+                      <span id="infrastructureBudgetDisplay" class="text-lg font-bold text-gray-900">â‚±250,000</span>
                     </div>
                   </div>
                   <div class="relative h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -869,7 +712,7 @@
               <div class="mt-8 pt-6 border-t-2 border-gray-200">
                 <div class="flex justify-between items-center">
                   <span class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Allocated</span>
-                  <span id="totalBudgetDisplay" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64]">₱1,000,000</span>
+                  <span id="totalBudgetDisplay" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64]">â‚±1,000,000</span>
                 </div>
               </div>
             </div>
@@ -887,7 +730,7 @@
                     <h3 class="text-2xl font-bold text-gray-900 mb-1">
                       Project Success Metrics
                     </h3>
-                    <p class="text-sm text-gray-500">Fiscal Year 2024 • 5-factor evaluation</p>
+                    <p id="metricsSubtitle" class="text-sm text-gray-500">5-factor evaluation</p>
                   </div>
                   <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -902,7 +745,7 @@
                 <!-- Total Projects -->
                 <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 hover:shadow-md transition-all" style="animation: fadeInUp 0.5s ease-out 0.1s both;">
                   <div class="flex flex-col items-center justify-center h-full">
-                    <div class="text-3xl sm:text-4xl font-black text-gray-900 mb-1">42</div>
+                    <div id="metricTotal" class="text-3xl sm:text-4xl font-black text-gray-900 mb-1">42</div>
                     <div class="text-xs font-semibold text-gray-600 uppercase tracking-wide text-center leading-tight">Total<br class="sm:hidden" /><span class="sm:ml-1">Projects</span></div>
                   </div>
                   <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gray-200/50 flex items-center justify-center">
@@ -916,7 +759,7 @@
                 <!-- Completed -->
                 <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-100 hover:shadow-md transition-all" style="animation: fadeInUp 0.5s ease-out 0.2s both;">
                   <div class="flex flex-col items-center justify-center h-full">
-                    <div class="text-3xl sm:text-4xl font-black text-emerald-600 mb-1">38</div>
+                    <div id="metricCompleted" class="text-3xl sm:text-4xl font-black text-emerald-600 mb-1">38</div>
                     <div class="text-xs font-semibold text-emerald-700 uppercase tracking-wide text-center">Completed</div>
                   </div>
                   <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-emerald-200/50 flex items-center justify-center">
@@ -929,7 +772,7 @@
                 <!-- Ongoing -->
                 <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 border border-amber-100 hover:shadow-md transition-all" style="animation: fadeInUp 0.5s ease-out 0.3s both;">
                   <div class="flex flex-col items-center justify-center h-full">
-                    <div class="text-3xl sm:text-4xl font-black text-amber-600 mb-1">4</div>
+                    <div id="metricOngoing" class="text-3xl sm:text-4xl font-black text-amber-600 mb-1">4</div>
                     <div class="text-xs font-semibold text-amber-700 uppercase tracking-wide text-center">Ongoing</div>
                   </div>
                   <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-amber-200/50 flex items-center justify-center">
@@ -942,7 +785,7 @@
                 <!-- Success Rate -->
                 <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#2f6e4e]/10 to-[#3d8b64]/10 border border-[#2f6e4e]/20 hover:shadow-md transition-all" style="animation: fadeInUp 0.5s ease-out 0.4s both;">
                   <div class="flex flex-col items-center justify-center h-full">
-                    <div class="text-3xl sm:text-4xl font-black text-[#2f6e4e] mb-1">89%</div>
+                    <div id="metricSuccessRate" class="text-3xl sm:text-4xl font-black text-[#2f6e4e] mb-1">89%</div>
                     <div class="text-xs font-semibold text-[#2f6e4e] uppercase tracking-wide text-center leading-tight">Success<br class="sm:hidden" /><span class="sm:ml-1">Rate</span></div>
                   </div>
                   <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-[#2f6e4e]/20 flex items-center justify-center">
@@ -1120,484 +963,499 @@
       </div>
     </footer>
 
-    <script>
-      // Project Filtering
-      function filterProjects(status) {
-        const cards = document.querySelectorAll(".project-card");
-        const buttons = document.querySelectorAll(".filter-btn");
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
 
-        // Update button states with modern styling
-        buttons.forEach((btn) => {
-          btn.classList.remove("active");
-          btn.style.background = "transparent";
-          btn.style.color = "#6b7280";
-          btn.style.boxShadow = "none";
-          btn.style.fontWeight = "600";
+    <script>
+      // === Security Helpers (XSS Prevention) ===
+      function escapeHTML(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function sanitizeImageURL(url) {
+        if (!url) return null;
+        try {
+          const parsed = new URL(url);
+          if (parsed.protocol !== 'https:') return null;
+          const allowed = ['vreuvpzxnvrhftafmado.supabase.co', 'lh3.googleusercontent.com'];
+          if (!allowed.some(d => parsed.hostname.endsWith(d))) return null;
+          return url;
+        } catch { return null; }
+      }
+
+      // === Utility Functions ===
+      function formatCurrency(amount) {
+        return '\u20B1' + Number(amount).toLocaleString();
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '';
+        return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+
+      // === Project Filtering ===
+      function filterProjects(status) {
+        const cards = document.querySelectorAll('.project-card');
+        const buttons = document.querySelectorAll('.filter-btn');
+
+        buttons.forEach(btn => {
+          btn.classList.remove('active');
+          btn.style.background = 'transparent';
+          btn.style.color = '#6b7280';
+          btn.style.boxShadow = 'none';
+          btn.style.fontWeight = '600';
         });
 
-        // Set active button with gradient and shadow
-        event.target.classList.add("active");
-        event.target.style.background = "linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%)";
-        event.target.style.color = "white";
-        event.target.style.boxShadow = "0 3px 8px rgba(47, 110, 78, 0.35), 0 1px 3px rgba(0, 0, 0, 0.12)";
-        event.target.style.fontWeight = "700";
+        event.target.classList.add('active');
+        event.target.style.background = 'linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%)';
+        event.target.style.color = 'white';
+        event.target.style.boxShadow = '0 3px 8px rgba(47, 110, 78, 0.35), 0 1px 3px rgba(0, 0, 0, 0.12)';
+        event.target.style.fontWeight = '700';
 
-        // Filter cards
-        cards.forEach((card) => {
-          if (status === "all") {
-            card.style.display = "block";
-          } else {
-            if (card.dataset.status === status) {
-              card.style.display = "block";
-            } else {
-              card.style.display = "none";
-            }
-          }
+        cards.forEach(card => {
+          card.style.display = (status === 'all' || card.dataset.status === status) ? 'block' : 'none';
         });
       }
 
       // Smooth scroll for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener("click", function (e) {
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
           e.preventDefault();
-          const target = document.querySelector(this.getAttribute("href"));
-          if (target) {
-            target.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
-          }
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
       });
 
-      // Initialize filter button style
-      document.addEventListener("DOMContentLoaded", function () {
-        const activeBtn = document.querySelector(".filter-btn.active");
-        if (activeBtn) {
-          activeBtn.style.background = "linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%)";
-          activeBtn.style.color = "white";
-          activeBtn.style.boxShadow = "0 3px 8px rgba(47, 110, 78, 0.35), 0 1px 3px rgba(0, 0, 0, 0.12)";
-          activeBtn.style.fontWeight = "700";
-        }
-      });
+      // === Load Projects from Supabase ===
+      async function loadProjects() {
+        const grid = document.getElementById('projectsGrid');
+        try {
+          const { data: projects, error } = await supabaseClient
+            .from('Pre_Project_Tbl')
+            .select('preProjectID, title, description, status, volunteers, startDateTime, endDateTime, imagePathURL, category')
+            .eq('approvalStatus', 'APPROVED')
+            .order('startDateTime', { ascending: false })
+            .limit(6);
 
-      // Testimonials Carousel System
-      // Load featured testimonies from localStorage (from SK Testimonies page)
-      function loadFeaturedTestimonies() {
-        const stored = localStorage.getItem('testimoniesData');
-        if (stored) {
-          try {
-            const allTestimonies = JSON.parse(stored);
-            // Filter only featured testimonies and map to homepage format
-            const featured = allTestimonies
-              .filter(t => t.featured)
-              .map(t => ({
-                id: t.id,
-                name: t.volunteerName,
-                initials: t.volunteerInitials,
-                role: "Youth Volunteer",
-                rating: t.rating,
-                testimony: t.testimony
-              }));
+          if (error) throw error;
 
-            return featured.length > 0 ? featured : getDefaultTestimonies();
-          } catch (e) {
-            console.error('Error loading featured testimonies:', e);
-            return getDefaultTestimonies();
+          if (!projects || projects.length === 0) {
+            grid.innerHTML = '<p class="text-center text-gray-500 col-span-full py-12">No projects available yet.</p>';
+            return;
           }
+
+          grid.innerHTML = projects.map(p => createProjectCard(p)).join('');
+        } catch (err) {
+          console.error('[BIMS] Failed to load projects:', err);
+          grid.innerHTML = '<p class="text-center text-gray-500 col-span-full py-12">Unable to load projects.</p>';
         }
-        return getDefaultTestimonies();
       }
 
-      // Default testimonies (fallback)
-      function getDefaultTestimonies() {
-        return [
-          {
-            id: 1,
-            name: "Juan Dela Cruz",
-            initials: "JD",
-            role: "Youth Volunteer",
-            rating: 5,
-            testimony: "This was an amazing experience! I learned so much about environmental conservation and met wonderful people. The SK team was very organized and supportive throughout the project."
-          },
-          {
-            id: 2,
-            name: "Maria Santos",
-            initials: "MS",
-            role: "Community Member",
-            rating: 5,
-            testimony: "Finally, transparency in our barangay! I can see exactly where the budget goes and track project progress. This is what we need more of."
-          },
-          {
-            id: 3,
-            name: "Pedro Reyes",
-            initials: "PR",
-            role: "SK Official",
-            rating: 5,
-            testimony: "BIMS streamlined our project management workflow significantly. From volunteer applications to event documentation, everything is organized in one place."
-          },
-          {
-            id: 4,
-            name: "Lisa Garcia",
-            initials: "LG",
-            role: "Youth Volunteer",
-            rating: 5,
-            testimony: "This project made me realize how important community service is. I'll definitely participate in more SK activities!"
-          },
-          {
-            id: 5,
-            name: "Carlo Mendoza",
-            initials: "CM",
-            role: "Youth Volunteer",
-            rating: 4,
-            testimony: "Great initiative! We collected tons of trash and raised awareness about ocean pollution. The experience opened my eyes to environmental issues."
-          },
-          {
-            id: 6,
-            name: "Sarah Lopez",
-            initials: "SL",
-            role: "Youth Volunteer",
-            rating: 5,
-            testimony: "The workshop exceeded my expectations. I now have practical skills I can use for freelancing. Thank you SK Malanday!"
-          }
-        ];
+      function createProjectCard(project) {
+        const statusLower = (project.status || 'ONGOING').toLowerCase();
+        const config = {
+          ongoing: { badge: 'text-amber-600', dot: 'bg-amber-500', bg: 'bg-gradient-to-br from-blue-500 to-blue-600', pulse: ' animate-pulse' },
+          completed: { badge: 'text-emerald-600', dot: 'bg-emerald-500', bg: 'gradient-bg', pulse: '' },
+          cancelled: { badge: 'text-red-600', dot: 'bg-red-500', bg: 'bg-gradient-to-br from-red-500 to-red-600', pulse: '' }
+        };
+        const s = config[statusLower] || config.ongoing;
+
+        const startDate = formatDate(project.startDateTime);
+        const endDate = project.endDateTime ? formatDate(project.endDateTime) : '';
+        const dateText = endDate && statusLower === 'ongoing' ? startDate + ' - ' + endDate : startDate;
+
+        const imgURL = sanitizeImageURL(project.imagePathURL);
+        const imgEl = imgURL
+          ? '<img src="' + escapeHTML(imgURL) + '" alt="' + escapeHTML(project.title) + '" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display=\'none\'">'
+          : '';
+
+        return '<div class="project-card group cursor-pointer" data-status="' + statusLower + '">' +
+          '<div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1">' +
+            '<div class="relative h-44 ' + s.bg + ' flex items-center justify-center overflow-hidden">' +
+              imgEl +
+              '<div class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>' +
+              '<svg class="relative w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-300' + (imgURL ? ' hidden' : '') + '" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">' +
+                '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>' +
+              '</svg>' +
+              '<div class="absolute top-3 right-3">' +
+                '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full text-[10px] font-semibold tracking-wide ' + s.badge + ' shadow-sm">' +
+                  '<span class="w-1.5 h-1.5 ' + s.dot + ' rounded-full' + s.pulse + '"></span>' +
+                  escapeHTML(project.status) +
+                '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="p-7">' +
+              '<h3 class="text-xl font-bold text-gray-900 mb-2.5 group-hover:text-[#2f6e4e] transition-colors">' + escapeHTML(project.title) + '</h3>' +
+              '<p class="text-gray-600 text-[15px] leading-relaxed mb-5 line-clamp-2">' + escapeHTML(project.description) + '</p>' +
+              '<div class="flex items-center justify-between pt-4 border-t border-gray-100">' +
+                '<span class="text-sm text-gray-500 font-medium">' + escapeHTML(dateText) + '</span>' +
+                '<span class="text-sm font-semibold text-[#2f6e4e] flex items-center gap-1.5">' +
+                  '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>' +
+                  (project.volunteers || 0) +
+                '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
       }
 
-      const featuredTestimonies = loadFeaturedTestimonies();
-
+      // === Testimonials Carousel from Supabase ===
       let currentSlide = 0;
       let autoSlideInterval;
-      const TESTIMONIES_PER_SLIDE = window.innerWidth >= 1024 ? 3 : (window.innerWidth >= 768 ? 2 : 1);
+      let testimoniesData = [];
 
-      // Generate star rating HTML
+      function getPerSlide() {
+        return window.innerWidth >= 1024 ? 3 : (window.innerWidth >= 768 ? 2 : 1);
+      }
+
       function generateStars(rating) {
-        let starsHTML = '';
+        let html = '';
         for (let i = 0; i < 5; i++) {
-          starsHTML += `
-            <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" opacity="${i < rating ? '1' : '0.3'}"/>
-            </svg>
-          `;
+          html += '<svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" opacity="' + (i < rating ? '1' : '0.3') + '"/></svg>';
         }
-        return starsHTML;
+        return html;
       }
 
-      // Create testimony card HTML
-      function createTestimonyCard(testimony) {
-        return `
-          <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition h-full flex flex-col">
-            <div class="flex items-center mb-6">
-              <div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
-                ${testimony.initials}
-              </div>
-              <div class="ml-4">
-                <h4 class="font-bold text-gray-800 text-lg">${testimony.name}</h4>
-                <p class="text-sm text-gray-500">${testimony.role}</p>
-              </div>
-            </div>
-            <div class="flex mb-4">
-              ${generateStars(testimony.rating)}
-            </div>
-            <p class="text-gray-600 leading-relaxed italic flex-1">
-              "${testimony.testimony}"
-            </p>
-          </div>
-        `;
+      function createTestimonyCard(t) {
+        const avatarHTML = t.imageURL
+          ? '<img src="' + escapeHTML(t.imageURL) + '" alt="" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.textContent=\'' + escapeHTML(t.initials) + '\'">'
+          : escapeHTML(t.initials);
+
+        return '<div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition h-full flex flex-col">' +
+          '<div class="flex items-center mb-6">' +
+            '<div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 overflow-hidden">' + avatarHTML + '</div>' +
+            '<div class="ml-4">' +
+              '<h4 class="font-bold text-gray-800 text-lg">' + escapeHTML(t.name) + '</h4>' +
+              '<p class="text-sm text-gray-500">' + escapeHTML(t.role) + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="flex mb-4">' + generateStars(t.rating) + '</div>' +
+          '<p class="text-gray-600 leading-relaxed italic flex-1">&ldquo;' + escapeHTML(t.testimony) + '&rdquo;</p>' +
+        '</div>';
       }
 
-      // Initialize carousel
-      function initTestimonials() {
+      function initCarousel(testimonies) {
+        testimoniesData = testimonies;
         const carousel = document.getElementById('testimonialsCarousel');
         const dotsContainer = document.getElementById('testimonialDots');
+        const perSlide = getPerSlide();
+        const totalSlides = Math.ceil(testimonies.length / perSlide);
 
-        // Calculate number of slides needed
-        const totalSlides = Math.ceil(featuredTestimonies.length / TESTIMONIES_PER_SLIDE);
+        carousel.innerHTML = '';
+        dotsContainer.innerHTML = '';
+        currentSlide = 0;
 
-        // Create slides
         for (let i = 0; i < totalSlides; i++) {
-          const slideTestimonies = featuredTestimonies.slice(
-            i * TESTIMONIES_PER_SLIDE,
-            (i + 1) * TESTIMONIES_PER_SLIDE
-          );
-
-          const slideHTML = `
-            <div class="min-w-full grid grid-cols-1 md:grid-cols-${TESTIMONIES_PER_SLIDE === 2 ? '2' : (TESTIMONIES_PER_SLIDE === 3 ? '3' : '1')} gap-8 px-2 items-stretch">
-              ${slideTestimonies.map(t => createTestimonyCard(t)).join('')}
-            </div>
-          `;
-          carousel.innerHTML += slideHTML;
+          const items = testimonies.slice(i * perSlide, (i + 1) * perSlide);
+          const colClass = perSlide >= 3 ? 'md:grid-cols-2 lg:grid-cols-3' : (perSlide >= 2 ? 'md:grid-cols-2' : '');
+          carousel.innerHTML += '<div class="min-w-full grid grid-cols-1 ' + colClass + ' gap-8 px-2 items-stretch">' +
+            items.map(t => createTestimonyCard(t)).join('') + '</div>';
         }
 
-        // Create navigation dots
         for (let i = 0; i < totalSlides; i++) {
           const dot = document.createElement('button');
-          dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${i === 0 ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400'}`;
+          dot.className = i === 0 ? 'w-8 h-2 rounded-full bg-[#2f6e4e] transition-all duration-300' : 'w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300';
           dot.onclick = () => goToSlide(i);
-          dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
           dotsContainer.appendChild(dot);
         }
 
-        // Start auto-slide
         startAutoSlide();
       }
 
-      // Navigate to specific slide
       function goToSlide(index) {
         const carousel = document.getElementById('testimonialsCarousel');
-        const totalSlides = Math.ceil(featuredTestimonies.length / TESTIMONIES_PER_SLIDE);
-
+        const perSlide = getPerSlide();
+        const totalSlides = Math.ceil(testimoniesData.length / perSlide);
         currentSlide = (index + totalSlides) % totalSlides;
-        carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        carousel.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
 
-        // Update dots
         const dots = document.getElementById('testimonialDots').children;
         Array.from(dots).forEach((dot, i) => {
-          if (i === currentSlide) {
-            dot.className = 'w-8 h-2 rounded-full bg-[#2f6e4e] transition-all duration-300';
-          } else {
-            dot.className = 'w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300';
-          }
+          dot.className = i === currentSlide
+            ? 'w-8 h-2 rounded-full bg-[#2f6e4e] transition-all duration-300'
+            : 'w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300';
         });
-
-        // Reset auto-slide timer
         resetAutoSlide();
       }
 
-      // Next slide
-      function nextTestimonial() {
-        goToSlide(currentSlide + 1);
-      }
+      function nextTestimonial() { goToSlide(currentSlide + 1); }
+      function prevTestimonial() { goToSlide(currentSlide - 1); }
+      function startAutoSlide() { autoSlideInterval = setInterval(nextTestimonial, 5000); }
+      function resetAutoSlide() { clearInterval(autoSlideInterval); startAutoSlide(); }
 
-      // Previous slide
-      function prevTestimonial() {
-        goToSlide(currentSlide - 1);
-      }
+      async function loadTestimonials() {
+        try {
+          const { data: testimonies, error } = await supabaseClient
+            .from('Testimonies_Tbl')
+            .select('testimonyID, message, rating, timeStamp, User_Tbl ( firstName, lastName, imagePathURL, role )')
+            .order('timeStamp', { ascending: false })
+            .limit(12);
 
-      // Auto-slide functionality
-      function startAutoSlide() {
-        autoSlideInterval = setInterval(() => {
-          nextTestimonial();
-        }, 5000); // Change slide every 5 seconds
-      }
+          if (error) throw error;
 
-      function resetAutoSlide() {
-        clearInterval(autoSlideInterval);
-        startAutoSlide();
-      }
+          if (!testimonies || testimonies.length === 0) {
+            document.getElementById('testimonialsCarousel').innerHTML =
+              '<div class="min-w-full flex items-center justify-center py-12"><p class="text-gray-500">No testimonials yet. Be the first to share your experience!</p></div>';
+            return;
+          }
 
-      // Pause auto-slide on hover
-      document.addEventListener('DOMContentLoaded', function() {
-        const carouselSection = document.getElementById('testimonialsCarousel');
-        if (carouselSection) {
-          carouselSection.addEventListener('mouseenter', () => {
-            clearInterval(autoSlideInterval);
+          const ROLE_LABELS = { SK_OFFICIAL: 'SK Official', YOUTH_VOLUNTEER: 'Youth Volunteer', CAPTAIN: 'Barangay Captain' };
+          const mapped = testimonies.map(t => {
+            const u = t.User_Tbl;
+            const first = u?.firstName || 'Anonymous';
+            const last = u?.lastName || '';
+            return {
+              id: t.testimonyID,
+              name: (first + ' ' + last).trim(),
+              initials: (first.charAt(0) + (last.charAt(0) || '')).toUpperCase(),
+              role: ROLE_LABELS[u?.role] || 'Community Member',
+              rating: t.rating || 5,
+              testimony: t.message,
+              imageURL: sanitizeImageURL(u?.imagePathURL)
+            };
           });
-          carouselSection.addEventListener('mouseleave', () => {
-            startAutoSlide();
+
+          initCarousel(mapped);
+        } catch (err) {
+          console.error('[BIMS] Failed to load testimonials:', err);
+          document.getElementById('testimonialsCarousel').innerHTML =
+            '<div class="min-w-full flex items-center justify-center py-12"><p class="text-gray-500">Unable to load testimonials.</p></div>';
+        }
+      }
+
+      // === Budget Data from Supabase ===
+      async function loadBudgetData() {
+        try {
+          const currentYear = new Date().getFullYear();
+          const { data: items, error } = await supabaseClient
+            .from('Annual_Budget_Tbl')
+            .select('budgetID, expenseCategory, budget')
+            .eq('fiscalYear', currentYear)
+            .order('budgetID', { ascending: true });
+
+          if (error) throw error;
+          if (!items || items.length === 0) return;
+
+          const total = items.reduce((sum, item) => sum + (Number(item.budget) || 0), 0);
+          const colors = [
+            { dot: 'bg-[#2f6e4e]', from: '#2f6e4e', to: '#3d8b64', shadow: 'rgba(47, 110, 78, 0.5)' },
+            { dot: 'bg-[#4a9d72]', from: '#4a9d72', to: '#5fb88a', shadow: 'rgba(74, 157, 114, 0.5)' },
+            { dot: 'bg-[#65c399]', from: '#65c399', to: '#7ed4ad', shadow: 'rgba(101, 195, 153, 0.5)' },
+            { dot: 'bg-[#89d7b4]', from: '#89d7b4', to: '#a0e3c6', shadow: 'rgba(137, 215, 180, 0.5)' },
+            { dot: 'bg-[#a8e6cf]', from: '#a8e6cf', to: '#c0f0dd', shadow: 'rgba(168, 230, 207, 0.5)' }
+          ];
+
+          const container = document.getElementById('budgetItemsContainer');
+          if (container) {
+            container.innerHTML = items.map((item, idx) => {
+              const pct = total > 0 ? Math.round((Number(item.budget) / total) * 100) : 0;
+              const c = colors[idx % colors.length];
+              return '<div class="budget-item" style="animation: slideInFromLeft 0.5s ease-out ' + (0.1 + idx * 0.1).toFixed(1) + 's both;">' +
+                '<div class="flex justify-between items-baseline mb-3">' +
+                  '<div class="flex items-center gap-2">' +
+                    '<div class="w-2 h-2 rounded-full ' + c.dot + '"></div>' +
+                    '<span class="text-sm font-semibold text-gray-700">' + escapeHTML(item.expenseCategory) + '</span>' +
+                  '</div>' +
+                  '<div class="flex items-center gap-2">' +
+                    '<span class="text-xs text-gray-500">' + pct + '%</span>' +
+                    '<span class="text-lg font-bold text-gray-900">' + formatCurrency(item.budget) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="relative h-2 bg-gray-100 rounded-full overflow-hidden">' +
+                  '<div class="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out shadow-lg" style="width: ' + pct + '%; background: linear-gradient(to right, ' + c.from + ', ' + c.to + '); box-shadow: 0 0 10px ' + c.shadow + ';"></div>' +
+                '</div>' +
+              '</div>';
+            }).join('');
+          }
+
+          const titleEl = document.getElementById('budgetYearTitle');
+          if (titleEl) titleEl.textContent = currentYear + ' Budget Allocation';
+
+          const totalEl = document.getElementById('totalBudgetDisplay');
+          if (totalEl) totalEl.textContent = formatCurrency(total);
+        } catch (err) {
+          console.error('[BIMS] Failed to load budget:', err);
+        }
+      }
+
+      // === Project Metrics from Supabase ===
+      async function loadProjectMetrics() {
+        try {
+          const { data: projects, error } = await supabaseClient
+            .from('Pre_Project_Tbl')
+            .select('preProjectID, status, volunteers')
+            .eq('approvalStatus', 'APPROVED');
+
+          if (error) throw error;
+          if (!projects) return;
+
+          const total = projects.length;
+          const completed = projects.filter(p => p.status === 'COMPLETED').length;
+          const ongoing = projects.filter(p => p.status === 'ONGOING').length;
+          const totalVolunteers = projects.reduce((sum, p) => sum + (p.volunteers || 0), 0);
+          const successRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+          // Update metrics card
+          const els = { metricTotal: total, metricCompleted: completed, metricOngoing: ongoing, metricSuccessRate: successRate + '%' };
+          Object.entries(els).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
           });
+
+          // Update hero stats
+          const heroEls = { heroVolunteers: totalVolunteers, heroProjects: total, heroSuccessRate: successRate };
+          Object.entries(heroEls).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+          });
+        } catch (err) {
+          console.error('[BIMS] Failed to load project metrics:', err);
         }
+      }
 
-        // Initialize testimonials
-        initTestimonials();
-      });
+      // === Published Files from Supabase ===
+      async function loadPublishedFiles() {
+        const grid = document.getElementById('publishedFilesGrid');
+        const noFilesDiv = document.getElementById('noPublishedFiles');
 
-      // Handle window resize
-      window.addEventListener('resize', () => {
-        const newTestimoniesPerSlide = window.innerWidth >= 1024 ? 3 : (window.innerWidth >= 768 ? 2 : 1);
-        if (newTestimoniesPerSlide !== TESTIMONIES_PER_SLIDE) {
-          location.reload(); // Reload to recalculate slides
+        try {
+          const { data: files, error } = await supabaseClient
+            .from('File_Tbl')
+            .select('fileID, fileName, fileType, filePath, dateUploaded')
+            .eq('fileStatus', 'ACTIVE')
+            .eq('isPublished', true)
+            .order('dateUploaded', { ascending: false });
+
+          if (error) throw error;
+
+          if (!files || files.length === 0) {
+            grid.classList.add('hidden');
+            noFilesDiv.classList.remove('hidden');
+            return;
+          }
+
+          grid.classList.remove('hidden');
+          noFilesDiv.classList.add('hidden');
+
+          function getFileIconColor(type) {
+            var colors = { PDF: 'bg-red-100 text-red-600', XLSX: 'bg-[#2f6e4e]/20 text-[#2f6e4e]', PNG: 'bg-blue-100 text-blue-600', JPG: 'bg-blue-100 text-blue-600', DOC: 'bg-indigo-100 text-indigo-600' };
+            return colors[type] || 'bg-gray-100 text-gray-700';
+          }
+
+          grid.innerHTML = files.map(file => {
+            const uploadDate = formatDate(file.dateUploaded);
+            return '<button onclick="downloadFile(\'' + escapeHTML(file.filePath) + '\', \'' + escapeHTML(file.fileName) + '\')" ' +
+              'class="flex items-center justify-between p-6 bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer">' +
+              '<div class="flex items-center space-x-4">' +
+                '<div class="w-10 h-10 ' + getFileIconColor(file.fileType) + ' rounded-lg flex items-center justify-center font-bold text-xs">' + escapeHTML(file.fileType || 'FILE') + '</div>' +
+                '<div class="text-left">' +
+                  '<div class="font-bold text-gray-800 line-clamp-1">' + escapeHTML(file.fileName) + '</div>' +
+                  '<div class="text-sm text-gray-500">' + escapeHTML(uploadDate) + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<svg class="w-6 h-6 text-gray-400 group-hover:text-[#2f6e4e] transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>' +
+              '</svg></button>';
+          }).join('');
+        } catch (err) {
+          console.error('[BIMS] Failed to load published files:', err);
+          grid.classList.add('hidden');
+          noFilesDiv.classList.remove('hidden');
         }
-      });
+      }
 
-      // Toast Notification System (kept for potential future use)
-      function showToast(message, type = 'success') {
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-          existingToast.remove();
+      // Download file from Supabase Storage
+      function downloadFile(filePath, fileName) {
+        if (!filePath) return;
+        var sanitized = sanitizeImageURL(filePath);
+        if (sanitized) {
+          var link = document.createElement('a');
+          link.href = sanitized;
+          link.download = fileName || 'download';
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          showToast('Unable to download file.', 'error');
         }
+      }
 
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
+      // === Toast Notification ===
+      function showToast(message, type) {
+        type = type || 'success';
+        var existing = document.querySelector('.toast');
+        if (existing) existing.remove();
 
-        const icons = {
+        var toast = document.createElement('div');
+        toast.className = 'toast ' + type;
+
+        var icons = {
           success: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
           error: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
           warning: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
           info: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
         };
 
-        toast.innerHTML = `
-          <div class="toast-icon">${icons[type]}</div>
-          <div class="toast-message">${message}</div>
-        `;
+        toast.innerHTML = '<div class="toast-icon">' + (icons[type] || icons.info) + '</div><div class="toast-message">' + escapeHTML(message) + '</div>';
 
-        const styles = document.createElement('style');
         if (!document.getElementById('toast-styles')) {
+          var styles = document.createElement('style');
           styles.id = 'toast-styles';
-          styles.textContent = `
-            .toast {
-              position: fixed;
-              top: 24px;
-              right: 24px;
-              min-width: 300px;
-              max-width: 500px;
-              padding: 16px;
-              border-radius: 12px;
-              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-              display: flex;
-              align-items: center;
-              gap: 12px;
-              z-index: 10000;
-              transform: translateX(400px);
-              transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-              font-family: 'Inter', sans-serif;
-            }
-            .toast.show {
-              transform: translateX(0);
-            }
-            .toast.success {
-              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-              color: white;
-            }
-            .toast.error {
-              background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-              color: white;
-            }
-            .toast.warning {
-              background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-              color: white;
-            }
-            .toast.info {
-              background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-              color: white;
-            }
-            .toast-icon {
-              flex-shrink: 0;
-              width: 20px;
-              height: 20px;
-            }
-            .toast-message {
-              flex: 1;
-              font-size: 14px;
-              font-weight: 500;
-              line-height: 1.5;
-            }
-          `;
+          styles.textContent = '.toast{position:fixed;top:24px;right:24px;min-width:300px;max-width:500px;padding:16px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.2);display:flex;align-items:center;gap:12px;z-index:10000;transform:translateX(400px);transition:transform .3s cubic-bezier(.4,0,.2,1);font-family:Inter,sans-serif}.toast.show{transform:translateX(0)}.toast.success{background:linear-gradient(135deg,#10b981,#059669);color:#fff}.toast.error{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}.toast.warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}.toast.info{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}.toast-icon{flex-shrink:0;width:20px;height:20px}.toast-message{flex:1;font-size:14px;font-weight:500;line-height:1.5}';
           document.head.appendChild(styles);
         }
 
         document.body.appendChild(toast);
-
-        setTimeout(() => {
-          toast.classList.add('show');
-        }, 10);
-
-        setTimeout(() => {
-          toast.classList.remove('show');
-          setTimeout(() => {
-            toast.remove();
-          }, 300);
-        }, 4000);
+        setTimeout(function() { toast.classList.add('show'); }, 10);
+        setTimeout(function() { toast.classList.remove('show'); setTimeout(function() { toast.remove(); }, 300); }, 4000);
       }
 
-      // Load and display published files
-      function loadPublishedFiles() {
-        const grid = document.getElementById('publishedFilesGrid');
-        const noFilesDiv = document.getElementById('noPublishedFiles');
-
-        // Get files from localStorage
-        const fileStoreJSON = localStorage.getItem('fileStore');
-        if (!fileStoreJSON) {
-          grid.classList.add('hidden');
-          noFilesDiv.classList.remove('hidden');
-          return;
+      // === Page Initialization ===
+      document.addEventListener('DOMContentLoaded', async function() {
+        // Style active filter button
+        var activeBtn = document.querySelector('.filter-btn.active');
+        if (activeBtn) {
+          activeBtn.style.background = 'linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%)';
+          activeBtn.style.color = 'white';
+          activeBtn.style.boxShadow = '0 3px 8px rgba(47, 110, 78, 0.35), 0 1px 3px rgba(0, 0, 0, 0.12)';
+          activeBtn.style.fontWeight = '700';
         }
 
-        let files = [];
-        try {
-          files = JSON.parse(fileStoreJSON);
-        } catch (e) {
-          console.error('Error parsing fileStore:', e);
-          grid.classList.add('hidden');
-          noFilesDiv.classList.remove('hidden');
-          return;
+        // Carousel hover behavior
+        var carouselEl = document.getElementById('testimonialsCarousel');
+        if (carouselEl) {
+          carouselEl.addEventListener('mouseenter', function() { clearInterval(autoSlideInterval); });
+          carouselEl.addEventListener('mouseleave', function() { startAutoSlide(); });
         }
 
-        // Filter only published files
-        const publishedFiles = files.filter(f => f.published);
+        // Load all data in parallel from Supabase
+        await Promise.allSettled([
+          loadProjects(),
+          loadTestimonials(),
+          loadBudgetData(),
+          loadProjectMetrics(),
+          loadPublishedFiles()
+        ]);
+      });
 
-        if (publishedFiles.length === 0) {
-          grid.classList.add('hidden');
-          noFilesDiv.classList.remove('hidden');
-          return;
+      // Debounced resize for testimonials carousel
+      window.addEventListener('resize', function() {
+        if (testimoniesData.length > 0) {
+          clearTimeout(window._resizeTimer);
+          window._resizeTimer = setTimeout(function() { initCarousel(testimoniesData); }, 250);
         }
-
-        grid.classList.remove('hidden');
-        noFilesDiv.classList.add('hidden');
-
-        // Get file type icon color
-        function getFileIconColor(type) {
-          const colors = {
-            pdf: "bg-red-100 text-red-600",
-            xlsx: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
-            png: "bg-blue-100 text-blue-600",
-            jpg: "bg-blue-100 text-blue-600",
-            default: "bg-gray-100 text-gray-700",
-          };
-          return colors[type] || colors.default;
-        }
-
-        // Render files
-        grid.innerHTML = publishedFiles.map(file => `
-          <button
-            onclick="downloadFile('${file.name}')"
-            class="flex items-center justify-between p-6 bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer"
-          >
-            <div class="flex items-center space-x-4">
-              <div class="w-10 h-10 ${getFileIconColor(file.type)} rounded-lg flex items-center justify-center font-bold text-xs">
-                ${file.type ? file.type.toUpperCase() : 'FILE'}
-              </div>
-              <div class="text-left">
-                <div class="font-bold text-gray-800 line-clamp-1">${file.name}</div>
-                <div class="text-sm text-gray-500">${file.uploaded}</div>
-              </div>
-            </div>
-            <svg
-              class="w-6 h-6 text-gray-400 group-hover:text-[#2f6e4e] transition flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              ></path>
-            </svg>
-          </button>
-        `).join('');
-      }
-
-      // Download file function (placeholder)
-      function downloadFile(fileName) {
-        showToast(`Downloading ${fileName}...`, 'info');
-        // In a real app, this would trigger an actual download
-        // For now, it just shows a toast notification
-      }
-
-      // Load published files when page loads
-      document.addEventListener('DOMContentLoaded', function() {
-        loadPublishedFiles();
       });
     </script>
 
-    <!-- Supabase and Google OAuth Handler -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config/env.js"></script>
-    <script src="js/config/supabase.js"></script>
     <script src="js/auth/google-auth-handler.js"></script>
-
     <script>
       // Handle Google OAuth callback on page load
       window.addEventListener('DOMContentLoaded', async () => {

@@ -11,6 +11,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+    <script src="js/auth/auth.js"></script>
+    <script src="js/auth/session.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -325,6 +332,7 @@
           <!-- Logout -->
           <div class="mt-8 pt-8 border-t border-gray-200">
             <button
+              onclick="handleLogout()"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
             >
               <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
@@ -365,16 +373,16 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
-                    <span id="notificationCount" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
+                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
                   </button>
                 </div>
                 <button onclick="openProfileModal()" class="flex items-center space-x-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Juan Dela Cruz</p>
-                    <p class="text-xs text-gray-500">Youth Volunteer</p>
+                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition" id="headerUserName">Loading...</p>
+                    <p class="text-xs text-gray-500" id="headerUserRole">Youth Volunteer</p>
                   </div>
-                  <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">
-                    JV
+                  <div id="headerUserAvatar" class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">
+                    <span class="text-white font-semibold">--</span>
                   </div>
                 </button>
               </div>
@@ -416,9 +424,64 @@
 
               <!-- Projects Grid -->
               <div class="p-6">
+                <!-- Loading Skeleton -->
+                <div id="projectsLoadingSkeleton" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div class="bg-white border border-gray-200 rounded-xl overflow-hidden animate-pulse">
+                    <div class="h-40 bg-gray-200"></div>
+                    <div class="p-5">
+                      <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+                      <div class="flex gap-2 mb-4">
+                        <div class="h-6 bg-gray-200 rounded w-20"></div>
+                        <div class="h-6 bg-gray-200 rounded w-24"></div>
+                      </div>
+                      <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                      <div class="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
+                      <div class="h-10 bg-gray-200 rounded w-full mb-2"></div>
+                      <div class="flex gap-2">
+                        <div class="h-10 bg-gray-200 rounded flex-1"></div>
+                        <div class="h-10 bg-gray-200 rounded flex-1"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-white border border-gray-200 rounded-xl overflow-hidden animate-pulse">
+                    <div class="h-40 bg-gray-200"></div>
+                    <div class="p-5">
+                      <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+                      <div class="flex gap-2 mb-4">
+                        <div class="h-6 bg-gray-200 rounded w-20"></div>
+                        <div class="h-6 bg-gray-200 rounded w-24"></div>
+                      </div>
+                      <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                      <div class="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
+                      <div class="h-10 bg-gray-200 rounded w-full mb-2"></div>
+                      <div class="flex gap-2">
+                        <div class="h-10 bg-gray-200 rounded flex-1"></div>
+                        <div class="h-10 bg-gray-200 rounded flex-1"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-white border border-gray-200 rounded-xl overflow-hidden animate-pulse">
+                    <div class="h-40 bg-gray-200"></div>
+                    <div class="p-5">
+                      <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+                      <div class="flex gap-2 mb-4">
+                        <div class="h-6 bg-gray-200 rounded w-20"></div>
+                        <div class="h-6 bg-gray-200 rounded w-24"></div>
+                      </div>
+                      <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                      <div class="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
+                      <div class="h-10 bg-gray-200 rounded w-full mb-2"></div>
+                      <div class="flex gap-2">
+                        <div class="h-10 bg-gray-200 rounded flex-1"></div>
+                        <div class="h-10 bg-gray-200 rounded flex-1"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div
                   id="projectsGrid"
-                  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"
                 >
                   <!-- Project cards will be dynamically inserted here -->
                 </div>
@@ -1034,96 +1097,11 @@
       </div>
     </div>
 
-    <!-- Main Notification Modal -->
-    <div
-      id="notificationModal"
-      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
-      onclick="closeNotificationModal()"
-    >
-      <div
-        class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col"
-        onclick="event.stopPropagation()"
-      >
-        <div class="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-          <h3 class="font-bold text-gray-800">Notifications</h3>
-          <div class="flex items-center gap-3">
-            <button
-              onclick="markAllAsRead()"
-              class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
-            >
-              Mark all as read
-            </button>
-            <button
-              onclick="closeNotificationModal()"
-              class="text-gray-400 hover:text-gray-600 transition"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
+    <!-- Notification Modal - Injected by NotificationModal.js component -->
+    <div id="notificationModalContainer"></div>
 
-        <div id="notificationList" class="overflow-y-auto flex-1">
-          <!-- Notifications will be dynamically inserted here -->
-        </div>
-      </div>
-    </div>
-
-    <!-- INQUIRY NOTIFICATIONS MODAL -->
-    <div
-      id="notificationsModal"
-      class="hidden fixed inset-0 z-50 overflow-y-auto"
-    >
-      <div class="flex items-center justify-center min-h-screen px-4">
-        <div
-          class="fixed inset-0 bg-gray-500 opacity-75"
-          onclick="closeNotificationsModal()"
-        ></div>
-
-        <div
-          class="relative bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden"
-        >
-          <div
-            class="p-6 border-b bg-gradient-to-r from-[#3d8b64] to-[#3d8b64]"
-          >
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="text-xl font-bold text-white">
-                  Inquiry Notifications
-                </h3>
-                <p class="text-sm text-[#2f6e4e]/20 mt-1">
-                  New replies to your inquiries
-                </p>
-              </div>
-              <button
-                onclick="closeNotificationsModal()"
-                class="text-white/80 hover:text-white"
-              >
-                <svg
-                  class="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div
-            id="notificationsList"
-            class="p-6 overflow-y-auto max-h-[60vh] custom-scrollbar"
-          >
-            <!-- Notifications will be inserted here -->
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- ProfileModal component will be dynamically rendered here -->
+    <div id="profileModalContainer"></div>
 
     <!-- Toast Notification -->
     <div
@@ -1133,102 +1111,358 @@
       <span id="toastMessage"></span>
     </div>
 
-    <script>
-      // Current user (volunteer)
-      const currentUser = "Juan Dela Cruz";
+    <script type="module">
+      // Import components
+      import { NotificationModal } from './js/components/NotificationModal.js';
+      import { ProfileModal } from './js/components/ProfileModal.js';
 
-      // Sample projects data (same as admin view but volunteer can't edit)
-      let projects = [
-        {
-          id: 1,
-          title: "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-          category: "Environment",
-          status: "Ongoing",
-          heads: ["Andrea Pelias", "Kyleen Nicdao"],
-          startDate: "2025-01-15",
-          endDate: "2025-03-15",
-          location: "Malanday River and surrounding areas",
-          description:
-            "A comprehensive environmental initiative focused on rehabilitating the Malanday River system through weekly clean-up activities, waste segregation education, and community involvement.\n\nObjectives:\n• Remove accumulated waste from river and riverbanks\n• Educate residents on proper waste disposal\n• Plant trees along riverbanks\n• Establish monitoring system for illegal dumping\n\nVolunteer Roles Needed:\n• Event Coordinators\n• Documentation Team\n• Logistics Support\n• Community Educators",
-          inquiries: [
-            {
-              id: 101,
-              from: "Juan Dela Cruz",
-              message: "What time po magsisimula?",
-              time: "2h",
-              replies: [
-                {
-                  text: "Good day! The clean-up drive will start at 7:00 AM. Please arrive 15 minutes earlier for registration. Thank you!",
-                  repliedBy: "Andrea Pelias",
-                  repliedAt: "1h",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: 2,
-          title: "Youth Sports Festival 2025",
-          category: "Sports",
-          status: "Ongoing",
-          heads: ["Kyleen Nicdao"],
-          startDate: "2025-02-01",
-          endDate: "2025-02-28",
-          location: "Covered Court",
-          description:
-            "A multi-sport festival for barangay youth including basketball and volleyball. Registration required for teams. Food and first aid on site.",
-          inquiries: [],
-        },
-        {
-          id: 3,
-          title: "Scholarship Program Now Open",
-          category: "Education",
-          status: "Completed",
-          heads: ["Andrea Pelias"],
-          startDate: "2024-11-01",
-          endDate: "2024-12-31",
-          location: "SK Office",
-          description:
-            "Support & scholarship application for deserving students. Deadline: December 15, 2025. Submit requirements to the office during office hours.",
-          inquiries: [],
-        },
-        {
-          id: 4,
-          title: "Youth Leadership Training Workshop",
-          category: "Education",
-          status: "Ongoing",
-          heads: ["Kyleen Nicdao", "Andrea Pelias"],
-          startDate: "2025-03-10",
-          endDate: "2025-03-12",
-          location: "Barangay Hall Conference Room",
-          description:
-            "A three-day intensive leadership training workshop designed to empower young leaders in our community. Learn essential skills in public speaking, project management, and community organizing.\n\nWorkshop Highlights:\n• Leadership fundamentals and team building\n• Effective communication and public speaking\n• Project planning and execution\n• Community engagement strategies\n• Networking with local youth leaders\n\nVolunteer Opportunities:\n• Workshop Facilitators\n• Registration Team\n• Documentation and Media Coverage\n• Logistics and Venue Coordination\n\nAll participants will receive certificates of completion.",
-          inquiries: [],
-        },
-      ];
+      // =========================================
+      // BIMS YOUTH PROJECTS - SUPABASE BACKEND
+      // =========================================
 
-      // User's applications
-      let myApplications = [
-        {
-          id: 1,
-          projectId: 1,
-          projectTitle:
-            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-          appliedDate: "2025-11-10",
-          firstName: "Juan",
-          middleName: "R.",
-          lastName: "Dela Cruz",
-          birthday: "2000-05-15",
-          contact: "09171234567",
-          email: "juan.delacruz@email.com",
-          address: "123 Main St., Marikina City",
-          role: "Event Volunteer",
-          status: "pending",
-        },
-      ];
+      // Security: XSS Prevention helpers
+      function escapeHTML(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
 
+      // State variables
+      let currentUser = null;
+      let currentUserData = null;
+      let projects = [];
+      let myApplications = [];
       let currentProjectId = null;
       let currentTab = "details";
+      let isLoading = false;
+
+      // =========================================
+      // SESSION & INITIALIZATION
+      // =========================================
+      async function initializePage() {
+        try {
+          // Show loading skeleton
+          showLoadingSkeleton(true);
+
+          // Initialize session for Youth Volunteers only
+          const sessionResult = await SessionManager.init(['YOUTH_VOLUNTEER', 'SUPERADMIN']);
+
+          if (!sessionResult.success) {
+            return; // SessionManager handles redirect
+          }
+
+          currentUser = sessionResult.user;
+          currentUserData = sessionResult.userData;
+
+          // Update header with user info
+          updateHeaderUserInfo(sessionResult);
+
+          // Load profile modal data
+          await profileModal.loadUserData(currentUser, sessionResult.userData);
+
+          // Load projects from Supabase
+          await loadProjects();
+
+          // Load user's applications
+          await loadMyApplications();
+
+          // Update current date
+          updateCurrentDate();
+
+          // Initial render
+          renderProjects(projects);
+          renderMyApplicationsGrid();
+
+        } catch (error) {
+          console.error('Page initialization error:', error);
+          showToast('Failed to initialize page. Please refresh.', 'error');
+        } finally {
+          showLoadingSkeleton(false);
+        }
+      }
+
+      function updateHeaderUserInfo(sessionResult) {
+        const nameEl = document.getElementById('headerUserName');
+        const roleEl = document.getElementById('headerUserRole');
+        const avatarEl = document.getElementById('headerUserAvatar');
+
+        if (nameEl && sessionResult.userData) {
+          const firstName = sessionResult.userData.firstName || '';
+          const lastName = sessionResult.userData.lastName || '';
+          nameEl.textContent = `${firstName} ${lastName}`.trim() || 'Youth Volunteer';
+        }
+
+        if (roleEl) {
+          roleEl.textContent = 'Youth Volunteer';
+        }
+
+        // Update avatar with profile image
+        if (avatarEl && sessionResult.userData) {
+          const imageUrl = sessionResult.userData.imagePathURL;
+          const firstName = sessionResult.userData.firstName || '';
+          const lastName = sessionResult.userData.lastName || '';
+          const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+
+          if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('https://')) {
+            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+          } else {
+            avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
+          }
+        }
+      }
+
+      // Listen for profile updates
+      document.addEventListener('profileUpdated', (event) => {
+        const profile = event.detail;
+        const nameEl = document.getElementById('headerUserName');
+        const avatarEl = document.getElementById('headerUserAvatar');
+
+        if (nameEl) {
+          const firstName = profile.firstName || profile.userData?.firstName || '';
+          const lastName = profile.lastName || profile.userData?.lastName || '';
+          nameEl.textContent = `${firstName} ${lastName}`.trim() || 'Youth Volunteer';
+        }
+
+        if (avatarEl) {
+          const firstName = profile.firstName || profile.userData?.firstName || '';
+          const lastName = profile.lastName || profile.userData?.lastName || '';
+          const initials = `${firstName.charAt(0) || ''}${lastName.charAt(0) || ''}`.toUpperCase();
+          const imageUrl = profile.profilePicture || profile.userData?.imagePathURL;
+          if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('https://')) {
+            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+          } else {
+            avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
+          }
+        }
+      });
+
+      function showLoadingSkeleton(show) {
+        const skeleton = document.getElementById('projectsLoadingSkeleton');
+        const grid = document.getElementById('projectsGrid');
+        if (skeleton && grid) {
+          if (show) {
+            skeleton.classList.remove('hidden');
+            grid.classList.add('hidden');
+          } else {
+            skeleton.classList.add('hidden');
+            grid.classList.remove('hidden');
+          }
+        }
+      }
+
+      // =========================================
+      // LOAD PROJECTS FROM SUPABASE
+      // =========================================
+      async function loadProjects() {
+        try {
+          // Query Pre_Project_Tbl for APPROVED projects (Ongoing, Upcoming, Completed)
+          const { data: projectsData, error } = await supabaseClient
+            .from('Pre_Project_Tbl')
+            .select(`
+              *,
+              SK_Tbl (
+                User_Tbl (
+                  firstName,
+                  lastName
+                )
+              )
+            `)
+            .eq('approvalStatus', 'APPROVED')
+            .neq('status', 'CANCELLED')
+            .order('createdAt', { ascending: false });
+
+          if (error) {
+            console.error('Error loading projects:', error);
+            showToast('Failed to load projects. Please try again.', 'error');
+            projects = [];
+          } else {
+            // Transform data to match frontend structure
+            projects = await Promise.all((projectsData || []).map(async (project) => {
+              // Load inquiries for this project
+              const inquiries = await loadProjectInquiries(project.preProjectID);
+
+              // Get project head name
+              const headName = project.SK_Tbl?.User_Tbl
+                ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
+                : 'SK Official';
+
+              // Determine display status
+              let displayStatus = 'Ongoing';
+              if (project.status === 'COMPLETED') {
+                displayStatus = 'Completed';
+              } else if (new Date(project.startDateTime) > new Date()) {
+                displayStatus = 'Upcoming';
+              } else {
+                displayStatus = 'Ongoing';
+              }
+
+              return {
+                id: project.preProjectID,
+                title: project.title,
+                category: project.category,
+                status: displayStatus,
+                heads: [headName],
+                startDate: project.startDateTime ? new Date(project.startDateTime).toISOString().split('T')[0] : '',
+                endDate: project.endDateTime ? new Date(project.endDateTime).toISOString().split('T')[0] : '',
+                location: project.location,
+                description: project.description,
+                budget: project.budget,
+                expectedVolunteers: project.volunteers,
+                beneficiaries: project.beneficiaries,
+                inquiries: inquiries,
+                imagePathURL: project.imagePathURL
+              };
+            }));
+          }
+        } catch (err) {
+          console.error('Load projects exception:', err);
+          showToast('An error occurred while loading projects.', 'error');
+          projects = [];
+        }
+      }
+
+      async function loadProjectInquiries(preProjectID) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('Inquiry_Tbl')
+            .select(`
+              *,
+              User_Tbl (
+                firstName,
+                lastName
+              )
+            `)
+            .eq('preProjectID', preProjectID)
+            .order('timeStamp', { ascending: false });
+
+          if (error) {
+            console.error('Error loading inquiries:', error);
+            return [];
+          }
+
+          // Load replies for each inquiry
+          const inquiriesWithReplies = await Promise.all((data || []).map(async (inquiry) => {
+            const replies = await loadInquiryReplies(inquiry.inquiryID);
+            return {
+              id: inquiry.inquiryID,
+              from: inquiry.User_Tbl ? `${inquiry.User_Tbl.firstName} ${inquiry.User_Tbl.lastName}` : 'Anonymous',
+              message: inquiry.message,
+              time: formatTimeAgo(inquiry.timeStamp),
+              replies: replies,
+              userID: inquiry.userID
+            };
+          }));
+
+          return inquiriesWithReplies;
+        } catch (err) {
+          console.error('Load inquiries exception:', err);
+          return [];
+        }
+      }
+
+      async function loadInquiryReplies(inquiryID) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('Reply_Tbl')
+            .select(`
+              *,
+              User_Tbl (
+                firstName,
+                lastName
+              )
+            `)
+            .eq('inquiryID', inquiryID)
+            .order('timeStamp', { ascending: true });
+
+          if (error) {
+            console.error('Error loading replies:', error);
+            return [];
+          }
+
+          return (data || []).map(reply => ({
+            id: reply.replyID,
+            text: reply.message,
+            repliedBy: reply.User_Tbl ? `${reply.User_Tbl.firstName} ${reply.User_Tbl.lastName}` : 'SK Official',
+            repliedAt: formatTimeAgo(reply.timeStamp)
+          }));
+        } catch (err) {
+          console.error('Load replies exception:', err);
+          return [];
+        }
+      }
+
+      // =========================================
+      // LOAD USER'S APPLICATIONS
+      // =========================================
+      async function loadMyApplications() {
+        if (!currentUser) return;
+
+        try {
+          const { data, error } = await supabaseClient
+            .from('Application_Tbl')
+            .select(`
+              *,
+              Pre_Project_Tbl (
+                title
+              )
+            `)
+            .eq('userID', currentUser.id)
+            .order('appliedDate', { ascending: false });
+
+          if (error) {
+            console.error('Error loading applications:', error);
+            myApplications = [];
+          } else {
+            myApplications = (data || []).map(app => ({
+              id: app.applicationID,
+              projectId: app.preProjectID,
+              projectTitle: app.Pre_Project_Tbl?.title || 'Unknown Project',
+              appliedDate: app.appliedDate ? new Date(app.appliedDate).toISOString().split('T')[0] : '',
+              firstName: currentUserData?.firstName || '',
+              middleName: currentUserData?.middleName || '',
+              lastName: currentUserData?.lastName || '',
+              birthday: currentUserData?.birthday || '',
+              contact: currentUserData?.contact || '',
+              email: currentUser?.email || '',
+              address: currentUserData?.address || '',
+              role: app.preferredRole || '',
+              status: app.applicationStatus?.toLowerCase() || 'pending'
+            }));
+          }
+        } catch (err) {
+          console.error('Load applications exception:', err);
+          myApplications = [];
+        }
+      }
+
+      // =========================================
+      // UTILITY FUNCTIONS
+      // =========================================
+      function formatTimeAgo(timestamp) {
+        if (!timestamp) return 'Unknown';
+        const now = new Date();
+        const date = new Date(timestamp);
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m`;
+        if (diffHours < 24) return `${diffHours}h`;
+        if (diffDays < 7) return `${diffDays}d`;
+        return date.toLocaleDateString();
+      }
+
+      function updateCurrentDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const currentDate = new Date().toLocaleDateString('en-US', options);
+        const dateElement = document.getElementById('currentDate');
+        if (dateElement) {
+          dateElement.textContent = currentDate;
+        }
+      }
 
       // Pagination variables
       let currentPage = 0;
@@ -1475,7 +1709,7 @@
             .join("")
             .substring(0, 2);
           const hasReplies = inquiry.replies && inquiry.replies.length > 0;
-          const isMyInquiry = inquiry.from === currentUser;
+          const isMyInquiry = currentUser && inquiry.userID === currentUser.id;
 
           const card = document.createElement("div");
           card.className = "bg-white border border-gray-200 rounded-lg p-4";
@@ -1635,53 +1869,82 @@
         applyingToProjectId = null;
       }
 
-      function submitApplication() {
-        const firstName = document.getElementById("appFirstName").value.trim();
-        const middleName = document
-          .getElementById("appMiddleName")
-          .value.trim();
-        const lastName = document.getElementById("appLastName").value.trim();
-        const birthday = document.getElementById("appBirthday").value;
-        const contact = document.getElementById("appContact").value.trim();
-        const email = document.getElementById("appEmail").value.trim();
-        const address = document.getElementById("appAddress").value.trim();
+      async function submitApplication() {
+        if (isLoading || !currentUser) return;
+
         const role = document.getElementById("appRole").value.trim();
 
-        if (
-          !firstName ||
-          !lastName ||
-          !birthday ||
-          !contact ||
-          !email ||
-          !address ||
-          !role
-        ) {
-          showToast("Please fill in all required fields", "warning");
+        if (!role) {
+          showToast("Please select a preferred role", "warning");
           return;
         }
 
         const project = projects.find((p) => p.id === applyingToProjectId);
+        if (!project) {
+          showToast("Project not found", "error");
+          return;
+        }
 
-        myApplications.push({
-          id: Date.now(),
-          projectId: applyingToProjectId,
-          projectTitle: project.title,
-          appliedDate: new Date().toISOString().split("T")[0],
-          firstName: firstName,
-          middleName: middleName,
-          lastName: lastName,
-          birthday: birthday,
-          contact: contact,
-          email: email,
-          address: address,
-          role: role,
-          status: "pending",
-        });
+        // Check if already applied
+        const alreadyApplied = myApplications.some(app => app.projectId === applyingToProjectId);
+        if (alreadyApplied) {
+          showToast("You have already applied to this project", "warning");
+          return;
+        }
 
-        showToast("Application submitted successfully!");
-        closeApplyModal();
-        renderProjects(currentFilteredProjects.length > 0 ? currentFilteredProjects : projects);
-        renderMyApplicationsGrid();
+        isLoading = true;
+        const submitBtn = document.querySelector('#applyModal button[onclick="submitApplication()"]');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Submitting...';
+        }
+
+        try {
+          // Insert application into Application_Tbl
+          const { data, error } = await supabaseClient
+            .from('Application_Tbl')
+            .insert({
+              userID: currentUser.id,
+              preProjectID: applyingToProjectId,
+              preferredRole: role,
+              applicationStatus: 'PENDING',
+              appliedDate: new Date().toISOString(),
+              createdAt: new Date().toISOString()
+            })
+            .select()
+            .single();
+
+          if (error) {
+            throw new Error(error.message);
+          }
+
+          // Add to local array
+          myApplications.push({
+            id: data.applicationID,
+            projectId: applyingToProjectId,
+            projectTitle: project.title,
+            appliedDate: new Date().toISOString().split("T")[0],
+            firstName: currentUserData?.firstName || '',
+            lastName: currentUserData?.lastName || '',
+            role: role,
+            status: "pending",
+          });
+
+          showToast("Application submitted successfully!", "success");
+          closeApplyModal();
+          renderProjects(currentFilteredProjects.length > 0 ? currentFilteredProjects : projects);
+          renderMyApplicationsGrid();
+
+        } catch (err) {
+          console.error('Submit application error:', err);
+          showToast('Failed to submit application. Please try again.', 'error');
+        } finally {
+          isLoading = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Application';
+          }
+        }
       }
 
       // Edit Application
@@ -1794,7 +2057,9 @@
         inquiryToProjectId = null;
       }
 
-      function submitInquiry() {
+      async function submitInquiry() {
+        if (isLoading || !currentUser) return;
+
         const message = document.getElementById("inquiryMessage").value.trim();
 
         if (!message) {
@@ -1803,20 +2068,70 @@
         }
 
         const project = projects.find((p) => p.id === inquiryToProjectId);
-        project.inquiries.push({
-          id: Date.now(),
-          from: currentUser,
-          message: message,
-          time: "Just now",
-          replies: [],
-        });
+        if (!project) {
+          showToast("Project not found", "error");
+          return;
+        }
 
-        showToast("Inquiry sent successfully!");
-        closeInquiryModal();
+        isLoading = true;
+        const submitBtn = document.querySelector('#inquiryModal button[onclick="submitInquiry()"]');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Sending...';
+        }
+
+        try {
+          // Insert inquiry into Inquiry_Tbl
+          const { data, error } = await supabaseClient
+            .from('Inquiry_Tbl')
+            .insert({
+              preProjectID: inquiryToProjectId,
+              userID: currentUser.id,
+              message: message,
+              isReplied: false,
+              timeStamp: new Date().toISOString(),
+              createdAt: new Date().toISOString()
+            })
+            .select()
+            .single();
+
+          if (error) {
+            throw new Error(error.message);
+          }
+
+          // Add to local project inquiries
+          const userName = currentUserData
+            ? `${currentUserData.firstName} ${currentUserData.lastName}`.trim()
+            : 'You';
+
+          project.inquiries.unshift({
+            id: data.inquiryID,
+            from: userName,
+            message: message,
+            time: "Just now",
+            replies: [],
+            userID: currentUser.id
+          });
+
+          showToast("Inquiry sent successfully!", "success");
+          closeInquiryModal();
+
+        } catch (err) {
+          console.error('Submit inquiry error:', err);
+          showToast('Failed to send inquiry. Please try again.', 'error');
+        } finally {
+          isLoading = false;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Inquiry';
+          }
+        }
       }
 
       // Reply to inquiry thread (for volunteers to continue conversation)
-      function sendInquiryReply(inquiryId) {
+      async function sendInquiryReply(inquiryId) {
+        if (isLoading || !currentUser) return;
+
         const replyText = document
           .getElementById(`replyText_${inquiryId}`)
           .value.trim();
@@ -1826,41 +2141,75 @@
           return;
         }
 
-        const project = projects.find((p) => p.id === currentProjectId);
-        if (project) {
-          const inquiry = project.inquiries.find((i) => i.id === inquiryId);
-          if (inquiry) {
-            if (!inquiry.replies) {
-              inquiry.replies = [];
-            }
+        isLoading = true;
 
-            inquiry.replies.push({
-              text: replyText,
-              repliedBy: currentUser,
-              repliedAt: "Just now",
-            });
+        try {
+          // Insert reply into Reply_Tbl
+          const { data, error } = await supabaseClient
+            .from('Reply_Tbl')
+            .insert({
+              inquiryID: inquiryId,
+              userID: currentUser.id,
+              message: replyText,
+              timeStamp: new Date().toISOString(),
+              createdAt: new Date().toISOString()
+            })
+            .select()
+            .single();
 
-            showToast("Reply sent successfully");
-            loadInquiries(project);
+          if (error) {
+            throw new Error(error.message);
           }
+
+          // Update local data
+          const project = projects.find((p) => p.id === currentProjectId);
+          if (project) {
+            const inquiry = project.inquiries.find((i) => i.id === inquiryId);
+            if (inquiry) {
+              if (!inquiry.replies) {
+                inquiry.replies = [];
+              }
+
+              const userName = currentUserData
+                ? `${currentUserData.firstName} ${currentUserData.lastName}`.trim()
+                : 'You';
+
+              inquiry.replies.push({
+                id: data.replyID,
+                text: replyText,
+                repliedBy: userName,
+                repliedAt: "Just now",
+              });
+
+              // Clear the reply input
+              document.getElementById(`replyText_${inquiryId}`).value = '';
+
+              showToast("Reply sent successfully", "success");
+              loadInquiries(project);
+            }
+          }
+
+        } catch (err) {
+          console.error('Send reply error:', err);
+          showToast('Failed to send reply. Please try again.', 'error');
+        } finally {
+          isLoading = false;
         }
       }
 
       // Count unread inquiry replies
       function countUnreadReplies() {
+        if (!currentUser) return 0;
         let count = 0;
         projects.forEach((project) => {
           project.inquiries.forEach((inquiry) => {
             if (
-              inquiry.from === currentUser &&
+              inquiry.userID === currentUser.id &&
               inquiry.replies &&
               inquiry.replies.length > 0
             ) {
-              // Check if there are replies from others (not from current user)
-              const hasNewReplies = inquiry.replies.some(
-                (reply) => reply.repliedBy !== currentUser
-              );
-              if (hasNewReplies) count++;
+              // Count inquiries with replies (notifications for user)
+              count++;
             }
           });
         });
@@ -1892,7 +2241,8 @@
         projects.forEach((project) => {
           project.inquiries.forEach((inquiry) => {
             if (
-              inquiry.from === currentUser &&
+              currentUser &&
+              inquiry.userID === currentUser.id &&
               inquiry.replies &&
               inquiry.replies.length > 0
             ) {
@@ -2267,219 +2617,9 @@
         }, 4000);
       }
 
-      // Main Notification System
-      let notifications = [
-        {
-          id: 1,
-          type: "announcement",
-          title: "New Announcement: Youth Sports Festival 2025",
-          message: "A new announcement has been posted",
-          timestamp: "2 hours ago",
-          read: false,
-          referenceId: 1,
-        },
-        {
-          id: 2,
-          type: "inquiry_update",
-          title: "Inquiry Update: Community Clean-Up Drive 2025",
-          message: "Andrea Pelias replied to your inquiry",
-          timestamp: "5 hours ago",
-          read: false,
-          referenceId: 101,
-          projectId: 1,
-          projectName:
-            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-        },
-        {
-          id: 3,
-          type: "project_posted",
-          title: "New Project: Youth Sports Festival 2025",
-          message: "SK Officers posted a new volunteer project",
-          timestamp: "1 day ago",
-          read: false,
-          referenceId: 2,
-        },
-        {
-          id: 4,
-          type: "application_approved",
-          title: "Application Approved: Community Clean-Up Drive 2025",
-          message: "Your application has been approved",
-          timestamp: "30 minutes ago",
-          read: false,
-          projectId: 1,
-          projectName:
-            "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-        },
-        {
-          id: 5,
-          type: "application_pending",
-          title: "Application Pending: Youth Sports Festival 2025",
-          message: "Your application is pending review",
-          timestamp: "1 hour ago",
-          read: false,
-          projectId: 2,
-          projectName: "Youth Sports Festival 2025",
-        },
-        {
-          id: 6,
-          type: "announcement",
-          title: "New Announcement: Free Skills Training Workshop",
-          message: "Check out the new skills training workshop announcement",
-          timestamp: "3 hours ago",
-          read: false,
-          referenceId: 2,
-        },
-        {
-          id: 7,
-          type: "project_posted",
-          title: "New Project: Beach Clean-Up Initiative",
-          message: "SK Officers posted a new volunteer opportunity",
-          timestamp: "2 days ago",
-          read: false,
-          referenceId: 3,
-        },
-        {
-          id: 8,
-          type: "application_approved",
-          title: "Application Approved: Youth Sports Festival 2025",
-          message: "Congratulations! Your application has been approved",
-          timestamp: "4 hours ago",
-          read: false,
-          projectId: 2,
-          projectName: "Youth Sports Festival 2025",
-        },
-      ];
-
-      function updateMainNotificationCount() {
-        const unreadCount = notifications.filter((n) => !n.read).length;
-        const countBadge = document.getElementById("notificationCount");
-
-        if (countBadge) {
-          if (unreadCount > 0) {
-            countBadge.textContent = unreadCount;
-            countBadge.classList.remove("hidden");
-          } else {
-            countBadge.classList.add("hidden");
-          }
-        }
-      }
-
-      function renderMainNotifications() {
-        const notificationList = document.getElementById("notificationList");
-
-        if (notifications.length === 0) {
-          notificationList.innerHTML = `
-          <div class="p-8 text-center text-gray-500">
-            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1"></path>
-            </svg>
-            <p class="text-sm">No notifications</p>
-          </div>
-        `;
-          return;
-        }
-
-        notificationList.innerHTML = notifications
-          .map((notif) => {
-            const unreadClass = !notif.read ? "bg-[#2f6e4e]/10" : "bg-white";
-            const unreadDot = !notif.read
-              ? '<span class="w-2 h-2 bg-[#2f6e4e] rounded-full"></span>'
-              : "";
-
-            let icon = "";
-            if (notif.type === "announcement") {
-              icon = `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
-              </svg>
-            </div>`;
-            } else if (notif.type === "inquiry_update") {
-              icon = `<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-              </svg>
-            </div>`;
-            } else if (notif.type === "project_posted") {
-              icon = `<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-              </svg>
-            </div>`;
-            } else if (notif.type === "application_approved") {
-              icon = `<div class="w-10 h-10 bg-[#2f6e4e]/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>`;
-            } else if (notif.type === "application_pending") {
-              icon = `<div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-            </div>`;
-            }
-
-            return `
-          <div onclick="handleMainNotificationClick(${notif.id})" class="${unreadClass} p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition">
-            <div class="flex items-start space-x-3">
-              ${icon}
-              <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between">
-                  <p class="text-sm font-semibold text-gray-800 truncate">${notif.title}</p>
-                  ${unreadDot}
-                </div>
-                <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
-                <p class="text-xs text-gray-400 mt-2">${notif.timestamp}</p>
-              </div>
-            </div>
-          </div>
-        `;
-          })
-          .join("");
-      }
-
-      function toggleNotificationModal() {
-        const modal = document.getElementById("notificationModal");
-        modal.classList.toggle("hidden");
-
-        if (!modal.classList.contains("hidden")) {
-          renderMainNotifications();
-        }
-      }
-
-      function closeNotificationModal() {
-        document.getElementById("notificationModal").classList.add("hidden");
-      }
-
-      function handleMainNotificationClick(notifId) {
-        const notif = notifications.find((n) => n.id === notifId);
-        if (!notif) return;
-
-        notif.read = true;
-        updateMainNotificationCount();
-        closeNotificationModal();
-
-        if (notif.type === "announcement") {
-          window.location.href = `youth-dashboard.html`;
-        } else if (notif.type === "inquiry_update") {
-          viewProject(notif.projectId);
-          setTimeout(() => switchTab("inquiries"), 200);
-        } else if (notif.type === "project_posted") {
-          viewProject(notif.referenceId);
-        }
-      }
-
-      function markAllAsRead() {
-        notifications.forEach((n) => (n.read = true));
-        updateMainNotificationCount();
-        renderMainNotifications();
-      }
-
       // Initialize
       renderProjects(projects);
       renderMyApplicationsGrid();
-      updateNotificationBadge();
-      updateMainNotificationCount();
 
       // Add event listeners for birthday fields to toggle parental consent
       document
@@ -2537,10 +2677,33 @@
       }
 
       // Call handleURLParameters after everything is initialized
-      // Wrap in setTimeout to ensure all DOM operations are complete
-      setTimeout(() => {
-        handleURLParameters();
-      }, 50);
+      // =========================================
+      // INITIALIZE COMPONENTS
+      // =========================================
+      // Initialize NotificationModal component
+      const notificationModal = new NotificationModal();
+      notificationModal.render();
+      window.notificationModal = notificationModal;
+      window.toggleNotificationModal = () => notificationModal.toggle();
+
+      // Initialize ProfileModal component
+      const profileModal = new ProfileModal();
+      profileModal.render();
+      window.profileModal = profileModal;
+      window.openProfileModal = () => profileModal.open();
+
+      // =========================================
+      // LOGOUT HANDLER
+      // =========================================
+      async function handleLogout() {
+        try {
+          await SessionManager.logout();
+          // SessionManager handles redirect to login page
+        } catch (error) {
+          console.error('Logout error:', error);
+          showToast('Failed to logout. Please try again.', 'error');
+        }
+      }
 
       // Make functions globally accessible
       window.viewProject = viewProject;
@@ -2559,17 +2722,19 @@
       window.showInquiryNotifications = showInquiryNotifications;
       window.closeNotificationsModal = closeNotificationsModal;
       window.updateNotificationBadge = updateNotificationBadge;
+      window.handleLogout = handleLogout;
+      window.navigateProjects = navigateProjects;
+      window.goToPage = goToPage;
+      window.openEditApplicationModal = openEditApplicationModal;
+      window.closeEditApplicationModal = closeEditApplicationModal;
+      window.saveEditedApplication = saveEditedApplication;
 
-      // Update current date
-      function updateCurrentDate() {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const currentDate = new Date().toLocaleDateString('en-US', options);
-        const dateElement = document.getElementById('currentDate');
-        if (dateElement) {
-          dateElement.textContent = currentDate;
-        }
-      }
-      updateCurrentDate();
+      // =========================================
+      // INITIALIZE ON PAGE LOAD
+      // =========================================
+      document.addEventListener('DOMContentLoaded', () => {
+        initializePage();
+      });
     </script>
 
       <script src="js/mobile-nav.js"></script>

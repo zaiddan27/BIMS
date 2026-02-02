@@ -1220,3 +1220,131 @@ When starting a new Claude session:
 - [x] Implement SK Files Supabase backend (upload, view, archive, delete)
 - [x] Implement Youth Files Supabase backend (view, download only)
 - [ ] Implement auto-archive for files older than 1 year
+
+---
+
+## Session: January 24, 2026 - Profile Name Display Consistency Fix
+
+### Issue
+Profile names were displayed inconsistently across dashboard and files pages:
+- Dashboard pages showed middle name (e.g., "Jerome N Ancheta")
+- Files pages showed only first and last name (e.g., "Jerome Ancheta")
+- Static/hardcoded names (e.g., "Andrea Pelias", "Juan Dela Cruz") flashed before dynamic data loaded
+
+### Changes Made
+
+**1. sk-dashboard.html**
+- Changed static HTML name from "Andrea Pelias" to "Loading..."
+- Changed static role from "SK Chairman" to "SK Official"
+- Changed static initials from "AP" to "--"
+- Updated `updateUserProfile()` function to exclude middle name: now shows `firstName lastName` only
+
+**2. youth-dashboard.html**
+- Updated `updateProfileUI()` function to exclude middle name: now shows `firstName lastName` only
+- Static HTML already had appropriate placeholder ("Youth Volunteer")
+
+**3. sk-files.html**
+- Changed static name from "Andrea Pelias" to "Loading..."
+- Changed static role from "SK Chairman" to "SK Official"
+- Changed static initials from "AP" to "--"
+
+**4. youth-files.html**
+- Changed static name from "Juan Dela Cruz" to "Loading..."
+- Changed static initials from "JV" to "--"
+
+### Result
+- All pages now consistently display names as `FirstName LastName` (no middle name)
+- Loading placeholders prevent static mockup data from flashing before real data loads
+- Consistent user experience across SK and Youth dashboards and files pages
+
+---
+
+## Session: January 24, 2026 - SK Projects Backend Integration (Major)
+
+### Overview
+Integrated full Supabase backend functionality for sk-projects.html - the most complex page in the system. This includes project CRUD operations, applicant management, inquiries with replies, budget breakdown, and evaluation/completion workflow.
+
+### Changes Made
+
+**1. Supabase Scripts Added**
+- Added Supabase client CDN script
+- Added `js/config/env.js`, `js/config/supabase.js`, `js/auth/auth.js`, `js/auth/session.js`
+- Changed `<script>` to `<script type="module">` for ES6 imports
+
+**2. Component Integration**
+- Imported NotificationModal and ProfileModal components
+- Replaced old manual profile modal functions with component-based approach
+- Added SessionManager.init() for authentication and role verification
+- Header profile now shows "Loading..." placeholder until real data loads
+
+**3. Project Loading from Supabase**
+- Implemented `loadProjects()` to fetch from Pre_Project_Tbl with related data
+- Loads User_Tbl for creator info, SK_Tbl for project head info
+- Status mapping: ONGOING → Ongoing, COMPLETED → Completed, CANCELLED → Archived
+- Approval status mapping: PENDING → Pending Approval, APPROVED → Ongoing/Completed, REVISION → Pending for Revision
+
+**4. Applicant Loading**
+- Implemented `loadProjectApplications()` to fetch from Application_Tbl
+- Joins User_Tbl to get applicant details (name, birthday, contact, address, email)
+- Calculates age from birthday automatically
+
+**5. Inquiry & Reply Loading**
+- Implemented `loadProjectInquiries()` to fetch from Inquiry_Tbl
+- Loads Reply_Tbl with nested User_Tbl for reply author names
+- Implemented `sendInquiryReply()` to insert into Reply_Tbl and update isReplied flag
+
+**6. Budget Breakdown**
+- Implemented `loadProjectBudgetBreakdown()` to fetch from BudgetBreakdown_Tbl
+- Implemented `saveBudgetBreakdownItems()` for new projects
+- Implemented `updateBudgetBreakdownItems()` for editing projects
+
+**7. Project CRUD Operations**
+- **Create**: Insert into Pre_Project_Tbl with userID, skID, status='ONGOING', approvalStatus='PENDING'
+- **Update**: Update Pre_Project_Tbl with all editable fields
+- **Archive**: Update status to 'CANCELLED' in Pre_Project_Tbl
+- Removed all hardcoded mock data (skOfficials, applications, projects arrays)
+
+**8. Mark as Complete (Evaluation)**
+- Updated `submitEvaluation()` to:
+  - Update Pre_Project_Tbl status to 'COMPLETED'
+  - Create Post_Project_Tbl entry with actual volunteer count, timeline adherence, beneficiaries reached, achievements
+  - Save actual expenses to Expenses_Tbl
+
+**9. Application Status Update**
+- Updated `updateStatus()` to update Application_Tbl.applicationStatus
+
+**10. Notifications**
+- Added `createCaptainNotification()` to notify captain when new project awaits approval
+
+**11. Helper Functions**
+- `isCurrentUserProjectHead()` - checks if current user created or is assigned to project
+- `formatTimeAgo()` - converts timestamps to relative time (2h, 1d, etc.)
+- `showLoadingSkeleton()` - displays loading animation while fetching data
+- `loadSKOfficials()` - loads SK officials from SK_Tbl for project head dropdown
+
+### Database Tables Used
+- Pre_Project_Tbl (projects)
+- Post_Project_Tbl (completed project data)
+- Application_Tbl (volunteer applications)
+- Inquiry_Tbl (project inquiries)
+- Reply_Tbl (inquiry replies)
+- BudgetBreakdown_Tbl (budget items)
+- Expenses_Tbl (actual expenses)
+- SK_Tbl (SK officials)
+- User_Tbl (user details)
+- Notification_Tbl (notifications)
+
+### Removed
+- Hardcoded `skOfficials` array
+- Hardcoded `applications` array
+- Hardcoded `projects` array with 4 sample projects
+- Old manual profile modal functions (openProfileModal, closeProfileModal, handleProfilePictureChange, updateHeaderAvatar, saveProfile)
+- Old `userProfile` object
+
+### Result
+- SK Projects page now fully integrated with Supabase backend
+- Projects load dynamically from database
+- Applications, inquiries, and budget breakdowns all stored in database
+- Mark as Complete workflow creates Post_Project_Tbl record
+- Archive updates project status to CANCELLED
+- Captain notified when new projects await approval

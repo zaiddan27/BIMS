@@ -896,8 +896,8 @@
 
       // Update the profile UI with loaded data
       function updateProfileUI(user, userData) {
-        // Update header profile display - name
-        const fullName = `${userData.firstName || ''} ${userData.middleName ? userData.middleName + ' ' : ''}${userData.lastName || ''}`.trim();
+        // Update header profile display - name (excluding middle name for consistency)
+        const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
 
         // Update header name using element ID
         const nameElement = document.getElementById('headerUserName');

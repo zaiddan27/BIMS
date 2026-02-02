@@ -15,6 +15,13 @@
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config/env.js"></script>
+    <script src="js/config/supabase.js"></script>
+    <script src="js/auth/auth.js"></script>
+    <script src="js/auth/session.js"></script>
+
     <script>
       tailwind.config = {
         theme: {
@@ -388,6 +395,7 @@
           <!-- Logout -->
           <div class="mt-8 pt-8 border-t border-gray-200">
             <button
+              onclick="handleLogout()"
               class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
             >
               <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
@@ -428,6 +436,23 @@
         </div>
       </div>
 
+      <!-- Cancel Approval Confirmation Modal -->
+      <div id="cancelApprovalModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+          <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Cancel Approval Request?</h3>
+          <p id="cancelApprovalProjectName" class="text-sm text-gray-600 text-center mb-6">Are you sure you want to cancel this project's approval request? The project will be deleted.</p>
+          <div class="flex gap-3">
+            <button onclick="closeCancelApprovalModal()" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Keep Project</button>
+            <button id="confirmCancelApprovalBtn" onclick="confirmCancelApproval()" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium">Cancel Approval</button>
+          </div>
+        </div>
+      </div>
+
       <!-- MAIN CONTENT -->
       <div class="flex-1 overflow-auto">
         <!-- Header -->
@@ -441,20 +466,20 @@
               </div>
               <div class="flex items-center space-x-4">
                 <div class="relative">
-                  <button onclick="toggleNotificationModal()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
+                  <button onclick="window.notificationModal.toggle()" class="notification-icon p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition" title="Notifications">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
                     <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse">5</span>
                   </button>
                 </div>
-                <button onclick="openProfileModal()" class="flex items-center space-x-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
+                <button onclick="window.profileModal.open()" class="flex items-center space-x-3 hover:bg-gray-100 rounded-lg px-3 py-2 transition-colors">
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Andrea Pelias</p>
-                    <p class="text-xs text-gray-500">SK Chairman</p>
+                    <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition">Loading...</p>
+                    <p class="text-xs text-gray-500">SK Official</p>
                   </div>
                   <div class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition">
-                    AP
+                    --
                   </div>
                 </button>
               </div>
@@ -1085,7 +1110,17 @@
               onclick="closeProjectModal()"
               class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
             >
-              Cancel
+              Close
+            </button>
+            <button
+              id="cancelApprovalBtn"
+              onclick="cancelProjectApproval()"
+              class="hidden px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center gap-2"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Cancel Approval
             </button>
             <button
               id="saveProjectBtn"
@@ -1718,178 +1753,48 @@
       <span id="toastMessage"></span>
     </div>
 
-    <!-- Notification Modal -->
-    <div
-      id="notificationModal"
-      class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
-      onclick="closeNotificationModal()"
-    >
-      <div
-        class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col"
-        onclick="event.stopPropagation()"
-      >
-        <div class="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-          <h3 class="font-bold text-gray-800">Notifications</h3>
-          <div class="flex items-center gap-3">
-            <button
-              onclick="markAllAsRead()"
-              class="text-xs text-[#2f6e4e] hover:text-[#2f6e4e] font-medium"
-            >
-              Mark all as read
-            </button>
-            <button
-              onclick="closeNotificationModal()"
-              class="text-gray-400 hover:text-gray-600 transition"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
+    <!-- NotificationModal and ProfileModal components will be dynamically rendered -->
 
-        <div id="notificationList" class="overflow-y-auto flex-1">
-          <!-- Notifications will be dynamically inserted here -->
-        </div>
-      </div>
-    </div>
+    <script type="module">
+      // =========================================
+      // BIMS SK PROJECT MONITORING - SUPABASE BACKEND
+      // Cache bust: 2026-01-24-v2
+      // =========================================
 
-    <!-- Profile Modal -->
-    <div id="profileModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50">
-      <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
-          <!-- Header -->
-          <div class="bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] text-white p-6 rounded-t-2xl">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <div class="relative group">
-                  <div id="profilePicturePreview" class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-2xl overflow-hidden">
-                    <span id="profileInitials">AP</span>
-                  </div>
-                  <label for="profilePictureInput" class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                  </label>
-                  <input type="file" id="profilePictureInput" accept="image/*" onchange="handleProfilePictureChange(event)" class="hidden" />
-                </div>
-                <div>
-                  <h2 class="text-2xl font-bold">My Profile</h2>
-                  <p class="text-[#2f6e4e]/20 text-sm">Manage your account information</p>
-                </div>
-              </div>
-              <button onclick="closeProfileModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
+      // Import components
+      import { NotificationModal } from './js/components/NotificationModal.js';
+      import { ProfileModal } from './js/components/ProfileModal.js';
 
-          <!-- Body -->
-          <div class="p-6 space-y-6">
-            <!-- Account Info Section -->
-            <div>
-              <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-                Account Information
-              </h3>
-              <div class="grid grid-cols-3 gap-4">
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
-                  <input type="text" id="profileFirstName" value="Andrea"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Middle Name</label>
-                  <input type="text" id="profileMiddleName" placeholder="Optional"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
-                  <input type="text" id="profileLastName" value="Pelias"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-              </div>
+      // Security: XSS Prevention helpers
+      function escapeHTML(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
 
-              <div class="mt-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                <input type="email" id="profileEmail" value="andrea.pelias@malanday.gov.ph"
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                       readonly />
-                <p class="text-xs text-gray-500 mt-1">Email cannot be changed. Contact admin if needed.</p>
-              </div>
+      // Security: Sanitize image URL (only allow Supabase storage URLs)
+      function sanitizeImageURL(url) {
+        if (!url) return null;
+        try {
+          const parsed = new URL(url);
+          const allowedHosts = ['supabase.co', 'supabase.com'];
+          if (allowedHosts.some(host => parsed.hostname.endsWith(host))) {
+            return url;
+          }
+        } catch (e) {
+          console.warn('Invalid URL:', url);
+        }
+        return null;
+      }
 
-              <div class="mt-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Position</label>
-                <input type="text" id="profilePosition" value="SK Chairman"
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
-                       readonly />
-              </div>
-            </div>
+      // State
+      let projects = [];
+      let currentUser = null;
+      let currentUserData = null;
+      let currentUserSKData = null;
+      let isLoading = false;
 
-            <!-- Personal Info Section -->
-            <div class="pt-6 border-t border-gray-200">
-              <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                Personal Information
-              </h3>
-
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Complete Address</label>
-                  <textarea id="profileAddress" rows="3" placeholder="Enter your complete address"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Number</label>
-                  <input type="tel" id="profileContact" placeholder="e.g., 09171234567"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
-                  <select id="profileGender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent">
-                    <option value="">Select gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="non-binary">Non-binary / Gender Neutral</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Birthday</label>
-                  <input type="date" id="profileBirthday"
-                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Footer -->
-          <div class="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end gap-3 border-t">
-            <button onclick="closeProfileModal()"
-                    class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition">
-              Cancel
-            </button>
-            <button onclick="saveProfile()"
-                    class="px-6 py-3 bg-[#2f6e4e] hover:bg-[#2f6e4e] text-white rounded-lg font-medium transition flex items-center gap-2">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              Save Changes
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
       // Update current date
       function updateCurrentDate() {
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -1899,132 +1804,459 @@
           dateElement.textContent = currentDate;
         }
       }
-      updateCurrentDate();
 
-      // Current user
-      const currentUser = "Andrea Pelias";
+      // =========================================
+      // COMPONENT INITIALIZATION
+      // =========================================
 
-      // User profile data (in production, this would be fetched from server)
-      let userProfile = {
-        firstName: "Andrea",
-        middleName: "",
-        lastName: "Pelias",
-        email: "andrea.pelias@malanday.gov.ph",
-        position: "SK Chairman",
-        address: "",
-        contact: "",
-        gender: "",
-        birthday: "",
-        profilePicture: null // Stores base64 image data
-      };
+      // Initialize NotificationModal component
+      const notificationModal = new NotificationModal();
+      notificationModal.render();
+      window.notificationModal = notificationModal;
+      window.toggleNotificationModal = () => notificationModal.toggle();
 
-      // Profile Modal Functions
-      function openProfileModal() {
-        // Load profile data into form
-        document.getElementById('profileFirstName').value = userProfile.firstName;
-        document.getElementById('profileMiddleName').value = userProfile.middleName;
-        document.getElementById('profileLastName').value = userProfile.lastName;
-        document.getElementById('profileEmail').value = userProfile.email;
-        document.getElementById('profilePosition').value = userProfile.position;
-        document.getElementById('profileAddress').value = userProfile.address;
-        document.getElementById('profileContact').value = userProfile.contact;
-        document.getElementById('profileGender').value = userProfile.gender;
-        document.getElementById('profileBirthday').value = userProfile.birthday;
+      // Initialize ProfileModal component
+      const profileModal = new ProfileModal();
+      profileModal.render();
+      window.profileModal = profileModal;
+      window.openProfileModal = () => profileModal.open();
 
-        // Load profile picture if exists
-        const previewDiv = document.getElementById('profilePicturePreview');
-        if (userProfile.profilePicture) {
-          previewDiv.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
-        } else {
-          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
-          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-          previewDiv.innerHTML = `<span id="profileInitials" class="text-white font-bold text-2xl">${firstInitial}${lastInitial}</span>`;
-        }
+      // =========================================
+      // SESSION & INITIALIZATION
+      // =========================================
+      async function initializePage() {
+        try {
+          // Initialize session for SK Officials only
+          const sessionResult = await SessionManager.init(['SK_OFFICIAL', 'SUPERADMIN']);
 
-        document.getElementById('profileModal').classList.remove('hidden');
-      }
+          if (!sessionResult.success) {
+            return; // SessionManager handles redirect
+          }
 
-      function closeProfileModal() {
-        document.getElementById('profileModal').classList.add('hidden');
-      }
+          currentUser = sessionResult.user;
+          currentUserData = sessionResult.userData;
 
-      function handleProfilePictureChange(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+          // Get SK data for the current user
+          await loadCurrentUserSKData();
 
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-          showToast('Please upload an image file', 'error');
-          return;
-        }
+          // Update header with user info
+          updateHeaderUserInfo(sessionResult);
 
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          showToast('Image size should be less than 5MB', 'error');
-          return;
-        }
+          // Load profile modal data
+          await profileModal.loadUserData(currentUser, sessionResult.userData);
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const imageData = e.target.result;
+          // Load notifications for badge count
+          await notificationModal.loadNotifications();
 
-          // Store in profile
-          userProfile.profilePicture = imageData;
+          // Load projects from Supabase
+          await loadProjects();
 
-          // Update modal preview
-          const previewDiv = document.getElementById('profilePicturePreview');
-          previewDiv.innerHTML = `<img src="${imageData}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
+          // Load SK Officials list
+          await loadSKOfficials();
 
-          // Update header avatar
-          updateHeaderAvatar();
+          // Update current date
+          updateCurrentDate();
 
-          showToast('Profile picture uploaded successfully!');
-        };
-        reader.readAsDataURL(file);
-      }
+          // Handle URL parameters (e.g., from captain approval)
+          handleURLParameters();
 
-      function updateHeaderAvatar() {
-        const headerAvatar = document.querySelector('header .w-10.h-10.bg-[#2f6e4e]');
-        if (!headerAvatar) return;
-
-        if (userProfile.profilePicture) {
-          headerAvatar.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
-        } else {
-          const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
-          const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-          headerAvatar.innerHTML = `<span class="text-white font-bold">${firstInitial}${lastInitial}</span>`;
+        } catch (error) {
+          console.error('Page initialization error:', error);
+          showToast('Failed to initialize page. Please refresh.', 'error');
         }
       }
 
-      function saveProfile() {
-        // Get form values
-        userProfile.firstName = document.getElementById('profileFirstName').value;
-        userProfile.middleName = document.getElementById('profileMiddleName').value;
-        userProfile.lastName = document.getElementById('profileLastName').value;
-        userProfile.address = document.getElementById('profileAddress').value;
-        userProfile.contact = document.getElementById('profileContact').value;
-        userProfile.gender = document.getElementById('profileGender').value;
-        userProfile.birthday = document.getElementById('profileBirthday').value;
+      async function loadSKOfficials() {
+        try {
+          const { data, error } = await supabaseClient
+            .from('SK_Tbl')
+            .select(`
+              skID,
+              position,
+              User_Tbl (
+                firstName,
+                lastName
+              )
+            `);
 
-        // Validation
-        if (!userProfile.firstName || !userProfile.lastName) {
-          showToast('First name and last name are required.', 'error');
-          return;
+          if (!error && data) {
+            skOfficials = data.map(sk => {
+              const user = sk.User_Tbl;
+              return user ? `${user.firstName} ${user.lastName}`.trim() : 'Unknown';
+            }).filter(name => name !== 'Unknown');
+          }
+        } catch (err) {
+          console.warn('Could not load SK officials:', err);
+        }
+      }
+
+      async function loadCurrentUserSKData() {
+        try {
+          const { data, error } = await supabaseClient
+            .from('SK_Tbl')
+            .select('*')
+            .eq('userID', currentUser.id)
+            .single();
+
+          if (!error && data) {
+            currentUserSKData = data;
+          }
+        } catch (err) {
+          console.warn('Could not load SK data:', err);
+        }
+      }
+
+      function updateHeaderUserInfo(sessionResult) {
+        const nameEl = document.querySelector('header .text-sm.font-medium');
+        const roleEl = document.querySelector('header .text-xs.text-gray-500');
+        const avatarEl = document.querySelector('header .w-10.h-10');
+
+        if (nameEl && sessionResult.userData) {
+          const firstName = sessionResult.userData.firstName || '';
+          const lastName = sessionResult.userData.lastName || '';
+          nameEl.textContent = `${firstName} ${lastName}`.trim() || 'SK Official';
         }
 
-        // In production, this would save to the server
-        console.log('Profile saved:', userProfile);
+        if (roleEl) {
+          const roleDisplay = {
+            'SK_OFFICIAL': 'SK Official',
+            'SUPERADMIN': 'Administrator'
+          };
+          roleEl.textContent = roleDisplay[sessionResult.role] || sessionResult.role;
+        }
 
-        // Update header display
-        const middleInitial = userProfile.middleName ? ` ${userProfile.middleName.charAt(0)}.` : '';
-        const fullName = `${userProfile.firstName}${middleInitial} ${userProfile.lastName}`;
-        document.querySelector('header .text-sm.font-medium').textContent = fullName;
+        // Update avatar with profile image
+        if (avatarEl && sessionResult.userData) {
+          const imageUrl = sessionResult.userData.imagePathURL;
+          const firstName = sessionResult.userData.firstName || '';
+          const lastName = sessionResult.userData.lastName || '';
+          const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
-        // Update header avatar
-        updateHeaderAvatar();
+          if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('https://')) {
+            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+          } else {
+            avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
+          }
+        }
+      }
 
-        showToast('Profile updated successfully!');
-        closeProfileModal();
+      // Listen for profile updates from ProfileModal
+      window.addEventListener('profileUpdated', (event) => {
+        const profile = event.detail;
+        const nameEl = document.querySelector('header .text-sm.font-medium');
+        const avatarEl = document.querySelector('header .w-10.h-10');
+
+        if (nameEl) {
+          nameEl.textContent = `${profile.firstName} ${profile.lastName}`.trim();
+        }
+
+        if (avatarEl) {
+          const initials = `${profile.firstName?.charAt(0) || ''}${profile.lastName?.charAt(0) || ''}`.toUpperCase();
+          if (profile.profilePicture && profile.profilePicture.startsWith('https://')) {
+            avatarEl.innerHTML = `<img src="${escapeHTML(profile.profilePicture)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+          } else {
+            avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
+          }
+        }
+
+        // Update currentUserData
+        if (currentUserData) {
+          currentUserData.firstName = profile.firstName;
+          currentUserData.lastName = profile.lastName;
+          currentUserData.imagePathURL = profile.profilePicture;
+        }
+      });
+
+      // =========================================
+      // PROJECT LOADING FROM SUPABASE
+      // =========================================
+      async function loadProjects() {
+        showLoadingSkeleton(true);
+
+        try {
+          // Query Pre_Project_Tbl for all projects (SK Officials can see all)
+          const { data: projectsData, error } = await supabaseClient
+            .from('Pre_Project_Tbl')
+            .select(`
+              *,
+              SK_Tbl (
+                User_Tbl (
+                  firstName,
+                  lastName
+                )
+              )
+            `)
+            .in('approvalStatus', ['APPROVED', 'PENDING', 'REVISION'])
+            .neq('status', 'CANCELLED')
+            .order('createdAt', { ascending: false });
+
+          if (error) {
+            console.error('Error loading projects:', error);
+            showToast('Failed to load projects. Please try again.', 'error');
+            projects = [];
+          } else {
+            // Transform data to match our frontend structure
+            projects = await Promise.all((projectsData || []).map(async (project) => {
+              // Load applications for this project
+              const applications = await loadProjectApplications(project.preProjectID);
+
+              // Load inquiries for this project
+              const inquiries = await loadProjectInquiries(project.preProjectID);
+
+              // Load budget breakdown
+              const budgetBreakdown = await loadProjectBudgetBreakdown(project.preProjectID);
+
+              // Get project head name
+              const headName = project.SK_Tbl?.User_Tbl
+                ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
+                : 'Unknown';
+
+              // Map status for display
+              const statusMap = {
+                'ONGOING': 'Ongoing',
+                'COMPLETED': 'Completed',
+                'CANCELLED': 'Cancelled'
+              };
+
+              const approvalStatusMap = {
+                'PENDING': 'Pending Approval',
+                'APPROVED': project.status === 'COMPLETED' ? 'Completed' : (new Date(project.startDateTime) > new Date() ? 'Upcoming' : 'Ongoing'),
+                'REJECTED': 'Rejected',
+                'REVISION': 'Pending for Revision'
+              };
+
+              // Determine display status
+              let displayStatus = approvalStatusMap[project.approvalStatus] || project.status;
+              if (project.approvalStatus === 'APPROVED') {
+                if (project.status === 'COMPLETED') {
+                  displayStatus = 'Completed';
+                } else if (new Date(project.startDateTime) > new Date()) {
+                  displayStatus = 'Upcoming';
+                } else {
+                  displayStatus = 'Ongoing';
+                }
+              }
+
+              return {
+                id: project.preProjectID,
+                title: project.title,
+                category: project.category,
+                status: displayStatus,
+                dbStatus: project.status,
+                approvalStatus: project.approvalStatus,
+                heads: [headName],
+                skID: project.skID,
+                startDate: project.startDateTime ? new Date(project.startDateTime).toISOString().split('T')[0] : '',
+                endDate: project.endDateTime ? new Date(project.endDateTime).toISOString().split('T')[0] : '',
+                startTime: project.startDateTime ? new Date(project.startDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
+                endTime: project.endDateTime ? new Date(project.endDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
+                location: project.location,
+                description: project.description,
+                budget: project.budget,
+                expectedVolunteers: project.volunteers,
+                beneficiaries: project.beneficiaries,
+                budgetBreakdown: budgetBreakdown,
+                applications: applications,
+                inquiries: inquiries,
+                approvalNotes: project.approvalNotes,
+                approvalDate: project.approvalDate ? new Date(project.approvalDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null,
+                imagePathURL: project.imagePathURL,
+                userID: project.userID
+              };
+            }));
+          }
+
+          showLoadingSkeleton(false);
+          renderProjects(projects);
+
+        } catch (err) {
+          console.error('Load projects exception:', err);
+          showToast('An error occurred while loading projects.', 'error');
+          showLoadingSkeleton(false);
+          projects = [];
+          renderProjects([]);
+        }
+      }
+
+      async function loadProjectApplications(preProjectID) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('Application_Tbl')
+            .select(`
+              *,
+              User_Tbl (
+                firstName,
+                lastName,
+                middleName,
+                birthday,
+                contactNumber,
+                address,
+                email
+              )
+            `)
+            .eq('preProjectID', preProjectID);
+
+          if (error) {
+            console.error('Error loading applications:', error);
+            return [];
+          }
+
+          return (data || []).map(app => {
+            const user = app.User_Tbl || {};
+            const birthday = user.birthday ? new Date(user.birthday) : null;
+            const age = birthday ? Math.floor((new Date() - birthday) / (365.25 * 24 * 60 * 60 * 1000)) : null;
+
+            return {
+              id: app.applicationID,
+              projectId: app.preProjectID,
+              firstName: user.firstName || '',
+              middleName: user.middleName || '',
+              lastName: user.lastName || '',
+              fullName: `${user.lastName || ''}, ${user.firstName || ''} ${user.middleName ? user.middleName.charAt(0) + '.' : ''}`.trim(),
+              birthday: user.birthday || '',
+              age: age,
+              contact: user.contactNumber || '',
+              email: user.email || '',
+              address: user.address || '',
+              preferredRole: app.preferredRole,
+              parentalConsent: app.parentConsentFile,
+              status: (app.applicationStatus || 'pending').toLowerCase(),
+              appliedDate: app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : '',
+              userID: app.userID
+            };
+          });
+        } catch (err) {
+          console.error('Load applications exception:', err);
+          return [];
+        }
+      }
+
+      async function loadProjectInquiries(preProjectID) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('Inquiry_Tbl')
+            .select(`
+              *,
+              User_Tbl (
+                firstName,
+                lastName
+              ),
+              Reply_Tbl (
+                replyID,
+                message,
+                timeStamp,
+                User_Tbl (
+                  firstName,
+                  lastName
+                )
+              )
+            `)
+            .eq('preProjectID', preProjectID)
+            .order('timeStamp', { ascending: false });
+
+          if (error) {
+            console.error('Error loading inquiries:', error);
+            return [];
+          }
+
+          return (data || []).map(inq => ({
+            id: inq.inquiryID,
+            from: inq.User_Tbl ? `${inq.User_Tbl.firstName} ${inq.User_Tbl.lastName}`.trim() : 'Anonymous',
+            message: inq.message,
+            time: formatTimeAgo(inq.timeStamp),
+            isReplied: inq.isReplied,
+            replies: (inq.Reply_Tbl || []).map(reply => ({
+              id: reply.replyID,
+              text: reply.message,
+              repliedBy: reply.User_Tbl ? `${reply.User_Tbl.firstName} ${reply.User_Tbl.lastName}`.trim() : 'SK Official',
+              repliedAt: formatTimeAgo(reply.timeStamp)
+            }))
+          }));
+        } catch (err) {
+          console.error('Load inquiries exception:', err);
+          return [];
+        }
+      }
+
+      async function loadProjectBudgetBreakdown(preProjectID) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('BudgetBreakdown_Tbl')
+            .select('*')
+            .eq('preProjectID', preProjectID);
+
+          if (error) {
+            console.error('Error loading budget breakdown:', error);
+            return [];
+          }
+
+          return (data || []).map(item => ({
+            id: item.breakdownID,
+            description: item.description,
+            cost: item.cost
+          }));
+        } catch (err) {
+          console.error('Load budget breakdown exception:', err);
+          return [];
+        }
+      }
+
+      function formatTimeAgo(timestamp) {
+        if (!timestamp) return '';
+        const now = new Date();
+        const date = new Date(timestamp);
+        const seconds = Math.floor((now - date) / 1000);
+
+        if (seconds < 60) return 'Just now';
+        if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+        if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
+        if (seconds < 604800) return `${Math.floor(seconds / 86400)}d`;
+        return date.toLocaleDateString();
+      }
+
+      function showLoadingSkeleton(show) {
+        const grid = document.getElementById('projectsGrid');
+        if (show) {
+          grid.innerHTML = `
+            <div class="bg-white border border-gray-200 rounded-xl p-5 animate-pulse">
+              <div class="h-40 bg-gray-200 rounded-lg mb-4"></div>
+              <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+              <div class="flex gap-2 mb-4">
+                <div class="h-6 bg-gray-200 rounded w-20"></div>
+                <div class="h-6 bg-gray-200 rounded w-24"></div>
+              </div>
+              <div class="h-16 bg-gray-200 rounded mb-4"></div>
+              <div class="h-10 bg-gray-200 rounded"></div>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-xl p-5 animate-pulse">
+              <div class="h-40 bg-gray-200 rounded-lg mb-4"></div>
+              <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+              <div class="flex gap-2 mb-4">
+                <div class="h-6 bg-gray-200 rounded w-20"></div>
+                <div class="h-6 bg-gray-200 rounded w-24"></div>
+              </div>
+              <div class="h-16 bg-gray-200 rounded mb-4"></div>
+              <div class="h-10 bg-gray-200 rounded"></div>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-xl p-5 animate-pulse">
+              <div class="h-40 bg-gray-200 rounded-lg mb-4"></div>
+              <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+              <div class="flex gap-2 mb-4">
+                <div class="h-6 bg-gray-200 rounded w-20"></div>
+                <div class="h-6 bg-gray-200 rounded w-24"></div>
+              </div>
+              <div class="h-16 bg-gray-200 rounded mb-4"></div>
+              <div class="h-10 bg-gray-200 rounded"></div>
+            </div>
+          `;
+        }
+      }
+
+      // Helper to check if current user is project head
+      function isCurrentUserProjectHead(project) {
+        if (!currentUserData || !project) return false;
+        const currentUserName = `${currentUserData.firstName} ${currentUserData.lastName}`.trim();
+        return project.heads.includes(currentUserName) || project.userID === currentUser?.id;
       }
 
       // Generate Attendance PDF
@@ -2157,200 +2389,6 @@
         showToast('Attendance sheet generated successfully!');
       }
 
-      // SK Officials list
-      const skOfficials = [
-        "Andrea Pelias",
-        "Kyleen Nicdao",
-        "Gavin Adrian Santos",
-        "Elijah Dela Vega",
-        "Juliana Gabriella Sergio",
-        "Jerome Ancheta",
-        "Catherine Reyes",
-        "Mark Santiago",
-      ];
-
-      // Sample volunteer applications
-      const applications = [
-        {
-          id: 1,
-          projectId: 1,
-          firstName: "Juan",
-          middleName: "R.",
-          lastName: "Dela Cruz",
-          fullName: "Dela Cruz, Juan R.",
-          birthday: "2005-03-15",
-          age: 20,
-          contact: "09171234567",
-          address: "123 Malanday Street, Marikina City",
-          preferredRole: "Event Coordinator",
-          status: "pending",
-          appliedDate: "2025-01-20",
-        },
-        {
-          id: 2,
-          projectId: 1,
-          firstName: "Maria",
-          middleName: "C.",
-          lastName: "Santos",
-          fullName: "Santos, Maria C.",
-          birthday: "2008-07-22",
-          age: 17,
-          contact: "09281234567",
-          address: "456 Sampaguita St., Marikina City",
-          preferredRole: "Documentation Team",
-          parentalConsent: "parental_consent_maria_santos.pdf",
-          status: "approved",
-          attended: true,
-          appliedDate: "2025-01-18",
-        },
-        {
-          id: 3,
-          projectId: 2,
-          firstName: "Mark",
-          middleName: "A.",
-          lastName: "Rivera",
-          fullName: "Rivera, Mark A.",
-          birthday: "2004-11-30",
-          age: 21,
-          contact: "09331234567",
-          address: "789 Rizal Ave., Marikina City",
-          preferredRole: "Sports Coach",
-          status: "approved",
-          appliedDate: "2025-01-19",
-        },
-      ];
-
-      // Sample projects with enhanced data
-      let projects = [
-        {
-          id: 1,
-          title: "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-          category: "Environment",
-          status: "Ongoing",
-          heads: ["Andrea Pelias", "Kyleen Nicdao"],
-          startDate: "2025-12-02",
-          endDate: "2025-12-02",
-          startTime: "08:00",
-          endTime: "12:00",
-          location: "Malanday River and surrounding areas",
-          description:
-            "A comprehensive environmental initiative focused on rehabilitating the Malanday River system through weekly clean-up activities, waste segregation education, and community involvement.\n\nObjectives:\n• Remove accumulated waste from river and riverbanks\n• Educate residents on proper waste disposal\n• Plant trees along riverbanks\n• Establish monitoring system for illegal dumping\n\nVolunteer Roles Needed:\n• Event Coordinators\n• Documentation Team\n• Logistics Support\n• Community Educators",
-          banner: "",
-          budget: 35000,
-          expectedVolunteers: 40,
-          beneficiaries: "250 Community residents, families near Malanday River",
-          budgetBreakdown: [
-            { id: 1, description: "Cleaning supplies and equipment", cost: 8000 },
-            { id: 2, description: "Trash bags and waste bins", cost: 3500 },
-            { id: 3, description: "Refreshments for volunteers", cost: 5000 },
-            { id: 4, description: "Tree saplings and planting materials", cost: 7500 },
-            { id: 5, description: "Signage and educational materials", cost: 4000 },
-            { id: 6, description: "First aid supplies", cost: 2000 },
-            { id: 7, description: "Transportation and logistics", cost: 3000 },
-            { id: 8, description: "Documentation (photos/videos)", cost: 2000 }
-          ],
-          applications: applications.filter((a) => a.projectId === 1),
-          approvalStatus: "approved",
-          notes: "Great initiative! The project proposal is well-structured and the budget is reasonable. Approved for implementation. Please ensure all safety protocols are followed during the event.",
-          approvedBy: "Hon. Barangay Captain",
-          approvalDate: "Dec 10, 2025",
-          inquiries: [
-            {
-              id: 101,
-              from: "Juan Dela Cruz",
-              message: "What time po magsisimula?",
-              time: "2h",
-              replies: [
-                {
-                  text: "Good day! The clean-up drive will start at 7:00 AM. Please arrive 15 minutes earlier for registration. Thank you!",
-                  repliedBy: "Andrea Pelias",
-                  repliedAt: "1h",
-                },
-              ],
-            },
-            {
-              id: 102,
-              from: "Maria Santos",
-              message: "Pwede po bang sumama kahit late?",
-              time: "5h",
-              replies: [
-                {
-                  text: "Hello! Yes, you can join even if you arrive late. However, we encourage everyone to come on time so you won't miss the orientation and safety briefing. See you there!",
-                  repliedBy: "Andrea Pelias",
-                  repliedAt: "4h",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: 2,
-          title: "Youth Sports Festival 2025",
-          category: "Sports",
-          status: "Completed",
-          heads: ["Kyleen Nicdao"],
-          startDate: "2025-11-25",
-          endDate: "2025-11-25",
-          startTime: "09:00",
-          endTime: "17:00",
-          location: "Covered Court",
-          description:
-            "A multi-sport festival for barangay youth including basketball and volleyball. Registration required for teams. Food and first aid on site.",
-          banner: "",
-          applications: applications.filter((a) => a.projectId === 2),
-          inquiries: [
-            {
-              id: 201,
-              from: "Mark Rivera",
-              message: "Anong uniform ang suot?",
-              time: "1d",
-              replies: [],
-            },
-          ],
-        },
-        {
-          id: 3,
-          title: "Scholarship Program Deadline",
-          category: "Education",
-          status: "Pending for Revision",
-          heads: ["Andrea Pelias"],
-          startDate: "2025-12-15",
-          endDate: "2025-12-15",
-          startTime: "23:59",
-          endTime: "23:59",
-          location: "SK Office",
-          description:
-            "Support & scholarship application for deserving students. Deadline: December 15, 2025. Submit requirements to the office during office hours.",
-          banner: "",
-          applications: [],
-          inquiries: [],
-          approvalStatus: "revision-requested",
-          notes: "The scholarship program needs more details:\n\n1. Provide specific eligibility criteria\n2. Include budget breakdown for scholarship amounts\n3. Add selection process timeline\n4. Specify number of scholarship slots available\n\nPlease revise and resubmit within 5 working days.",
-          revisionRequestedBy: "Hon. Barangay Captain",
-          revisionRequestDate: "Dec 12, 2025",
-        },
-        {
-          id: 4,
-          title: "International Youth Exchange Program",
-          category: "Education",
-          status: "Rejected",
-          heads: ["Andrea Pelias"],
-          startDate: "2026-03-01",
-          endDate: "2026-03-15",
-          startTime: "08:00",
-          endTime: "18:00",
-          location: "Various International Venues",
-          description: "Youth exchange program with sister barangay in another country to promote cultural exchange and global exposure.",
-          banner: "",
-          applications: [],
-          inquiries: [],
-          approvalStatus: "rejected",
-          notes: "After careful review, this project cannot be approved due to:\n\n1. Budget of ₱250,000 exceeds our Q1 allocation\n2. Not aligned with current barangay priorities\n3. Limited direct benefit to the community\n4. High costs for small participant pool\n\nWe suggest focusing on local programs that can benefit more residents. You may consider a local cultural exchange with nearby barangays instead, which would be more cost-effective and accessible.",
-          rejectedBy: "Hon. Barangay Captain",
-          rejectionDate: "Dec 11, 2025",
-        },
-      ];
-
       // Store current project ID for modal operations
       let currentProjectId = null;
 
@@ -2358,6 +2396,9 @@
       let currentPage = 0;
       const projectsPerPage = 3;
       let currentFilteredProjects = [];
+
+      // SK Officials list (loaded from database)
+      let skOfficials = [];
 
       // Navigate through project pages
       function navigateProjects(direction) {
@@ -2426,7 +2467,7 @@
         updatePaginationDots();
 
         projectsToShow.forEach((project) => {
-          const isHead = project.heads.includes(currentUser);
+          const isHead = isCurrentUserProjectHead(project);
           const pendingCount = project.applications.filter(
             (a) => a.status === "pending"
           ).length;
@@ -2527,7 +2568,7 @@
               project.status === "Completed" || project.status === "Rejected" || project.status === "Pending for Revision"
                 ? `
               <button onclick="archiveProject(${project.id})"
-                      class="w-full px-4 py-2.5 bg-gray-700 text-white rounded-lg hover:bg-gray-800 font-medium mb-3 transition flex items-center justify-center gap-2">
+                      class="w-full px-4 py-2.5 text-yellow-600 border border-yellow-300 rounded-lg hover:bg-yellow-50 font-medium mb-3 transition flex items-center justify-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
                 </svg>
@@ -2928,42 +2969,68 @@
         currentApp = null;
       }
 
-      function updateStatus(newStatus) {
+      async function updateStatus(newStatus) {
         if (!currentApp) return;
-        currentApp.status = newStatus;
-        showToast(`Application status updated to ${newStatus}`);
-        closeApplicantModal();
 
-        // Refresh the view
-        const project = projects.find((p) =>
-          p.applications.some((a) => a.id === currentApp.id)
-        );
-        if (project) {
-          loadApplicants(project);
+        try {
+          // Map status to database format
+          const dbStatus = newStatus.toUpperCase();
 
-          // Update counts
-          const pending = project.applications.filter(
-            (a) => a.status === "pending"
-          ).length;
-          const approved = project.applications.filter(
-            (a) => a.status === "approved"
-          ).length;
-          document.getElementById("pendingCount").textContent = pending;
-          document.getElementById("approvedCount").textContent = approved;
+          // Update application status in database
+          const { error } = await supabaseClient
+            .from('Application_Tbl')
+            .update({
+              applicationStatus: dbStatus
+            })
+            .eq('applicationID', currentApp.id);
+
+          if (error) {
+            console.error('Error updating application status:', error);
+            showToast('Failed to update status. Please try again.', 'error');
+            return;
+          }
+
+          // Update local state
+          currentApp.status = newStatus;
+          showToast(`Application status updated to ${newStatus}`);
+          closeApplicantModal();
+
+          // Refresh the view
+          const project = projects.find((p) =>
+            p.applications.some((a) => a.id === currentApp.id)
+          );
+          if (project) {
+            // Reload applications from database
+            project.applications = await loadProjectApplications(project.id);
+            loadApplicants(project);
+
+            // Update counts
+            const pending = project.applications.filter(
+              (a) => a.status === "pending"
+            ).length;
+            const approved = project.applications.filter(
+              (a) => a.status === "approved"
+            ).length;
+            document.getElementById("pendingCount").textContent = pending;
+            document.getElementById("approvedCount").textContent = approved;
+          }
+
+          renderProjects(projects);
+        } catch (err) {
+          console.error('Update status exception:', err);
+          showToast('An error occurred. Please try again.', 'error');
         }
-
-        renderProjects(projects);
       }
 
       // Edit project
       let editingProjectId = null;
       let selectedHeads = [];
 
-      function editProject(id) {
+      async function editProject(id) {
         const project = projects.find((p) => p.id === id);
         if (!project) return;
 
-        if (!project.heads.includes(currentUser)) {
+        if (!isCurrentUserProjectHead(project)) {
           showToast("Only project heads can edit this project.", "warning");
           return;
         }
@@ -2986,10 +3053,51 @@
         document.getElementById("projDesc").value = project.description;
         document.getElementById("projBeneficiaries").value = project.beneficiaries || "";
 
-        selectedHeads = [...project.heads];
+        selectedHeads = [...(project.heads || [])];
         renderHeadsPills();
 
+        // Load budget breakdown items from database
+        await loadBudgetBreakdownForEdit(project.id);
+
+        // Show/hide cancel approval button based on status
+        const cancelApprovalBtn = document.getElementById("cancelApprovalBtn");
+        if (project.status === "Pending Approval") {
+          cancelApprovalBtn.classList.remove("hidden");
+          cancelApprovalBtn.classList.add("flex");
+        } else {
+          cancelApprovalBtn.classList.add("hidden");
+          cancelApprovalBtn.classList.remove("flex");
+        }
+
         document.getElementById("projectModal").classList.remove("hidden");
+      }
+
+      async function loadBudgetBreakdownForEdit(preProjectID) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('BudgetBreakdown_Tbl')
+            .select('*')
+            .eq('preProjectID', preProjectID)
+            .order('breakdownID', { ascending: true });
+
+          if (error) {
+            console.error('Error loading budget breakdown:', error);
+            budgetBreakdownItems = [];
+          } else {
+            // Transform database items to local format
+            budgetBreakdownItems = (data || []).map(item => ({
+              id: item.breakdownID,
+              description: item.description,
+              cost: item.cost || 0
+            }));
+          }
+          renderBudgetBreakdown();
+          updateBudgetTotal();
+        } catch (err) {
+          console.error('Error loading budget breakdown:', err);
+          budgetBreakdownItems = [];
+          renderBudgetBreakdown();
+        }
       }
 
       // Create new project
@@ -3014,6 +3122,12 @@
 
           clearBudgetBreakdown();
           renderHeadsPills();
+
+          // Hide cancel approval button when creating new project
+          const cancelApprovalBtn = document.getElementById("cancelApprovalBtn");
+          cancelApprovalBtn.classList.add("hidden");
+          cancelApprovalBtn.classList.remove("flex");
+
           document.getElementById("projectModal").classList.remove("hidden");
 
           // Check if there's a budget in URL params (from captain approval)
@@ -3031,6 +3145,67 @@
         editingProjectId = null;
         selectedHeads = [];
         clearBudgetBreakdown();
+      }
+
+      function cancelProjectApproval() {
+        if (!editingProjectId) return;
+
+        const project = projects.find((p) => p.id === editingProjectId);
+        if (!project) return;
+
+        // Show the styled confirmation modal
+        document.getElementById("cancelApprovalProjectName").textContent =
+          `Are you sure you want to cancel the approval request for "${project.title}"? The project will be permanently deleted.`;
+        document.getElementById("cancelApprovalModal").classList.remove("hidden");
+      }
+
+      function closeCancelApprovalModal() {
+        document.getElementById("cancelApprovalModal").classList.add("hidden");
+      }
+
+      async function confirmCancelApproval() {
+        if (!editingProjectId) return;
+
+        const project = projects.find((p) => p.id === editingProjectId);
+        if (!project) return;
+
+        const btn = document.getElementById("confirmCancelApprovalBtn");
+        btn.disabled = true;
+        btn.textContent = "Canceling...";
+
+        try {
+          // Delete budget breakdown items first
+          const { error: breakdownError } = await supabaseClient
+            .from("BudgetBreakdown_Tbl")
+            .delete()
+            .eq("preProjectID", project.id);
+
+          if (breakdownError) {
+            console.error("Error deleting budget breakdown:", breakdownError);
+          }
+
+          // Delete the project
+          const { error } = await supabaseClient
+            .from("Pre_Project_Tbl")
+            .delete()
+            .eq("preProjectID", project.id);
+
+          if (error) {
+            showToast("Error canceling project approval: " + error.message, "error");
+            return;
+          }
+
+          showToast("Project approval request has been canceled.", "success");
+          closeCancelApprovalModal();
+          closeProjectModal();
+          await loadProjects();
+        } catch (err) {
+          console.error("Error canceling project approval:", err);
+          showToast("An error occurred while canceling the project.", "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Cancel Approval";
+        }
       }
 
       // Budget Breakdown Functions
@@ -3215,7 +3390,12 @@
       // Save project
       document
         .getElementById("saveProjectBtn")
-        .addEventListener("click", () => {
+        .addEventListener("click", async () => {
+          const saveBtn = document.getElementById("saveProjectBtn");
+          if (saveBtn.disabled) return;
+          saveBtn.disabled = true;
+          saveBtn.classList.add("opacity-50", "pointer-events-none");
+
           const title = document.getElementById("projTitle").value.trim();
           const category = document.getElementById("projCategory").value.trim();
           const status = document.getElementById("projStatus").value;
@@ -3229,16 +3409,23 @@
           const volunteers = parseInt(document.getElementById("projVolunteers").value) || 0;
           const beneficiaries = document.getElementById("projBeneficiaries").value.trim();
 
+          function reenableBtn() {
+            saveBtn.disabled = false;
+            saveBtn.classList.remove("opacity-50", "pointer-events-none");
+          }
+
           if (
             !title ||
             !category ||
-            selectedHeads.length === 0 ||
             !startDate ||
             !startTime ||
             !endDate ||
-            !endTime
+            !endTime ||
+            !location ||
+            !description
           ) {
-            showToast("Please provide all required fields: title, category, start date/time, end date/time, and at least one project head.", "error");
+            showToast("Please provide all required fields.", "error");
+            reenableBtn();
             return;
           }
 
@@ -3247,69 +3434,156 @@
             const totalBudgetBreakdown = budgetBreakdownItems.reduce((sum, item) => sum + (item.cost || 0), 0);
             if (totalBudgetBreakdown > budget) {
               showToast(`Budget breakdown total (₱${totalBudgetBreakdown.toLocaleString()}) exceeds the proposed budget (₱${budget.toLocaleString()}). Please adjust the breakdown.`, "error");
+              reenableBtn();
               return;
             }
             // Check if all items have descriptions
             const hasEmptyDescriptions = budgetBreakdownItems.some(item => !item.description.trim());
             if (hasEmptyDescriptions) {
               showToast("Please provide descriptions for all budget breakdown items.", "error");
+              reenableBtn();
               return;
             }
           }
 
-          if (editingProjectId) {
-            const project = projects.find((p) => p.id === editingProjectId);
-            Object.assign(project, {
-              title,
-              category,
-              status,
-              startDate,
-              startTime,
-              endDate,
-              endTime,
-              location,
-              description,
-              budget,
-              expectedVolunteers: volunteers,
-              beneficiaries,
-              heads: [...selectedHeads],
-              budgetBreakdown: budgetBreakdownItems.map(item => ({ ...item })),
-            });
-            showToast("Project updated successfully");
-          } else {
-            const newProject = {
-              id: Date.now(),
-              title,
-              category,
-              status: "Pending Approval",
-              startDate,
-              startTime,
-              endDate,
-              endTime,
-              location,
-              description,
-              budget,
-              expectedVolunteers: volunteers,
-              beneficiaries,
-              heads: [...selectedHeads],
-              budgetBreakdown: budgetBreakdownItems.map(item => ({ ...item })),
-              banner: "",
-              submittedBy: "Andrea Pelias",
-              submissionDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-              approvalStatus: "pending",
-              applications: [],
-              inquiries: [],
-            };
-            projects.unshift(newProject);
-            showToast("Project submitted for Barangay Captain approval!");
-          }
+          // Combine date and time into ISO format
+          const startDateTime = new Date(`${startDate}T${startTime}`).toISOString();
+          const endDateTime = new Date(`${endDate}T${endTime}`).toISOString();
 
-          closeProjectModal();
-          renderProjects(projects);
+          try {
+            if (editingProjectId) {
+              // Update existing project
+              const { data, error } = await supabaseClient
+                .from('Pre_Project_Tbl')
+                .update({
+                  title,
+                  category,
+                  description,
+                  budget: Math.round(budget),
+                  volunteers,
+                  beneficiaries: parseInt(beneficiaries) || 0,
+                  startDateTime,
+                  endDateTime,
+                  location,
+                  updatedAt: new Date().toISOString()
+                })
+                .eq('preProjectID', editingProjectId)
+                .select();
+
+              if (error) {
+                console.error('Error updating project:', error);
+                showToast('Failed to update project. Please try again.', 'error');
+                reenableBtn();
+                return;
+              }
+
+              // Update budget breakdown items
+              await updateBudgetBreakdownItems(editingProjectId);
+
+              showToast("Project updated successfully");
+            } else {
+              // Create new project
+              const { data: newProject, error } = await supabaseClient
+                .from('Pre_Project_Tbl')
+                .insert({
+                  userID: currentUser.id,
+                  skID: currentUserSKData?.skID || null,
+                  title,
+                  category,
+                  description,
+                  budget: Math.round(budget),
+                  volunteers,
+                  beneficiaries: parseInt(beneficiaries) || 0,
+                  status: 'ONGOING',
+                  startDateTime,
+                  endDateTime,
+                  location,
+                  approvalStatus: 'PENDING',
+                  submittedDate: new Date().toISOString()
+                })
+                .select()
+                .single();
+
+              if (error) {
+                console.error('Error creating project:', error);
+                showToast('Failed to create project. Please try again.', 'error');
+                reenableBtn();
+                return;
+              }
+
+              // Save budget breakdown items
+              if (budgetBreakdownItems.length > 0 && newProject) {
+                await saveBudgetBreakdownItems(newProject.preProjectID);
+              }
+
+              // Create notification for captain
+              await createCaptainNotification(newProject.preProjectID, title);
+
+              showToast("Project submitted for Barangay Captain approval!");
+            }
+
+            closeProjectModal();
+            reenableBtn();
+            await loadProjects(); // Reload projects from database
+          } catch (err) {
+            console.error('Save project exception:', err);
+            showToast('An error occurred. Please try again.', 'error');
+            reenableBtn();
+          }
         });
 
+      async function saveBudgetBreakdownItems(preProjectID) {
+        for (const item of budgetBreakdownItems) {
+          if (item.description && item.cost > 0) {
+            await supabaseClient
+              .from('BudgetBreakdown_Tbl')
+              .insert({
+                preProjectID,
+                description: item.description,
+                cost: Math.round(item.cost)
+              });
+          }
+        }
+      }
+
+      async function updateBudgetBreakdownItems(preProjectID) {
+        // Delete existing breakdown items
+        await supabaseClient
+          .from('BudgetBreakdown_Tbl')
+          .delete()
+          .eq('preProjectID', preProjectID);
+
+        // Insert new items
+        await saveBudgetBreakdownItems(preProjectID);
+      }
+
+      async function createCaptainNotification(preProjectID, projectTitle) {
+        try {
+          // Find captain user
+          const { data: captainData } = await supabaseClient
+            .from('User_Tbl')
+            .select('userID')
+            .eq('role', 'CAPTAIN')
+            .eq('accountStatus', 'ACTIVE')
+            .single();
+
+          if (captainData) {
+            await supabaseClient
+              .from('Notification_Tbl')
+              .insert({
+                userID: captainData.userID,
+                notificationType: 'project_awaiting_approval',
+                title: `New project awaiting approval: ${projectTitle}`,
+                isRead: false
+              });
+          }
+        } catch (err) {
+          console.warn('Could not create captain notification:', err);
+        }
+      }
+
       // Send reply to inquiry
-      function sendInquiryReply(inquiryId) {
+      async function sendInquiryReply(inquiryId) {
         const replyText = document
           .getElementById(`replyText_${inquiryId}`)
           .value.trim();
@@ -3319,29 +3593,45 @@
           return;
         }
 
-        // Find and update the inquiry
-        const project = projects.find((p) => p.id === currentProjectId);
-        if (project) {
-          const inquiry = project.inquiries.find((i) => i.id === inquiryId);
-          if (inquiry) {
-            // Initialize replies array if it doesn't exist
-            if (!inquiry.replies) {
-              inquiry.replies = [];
-            }
+        try {
+          // Insert reply into Reply_Tbl
+          const { data, error } = await supabaseClient
+            .from('Reply_Tbl')
+            .insert({
+              inquiryID: inquiryId,
+              userID: currentUser.id,
+              message: replyText,
+              timeStamp: new Date().toISOString()
+            })
+            .select();
 
-            // Add new reply to the thread
-            inquiry.replies.push({
-              text: replyText,
-              repliedBy: currentUser,
-              repliedAt: "Just now",
-            });
-
-            showToast("Reply sent successfully");
-            loadInquiries(project);
-
-            // Refresh main grid to update inquiry counts
-            renderProjects(projects);
+          if (error) {
+            console.error('Error sending reply:', error);
+            showToast('Failed to send reply. Please try again.', 'error');
+            return;
           }
+
+          // Update inquiry isReplied status
+          await supabaseClient
+            .from('Inquiry_Tbl')
+            .update({ isReplied: true })
+            .eq('inquiryID', inquiryId);
+
+          // Clear input
+          document.getElementById(`replyText_${inquiryId}`).value = '';
+
+          showToast("Reply sent successfully");
+
+          // Reload project data to show new reply
+          const project = projects.find((p) => p.id === currentProjectId);
+          if (project) {
+            project.inquiries = await loadProjectInquiries(currentProjectId);
+            loadInquiries(project);
+          }
+
+        } catch (err) {
+          console.error('Send reply exception:', err);
+          showToast('An error occurred. Please try again.', 'error');
         }
       }
 
@@ -3531,12 +3821,29 @@
       // Initialize
       renderProjects(projects);
 
+      // =========================================
+      // LOGOUT HANDLER
+      // =========================================
+      async function handleLogout() {
+        try {
+          await SessionManager.logout();
+          // SessionManager handles redirect to login page
+        } catch (error) {
+          console.error('Logout error:', error);
+          showToast('Failed to logout. Please try again.', 'error');
+        }
+      }
+
       // Make functions globally accessible
+      window.handleLogout = handleLogout;
       window.viewProject = viewProject;
       window.closeProjectView = closeProjectView;
       window.switchTab = switchTab;
       window.editProject = editProject;
       window.closeProjectModal = closeProjectModal;
+      window.cancelProjectApproval = cancelProjectApproval;
+      window.closeCancelApprovalModal = closeCancelApprovalModal;
+      window.confirmCancelApproval = confirmCancelApproval;
       window.closeApplicantModal = closeApplicantModal;
       window.viewApplicant = viewApplicant;
       window.updateStatus = updateStatus;
@@ -3553,281 +3860,23 @@
       window.closeDownloadReportModal = closeDownloadReportModal;
       window.downloadReport = downloadReport;
       window.archiveProject = archiveProject;
-
-      // Notification System
-      let notifications = [
-        {
-          id: 1,
-          type: "project_approved",
-          title: "Project Approved: Community Clean-Up Drive 2025",
-          message: "Your project has been approved by the Barangay Captain and is now Ongoing",
-          time: "2 hours ago",
-          read: false,
-          projectId: 1,
-          status: "approved",
-        },
-        {
-          id: 2,
-          type: "project_rejected",
-          title: "Project Rejected: International Youth Exchange Program",
-          message: "Your project has been rejected. Click to view captain's feedback and edit your proposal",
-          time: "1 day ago",
-          read: false,
-          projectId: 4,
-          status: "rejected",
-        },
-        {
-          id: 3,
-          type: "project_revision",
-          title: "Revision Requested: Scholarship Program Deadline",
-          message: "The Barangay Captain requested revisions. Click to view feedback and edit your project",
-          time: "3 hours ago",
-          read: false,
-          projectId: 3,
-          status: "revision",
-        },
-        {
-          id: 4,
-          type: "new_inquiry",
-          title: "New Inquiry: Community Clean-Up Drive 2025",
-          message: "Juan Dela Cruz posted a new inquiry on your project",
-          time: "5 minutes ago",
-          read: false,
-          projectId: 1,
-        },
-        {
-          id: 5,
-          type: "inquiry_reply",
-          title: "Inquiry Reply: Youth Sports Festival",
-          message: "Maria Santos replied to an inquiry thread",
-          time: "1 hour ago",
-          read: false,
-          projectId: 2,
-        },
-        {
-          id: 6,
-          type: "new_announcement",
-          title: "New Announcement Posted",
-          message: "Kyleen Nicdao posted a new announcement",
-          time: "2 hours ago",
-          read: false,
-          referenceId: 1,
-        },
-        {
-          id: 7,
-          type: "new_project",
-          title: "New Project: Beach Clean-Up Initiative",
-          message: "Andrea Pelias created a new project",
-          time: "3 hours ago",
-          read: false,
-          referenceId: 3,
-        },
-        {
-          id: 8,
-          type: "project_application",
-          title: "New Application: Community Clean-Up Drive 2025",
-          message: "Juan Dela Cruz applied to your project",
-          time: "30 minutes ago",
-          read: false,
-          projectId: 1,
-          applicantId: 1,
-        },
-      ];
-
-      function toggleNotificationModal() {
-        const modal = document.getElementById("notificationModal");
-        modal.classList.toggle("hidden");
-        if (!modal.classList.contains("hidden")) {
-          renderNotifications();
-        }
-      }
-
-      function closeNotificationModal() {
-        document.getElementById("notificationModal").classList.add("hidden");
-      }
-
-      function updateNotificationCount() {
-        const unreadCount = notifications.filter((n) => !n.read).length;
-        const badge = document.getElementById("notificationBadge");
-
-        if (unreadCount > 0) {
-          badge.textContent = unreadCount > 9 ? "9+" : unreadCount;
-          badge.classList.remove("hidden");
-        } else {
-          badge.classList.add("hidden");
-        }
-      }
-
-      function getNotificationIcon(type) {
-        switch (type) {
-          case "project_approved":
-            return `<svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>`;
-          case "project_rejected":
-            return `<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>`;
-          case "project_revision":
-            return `<svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-            </svg>`;
-          case "new_inquiry":
-            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>`;
-          case "inquiry_reply":
-            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-            </svg>`;
-          case "new_announcement":
-            return `<svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
-            </svg>`;
-          case "new_project":
-            return `<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-            </svg>`;
-          case "project_application":
-            return `<svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>`;
-          default:
-            return "";
-        }
-      }
-
-      function getNotificationBgColor(type) {
-        switch (type) {
-          case "project_approved":
-            return "bg-[#2f6e4e]/10";
-          case "project_rejected":
-            return "bg-red-50";
-          case "project_revision":
-            return "bg-yellow-50";
-          case "new_inquiry":
-            return "bg-blue-50";
-          case "inquiry_reply":
-            return "bg-blue-50";
-          case "new_announcement":
-            return "bg-purple-50";
-          case "new_project":
-            return "bg-blue-50";
-          case "project_application":
-            return "bg-[#2f6e4e]/10";
-          default:
-            return "bg-gray-50";
-        }
-      }
-
-      function renderNotifications() {
-        const notificationList = document.getElementById("notificationList");
-
-        if (notifications.length === 0) {
-          notificationList.innerHTML = `
-            <div class="p-8 text-center text-gray-500">
-              <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-              </svg>
-              <p class="font-medium">No notifications</p>
-              <p class="text-sm mt-1">You're all caught up!</p>
-            </div>
-          `;
-          return;
-        }
-
-        notificationList.innerHTML = notifications
-          .map(
-            (notif) => `
-          <div
-            onclick="handleNotificationClick(${notif.id})"
-            class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
-              !notif.read ? getNotificationBgColor(notif.type) : ""
-            }"
-          >
-            <div class="flex items-start space-x-3">
-              <div class="flex-shrink-0">
-                ${getNotificationIcon(notif.type)}
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between">
-                  <p class="text-sm font-semibold text-gray-800 truncate ${
-                    !notif.read ? "font-bold" : ""
-                  }">
-                    ${notif.title}
-                  </p>
-                  ${
-                    !notif.read
-                      ? '<span class="w-2 h-2 bg-[#2f6e4e] rounded-full flex-shrink-0 ml-2 mt-1"></span>'
-                      : ""
-                  }
-                </div>
-                <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
-                <p class="text-xs text-gray-400 mt-2">${notif.time}</p>
-              </div>
-            </div>
-          </div>
-        `
-          )
-          .join("");
-      }
-
-      function handleNotificationClick(notifId) {
-        const notif = notifications.find((n) => n.id === notifId);
-        if (!notif) return;
-
-        notif.read = true;
-        updateNotificationCount();
-        closeNotificationModal();
-
-        // Route to appropriate page based on notification type
-        if (notif.type === "project_approved") {
-          // For approved projects (now Ongoing), view project details
-          viewProject(notif.projectId);
-        } else if (notif.type === "project_rejected" || notif.type === "project_revision") {
-          // For rejected or revision-needed projects, open edit modal
-          editProject(notif.projectId);
-        } else if (notif.type === "new_inquiry" || notif.type === "inquiry_reply") {
-          viewProject(notif.projectId);
-          // Switch to inquiries tab after a short delay
-          setTimeout(() => {
-            document.querySelector('[onclick*="showTab"][onclick*="inquiries"]')?.click();
-          }, 300);
-        } else if (notif.type === "new_announcement") {
-          window.location.href = `sk-dashboard.html`;
-        } else if (notif.type === "new_project") {
-          viewProject(notif.referenceId);
-        } else if (notif.type === "project_application") {
-          viewProject(notif.projectId);
-          // Switch to applications tab after a short delay
-          setTimeout(() => {
-            document.querySelector('[onclick*="showTab"][onclick*="applications"]')?.click();
-          }, 300);
-        }
-      }
-
-      function markAllAsRead() {
-        notifications.forEach((n) => (n.read = true));
-        updateNotificationCount();
-        renderNotifications();
-      }
-
-      // Close notification modal when clicking outside
-      document.addEventListener("click", function (event) {
-        const modal = document.getElementById("notificationModal");
-        const notificationButton = event.target.closest(
-          'button[onclick="toggleNotificationModal()"]'
-        );
-
-        if (
-          !modal.contains(event.target) &&
-          !notificationButton &&
-          !modal.classList.contains("hidden")
-        ) {
-          closeNotificationModal();
-        }
-      });
-
+      window.goToPage = goToPage;
+      window.addQuickAchievement = addQuickAchievement;
+      window.addAchievement = addAchievement;
+      window.selectAchievementSuggestion = selectAchievementSuggestion;
+      window.removeAchievement = removeAchievement;
+      window.showAchievementSuggestions = showAchievementSuggestions;
+      window.generateAttendancePDF = generateAttendancePDF;
+      window.uploadAttendancePDF = uploadAttendancePDF;
+      window.viewReceiptImage = viewReceiptImage;
+      window.navigateProjects = navigateProjects;
+      window.addBudgetRow = addBudgetRow;
+      window.removeBudgetRow = removeBudgetRow;
+      window.updateBudgetItem = updateBudgetItem;
+      window.updateBudgetRemaining = updateBudgetRemaining;
+      window.addActualBreakdownRow = addActualBreakdownRow;
+      window.deleteActualBreakdownRow = deleteActualBreakdownRow;
+      window.removeReceipt = removeReceipt;
       // Handle URL parameters for deep linking to inquiries
       function handleURLParameters() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -4311,7 +4360,7 @@
         return successRate;
       }
 
-      function submitEvaluation() {
+      async function submitEvaluation() {
         const budgetPlanned = parseFloat(document.getElementById('budgetPlanned').value);
         const budgetActual = parseFloat(document.getElementById('budgetActual').value);
         const volunteersTarget = parseFloat(document.getElementById('volunteersTarget').value);
@@ -4330,37 +4379,62 @@
 
         const successRate = calculateSuccessRate();
 
-        // Update project
-        const project = projects.find(p => p.id === currentProjectId);
-        if (project) {
-          project.status = 'Completed';
-          project.successRate = successRate;
-          project.evaluation = {
-            budgetPlanned,
-            budgetActual,
-            volunteersTarget,
-            volunteersActual,
-            timelineStatus,
-            beneficiariesTarget,
-            beneficiariesActual,
-            feedbackRating,
-            completedDate: new Date().toISOString()
-          };
-          project.achievements = [...projectAchievements];
+        try {
+          // Update project status to COMPLETED
+          const { error: projectError } = await supabaseClient
+            .from('Pre_Project_Tbl')
+            .update({
+              status: 'COMPLETED',
+              updatedAt: new Date().toISOString()
+            })
+            .eq('preProjectID', currentProjectId);
 
-          // Save actual budget breakdown with receipts
-          project.actualBreakdown = actualBreakdownItems.map(item => ({
-            id: item.id,
-            description: item.description,
-            plannedCost: item.plannedCost,
-            actualCost: item.actualCost,
-            receipt: item.receipt,
-            receiptPreview: item.receiptPreview
-          }));
+          if (projectError) {
+            console.error('Error updating project status:', projectError);
+            showToast('Failed to mark project as complete. Please try again.', 'error');
+            return;
+          }
 
-          renderProjects(projects);
+          // Create Post_Project_Tbl entry
+          const { data: postProject, error: postError } = await supabaseClient
+            .from('Post_Project_Tbl')
+            .insert({
+              preProjectID: currentProjectId,
+              actualVolunteer: Math.round(volunteersActual),
+              timelineAdherence: timelineStatus,
+              beneficiariesReached: Math.round(beneficiariesActual),
+              projectAchievement: projectAchievements.join('\n')
+            })
+            .select()
+            .single();
+
+          if (postError) {
+            console.error('Error creating post-project record:', postError);
+            // Continue anyway - the project status is updated
+          }
+
+          // Save actual expense data
+          if (actualBreakdownItems.length > 0 && postProject) {
+            for (const item of actualBreakdownItems) {
+              if (item.actualCost > 0) {
+                await supabaseClient
+                  .from('Expenses_Tbl')
+                  .insert({
+                    breakdownID: item.id,
+                    actualCost: item.actualCost,
+                    receiptURL: item.receipt || null
+                  });
+              }
+            }
+          }
+
           showToast(`Project marked as complete with ${successRate}% success rate!`);
           closeEvaluationModal();
+          await loadProjects(); // Reload projects to reflect changes
+
+        } catch (err) {
+          console.error('Submit evaluation exception:', err);
+          showToast('An error occurred. Please try again.', 'error');
         }
       }
 
@@ -4378,16 +4452,30 @@
 
         showConfirm(
           'Archive Project',
-          `Are you sure you want to archive "${project.title}"?\n\nStatus: ${project.status}\nThis will move the project to the Archive section.`,
-          () => {
-            // Remove from active projects
-            projects = projects.filter(p => p.id !== projectId);
+          `Are you sure you want to archive "${escapeHTML(project.title)}"?\n\nStatus: ${project.status}\nThis will move the project to the Archive section.`,
+          async () => {
+            try {
+              // Update project status to CANCELLED (archived)
+              const { error } = await supabaseClient
+                .from('Pre_Project_Tbl')
+                .update({
+                  status: 'CANCELLED',
+                  updatedAt: new Date().toISOString()
+                })
+                .eq('preProjectID', projectId);
 
-            // In a real app, this would be sent to the archive database
-            // For now, we just remove it from the active list
+              if (error) {
+                console.error('Error archiving project:', error);
+                showToast('Failed to archive project. Please try again.', 'error');
+                return;
+              }
 
-            showToast('Project archived successfully', 'success');
-            renderProjects(projects);
+              showToast('Project archived successfully', 'success');
+              await loadProjects(); // Reload projects
+            } catch (err) {
+              console.error('Archive project exception:', err);
+              showToast('An error occurred. Please try again.', 'error');
+            }
           },
           'Archive',
           'yellow'
@@ -4441,31 +4529,34 @@
 
         if (format === 'pdf') {
           showToast('Generating PDF report...');
-          const reportWindow = window.open('', '_blank');
           const volunteers = project.applications.filter(a => a.status === 'approved');
 
-          // Simple PDF - user clicks ctrl+P to print/save as PDF
-          reportWindow.document.write('<html><head><title>' + project.title + ' Report</title></head>');
-          reportWindow.document.write('<body style="font-family: Arial; padding: 20px;">');
-          reportWindow.document.write('<h1>' + project.title + '</h1>');
-          reportWindow.document.write('<p><strong>Success Rate:</strong> ' + (project.successRate || 'N/A') + '%</p>');
-          reportWindow.document.write('<p><strong>Category:</strong> ' + project.category + '</p>');
-          reportWindow.document.write('<p><strong>Status:</strong> ' + project.status + '</p>');
+          // Build HTML content as array and join
+          const htmlParts = [];
+          htmlParts.push('<html><head><title>' + project.title + ' Report<\/title><\/head>');
+          htmlParts.push('<body style="font-family: Arial; padding: 20px;">');
+          htmlParts.push('<h1>' + project.title + '<\/h1>');
+          htmlParts.push('<p><strong>Success Rate:<\/strong> ' + (project.successRate || 'N/A') + '%<\/p>');
+          htmlParts.push('<p><strong>Category:<\/strong> ' + project.category + '<\/p>');
+          htmlParts.push('<p><strong>Status:<\/strong> ' + project.status + '<\/p>');
           if (project.evaluation) {
-            reportWindow.document.write('<h2>Evaluation Metrics</h2>');
-            reportWindow.document.write('<p><strong>Budget:</strong> ₱' + project.evaluation.budgetActual.toLocaleString() + ' / ₱' + project.evaluation.budgetPlanned.toLocaleString() + '</p>');
-            reportWindow.document.write('<p><strong>Volunteers:</strong> ' + project.evaluation.volunteersActual + ' / ' + project.evaluation.volunteersTarget + '</p>');
-            reportWindow.document.write('<p><strong>Beneficiaries:</strong> ' + project.evaluation.beneficiariesActual + ' / ' + project.evaluation.beneficiariesTarget + '</p>');
+            htmlParts.push('<h2>Evaluation Metrics<\/h2>');
+            htmlParts.push('<p><strong>Budget:<\/strong> ₱' + project.evaluation.budgetActual.toLocaleString() + ' / ₱' + project.evaluation.budgetPlanned.toLocaleString() + '<\/p>');
+            htmlParts.push('<p><strong>Volunteers:<\/strong> ' + project.evaluation.volunteersActual + ' / ' + project.evaluation.volunteersTarget + '<\/p>');
+            htmlParts.push('<p><strong>Beneficiaries:<\/strong> ' + project.evaluation.beneficiariesActual + ' / ' + project.evaluation.beneficiariesTarget + '<\/p>');
           }
-          reportWindow.document.write('<h2>Volunteers (' + volunteers.length + ')</h2>');
-          reportWindow.document.write('<table border="1" style="width:100%; border-collapse: collapse;"><tr><th>Name</th><th>Age</th><th>Contact</th></tr>');
+          htmlParts.push('<h2>Volunteers (' + volunteers.length + ')<\/h2>');
+          htmlParts.push('<table border="1" style="width:100%; border-collapse: collapse;"><tr><th>Name<\/th><th>Age<\/th><th>Contact<\/th><\/tr>');
           volunteers.forEach(v => {
-            reportWindow.document.write('<tr><td>' + (v.fullName || v.firstName + ' ' + v.lastName) + '</td><td>' + v.age + '</td><td>' + (v.contact || 'N/A') + '</td></tr>');
+            htmlParts.push('<tr><td>' + (v.fullName || v.firstName + ' ' + v.lastName) + '<\/td><td>' + v.age + '<\/td><td>' + (v.contact || 'N/A') + '<\/td><\/tr>');
           });
-          reportWindow.document.write('</table>');
-          reportWindow.document.write('<script>window.onload = function() { setTimeout(function() { window.print(); }, 500); };</' + 'script>');
-          reportWindow.document.write('</body></html>');
+          htmlParts.push('<\/table>');
+          htmlParts.push('<\/body><\/html>');
+
+          const reportWindow = window.open('', '_blank');
+          reportWindow.document.write(htmlParts.join(''));
           reportWindow.document.close();
+          setTimeout(function() { reportWindow.print(); }, 500);
 
           showToast('PDF report opened. Use Print to save as PDF.');
           closeDownloadReportModal();
@@ -4503,9 +4594,12 @@
         document.getElementById('attendancePdfName').classList.add('text-[#2f6e4e]', 'font-medium');
       }
 
-      // Initialize notification count on page load
-      updateNotificationCount();
-      handleURLParameters();
+      // =========================================
+      // INITIALIZE ON PAGE LOAD
+      // =========================================
+      document.addEventListener('DOMContentLoaded', () => {
+        initializePage();
+      });
     </script>
     <script src="js/mobile-nav.js"></script>
   </body>

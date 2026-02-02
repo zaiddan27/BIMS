@@ -503,14 +503,14 @@
                     <p
                       class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition"
                     >
-                      Andrea Pelias
+                      Loading...
                     </p>
-                    <p class="text-xs text-gray-500">SK Chairman</p>
+                    <p class="text-xs text-gray-500">SK Official</p>
                   </div>
                   <div
                     class="w-10 h-10 bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-full flex items-center justify-center text-white font-semibold shadow-lg ring-2 ring-[#2f6e4e]/20 group-hover:ring-[#2f6e4e]/40 transition"
                   >
-                    AP
+                    --
                   </div>
                 </div>
               </div>
@@ -1758,12 +1758,8 @@
         const avatarElement = document.querySelector("header .w-10.h-10");
 
         if (nameElement) {
-          const fullName = `${currentUserData.firstName} ${
-            currentUserData.middleName || ""
-          } ${currentUserData.lastName}`
-            .trim()
-            .replace(/\s+/g, " ");
-          nameElement.textContent = fullName;
+          const fullName = `${currentUserData.firstName || ''} ${currentUserData.lastName || ''}`.trim();
+          nameElement.textContent = fullName || 'SK Official';
         }
 
         if (roleElement) {
