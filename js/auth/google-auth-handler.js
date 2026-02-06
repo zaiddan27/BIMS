@@ -68,7 +68,8 @@ async function handleGoogleAuthCallback() {
         }
         sessionStorage.setItem('profile_incomplete', 'true');
         setTimeout(() => {
-          if (window.location.pathname !== '/complete-profile.html') {
+          // Check if already on complete-profile page (works for both local and GitHub Pages)
+          if (!window.location.pathname.endsWith('/complete-profile.html')) {
             window.location.href = 'complete-profile.html';
           }
         }, 1500);

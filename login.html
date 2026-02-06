@@ -515,11 +515,15 @@
           // Show loading state
           showToast('Redirecting to Google...', 'info');
 
+          // Get the correct base URL (works for both local dev and GitHub Pages)
+          const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+          const redirectUrl = `${window.location.origin}${basePath}/index.html`;
+
           // Sign in with Google OAuth
           const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
-              redirectTo: `${window.location.origin}/index.html`,
+              redirectTo: redirectUrl,
               queryParams: {
                 access_type: 'offline',
                 prompt: 'consent',
