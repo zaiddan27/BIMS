@@ -595,6 +595,7 @@
               name: file.fileName,
               type: file.fileType?.toLowerCase() || 'file',
               uploaded: formatDate(file.dateUploaded),
+              uploadedFull: formatDateLong(file.dateUploaded),
               uploadedDate: new Date(file.dateUploaded),
               category: file.fileCategory?.toLowerCase() || 'general',
               url: file.filePath
@@ -616,6 +617,16 @@
         const date = new Date(dateStr);
         return date.toLocaleDateString('en-US', {
           month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+      }
+
+      function formatDateLong(dateStr) {
+        if (!dateStr) return 'Unknown';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', {
+          month: 'long',
           day: 'numeric',
           year: 'numeric'
         });
@@ -691,19 +702,20 @@
       }
 
       /* SEARCH + FILTER */
-      function applyFilters() {
+      function getFilteredFiles() {
         const q = searchInput.value.toLowerCase();
         const c = filterCategory.value;
 
-        currentPage = 0; // Reset to first page when filters change
-
-        renderFiles(
-          fileStore.filter(
-            (f) =>
-              (!c || f.category === c) &&
-              (!q || f.name.toLowerCase().includes(q))
-          )
+        return fileStore.filter(
+          (f) =>
+            (!c || f.category === c) &&
+            (!q || f.name.toLowerCase().includes(q) || f.uploaded.toLowerCase().includes(q) || (f.uploadedFull && f.uploadedFull.toLowerCase().includes(q)))
         );
+      }
+
+      function applyFilters() {
+        currentPage = 0; // Reset to first page when filters change
+        renderFiles(getFilteredFiles());
       }
 
       searchInput.addEventListener("input", applyFilters);
@@ -735,15 +747,7 @@
       }
 
       function navigateFiles(direction) {
-        // Get current filtered list
-        const q = searchInput.value.toLowerCase();
-        const c = filterCategory.value;
-        let filtered = fileStore.filter(
-          (f) =>
-            (!c || f.category === c) &&
-            (!q || f.name.toLowerCase().includes(q))
-        );
-
+        const filtered = getFilteredFiles();
         const totalPages = Math.ceil(filtered.length / FILES_PER_PAGE);
         currentPage += direction;
 
@@ -756,17 +760,7 @@
 
       function goToFilePage(pageIndex) {
         currentPage = pageIndex;
-
-        // Get current filtered list
-        const q = searchInput.value.toLowerCase();
-        const c = filterCategory.value;
-        let filtered = fileStore.filter(
-          (f) =>
-            (!c || f.category === c) &&
-            (!q || f.name.toLowerCase().includes(q))
-        );
-
-        renderFiles(filtered);
+        renderFiles(getFilteredFiles());
       }
 
       /* MODAL VIEW WITH PDF SUPPORT */

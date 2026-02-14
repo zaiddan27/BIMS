@@ -528,11 +528,6 @@
                     class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white md:min-w-[180px]"
                   >
                     <option value="">All types</option>
-                    <option>Community</option>
-                    <option>Sports</option>
-                    <option>Education</option>
-                    <option>Environment</option>
-                    <option>Health</option>
                   </select>
                 </div>
               </div>
@@ -2076,6 +2071,21 @@
           projects = [];
           renderProjects([]);
         }
+
+        // Populate category filter dropdown from loaded projects
+        populateCategoryFilter();
+      }
+
+      function populateCategoryFilter() {
+        const select = document.getElementById("categoryFilter");
+        const categories = [...new Set(projects.map(p => p.category).filter(Boolean))].sort();
+        select.length = 1;
+        categories.forEach(cat => {
+          const option = document.createElement("option");
+          option.value = cat;
+          option.textContent = cat;
+          select.appendChild(option);
+        });
       }
 
       async function loadProjectApplications(preProjectID) {
@@ -2274,8 +2284,8 @@
         }
 
         // Get approved applicants for the current project
-        const approvedApplicants = applications.filter(app =>
-          app.projectId === currentProjectId && app.status === 'approved'
+        const approvedApplicants = (project.applications || []).filter(app =>
+          app.status === 'approved'
         );
 
         if (approvedApplicants.length === 0) {
@@ -3450,6 +3460,13 @@
           const startDateTime = new Date(`${startDate}T${startTime}`).toISOString();
           const endDateTime = new Date(`${endDate}T${endTime}`).toISOString();
 
+          // Validate end date/time is after start date/time
+          if (new Date(endDateTime) <= new Date(startDateTime)) {
+            showToast("End date/time must be after start date/time.", "error");
+            reenableBtn();
+            return;
+          }
+
           try {
             if (editingProjectId) {
               // Update existing project
@@ -3472,7 +3489,11 @@
 
               if (error) {
                 console.error('Error updating project:', error);
-                showToast('Failed to update project. Please try again.', 'error');
+                if (error.code === '23514' && error.message?.includes('check_dates')) {
+                  showToast('End date/time must be after start date/time.', 'error');
+                } else {
+                  showToast('Failed to update project. Please try again.', 'error');
+                }
                 reenableBtn();
                 return;
               }
@@ -3506,7 +3527,11 @@
 
               if (error) {
                 console.error('Error creating project:', error);
-                showToast('Failed to create project. Please try again.', 'error');
+                if (error.code === '23514' && error.message?.includes('check_dates')) {
+                  showToast('End date/time must be after start date/time.', 'error');
+                } else {
+                  showToast('Failed to create project. Please try again.', 'error');
+                }
                 reenableBtn();
                 return;
               }
@@ -3656,7 +3681,7 @@
             p.description.toLowerCase().includes(search) ||
             p.category.toLowerCase().includes(search) ||
             p.heads.join(" ").toLowerCase().includes(search);
-          const matchCategory = !category || p.category === category;
+          const matchCategory = !category || (p.category && p.category.toLowerCase() === category.toLowerCase());
           return matchSearch && matchCategory;
         });
 

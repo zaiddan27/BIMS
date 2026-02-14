@@ -956,11 +956,11 @@
                         class="text-3xl font-bold text-[#2f6e4e]"
                         id="totalProjects"
                       >
-                        42
+                        --
                       </p>
                       <p class="text-sm text-gray-600 mt-1">Total Projects</p>
                       <p class="text-xs text-gray-400 mt-1" id="projectsYear">
-                        2025
+                        --
                       </p>
                     </div>
                     <div
@@ -970,7 +970,7 @@
                         class="text-3xl font-bold text-[#2f6e4e]"
                         id="completedProjects"
                       >
-                        38
+                        --
                       </p>
                       <p class="text-sm text-gray-600 mt-1">Completed</p>
                     </div>
@@ -981,7 +981,7 @@
                         class="text-3xl font-bold text-yellow-600"
                         id="ongoingProjects"
                       >
-                        4
+                        --
                       </p>
                       <p class="text-sm text-gray-600 mt-1">Ongoing</p>
                     </div>
@@ -992,9 +992,9 @@
                         class="text-3xl font-bold text-[#2f6e4e]"
                         id="successRate"
                       >
-                        89%
+                        --%
                       </p>
-                      <p class="text-sm text-gray-600 mt-1">Avg Success Rate</p>
+                      <p class="text-sm text-gray-600 mt-1">Success Rate</p>
                     </div>
                   </div>
 
@@ -1644,7 +1644,7 @@
           await profileModal.loadUserData(currentUser, currentUserData);
 
           // EFFICIENCY: Load dashboard data in parallel
-          await Promise.all([loadAnnouncements(), loadDashboardStatistics()]);
+          await Promise.all([loadAnnouncements(), loadDashboardStatistics(), loadProjectMetrics()]);
 
           // TODO: Load notifications after authentication completes
           // loadSKNotifications();
@@ -2932,11 +2932,11 @@
 
       // Project metrics data
       let projectMetrics = {
-        year: 2025,
-        total: 42,
-        completed: 38,
-        ongoing: 4,
-        successRate: 89,
+        year: new Date().getFullYear(),
+        total: 0,
+        completed: 0,
+        ongoing: 0,
+        successRate: 0,
       };
 
       // Load budget data from localStorage
@@ -2948,12 +2948,43 @@
         }
       }
 
-      // Load project metrics from localStorage
-      function loadProjectMetrics() {
-        const saved = localStorage.getItem("projectMetrics");
-        if (saved) {
-          projectMetrics = JSON.parse(saved);
+      // Load project metrics from Supabase
+      async function loadProjectMetrics() {
+        try {
+          const currentYear = new Date().getFullYear();
+          const yearStart = `${currentYear}-01-01T00:00:00.000Z`;
+          const yearEnd = `${currentYear}-12-31T23:59:59.999Z`;
+
+          // Fetch all approved projects for the current year
+          const { data: allProjects, error } = await supabaseClient
+            .from('Pre_Project_Tbl')
+            .select('status, approvalStatus')
+            .eq('approvalStatus', 'APPROVED')
+            .gte('createdAt', yearStart)
+            .lte('createdAt', yearEnd);
+
+          if (error) {
+            console.error('Error loading project metrics:', error);
+            return;
+          }
+
+          const projects = allProjects || [];
+          const total = projects.length;
+          const completed = projects.filter(p => p.status === 'COMPLETED').length;
+          const ongoing = projects.filter(p => p.status === 'ONGOING').length;
+          const successRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+          projectMetrics = {
+            year: currentYear,
+            total,
+            completed,
+            ongoing,
+            successRate,
+          };
+
           updateMetricsDisplay();
+        } catch (err) {
+          console.error('Load project metrics exception:', err);
         }
       }
 
@@ -3201,13 +3232,15 @@
       window.viewBudgetHistory = viewBudgetHistory;
       window.addBudgetCategory = addBudgetCategory;
       window.removeBudgetCategory = removeBudgetCategory;
+      window.updateEditBudgetTotal = updateEditBudgetTotal;
+      window.updateCategoryAmount = updateCategoryAmount;
+      window.updateCategoryName = updateCategoryName;
 
       // Logout function
       window.handleLogout = handleLogout;
 
-      // Initialize other page components on load (budget and project metrics are loaded separately from auth)
+      // Initialize budget data from localStorage (project metrics are loaded from Supabase in initializeDashboard)
       loadBudgetData();
-      loadProjectMetrics();
     </script>
     <script src="js/mobile-nav.js"></script>
   </body>

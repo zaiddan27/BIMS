@@ -1041,6 +1041,7 @@
               name: file.fileName,
               type: file.fileType?.toLowerCase() || 'file',
               uploaded: formatDate(file.dateUploaded),
+              uploadedFull: formatDateLong(file.dateUploaded),
               uploadedDate: new Date(file.dateUploaded),
               category: file.fileCategory?.toLowerCase() || 'general',
               url: file.filePath,
@@ -1076,6 +1077,16 @@
         const date = new Date(dateStr);
         return date.toLocaleDateString('en-US', {
           month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+      }
+
+      function formatDateLong(dateStr) {
+        if (!dateStr) return 'Unknown';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', {
+          month: 'long',
           day: 'numeric',
           year: 'numeric'
         });
@@ -1206,7 +1217,8 @@
           const matchesCategory = !c || (c === 'published' ? f.isPublished : f.category === c);
           const matchesQuery = !q ||
             f.name.toLowerCase().includes(q) ||
-            (f.uploaded && f.uploaded.toLowerCase().includes(q));
+            (f.uploaded && f.uploaded.toLowerCase().includes(q)) ||
+            (f.uploadedFull && f.uploadedFull.toLowerCase().includes(q));
           return matchesCategory && matchesQuery;
         });
       }

@@ -413,11 +413,6 @@
                     class="px-4 py-2.5 border border-gray-300 rounded-lg bg-white md:min-w-[180px]"
                   >
                     <option value="">All categories</option>
-                    <option>Community</option>
-                    <option>Sports</option>
-                    <option>Education</option>
-                    <option>Environment</option>
-                    <option>Health</option>
                   </select>
                 </div>
               </div>
@@ -1320,6 +1315,22 @@
           showToast('An error occurred while loading projects.', 'error');
           projects = [];
         }
+
+        // Populate category filter dropdown from loaded projects
+        populateCategoryFilter();
+      }
+
+      function populateCategoryFilter() {
+        const select = document.getElementById("categoryFilter");
+        const categories = [...new Set(projects.map(p => p.category).filter(Boolean))].sort();
+        // Keep the "All categories" option, remove the rest
+        select.length = 1;
+        categories.forEach(cat => {
+          const option = document.createElement("option");
+          option.value = cat;
+          option.textContent = cat;
+          select.appendChild(option);
+        });
       }
 
       async function loadProjectInquiries(preProjectID) {
@@ -1405,6 +1416,15 @@
               *,
               Pre_Project_Tbl (
                 title
+              ),
+              User_Tbl (
+                firstName,
+                lastName,
+                middleName,
+                birthday,
+                contactNumber,
+                email,
+                address
               )
             `)
             .eq('userID', currentUser.id)
@@ -1414,21 +1434,24 @@
             console.error('Error loading applications:', error);
             myApplications = [];
           } else {
-            myApplications = (data || []).map(app => ({
-              id: app.applicationID,
-              projectId: app.preProjectID,
-              projectTitle: app.Pre_Project_Tbl?.title || 'Unknown Project',
-              appliedDate: app.appliedDate ? new Date(app.appliedDate).toISOString().split('T')[0] : '',
-              firstName: currentUserData?.firstName || '',
-              middleName: currentUserData?.middleName || '',
-              lastName: currentUserData?.lastName || '',
-              birthday: currentUserData?.birthday || '',
-              contact: currentUserData?.contact || '',
-              email: currentUser?.email || '',
-              address: currentUserData?.address || '',
-              role: app.preferredRole || '',
-              status: app.applicationStatus?.toLowerCase() || 'pending'
-            }));
+            myApplications = (data || []).map(app => {
+              const user = app.User_Tbl || {};
+              return {
+                id: app.applicationID,
+                projectId: app.preProjectID,
+                projectTitle: app.Pre_Project_Tbl?.title || 'Unknown Project',
+                appliedDate: app.appliedDate ? new Date(app.appliedDate).toISOString().split('T')[0] : '',
+                firstName: user.firstName || '',
+                middleName: user.middleName || '',
+                lastName: user.lastName || '',
+                birthday: user.birthday || '',
+                contact: user.contactNumber || '',
+                email: user.email || currentUser?.email || '',
+                address: user.address || '',
+                role: app.preferredRole || '',
+                status: app.applicationStatus?.toLowerCase() || 'pending'
+              };
+            });
           }
         } catch (err) {
           console.error('Load applications exception:', err);
@@ -1842,23 +1865,40 @@
           "applyProjectTitle"
         ).textContent = `Applying to: ${project.title}`;
 
-        // Clear form
-        document.getElementById("appFirstName").value = "";
-        document.getElementById("appMiddleName").value = "";
-        document.getElementById("appLastName").value = "";
-        document.getElementById("appBirthday").value = "";
-        document.getElementById("appContact").value = "";
-        document.getElementById("appEmail").value = "";
-        document.getElementById("appAddress").value = "";
+        // Pre-fill form with existing user profile data
+        document.getElementById("appFirstName").value = currentUserData?.firstName || "";
+        document.getElementById("appMiddleName").value = currentUserData?.middleName || "";
+        document.getElementById("appLastName").value = currentUserData?.lastName || "";
+        document.getElementById("appBirthday").value = currentUserData?.birthday || "";
+        document.getElementById("appContact").value = currentUserData?.contactNumber || "";
+        document.getElementById("appEmail").value = currentUser?.email || currentUserData?.email || "";
+        document.getElementById("appAddress").value = currentUserData?.address || "";
         document.getElementById("appRole").value = "";
         document.getElementById("appParentalConsent").value = "";
 
-        // Reset parental consent section
+        // Set up parental consent section based on pre-filled birthday
         const section = document.getElementById("parentalConsentSection");
         section.style.opacity = "1";
         section.style.pointerEvents = "auto";
         section.querySelectorAll("input").forEach((input) => {
           input.disabled = false;
+        });
+
+        // Toggle parental consent if birthday is pre-filled
+        if (currentUserData?.birthday) {
+          toggleParentalConsentSection(currentUserData.birthday, 'parentalConsentSection');
+        }
+
+        // Clear any previous error highlights
+        ['appFirstName', 'appLastName', 'appBirthday', 'appAddress', 'appRole'].forEach(id => {
+          const el = document.getElementById(id);
+          el.classList.remove('input-error');
+          el.addEventListener('input', function() { this.classList.remove('input-error'); });
+        });
+
+        // Listen for birthday changes to toggle parental consent
+        document.getElementById("appBirthday").addEventListener('change', function() {
+          toggleParentalConsentSection(this.value, 'parentalConsentSection');
         });
 
         document.getElementById("applyModal").classList.remove("hidden");
@@ -1872,11 +1912,56 @@
       async function submitApplication() {
         if (isLoading || !currentUser) return;
 
+        const firstName = document.getElementById("appFirstName").value.trim();
+        const middleName = document.getElementById("appMiddleName").value.trim();
+        const lastName = document.getElementById("appLastName").value.trim();
+        const birthday = document.getElementById("appBirthday").value;
+        const contact = document.getElementById("appContact").value.trim();
+        const email = document.getElementById("appEmail").value.trim();
+        const address = document.getElementById("appAddress").value.trim();
         const role = document.getElementById("appRole").value.trim();
 
-        if (!role) {
-          showToast("Please select a preferred role", "warning");
+        // Clear previous error highlights
+        const formFields = ['appFirstName', 'appLastName', 'appBirthday', 'appAddress', 'appRole'];
+        formFields.forEach(id => {
+          document.getElementById(id).classList.remove('input-error');
+        });
+
+        // Validate required fields
+        const missingFields = [];
+        if (!lastName) { missingFields.push('Last Name'); document.getElementById('appLastName').classList.add('input-error'); }
+        if (!firstName) { missingFields.push('First Name'); document.getElementById('appFirstName').classList.add('input-error'); }
+        if (!birthday) { missingFields.push('Birthday'); document.getElementById('appBirthday').classList.add('input-error'); }
+        if (!address) { missingFields.push('Address'); document.getElementById('appAddress').classList.add('input-error'); }
+        if (!role) { missingFields.push('Preferred Role'); document.getElementById('appRole').classList.add('input-error'); }
+
+        if (missingFields.length > 0) {
+          showToast(`Please fill in: ${missingFields.join(', ')}`, "warning");
           return;
+        }
+
+        // Validate birthday is a valid past date
+        const birthDate = new Date(birthday);
+        const today = new Date();
+        if (isNaN(birthDate.getTime()) || birthDate >= today) {
+          document.getElementById('appBirthday').classList.add('input-error');
+          showToast("Please enter a valid birthday", "warning");
+          return;
+        }
+
+        // Validate parental consent for under-18 applicants
+        const age = calculateAge(birthday);
+        if (age < 18) {
+          const consentFile = document.getElementById("appParentalConsent").files[0];
+          if (!consentFile) {
+            showToast("Parental consent is required for applicants under 18", "warning");
+            return;
+          }
+          // Validate file size (max 5MB)
+          if (consentFile.size > 5 * 1024 * 1024) {
+            showToast("Parental consent file must be under 5MB", "warning");
+            return;
+          }
         }
 
         const project = projects.find((p) => p.id === applyingToProjectId);
@@ -1900,6 +1985,21 @@
         }
 
         try {
+          // Update user profile in User_Tbl with form data
+          const { error: userError } = await supabaseClient
+            .from('User_Tbl')
+            .update({
+              firstName,
+              lastName,
+              middleName,
+              birthday,
+              contactNumber: contact,
+              address
+            })
+            .eq('userID', currentUser.id);
+
+          if (userError) throw userError;
+
           // Insert application into Application_Tbl
           const { data, error } = await supabaseClient
             .from('Application_Tbl')
@@ -1918,14 +2018,29 @@
             throw new Error(error.message);
           }
 
+          // Keep currentUserData in sync so apply form pre-fills correctly
+          if (currentUserData) {
+            currentUserData.firstName = firstName;
+            currentUserData.lastName = lastName;
+            currentUserData.middleName = middleName;
+            currentUserData.birthday = birthday;
+            currentUserData.contactNumber = contact;
+            currentUserData.address = address;
+          }
+
           // Add to local array
           myApplications.push({
             id: data.applicationID,
             projectId: applyingToProjectId,
             projectTitle: project.title,
             appliedDate: new Date().toISOString().split("T")[0],
-            firstName: currentUserData?.firstName || '',
-            lastName: currentUserData?.lastName || '',
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+            birthday: birthday,
+            contact: contact,
+            email: email || currentUser?.email || '',
+            address: address,
             role: role,
             status: "pending",
           });
@@ -1993,7 +2108,7 @@
         editingApplicationId = null;
       }
 
-      function saveEditedApplication() {
+      async function saveEditedApplication() {
         const firstName = document
           .getElementById("editAppFirstName")
           .value.trim();
@@ -2023,7 +2138,42 @@
         }
 
         const app = myApplications.find((a) => a.id === editingApplicationId);
-        if (app) {
+        if (!app) {
+          showToast("Application not found", "error");
+          return;
+        }
+
+        const saveBtn = document.querySelector('#editApplicationModal button[onclick="saveEditedApplication()"]');
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.textContent = 'Saving...';
+        }
+
+        try {
+          // Update preferred role in Application_Tbl
+          const { error: appError } = await supabaseClient
+            .from('Application_Tbl')
+            .update({ preferredRole: role })
+            .eq('applicationID', editingApplicationId);
+
+          if (appError) throw appError;
+
+          // Update user profile in User_Tbl
+          const { error: userError } = await supabaseClient
+            .from('User_Tbl')
+            .update({
+              firstName,
+              lastName,
+              middleName,
+              birthday,
+              contactNumber: contact,
+              address
+            })
+            .eq('userID', currentUser.id);
+
+          if (userError) throw userError;
+
+          // Update local application data
           app.firstName = firstName;
           app.middleName = middleName;
           app.lastName = lastName;
@@ -2033,9 +2183,27 @@
           app.address = address;
           app.role = role;
 
+          // Keep currentUserData in sync so apply form pre-fills correctly
+          if (currentUserData) {
+            currentUserData.firstName = firstName;
+            currentUserData.lastName = lastName;
+            currentUserData.middleName = middleName;
+            currentUserData.birthday = birthday;
+            currentUserData.contactNumber = contact;
+            currentUserData.address = address;
+          }
+
           showToast("Application updated successfully!");
           closeEditApplicationModal();
           renderMyApplicationsGrid();
+        } catch (err) {
+          console.error('Error saving application:', err);
+          showToast("Failed to save changes. Please try again.", "error");
+        } finally {
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+          }
         }
       }
 
@@ -2518,7 +2686,7 @@
             p.title.toLowerCase().includes(search) ||
             p.description.toLowerCase().includes(search) ||
             p.location.toLowerCase().includes(search);
-          const matchCategory = !category || p.category === category;
+          const matchCategory = !category || (p.category && p.category.toLowerCase() === category.toLowerCase());
           return matchSearch && matchCategory;
         });
 
