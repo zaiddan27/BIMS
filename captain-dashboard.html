@@ -1858,13 +1858,18 @@
                         currentProject.approvalStatus = 'approved';
                         currentProject.notes = notes || 'Approved by Barangay Captain.';
 
-                        // Create notification for SK
-                        await createSKNotificationDB(currentProject, 'approved', currentProject.notes);
+                        // Create notification for SK (non-blocking)
+                        try {
+                            await createSKNotificationDB(currentProject, 'approved', currentProject.notes);
+                        } catch (notifErr) {
+                            console.warn('Could not create notification:', notifErr);
+                        }
 
+                        const projectName = currentProject.name;
                         closeModal();
                         await loadProjectApprovals(); // Reload from database
 
-                        showToast(`✓ Project "${currentProject.name}" has been approved!`, 'success');
+                        showToast(`✓ Project "${projectName}" has been approved!`, 'success');
                     } catch (error) {
                         console.error('Error approving project:', error);
                         showToast('Failed to approve project. Please try again.', 'error');
@@ -1905,13 +1910,18 @@
                         currentProject.status = 'rejected';
                         currentProject.notes = notes;
 
-                        // Create notification for SK
-                        await createSKNotificationDB(currentProject, 'rejected', notes);
+                        // Create notification for SK (non-blocking)
+                        try {
+                            await createSKNotificationDB(currentProject, 'rejected', notes);
+                        } catch (notifErr) {
+                            console.warn('Could not create notification:', notifErr);
+                        }
 
+                        const projectName = currentProject.name;
                         closeModal();
                         await loadProjectApprovals(); // Reload from database
 
-                        showToast(`✗ Project "${currentProject.name}" has been rejected.`, 'error');
+                        showToast(`✗ Project "${projectName}" has been rejected.`, 'error');
                     } catch (error) {
                         console.error('Error rejecting project:', error);
                         showToast('Failed to reject project. Please try again.', 'error');
@@ -1952,13 +1962,18 @@
                         currentProject.status = 'revision-requested';
                         currentProject.notes = notes;
 
-                        // Create notification for SK
-                        await createSKNotificationDB(currentProject, 'revision-requested', notes);
+                        // Create notification for SK (non-blocking)
+                        try {
+                            await createSKNotificationDB(currentProject, 'revision-requested', notes);
+                        } catch (notifErr) {
+                            console.warn('Could not create notification:', notifErr);
+                        }
 
+                        const projectName = currentProject.name;
                         closeModal();
                         await loadProjectApprovals(); // Reload from database
 
-                        showToast(`✎ Revision request sent for "${currentProject.name}".`, 'info');
+                        showToast(`✎ Revision request sent for "${projectName}".`, 'info');
                     } catch (error) {
                         console.error('Error requesting revision:', error);
                         showToast('Failed to send revision request. Please try again.', 'error');
@@ -2085,37 +2100,33 @@
                     return;
                 }
 
-                // Set notification type and message based on decision
+                // Set notification type and title based on decision
+                // Allowed notificationType values: project_approved, project_rejected, revision_requested
                 let notificationType = 'project_approved';
                 let title = '';
-                let message = '';
 
                 if (decision === 'approved') {
                     notificationType = 'project_approved';
                     title = `Project Approved: ${project.name}`;
-                    message = 'Your project has been approved by the Barangay Captain and is now active.';
                 } else if (decision === 'rejected') {
                     notificationType = 'project_rejected';
                     title = `Project Rejected: ${project.name}`;
-                    message = `Your project has been rejected. Reason: ${comments}`;
                 } else if (decision === 'revision-requested') {
-                    notificationType = 'project_revision';
-                    title = `Revision Requested: ${project.name}`;
-                    message = `The Barangay Captain has requested changes: ${comments}`;
+                    notificationType = 'revision_requested';
+                    title = comments
+                        ? `Revision Requested: ${project.name} — ${comments}`
+                        : `Revision Requested: ${project.name}`;
                 }
 
                 // Insert notification into Notification_Tbl
+                // Columns: userID, notificationType, title, isRead, createdAt
                 const { error } = await supabaseClient
                     .from('Notification_Tbl')
                     .insert({
                         userID: projectData.userID,
-                        type: notificationType,
+                        notificationType: notificationType,
                         title: title,
-                        message: message,
-                        referenceID: projectData.preProjectID,
-                        referenceType: 'project',
-                        isRead: false,
-                        createdAt: new Date().toISOString()
+                        isRead: false
                     });
 
                 if (error) throw error;

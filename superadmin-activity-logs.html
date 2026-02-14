@@ -389,8 +389,8 @@
             }
 
             // Update header
-            document.getElementById('headerUserName').textContent = `${user.firstName} ${user.lastName}`;
-            document.getElementById('headerAvatar').textContent = `${user.firstName[0]}${user.lastName[0]}`;
+            document.getElementById('headerUserName').textContent = `${user.firstName || ''} ${user.lastName || ''}`;
+            document.getElementById('headerAvatar').textContent = `${(user.firstName || 'S')[0]}${(user.lastName || 'A')[0]}`;
 
             console.log('✅ Authentication successful:', user.role);
             return true;
@@ -459,7 +459,7 @@
 
             // Load content if not loaded yet
             if (tabName === 'logs' && !window.logsLoaded) {
-                loadAllLogs();
+                fetchLogs();
                 window.logsLoaded = true;
             }
             if (tabName === 'audit' && !window.auditLoaded) {
@@ -472,52 +472,45 @@
             }
         };
 
-        // ==================== DATA LOADING ====================
-        let allLogsData = [];
-        let allAuditData = [];
+        // ==================== DATA LOADING (Server-side pagination) ====================
+        let totalLogsCount = 0;
+        let totalAuditCount = 0;
         let currentLogsPage = 0;
         let currentAuditPage = 0;
-        const logsPerPage = 10;
+        const logsPerPage = 20;
 
-        async function loadAllLogs() {
+        async function fetchLogs() {
+            const container = document.getElementById('allLogs');
             try {
+                const startIndex = currentLogsPage * logsPerPage;
+                const endIndex = startIndex + logsPerPage - 1;
+
                 let query = supabaseClient
                     .from('Logs_Tbl')
-                    .select(`
-                        *,
-                        User_Tbl (firstName, lastName, role)
-                    `)
-                    .order('timeStamp', { ascending: false });
+                    .select('logID, action, timestamp, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
+                    .order('timestamp', { ascending: false });
 
                 const dateFilter = document.getElementById('logDateFilter')?.value;
                 if (dateFilter) {
-                    const startOfDay = new Date(dateFilter);
-                    startOfDay.setHours(0, 0, 0, 0);
-                    const endOfDay = new Date(dateFilter);
-                    endOfDay.setHours(23, 59, 59, 999);
-
                     query = query
-                        .gte('timeStamp', startOfDay.toISOString())
-                        .lte('timeStamp', endOfDay.toISOString());
+                        .gte('timestamp', `${dateFilter}T00:00:00`)
+                        .lte('timestamp', `${dateFilter}T23:59:59`);
                 }
 
-                const { data: logs, error } = await query;
+                const { data: logs, count, error } = await query.range(startIndex, endIndex);
 
                 if (error) throw error;
 
-                allLogsData = logs;
-                currentLogsPage = 0;
-                renderLogs();
+                totalLogsCount = count || 0;
+                renderLogs(logs);
             } catch (error) {
                 console.error('Error loading logs:', error);
-                document.getElementById('allLogs').innerHTML =
-                    '<p class="text-red-500 text-center py-4">Error loading logs</p>';
+                container.innerHTML = '<p class="text-red-500 text-center py-4">Error loading logs</p>';
             }
         }
 
-        function renderLogs() {
+        function renderLogs(logs) {
             const container = document.getElementById('allLogs');
-            const logs = allLogsData;
 
             if (!logs || logs.length === 0) {
                 container.innerHTML = '<p class="text-gray-500 text-center py-4">No logs found</p>';
@@ -526,22 +519,16 @@
                 return;
             }
 
-            // Calculate pagination
-            const startIndex = currentLogsPage * logsPerPage;
-            const endIndex = startIndex + logsPerPage;
-            const logsToShow = logs.slice(startIndex, endIndex);
+            updateLogsPagination(totalLogsCount);
 
-            // Update pagination controls
-            updateLogsPagination(logs.length);
-
-            container.innerHTML = logsToShow.map(log => `
+            container.innerHTML = logs.map(log => `
                 <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition">
                     <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                     <div class="flex-1">
-                        <p class="text-sm text-gray-800">${log.action}</p>
+                        <p class="text-sm text-gray-800">${log.action || ''}</p>
                         <p class="text-xs text-gray-500 mt-1">
-                            by ${log.User_Tbl?.firstName} ${log.User_Tbl?.lastName} (${log.User_Tbl?.role}) •
-                            ${new Date(log.timeStamp).toLocaleString()}
+                            by ${log.User_Tbl?.firstName || ''} ${log.User_Tbl?.lastName || ''} (${log.User_Tbl?.role || 'Unknown'}) •
+                            ${log.timestamp ? new Date(log.timestamp).toLocaleString() : '-'}
                         </p>
                     </div>
                 </div>
@@ -562,61 +549,70 @@
             dotsContainer.classList.remove('hidden');
             navContainer.classList.remove('hidden');
 
-            // Create pagination dots
-            dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
-                <button
-                    onclick="goToLogsPage(${i})"
-                    class="h-2 rounded-full transition-all duration-300 ${i === currentLogsPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
-                    style="min-height: 8px; flex-shrink: 0; cursor: pointer;"
-                    aria-label="Go to page ${i + 1}"
-                ></button>
-            `).join('');
+            // Show max 7 dots to avoid overflow
+            const maxDots = 7;
+            let dots = '';
+            if (totalPages <= maxDots) {
+                dots = Array.from({ length: totalPages }, (_, i) => paginationDot(i, currentLogsPage, 'goToLogsPage')).join('');
+            } else {
+                const start = Math.max(0, Math.min(currentLogsPage - 3, totalPages - maxDots));
+                const end = Math.min(totalPages, start + maxDots);
+                dots = Array.from({ length: end - start }, (_, i) => paginationDot(start + i, currentLogsPage, 'goToLogsPage')).join('');
+            }
+            dotsContainer.innerHTML = dots;
+        }
+
+        function paginationDot(index, currentPage, fnName) {
+            return `<button onclick="${fnName}(${index})"
+                class="h-2 rounded-full transition-all duration-300 ${index === currentPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
+                style="min-height: 8px; flex-shrink: 0; cursor: pointer;"
+                aria-label="Go to page ${index + 1}"></button>`;
         }
 
         window.navigateLogs = function(direction) {
-            const totalPages = Math.ceil(allLogsData.length / logsPerPage);
+            const totalPages = Math.ceil(totalLogsCount / logsPerPage);
             currentLogsPage += direction;
-
-            // Wrap around
             if (currentLogsPage < 0) currentLogsPage = totalPages - 1;
             if (currentLogsPage >= totalPages) currentLogsPage = 0;
-
-            renderLogs();
+            fetchLogs();
         };
 
         window.goToLogsPage = function(pageIndex) {
             currentLogsPage = pageIndex;
-            renderLogs();
+            fetchLogs();
         };
 
-        window.loadAllLogs = loadAllLogs;
+        // Called from date filter onchange - resets to page 0
+        window.loadAllLogs = function() {
+            currentLogsPage = 0;
+            fetchLogs();
+        };
 
         async function loadAuditTrail() {
+            const container = document.getElementById('auditLogs');
             try {
-                const { data: logs, error } = await supabaseClient
+                const startIndex = currentAuditPage * logsPerPage;
+                const endIndex = startIndex + logsPerPage - 1;
+
+                const { data: logs, count, error } = await supabaseClient
                     .from('Logs_Tbl')
-                    .select(`
-                        *,
-                        User_Tbl (firstName, lastName, role)
-                    `)
+                    .select('logID, action, timestamp, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
                     .ilike('action', '%[AUDIT]%')
-                    .order('timeStamp', { ascending: false });
+                    .order('timestamp', { ascending: false })
+                    .range(startIndex, endIndex);
 
                 if (error) throw error;
 
-                allAuditData = logs;
-                currentAuditPage = 0;
-                renderAudit();
+                totalAuditCount = count || 0;
+                renderAudit(logs);
             } catch (error) {
                 console.error('Error loading audit trail:', error);
-                document.getElementById('auditLogs').innerHTML =
-                    '<p class="text-red-500 text-center py-4">Error loading audit trail</p>';
+                container.innerHTML = '<p class="text-red-500 text-center py-4">Error loading audit trail</p>';
             }
         }
 
-        function renderAudit() {
+        function renderAudit(logs) {
             const container = document.getElementById('auditLogs');
-            const logs = allAuditData;
 
             if (!logs || logs.length === 0) {
                 container.innerHTML = '<p class="text-gray-500 text-center py-4">No audit logs found</p>';
@@ -625,25 +621,19 @@
                 return;
             }
 
-            // Calculate pagination
-            const startIndex = currentAuditPage * logsPerPage;
-            const endIndex = startIndex + logsPerPage;
-            const logsToShow = logs.slice(startIndex, endIndex);
+            updateAuditPagination(totalAuditCount);
 
-            // Update pagination controls
-            updateAuditPagination(logs.length);
-
-            container.innerHTML = logsToShow.map(log => `
+            container.innerHTML = logs.map(log => `
                 <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
                     <div class="flex items-start">
                         <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
                         </svg>
                         <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium text-gray-900">${log.action}</p>
+                            <p class="text-sm font-medium text-gray-900">${log.action || ''}</p>
                             <p class="text-xs text-gray-600 mt-1">
-                                by ${log.User_Tbl?.firstName} ${log.User_Tbl?.lastName} (${log.User_Tbl?.role}) •
-                                ${new Date(log.timeStamp).toLocaleString()}
+                                by ${log.User_Tbl?.firstName || ''} ${log.User_Tbl?.lastName || ''} (${log.User_Tbl?.role || 'Unknown'}) •
+                                ${log.timestamp ? new Date(log.timestamp).toLocaleString() : '-'}
                             </p>
                         </div>
                     </div>
@@ -665,56 +655,44 @@
             dotsContainer.classList.remove('hidden');
             navContainer.classList.remove('hidden');
 
-            // Create pagination dots
-            dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
-                <button
-                    onclick="goToAuditPage(${i})"
-                    class="h-2 rounded-full transition-all duration-300 ${i === currentAuditPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
-                    style="min-height: 8px; flex-shrink: 0; cursor: pointer;"
-                    aria-label="Go to page ${i + 1}"
-                ></button>
-            `).join('');
+            const maxDots = 7;
+            let dots = '';
+            if (totalPages <= maxDots) {
+                dots = Array.from({ length: totalPages }, (_, i) => paginationDot(i, currentAuditPage, 'goToAuditPage')).join('');
+            } else {
+                const start = Math.max(0, Math.min(currentAuditPage - 3, totalPages - maxDots));
+                const end = Math.min(totalPages, start + maxDots);
+                dots = Array.from({ length: end - start }, (_, i) => paginationDot(start + i, currentAuditPage, 'goToAuditPage')).join('');
+            }
+            dotsContainer.innerHTML = dots;
         }
 
         window.navigateAudit = function(direction) {
-            const totalPages = Math.ceil(allAuditData.length / logsPerPage);
+            const totalPages = Math.ceil(totalAuditCount / logsPerPage);
             currentAuditPage += direction;
-
-            // Wrap around
             if (currentAuditPage < 0) currentAuditPage = totalPages - 1;
             if (currentAuditPage >= totalPages) currentAuditPage = 0;
-
-            renderAudit();
+            loadAuditTrail();
         };
 
         window.goToAuditPage = function(pageIndex) {
             currentAuditPage = pageIndex;
-            renderAudit();
+            loadAuditTrail();
         };
 
         async function loadDatabaseStats() {
             try {
                 const tables = [
-                    'User_Tbl',
-                    'SK_Tbl',
-                    'Captain_Tbl',
-                    'Announcement_Tbl',
-                    'File_Tbl',
-                    'Pre_Project_Tbl',
-                    'Post_Project_Tbl',
-                    'Application_Tbl',
-                    'Inquiry_Tbl',
-                    'Reply_Tbl',
-                    'Notification_Tbl',
-                    'Certificate_Tbl',
-                    'Evaluation_Tbl',
-                    'Testimonies_Tbl',
-                    'Logs_Tbl'
+                    'User_Tbl', 'SK_Tbl', 'Captain_Tbl', 'Announcement_Tbl',
+                    'File_Tbl', 'Pre_Project_Tbl', 'Post_Project_Tbl',
+                    'Application_Tbl', 'Inquiry_Tbl', 'Reply_Tbl',
+                    'Notification_Tbl', 'Certificate_Tbl', 'Evaluation_Tbl',
+                    'Testimonies_Tbl', 'Logs_Tbl'
                 ];
 
                 const counts = await Promise.all(
                     tables.map(async (table) => {
-                        const { count, error } = await supabaseClient
+                        const { count } = await supabaseClient
                             .from(table)
                             .select('*', { count: 'exact', head: true });
                         return { table, count: count || 0 };
@@ -806,7 +784,7 @@
             if (!isAuthenticated) return;
 
             setCurrentDate();
-            await loadAllLogs();
+            await fetchLogs();
             window.logsLoaded = true;
 
             console.log('✅ Activity Logs Page loaded successfully!');

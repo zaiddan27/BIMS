@@ -502,24 +502,43 @@
         // Check Captain term expiration
         async function checkCaptainTermExpiration() {
             try {
-                const { data, error } = await supabaseClient.rpc('check_captain_term_expiration');
+                // Query Captain_Tbl directly instead of using RPC
+                const { data, error } = await supabaseClient
+                    .from('Captain_Tbl')
+                    .select(`
+                        termEnd,
+                        User_Tbl (firstName, lastName)
+                    `)
+                    .eq('isActive', true)
+                    .limit(1)
+                    .single();
 
-                if (error) throw error;
+                if (error) {
+                    // No active captain found or table doesn't exist - not critical
+                    if (error.code !== 'PGRST116') {
+                        console.warn('Could not check Captain term:', error.message);
+                    }
+                    return;
+                }
 
-                if (data && data.length > 0) {
-                    const captain = data[0];
-                    const daysRemaining = captain.daysRemaining;
+                if (data && data.termEnd) {
+                    const termEnd = new Date(data.termEnd);
+                    const today = new Date();
+                    const daysRemaining = Math.ceil((termEnd - today) / (1000 * 60 * 60 * 24));
+                    const hasExpired = termEnd < today;
 
-                    if (captain.hasExpired || daysRemaining <= 30) {
+                    if (hasExpired || daysRemaining <= 30) {
                         const warning = document.getElementById('captainTermWarning');
                         warning.classList.remove('hidden');
 
+                        const firstName = data.User_Tbl?.firstName || '';
+                        const lastName = data.User_Tbl?.lastName || '';
                         document.getElementById('captainName').textContent =
-                            `${captain.firstName} ${captain.lastName}`;
+                            `${firstName} ${lastName}`.trim();
                         document.getElementById('captainTermEnd').textContent =
-                            new Date(captain.termEnd).toLocaleDateString();
+                            termEnd.toLocaleDateString();
 
-                        if (captain.hasExpired) {
+                        if (hasExpired) {
                             document.getElementById('captainTermMessage').innerHTML =
                                 `<strong>🚨 CRITICAL:</strong> Captain's term has EXPIRED! A new Captain must be designated immediately.`;
                         } else {
@@ -529,7 +548,7 @@
                     }
                 }
             } catch (error) {
-                console.error('Error checking Captain term:', error);
+                console.warn('Could not check Captain term:', error);
             }
         }
 
@@ -546,17 +565,17 @@
                         *,
                         User_Tbl (firstName, lastName)
                     `)
-                    .order('timeStamp', { ascending: false });
+                    .order('timestamp', { ascending: false });
 
                 if (error) throw error;
 
-                recentActivityData = logs;
+                recentActivityData = logs || [];
                 currentActivityPage = 0;
                 renderRecentActivity();
             } catch (error) {
-                console.error('Error loading recent activity:', error);
+                console.warn('Could not load recent activity:', error);
                 document.getElementById('recentActivity').innerHTML =
-                    '<p class="text-red-500 text-center py-4">Error loading activity</p>';
+                    '<p class="text-gray-500 text-center py-4">No recent activity</p>';
             }
         }
 
@@ -583,10 +602,10 @@
                 <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition">
                     <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                     <div class="flex-1">
-                        <p class="text-sm text-gray-800">${log.action}</p>
+                        <p class="text-sm text-gray-800">${log.action || 'Unknown action'}</p>
                         <p class="text-xs text-gray-500 mt-1">
-                            by ${log.User_Tbl?.firstName} ${log.User_Tbl?.lastName} •
-                            ${new Date(log.timeStamp).toLocaleString()}
+                            by ${log.User_Tbl?.firstName || ''} ${log.User_Tbl?.lastName || ''} •
+                            ${log.timestamp ? new Date(log.timestamp).toLocaleString() : 'Unknown time'}
                         </p>
                     </div>
                 </div>

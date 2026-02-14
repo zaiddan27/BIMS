@@ -721,8 +721,8 @@
             }
 
             // Update header
-            document.getElementById('headerUserName').textContent = `${user.firstName} ${user.lastName}`;
-            document.getElementById('headerAvatar').textContent = `${user.firstName[0]}${user.lastName[0]}`;
+            document.getElementById('headerUserName').textContent = `${user.firstName || ''} ${user.lastName || ''}`;
+            document.getElementById('headerAvatar').textContent = `${(user.firstName || 'S')[0]}${(user.lastName || 'A')[0]}`;
 
             console.log('✅ Authentication successful:', user.role);
             return true;
@@ -793,15 +793,6 @@
 
                 if (error) throw error;
 
-                // DEBUG: Check for users without userID
-                console.log('🔍 Raw users data (first user):', users[0]);
-                const usersWithoutID = users.filter(u => !u.userID);
-                if (usersWithoutID.length > 0) {
-                    console.error('⚠️ Found users without userID:', usersWithoutID);
-                }
-
-                console.log('✅ Loaded users:', users.length);
-
                 allUsers = users;
                 updateUserStats(users);
                 renderUsers(users);
@@ -848,17 +839,7 @@
                 const isSuperadmin = user.role === 'SUPERADMIN';
                 const isCaptain = user.role === 'CAPTAIN';
 
-                // DEBUG: Log user data for youth volunteers
-                if (user.role === 'YOUTH_VOLUNTEER') {
-                    console.log('🔍 Youth Volunteer user data:', {
-                        userID: user.userID,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        role: user.role
-                    });
-                }
-
-                // CRITICAL: Validate userID exists
+                // Validate userID exists
                 if (!user.userID) {
                     console.error('❌ User missing userID:', user);
                     return '';
@@ -875,14 +856,6 @@
                 const safeFirstName = (user.firstName || '').replace(/'/g, "\\'");
                 const safeLastName = (user.lastName || '').replace(/'/g, "\\'");
                 const safeFullName = `${safeFirstName} ${safeLastName}`;
-
-                // DEBUG: Log the safe values being used
-                if (user.role === 'YOUTH_VOLUNTEER') {
-                    console.log('🔍 Safe values for button:', {
-                        safeUserID,
-                        safeFullName
-                    });
-                }
 
                 let actionButtons = '';
                 if (isSuperadmin) {
@@ -937,11 +910,11 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold ${isInactive ? 'opacity-50' : ''}">
-                                    ${user.firstName[0]}${user.lastName[0]}
+                                    ${(user.firstName || '?')[0]}${(user.lastName || '?')[0]}
                                 </div>
                                 <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">${user.firstName} ${user.lastName}</div>
-                                    <div class="text-sm text-gray-500">${user.email}</div>
+                                    <div class="text-sm font-medium text-gray-900">${user.firstName || ''} ${user.lastName || ''}</div>
+                                    <div class="text-sm text-gray-500">${user.email || ''}</div>
                                 </div>
                             </div>
                         </td>
@@ -951,22 +924,22 @@
                                   user.role === 'CAPTAIN' ? 'bg-green-100 text-green-800' :
                                   user.role === 'SK_OFFICIAL' ? 'bg-blue-100 text-blue-800' :
                                   'bg-gray-100 text-gray-800'}">
-                                ${user.role.replace('_', ' ')}
+                                ${(user.role || 'UNKNOWN').replace('_', ' ')}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            ${user.SK_Tbl && user.SK_Tbl.length > 0 ? user.SK_Tbl[0].position.replace('_', ' ') : '-'}
+                            ${user.SK_Tbl && user.SK_Tbl.length > 0 && user.SK_Tbl[0].position ? user.SK_Tbl[0].position.replace('_', ' ') : '-'}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             ${isInactive
                                 ? '<span class="badge-inactive">INACTIVE</span>'
                                 : `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                     ${user.accountStatus === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
-                                    ${user.accountStatus}
+                                    ${user.accountStatus || 'UNKNOWN'}
                                 </span>`}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            ${new Date(user.createdAt).toLocaleDateString()}
+                            ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             ${actionButtons}
@@ -985,9 +958,9 @@
 
             const filtered = allUsers.filter(user => {
                 const matchesSearch = !searchTerm ||
-                    user.firstName.toLowerCase().includes(searchTerm) ||
-                    user.lastName.toLowerCase().includes(searchTerm) ||
-                    user.email.toLowerCase().includes(searchTerm);
+                    (user.firstName || '').toLowerCase().includes(searchTerm) ||
+                    (user.lastName || '').toLowerCase().includes(searchTerm) ||
+                    (user.email || '').toLowerCase().includes(searchTerm);
 
                 const matchesRole = !roleFilter || user.role === roleFilter;
                 const matchesStatus = !statusFilter || user.accountStatus === statusFilter;
