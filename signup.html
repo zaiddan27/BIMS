@@ -652,6 +652,16 @@
             throw error;
           }
 
+          // Check if email is already registered
+          // Supabase returns a fake success with empty identities for existing emails
+          if (data.user && data.user.identities && data.user.identities.length === 0) {
+            showToast('This email is already registered. Please sign in instead.', 'error');
+            setInputState(emailInput, false);
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalButtonText;
+            return;
+          }
+
           // Store email for OTP verification
           sessionStorage.setItem('verification_email', email);
 

@@ -1677,7 +1677,7 @@
         const dateStr = startDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
         const viewDetailsLink = event.type === 'project'
-          ? `youth-projects.html?id=${event.dbId}`
+          ? `youth-projects.html?projectId=${event.dbId}`
           : `youth-dashboard.html`;
 
         document.getElementById('modalEventTitle').textContent = event.title;

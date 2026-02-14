@@ -1730,7 +1730,7 @@
 
         // Determine view details link based on event type
         const viewDetailsLink = event.type === 'project'
-          ? `sk-projects.html?id=${event.dbId}`
+          ? `sk-projects.html?projectId=${event.dbId}`
           : `sk-dashboard.html`; // Announcements are on dashboard
 
         // SECURITY: Use escapeHTML to prevent XSS attacks

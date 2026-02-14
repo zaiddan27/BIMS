@@ -737,22 +737,26 @@
       // AUTHENTICATION
       // =========================================
       let currentUser = null;
+      let currentUserData = null;
 
       try {
         const session = await SessionManager.requireAuth(['YOUTH_VOLUNTEER']);
         currentUser = session.user;
+        currentUserData = session.userData || {};
 
-        const userMeta = currentUser.user_metadata || {};
-        const firstName = userMeta.firstName || '';
-        const lastName = userMeta.lastName || '';
-        const fullName = `${firstName} ${lastName}`.trim() || 'Youth Volunteer';
+        // Use database User_Tbl data for name (not user_metadata which may be empty for email/password users)
+        const firstName = currentUserData.firstName || '';
+        const middleName = currentUserData.middleName || '';
+        const lastName = currentUserData.lastName || '';
+        const middleInitial = middleName ? `${middleName.charAt(0)}.` : '';
+        const fullName = `${firstName} ${middleInitial} ${lastName}`.replace(/\s+/g, ' ').trim() || 'Youth Volunteer';
         const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || '--';
 
         const headerName = document.getElementById('headerUserName');
         const headerAvatar = document.getElementById('headerUserAvatar');
         if (headerName) headerName.textContent = escapeHTML(fullName);
         if (headerAvatar) {
-          const profileImageUrl = sanitizeImageURL(userMeta.profileImageUrl);
+          const profileImageUrl = sanitizeImageURL(currentUserData.imagePathURL || currentUser.user_metadata?.profileImageUrl);
           if (profileImageUrl) {
             headerAvatar.innerHTML = `<img src="${profileImageUrl}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
           } else {
@@ -790,6 +794,9 @@
 
           if (appError) {
             console.error('Error loading applications:', appError);
+            showToast('Failed to load your applications. Please try again later.', 'error');
+            completedProjects = [];
+            renderProjects();
             return;
           }
 
@@ -854,6 +861,7 @@
 
         } catch (error) {
           console.error('Error loading completed projects:', error);
+          showToast('An error occurred while loading certificates data.', 'error');
         }
 
         renderProjects();
@@ -1024,29 +1032,60 @@
         const project = completedProjects.find(p => p.id === currentProjectId);
         if (!project) return;
 
+        // If postProjectID is missing, try to fetch it first
+        if (!project.postProjectID) {
+          const { data: postData, error: postError } = await supabaseClient
+            .from('Post_Project_Tbl')
+            .select('postProjectID')
+            .eq('preProjectID', project.id)
+            .single();
+
+          if (postError || !postData) {
+            console.error('No post-project record found:', postError);
+            showToast('This project has not been finalized yet. Please contact an SK Official.', 'warning');
+            return;
+          }
+          project.postProjectID = postData.postProjectID;
+        }
+
         try {
+          // Build evaluation record
+          const evalRecord = {
+            applicationID: project.applicationID,
+            q1: q1,
+            q2: q2,
+            q3: q3,
+            q4: q4,
+            q5: q5,
+            message: comments || null,
+            hasCertificate: true,
+            timeStamp: new Date().toISOString(),
+            createdAt: new Date().toISOString()
+          };
+
+          // Only include postProjectID if it exists (column may be nullable)
+          if (project.postProjectID) {
+            evalRecord.postProjectID = project.postProjectID;
+          }
+
           // Insert evaluation into database
           const { data, error } = await supabaseClient
             .from('Evaluation_Tbl')
-            .insert({
-              postProjectID: project.postProjectID,
-              applicationID: project.applicationID,
-              q1: q1,
-              q2: q2,
-              q3: q3,
-              q4: q4,
-              q5: q5,
-              message: comments || null,
-              hasCertificate: true,
-              timeStamp: new Date().toISOString(),
-              createdAt: new Date().toISOString()
-            })
+            .insert(evalRecord)
             .select()
             .single();
 
           if (error) {
             console.error('Error submitting survey:', error);
-            showToast('Failed to submit survey. Please try again.', 'error');
+            if (error.message?.includes('postProjectID') || error.code === '23502') {
+              showToast('This project has not been finalized by SK officials yet. Survey cannot be submitted.', 'warning');
+            } else if (error.code === '23505') {
+              showToast('You have already submitted a survey for this project.', 'warning');
+              // Reload to reflect the existing survey
+              await loadCompletedProjects();
+            } else {
+              showToast('Failed to submit survey. Please try again.', 'error');
+            }
             return;
           }
 
@@ -1056,13 +1095,16 @@
           project.satisfactionScore = avg;
           project.hasCertificate = true;
 
+          // Save the projectId before closing modal (closeSurveyModal resets currentProjectId)
+          const projectIdForCert = currentProjectId;
+
           showToast('Survey submitted successfully!', 'success');
           closeSurveyModal();
           renderProjects();
 
           // Auto-show certificate
           setTimeout(() => {
-            viewCertificate(currentProjectId);
+            viewCertificate(projectIdForCert);
           }, 500);
 
         } catch (error) {
@@ -1083,8 +1125,12 @@
 
       function viewCertificate(projectId) {
         const project = completedProjects.find(p => p.id === projectId);
-        const userMeta = currentUser.user_metadata || {};
-        const fullName = `${userMeta.firstName || ''} ${userMeta.lastName || ''}`.trim() || 'Youth Volunteer';
+        // Use database User_Tbl data for certificate name (not user_metadata)
+        const firstName = currentUserData.firstName || '';
+        const middleName = currentUserData.middleName || '';
+        const lastName = currentUserData.lastName || '';
+        const middleInitial = middleName ? `${middleName.charAt(0)}.` : '';
+        const fullName = `${firstName} ${middleInitial} ${lastName}`.replace(/\s+/g, ' ').trim() || 'Youth Volunteer';
 
         document.getElementById('certName').textContent = escapeHTML(fullName);
         document.getElementById('certProject').textContent = escapeHTML(project.title);
@@ -1404,17 +1450,23 @@
         console.error('Error loading profile:', error);
       }
 
-      // Listen for profile updates
+      // Listen for profile updates - also update currentUserData so certificate uses correct name
       document.addEventListener('profileUpdated', (e) => {
         const p = e.detail;
-        const fullName = `${p.firstName || ''} ${p.lastName || ''}`.trim() || 'Youth Volunteer';
+        // Update the stored user data so certificate reflects changes
+        if (p.firstName) currentUserData.firstName = p.firstName;
+        if (p.lastName) currentUserData.lastName = p.lastName;
+        if (p.middleName !== undefined) currentUserData.middleName = p.middleName;
+
+        const middleInitial = p.middleName ? `${p.middleName.charAt(0)}.` : '';
+        const fullName = `${p.firstName || ''} ${middleInitial} ${p.lastName || ''}`.replace(/\s+/g, ' ').trim() || 'Youth Volunteer';
         const initials = `${(p.firstName || '').charAt(0)}${(p.lastName || '').charAt(0)}`.toUpperCase() || '--';
 
         const headerName = document.getElementById('headerUserName');
         const headerAvatar = document.getElementById('headerUserAvatar');
         if (headerName) headerName.textContent = fullName;
         if (headerAvatar) {
-          const profileImageUrl = sanitizeImageURL(p.profileImageUrl);
+          const profileImageUrl = sanitizeImageURL(p.profileImageUrl || p.imagePathURL);
           if (profileImageUrl) {
             headerAvatar.innerHTML = `<img src="${profileImageUrl}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
           } else {

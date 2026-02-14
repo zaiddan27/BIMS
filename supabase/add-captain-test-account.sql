@@ -33,9 +33,9 @@ BEGIN
   ) VALUES (
     v_user_id,
     'captain.test@bims.ph',
-    'Gavin',
+    'Maria',
     'Santos',
-    NULL,
+    'Cruz',
     'CAPTAIN',
     '1985-06-15',
     '09171234567',
@@ -78,6 +78,6 @@ WHERE u.email = 'captain.test@bims.ph';
 -- ============================================
 -- QA Login Credentials:
 --   Email:    captain.test@bims.ph
---   Password: captain@2026
+--   Password: Captain@2026
 --   Role:     CAPTAIN
 -- ============================================

@@ -97,6 +97,27 @@ const SessionManager = {
                 return { success: false, error: 'Account pending' };
             }
 
+            // Check if profile is incomplete (missing essential fields)
+            // This applies to both email/password and Google OAuth users
+            const isOnCompleteProfilePage = window.location.pathname.endsWith('/complete-profile.html') ||
+                                            window.location.pathname.endsWith('complete-profile.html');
+
+            if (!isOnCompleteProfilePage) {
+                const profileIncomplete =
+                    !userData.contactNumber ||
+                    !userData.address ||
+                    !userData.gender ||
+                    !userData.birthday ||
+                    userData.birthday === '2000-01-01';
+
+                if (profileIncomplete) {
+                    console.log('⚠️ Profile incomplete - redirecting to complete-profile.html');
+                    sessionStorage.setItem('profile_incomplete', 'true');
+                    window.location.href = 'complete-profile.html';
+                    return { success: false, error: 'Profile incomplete' };
+                }
+            }
+
             // Store user info in localStorage for quick access
             localStorage.setItem('userRole', userRole);
             localStorage.setItem('userName', `${userData.firstName} ${userData.middleName || ''} ${userData.lastName}`.trim().replace(/\s+/g, ' '));

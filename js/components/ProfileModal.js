@@ -89,6 +89,11 @@ export class ProfileModal {
                   </h3>
                   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
+                      <input type="text" id="profileLastName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" required />
+                      <p id="lastNameError" class="hidden text-xs text-red-600 mt-1"></p>
+                    </div>
+                    <div>
                       <label class="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
                       <input type="text" id="profileFirstName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" required />
                       <p id="firstNameError" class="hidden text-xs text-red-600 mt-1"></p>
@@ -97,11 +102,6 @@ export class ProfileModal {
                       <label class="block text-sm font-medium text-gray-700 mb-1">Middle Name</label>
                       <input type="text" id="profileMiddleName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
                       <p id="middleNameError" class="hidden text-xs text-red-600 mt-1"></p>
-                    </div>
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
-                      <input type="text" id="profileLastName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" required />
-                      <p id="lastNameError" class="hidden text-xs text-red-600 mt-1"></p>
                     </div>
                   </div>
                 </div>
@@ -705,11 +705,11 @@ export class ProfileModal {
         console.log("[ProfileModal] Uploading profile picture...");
 
         const fileExt = this.pendingProfilePicture.type.split('/')[1].replace('jpeg', 'jpg');
-        const fileName = `profile_${session.user.id}_${Date.now()}.${fileExt}`;
-        const filePath = `profile-pictures/${fileName}`;
+        const fileName = `profile_${Date.now()}.${fileExt}`;
+        const filePath = `${session.user.id}/${fileName}`;
 
         const { data: uploadData, error: uploadError } = await supabaseClient.storage
-          .from('bims-files')
+          .from('user-images')
           .upload(filePath, this.pendingProfilePicture, {
             cacheControl: '3600',
             upsert: true,
@@ -722,7 +722,7 @@ export class ProfileModal {
         }
 
         const { data: urlData } = supabaseClient.storage
-          .from('bims-files')
+          .from('user-images')
           .getPublicUrl(filePath);
 
         updateData.imagePathURL = urlData.publicUrl;

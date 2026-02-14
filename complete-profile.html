@@ -108,7 +108,7 @@
                 </div>
             </div>
             <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                <p class="text-sm mb-2">Google account connected successfully!</p>
+                <p class="text-sm mb-2" id="headerMessage">Account created successfully!</p>
                 <p class="text-white/90 text-sm">Please complete your profile to access all features.</p>
             </div>
         </div>
@@ -126,17 +126,41 @@
             </div>
 
             <form id="completeProfileForm" class="space-y-6">
-                <!-- Middle Name (Optional) -->
+                <!-- Name Fields (Last Name, First Name, Middle Name - Filipino convention) -->
                 <div>
-                    <label for="middleName" class="block text-sm font-semibold text-gray-700 mb-2">
-                        Middle Name <span class="text-gray-400 text-xs">(Optional)</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="middleName"
-                        placeholder="Enter your middle name"
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#2f6e4e] focus:ring-2 focus:ring-[#2f6e4e]/20 outline-none transition"
-                    />
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="lastName" class="block text-xs text-gray-500 mb-1">Last Name <span class="text-red-500">*</span></label>
+                            <input
+                                type="text"
+                                id="lastName"
+                                placeholder="Enter last name"
+                                required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#2f6e4e] focus:ring-2 focus:ring-[#2f6e4e]/20 outline-none transition"
+                            />
+                        </div>
+                        <div>
+                            <label for="firstName" class="block text-xs text-gray-500 mb-1">First Name <span class="text-red-500">*</span></label>
+                            <input
+                                type="text"
+                                id="firstName"
+                                placeholder="Enter first name"
+                                required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#2f6e4e] focus:ring-2 focus:ring-[#2f6e4e]/20 outline-none transition"
+                            />
+                        </div>
+                        <div>
+                            <label for="middleName" class="block text-xs text-gray-500 mb-1">Middle Name <span class="text-gray-400 text-xs">(Optional)</span></label>
+                            <input
+                                type="text"
+                                id="middleName"
+                                placeholder="Enter middle name"
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#2f6e4e] focus:ring-2 focus:ring-[#2f6e4e]/20 outline-none transition"
+                            />
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Please verify your name. You can correct it if needed.</p>
                 </div>
 
                 <!-- Birthday -->
@@ -168,6 +192,24 @@
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#2f6e4e] focus:ring-2 focus:ring-[#2f6e4e]/20 outline-none transition"
                     />
                     <p class="text-xs text-gray-500 mt-1">Format: 11 digits starting with 09</p>
+                </div>
+
+                <!-- Gender -->
+                <div>
+                    <label for="gender" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Gender <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                        id="gender"
+                        required
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#2f6e4e] focus:ring-2 focus:ring-[#2f6e4e]/20 outline-none transition bg-white"
+                    >
+                        <option value="" disabled selected>Select gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
                 </div>
 
                 <!-- Full Address -->
@@ -229,9 +271,62 @@
 
           const user = session.user;
 
-          // Display user info
+          // Display email
           document.getElementById('userEmail').textContent = user.email;
-          document.getElementById('userName').textContent = user.user_metadata.full_name || user.user_metadata.name || 'User';
+
+          // Set appropriate header message based on auth provider
+          const isGoogleUser = user.app_metadata?.provider === 'google';
+          document.getElementById('headerMessage').textContent = isGoogleUser
+            ? 'Google account connected successfully!'
+            : 'Account created successfully!';
+
+          // Fetch user data from User_Tbl (populated by trigger on signup)
+          const { data: userData, error: fetchError } = await supabaseClient
+            .from('User_Tbl')
+            .select('firstName, lastName, middleName, birthday, contactNumber, gender, address')
+            .eq('userID', user.id)
+            .single();
+
+          let firstName = '';
+          let lastName = '';
+          let middleName = '';
+
+          if (!fetchError && userData) {
+            firstName = userData.firstName || '';
+            lastName = userData.lastName || '';
+            middleName = userData.middleName || '';
+
+            // Pre-fill existing data if available (non-placeholder values)
+            if (userData.contactNumber) {
+              document.getElementById('contactNumber').value = userData.contactNumber;
+            }
+            if (userData.gender) {
+              document.getElementById('gender').value = userData.gender;
+            }
+            if (userData.address) {
+              document.getElementById('address').value = userData.address;
+            }
+            if (userData.birthday && userData.birthday !== '2000-01-01') {
+              document.getElementById('birthday').value = userData.birthday;
+            }
+          } else {
+            // Fallback: parse from Google metadata
+            const fullName = user.user_metadata.full_name || user.user_metadata.name || '';
+            const nameParts = fullName.split(' ');
+            firstName = nameParts[0] || '';
+            lastName = nameParts.slice(1).join(' ') || '';
+          }
+
+          // Display name in "Last Name, First Name" format (Filipino convention)
+          const displayName = lastName && firstName
+            ? `${lastName}, ${firstName}${middleName ? ' ' + middleName : ''}`
+            : user.user_metadata.full_name || user.user_metadata.name || 'User';
+          document.getElementById('userName').textContent = displayName;
+
+          // Pre-fill editable name fields
+          document.getElementById('lastName').value = lastName;
+          document.getElementById('firstName').value = firstName;
+          document.getElementById('middleName').value = middleName;
 
           // Set max date to 15 years ago
           const today = new Date();
@@ -248,11 +343,25 @@
       document.getElementById('completeProfileForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
         const middleName = document.getElementById('middleName').value.trim();
         const birthday = document.getElementById('birthday').value;
         const contactNumber = document.getElementById('contactNumber').value.trim();
+        const gender = document.getElementById('gender').value;
         const address = document.getElementById('address').value.trim();
         const submitButton = document.getElementById('submitButton');
+
+        // Validate names
+        if (!firstName || firstName.length < 2) {
+          showToast('Please enter your first name (at least 2 characters)', 'error');
+          return;
+        }
+
+        if (!lastName || lastName.length < 2) {
+          showToast('Please enter your last name (at least 2 characters)', 'error');
+          return;
+        }
 
         // Validation
         if (!birthday) {
@@ -262,6 +371,11 @@
 
         if (!contactNumber || contactNumber.length !== 11 || !contactNumber.startsWith('09')) {
           showToast('Please enter a valid 11-digit mobile number starting with 09', 'error');
+          return;
+        }
+
+        if (!gender) {
+          showToast('Please select your gender', 'error');
           return;
         }
 
@@ -297,16 +411,21 @@
             throw new Error('No active session');
           }
 
-          // Format middle name to Title Case if provided
+          // Format names to Title Case
+          const formattedFirstName = formatName(firstName);
+          const formattedLastName = formatName(lastName);
           const formattedMiddleName = middleName ? formatName(middleName) : null;
 
           // Update user profile in database
           const { error } = await supabaseClient
             .from('User_Tbl')
             .update({
+              firstName: formattedFirstName,
+              lastName: formattedLastName,
               middleName: formattedMiddleName,
               birthday: birthday,
               contactNumber: contactNumber,
+              gender: gender,
               address: address,
               updatedAt: new Date().toISOString()
             })

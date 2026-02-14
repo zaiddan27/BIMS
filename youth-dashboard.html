@@ -614,7 +614,6 @@
                   <textarea
                     id="testimonyText"
                     rows="5"
-                    maxlength="500"
                     required
                     placeholder="Share your experience, what you learned, and how the project impacted you..."
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
@@ -1881,8 +1880,13 @@
       function updateCharCount(inputId, counterId, maxLength) {
         const input = document.getElementById(inputId);
         const counter = document.getElementById(counterId);
-        const currentLength = input.value.length;
 
+        // Enforce max length programmatically to avoid browser \r\n double-counting
+        if (input.value.length > maxLength) {
+          input.value = input.value.substring(0, maxLength);
+        }
+
+        const currentLength = input.value.length;
         counter.textContent = `${currentLength}/${maxLength} characters`;
 
         counter.classList.remove('warning', 'error');
@@ -1892,6 +1896,7 @@
           counter.classList.add('warning');
         }
       }
+      window.updateCharCount = updateCharCount;
 
       // Input validation helper
       function setInputState(inputElement, isValid) {

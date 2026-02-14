@@ -1348,3 +1348,43 @@ Integrated full Supabase backend functionality for sk-projects.html - the most c
 - Mark as Complete workflow creates Post_Project_Tbl record
 - Archive updates project status to CANCELLED
 - Captain notified when new projects await approval
+
+---
+
+## QA Bug Fix Reports (2026-02-14)
+
+### Batch 1: LEDONIO Report (commit 44aa64c)
+
+| File | Bug | Fix |
+|------|-----|-----|
+| youth-files.html | Can't search using date | Added date field to search filter, `formatDateLong()` for full month names |
+| youth-projects.html | Invalid/missing inputs accepted in application | Added comprehensive validation for all required fields, visual error states |
+| youth-projects.html | Edit modal shows wrong/missing data | Pre-fill from `currentUserData`, email fallback, in-memory sync |
+| sk-dashboard.html | Budget allocation cannot be edited | Added `window.` exports for `updateEditBudgetTotal`, `updateCategoryAmount`, `updateCategoryName` |
+| sk-dashboard.html | Project success metrics not accurate | Replaced hardcoded values with async Supabase query to `Pre_Project_Tbl` |
+| sk-files.html | Full month names can't be searched | Added `formatDateLong()` and dual-format search matching |
+| sk-projects.html | Attendance sheet cannot be generated | Fixed `applications` → `(project.applications \|\| [])` |
+| sk-projects.html | Application status cannot be set | Migration 012: Fixed unquoted camelCase columns in `notify_application_status()` trigger |
+| sk-projects.html | Cannot reply to inquiries | Migration 013: Rewrote `notify_inquiry_reply()` to use `create_notification()` helper |
+| sk-projects.html | Same start/end date gives unclear error | Added frontend validation before DB `check_dates` constraint |
+
+### Batch 2: RALLETA Report (commit ea4cdd9)
+
+| File | Bug | Fix |
+|------|-----|-----|
+| captain-dashboard.html | Request Revision fails | Fixed `createSKNotificationDB()` wrong Notification_Tbl columns, made non-blocking |
+| captain-dashboard.html | Approve Project shows errors | Fixed `currentProject` null ref after `closeModal()` — save name before closing |
+| superadmin-dashboard.html | Multiple console errors | Replaced broken RPC call with direct `Captain_Tbl` query, fixed `timeStamp`→`timestamp` |
+| superadmin-user-management.html | User table fails to render | Added null safety for `firstName[0]`/`lastName[0]`/`role`/`position`, cleaned debug logs |
+| superadmin-activity-logs.html | Activity logs show "No logs" | Fixed `timeStamp`→`timestamp` column name, switched to server-side pagination with `.range()` |
+
+### Migrations Created
+
+| # | File | Purpose |
+|---|------|---------|
+| 012 | `012_fix_application_status_trigger.sql` | Fix unquoted camelCase in `notify_application_status()` trigger |
+| 013 | `013_fix_inquiry_reply_trigger.sql` | Fix wrong Notification_Tbl columns in `notify_inquiry_reply()` |
+| 014 | `014_fix_superadmin_logs_access.sql` | Add SUPERADMIN to Logs_Tbl RLS SELECT policy |
+
+### Optimization Applied
+- **superadmin-activity-logs.html**: Switched from client-side pagination (load ALL logs) to server-side pagination using Supabase `.range()` and `{ count: 'exact' }`. Only fetches 20 records per page. Selects only needed columns instead of `*`.

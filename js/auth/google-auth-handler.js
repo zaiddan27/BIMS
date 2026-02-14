@@ -25,7 +25,18 @@ async function handleGoogleAuthCallback() {
     }
 
     const user = session.user;
-    console.log('✅ Session found for user:', user.email);
+    const isGoogleUser = user.app_metadata?.provider === 'google';
+    console.log('✅ Session found for user:', user.email, '| Provider:', user.app_metadata?.provider);
+
+    // If NOT a Google user, just redirect to dashboard directly
+    // Don't handle profile completion here — SessionManager does that on dashboard pages
+    if (!isGoogleUser) {
+      console.log('ℹ️ Non-Google session detected — redirecting to dashboard');
+      await redirectToDashboard();
+      return true;
+    }
+
+    // --- Google OAuth user flow below ---
 
     // Check if user exists in User_Tbl
     const { data: existingUser, error: checkError } = await supabaseClient
@@ -40,7 +51,7 @@ async function handleGoogleAuthCallback() {
 
     // If user exists and has complete profile, redirect to dashboard
     if (existingUser) {
-      console.log('✅ Existing user found');
+      console.log('✅ Existing Google user found');
 
       // Check account status first
       if (existingUser.accountStatus !== 'ACTIVE') {
@@ -68,7 +79,6 @@ async function handleGoogleAuthCallback() {
         }
         sessionStorage.setItem('profile_incomplete', 'true');
         setTimeout(() => {
-          // Check if already on complete-profile page (works for both local and GitHub Pages)
           if (!window.location.pathname.endsWith('/complete-profile.html')) {
             window.location.href = 'complete-profile.html';
           }
@@ -77,15 +87,13 @@ async function handleGoogleAuthCallback() {
       }
 
       // Profile is complete - redirect to dashboard
-      if (existingUser.accountStatus === 'ACTIVE') {
-        console.log('✅ Profile complete - redirecting to dashboard');
-        if (typeof showToast === 'function') {
-          showToast(`Welcome back! Redirecting to your dashboard...`, 'success');
-        }
-        setTimeout(async () => {
-          await redirectToDashboard();
-        }, 1000);
+      console.log('✅ Profile complete - redirecting to dashboard');
+      if (typeof showToast === 'function') {
+        showToast(`Welcome back! Redirecting to your dashboard...`, 'success');
       }
+      setTimeout(async () => {
+        await redirectToDashboard();
+      }, 1000);
 
       return true;
     }
