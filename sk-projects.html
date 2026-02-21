@@ -3,40 +3,29 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="SK Project Monitoring - Track and manage barangay projects">
     <title>BIMS - SK Project Monitoring</title>
 
     <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link href="css/toast.css" rel="stylesheet">
 
     <!-- jsPDF for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous" defer></script>
 
     <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/auth.js"></script>
     <script src="js/auth/session.js"></script>
-
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
 
     <style>
       /* Text truncation */
@@ -124,44 +113,6 @@
       .icon-primary { filter: drop-shadow(0 2px 4px rgba(47, 110, 78, 0.1)); }
       .icon-glow { filter: drop-shadow(0 0 8px rgba(47, 110, 78, 0.3)); }
 
-      /* Toast Notification Styles */
-      .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        min-width: 300px;
-        background: white;
-        padding: 16px 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateX(400px);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 9999;
-      }
-
-      .toast.show {
-        transform: translateX(0);
-      }
-
-      .toast.success {
-        border-left: 4px solid #10b981;
-      }
-
-      .toast.error {
-        border-left: 4px solid #ef4444;
-      }
-
-      .toast.warning {
-        border-left: 4px solid #f59e0b;
-      }
-
-      .toast.info {
-        border-left: 4px solid #3b82f6;
-      }
-
       /* Input validation states */
       .input-error {
         border-color: #ef4444 !important;
@@ -241,193 +192,21 @@
     </style>
   </head>
   <body class="bg-gray-50 overflow-x-hidden">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
     <div class="flex h-screen overflow-hidden">
       <!-- SIDEBAR -->
-      <aside
-        class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col"
-      >
-        <div class="p-6 flex-1 flex flex-col">
-          <!-- Logo -->
-          <div class="flex items-center space-x-4 mb-8">
-            <div
-              class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden"
-            >
-              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
-            </div>
-            <div>
-              <h1 class="text-xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-            </div>
-          </div>
-
-          <!-- Navigation Menu -->
-          <nav class="space-y-2">
-            <a
-              href="sk-dashboard.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-green-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
-                  ></path>
-                </svg>
-              </div>
-              <span>Dashboard</span>
-            </a>
-            <a
-              href="sk-files.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-blue-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Manage Files</span>
-            </a>
-            <a
-              href="sk-projects.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group"
-            >
-              <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  ></path>
-                </svg>
-              </div>
-              <span>Project Monitoring</span>
-            </a>
-            <a
-              href="sk-calendar.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-orange-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Calendar</span>
-            </a>
-            <a
-              href="sk-testimonies.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-indigo-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Testimonies</span>
-            </a>
-            <a
-              href="sk-archive.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-gray-700 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                  ></path>
-                </svg>
-              </div>
-              <span>Archives</span>
-            </a>
-          </nav>
-
-          <div class="flex-1"></div>
-
-          <!-- Logout -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <button
-              onclick="handleLogout()"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
-            >
-              <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
-                </svg>
-              </div>
-              <span class="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col" data-role="sk"></aside>
+      <script src="js/components/sidebar.js"></script>
 
       <!-- Confirmation Modal -->
-      <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+      <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
           <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
             <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
             </svg>
           </div>
-          <h3 id="confirmTitle" class="text-lg font-bold text-gray-900 text-center mb-2">Confirm Action</h3>
+          <h3 id="confirmModalTitle" class="text-lg font-bold text-gray-900 text-center mb-2">Confirm Action</h3>
           <p id="confirmMessage" class="text-sm text-gray-600 text-center mb-6">Are you sure you want to proceed?</p>
           <div class="flex gap-3">
             <button id="confirmCancel" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Cancel</button>
@@ -437,14 +216,14 @@
       </div>
 
       <!-- Cancel Approval Confirmation Modal -->
-      <div id="cancelApprovalModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+      <div id="cancelApprovalModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="cancelApprovalModalTitle">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
           <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
             <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Cancel Approval Request?</h3>
+          <h3 id="cancelApprovalModalTitle" class="text-xl font-bold text-gray-900 text-center mb-2">Cancel Approval Request?</h3>
           <p id="cancelApprovalProjectName" class="text-sm text-gray-600 text-center mb-6">Are you sure you want to cancel this project's approval request? The project will be deleted.</p>
           <div class="flex gap-3">
             <button onclick="closeCancelApprovalModal()" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Keep Project</button>
@@ -454,7 +233,7 @@
       </div>
 
       <!-- MAIN CONTENT -->
-      <div class="flex-1 overflow-auto">
+      <div id="main-content" class="flex-1 overflow-auto">
         <!-- Header -->
         <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200">
           <div class="px-8 py-6">
@@ -581,6 +360,7 @@
     <div
       id="projectViewModal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-2 sm:p-4"
+      role="dialog" aria-modal="true" aria-labelledby="projectViewModalTitle"
       onclick="if(event.target === this) closeProjectView()"
     >
         <div
@@ -592,7 +372,7 @@
           >
             <div class="flex justify-between items-start">
               <div>
-                <h2 id="viewProjectTitle" class="text-lg sm:text-xl font-bold mb-2"></h2>
+                <h2 id="projectViewModalTitle" class="text-lg sm:text-xl font-bold mb-2"></h2>
                 <div class="flex items-center gap-4 text-white/70">
                   <span id="viewProjectHeadsCount" class="text-xs sm:text-sm"></span>
                   <span>•</span>
@@ -800,7 +580,7 @@
     </div>
 
     <!-- CREATE/EDIT PROJECT MODAL -->
-    <div id="projectModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div id="projectModal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
       <div class="flex items-center justify-center min-h-screen px-4">
         <div
           class="fixed inset-0 bg-gray-500 opacity-75"
@@ -1135,6 +915,7 @@
     <div
       id="applicantModal"
       class="hidden fixed inset-0 z-[10000] overflow-y-auto"
+      role="dialog" aria-modal="true" aria-labelledby="applicantModalTitle"
     >
       <div class="flex items-center justify-center min-h-screen px-4">
         <div
@@ -1149,7 +930,7 @@
           <div class="bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] p-6">
             <div class="flex justify-between items-start">
               <div>
-                <h2 class="text-xl font-bold text-white">
+                <h2 id="applicantModalTitle" class="text-xl font-bold text-white">
                   Volunteer Application Details
                 </h2>
                 <p
@@ -1305,7 +1086,7 @@
     </div>
 
     <!-- PROJECT EVALUATION MODAL (Mark as Complete) -->
-    <div id="evaluationModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div id="evaluationModal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="evaluationModalTitle">
       <div class="flex items-center justify-center min-h-screen px-4">
         <div class="fixed inset-0 bg-gray-500 opacity-75" onclick="closeEvaluationModal()"></div>
 
@@ -1314,7 +1095,7 @@
           <div class="sticky top-0 z-20 bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-t-xl">
             <div class="flex justify-between items-start">
               <div>
-                <h2 class="text-2xl font-bold mb-2">Project Evaluation</h2>
+                <h2 id="evaluationModalTitle" class="text-2xl font-bold mb-2">Project Evaluation</h2>
                 <p id="evalProjectTitle" class="text-purple-100"></p>
               </div>
               <button onclick="closeEvaluationModal()" class="text-white/80 hover:text-white">
@@ -1642,7 +1423,7 @@
     </div>
 
     <!-- DOWNLOAD REPORT MODAL -->
-    <div id="downloadReportModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div id="downloadReportModal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="downloadReportModalTitle">
       <div class="flex items-center justify-center min-h-screen px-4">
         <div class="fixed inset-0 bg-gray-500 opacity-75" onclick="closeDownloadReportModal()"></div>
 
@@ -1651,7 +1432,7 @@
           <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6">
             <div class="flex justify-between items-start">
               <div>
-                <h2 class="text-2xl font-bold mb-2">Download Project Report</h2>
+                <h2 id="downloadReportModalTitle" class="text-2xl font-bold mb-2">Download Project Report</h2>
                 <p id="downloadProjectTitle" class="text-blue-100"></p>
               </div>
               <button onclick="closeDownloadReportModal()" class="text-white/80 hover:text-white">
@@ -1760,14 +1541,6 @@
       import { NotificationModal } from './js/components/NotificationModal.js';
       import { ProfileModal } from './js/components/ProfileModal.js';
 
-      // Security: XSS Prevention helpers
-      function escapeHTML(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-      }
-
       // Security: Sanitize image URL (only allow Supabase storage URLs)
       function sanitizeImageURL(url) {
         if (!url) return null;
@@ -1778,7 +1551,7 @@
             return url;
           }
         } catch (e) {
-          console.warn('Invalid URL:', url);
+          // invalid URL - ignore
         }
         return null;
       }
@@ -1881,7 +1654,7 @@
             }).filter(name => name !== 'Unknown');
           }
         } catch (err) {
-          console.warn('Could not load SK officials:', err);
+          // non-critical - SK officials list unavailable
         }
       }
 
@@ -1889,7 +1662,7 @@
         try {
           const { data, error } = await supabaseClient
             .from('SK_Tbl')
-            .select('*')
+            .select('skID, userID, position, committee')
             .eq('userID', currentUser.id)
             .single();
 
@@ -1897,7 +1670,7 @@
             currentUserSKData = data;
           }
         } catch (err) {
-          console.warn('Could not load SK data:', err);
+          // non-critical - SK data unavailable
         }
       }
 
@@ -1928,7 +1701,7 @@
           const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
           if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('https://')) {
-            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="handleAvatarError(this, '${escapeHTML(initials)}')" />`;
           } else {
             avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
           }
@@ -1948,7 +1721,7 @@
         if (avatarEl) {
           const initials = `${profile.firstName?.charAt(0) || ''}${profile.lastName?.charAt(0) || ''}`.toUpperCase();
           if (profile.profilePicture && profile.profilePicture.startsWith('https://')) {
-            avatarEl.innerHTML = `<img src="${escapeHTML(profile.profilePicture)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+            avatarEl.innerHTML = `<img src="${escapeHTML(profile.profilePicture)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="handleAvatarError(this, '${escapeHTML(initials)}')" />`;
           } else {
             avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
           }
@@ -1973,12 +1746,56 @@
           const { data: projectsData, error } = await supabaseClient
             .from('Pre_Project_Tbl')
             .select(`
-              *,
+              preProjectID, title, category, status, approvalStatus, skID,
+              startDateTime, endDateTime, location, description, budget,
+              volunteers, beneficiaries, createdAt,
               SK_Tbl (
                 User_Tbl (
                   firstName,
                   lastName
                 )
+              ),
+              Application_Tbl (
+                applicationID,
+                preProjectID,
+                userID,
+                preferredRole,
+                parentConsentFile,
+                applicationStatus,
+                appliedDate,
+                User_Tbl (
+                  firstName,
+                  lastName,
+                  middleName,
+                  birthday,
+                  contactNumber,
+                  address,
+                  email
+                )
+              ),
+              Inquiry_Tbl (
+                inquiryID,
+                message,
+                timeStamp,
+                isReplied,
+                User_Tbl (
+                  firstName,
+                  lastName
+                ),
+                Reply_Tbl (
+                  replyID,
+                  message,
+                  timeStamp,
+                  User_Tbl (
+                    firstName,
+                    lastName
+                  )
+                )
+              ),
+              BudgetBreakdown_Tbl (
+                breakdownID,
+                description,
+                cost
               )
             `)
             .in('approvalStatus', ['APPROVED', 'PENDING', 'REVISION'])
@@ -1986,20 +1803,58 @@
             .order('createdAt', { ascending: false });
 
           if (error) {
-            console.error('Error loading projects:', error);
             showToast('Failed to load projects. Please try again.', 'error');
             projects = [];
           } else {
             // Transform data to match our frontend structure
-            projects = await Promise.all((projectsData || []).map(async (project) => {
-              // Load applications for this project
-              const applications = await loadProjectApplications(project.preProjectID);
+            projects = (projectsData || []).map(project => {
+              // Transform applications from embedded data
+              const applications = (project.Application_Tbl || []).map(app => {
+                const user = app.User_Tbl || {};
+                const birthday = user.birthday ? new Date(user.birthday) : null;
+                const age = birthday ? Math.floor((new Date() - birthday) / (365.25 * 24 * 60 * 60 * 1000)) : null;
 
-              // Load inquiries for this project
-              const inquiries = await loadProjectInquiries(project.preProjectID);
+                return {
+                  id: app.applicationID,
+                  projectId: app.preProjectID,
+                  firstName: user.firstName || '',
+                  middleName: user.middleName || '',
+                  lastName: user.lastName || '',
+                  fullName: `${user.lastName || ''}, ${user.firstName || ''} ${user.middleName ? user.middleName.charAt(0) + '.' : ''}`.trim(),
+                  birthday: user.birthday || '',
+                  age: age,
+                  contact: user.contactNumber || '',
+                  email: user.email || '',
+                  address: user.address || '',
+                  preferredRole: app.preferredRole,
+                  parentalConsent: app.parentConsentFile,
+                  status: (app.applicationStatus || 'pending').toLowerCase(),
+                  appliedDate: app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : '',
+                  userID: app.userID
+                };
+              });
 
-              // Load budget breakdown
-              const budgetBreakdown = await loadProjectBudgetBreakdown(project.preProjectID);
+              // Transform inquiries from embedded data
+              const inquiries = (project.Inquiry_Tbl || []).map(inq => ({
+                id: inq.inquiryID,
+                from: inq.User_Tbl ? `${inq.User_Tbl.firstName} ${inq.User_Tbl.lastName}`.trim() : 'Anonymous',
+                message: inq.message,
+                time: formatTimeAgo(inq.timeStamp),
+                isReplied: inq.isReplied,
+                replies: (inq.Reply_Tbl || []).map(reply => ({
+                  id: reply.replyID,
+                  text: reply.message,
+                  repliedBy: reply.User_Tbl ? `${reply.User_Tbl.firstName} ${reply.User_Tbl.lastName}`.trim() : 'SK Official',
+                  repliedAt: formatTimeAgo(reply.timeStamp)
+                }))
+              }));
+
+              // Transform budget breakdown from embedded data
+              const budgetBreakdown = (project.BudgetBreakdown_Tbl || []).map(item => ({
+                id: item.breakdownID,
+                description: item.description,
+                cost: item.cost
+              }));
 
               // Get project head name
               const headName = project.SK_Tbl?.User_Tbl
@@ -2058,14 +1913,13 @@
                 imagePathURL: project.imagePathURL,
                 userID: project.userID
               };
-            }));
+            });
           }
 
           showLoadingSkeleton(false);
           renderProjects(projects);
 
         } catch (err) {
-          console.error('Load projects exception:', err);
           showToast('An error occurred while loading projects.', 'error');
           showLoadingSkeleton(false);
           projects = [];
@@ -2093,7 +1947,7 @@
           const { data, error } = await supabaseClient
             .from('Application_Tbl')
             .select(`
-              *,
+              applicationID, preProjectID, userID, preferredRole, parentConsentFile, applicationStatus, appliedDate,
               User_Tbl (
                 firstName,
                 lastName,
@@ -2107,7 +1961,6 @@
             .eq('preProjectID', preProjectID);
 
           if (error) {
-            console.error('Error loading applications:', error);
             return [];
           }
 
@@ -2136,7 +1989,6 @@
             };
           });
         } catch (err) {
-          console.error('Load applications exception:', err);
           return [];
         }
       }
@@ -2146,7 +1998,7 @@
           const { data, error } = await supabaseClient
             .from('Inquiry_Tbl')
             .select(`
-              *,
+              inquiryID, message, timeStamp, isReplied,
               User_Tbl (
                 firstName,
                 lastName
@@ -2165,7 +2017,6 @@
             .order('timeStamp', { ascending: false });
 
           if (error) {
-            console.error('Error loading inquiries:', error);
             return [];
           }
 
@@ -2183,7 +2034,6 @@
             }))
           }));
         } catch (err) {
-          console.error('Load inquiries exception:', err);
           return [];
         }
       }
@@ -2192,11 +2042,10 @@
         try {
           const { data, error } = await supabaseClient
             .from('BudgetBreakdown_Tbl')
-            .select('*')
+            .select('breakdownID, description, cost')
             .eq('preProjectID', preProjectID);
 
           if (error) {
-            console.error('Error loading budget breakdown:', error);
             return [];
           }
 
@@ -2206,7 +2055,6 @@
             cost: item.cost
           }));
         } catch (err) {
-          console.error('Load budget breakdown exception:', err);
           return [];
         }
       }
@@ -2630,7 +2478,7 @@
         if (!project) return;
 
         // Populate header
-        document.getElementById("viewProjectTitle").textContent = project.title;
+        document.getElementById("projectViewModalTitle").textContent = project.title;
         document.getElementById(
           "viewProjectHeadsCount"
         ).textContent = `${project.heads.length} Project Head(s)`;
@@ -3086,12 +2934,11 @@
         try {
           const { data, error } = await supabaseClient
             .from('BudgetBreakdown_Tbl')
-            .select('*')
+            .select('breakdownID, description, cost')
             .eq('preProjectID', preProjectID)
             .order('breakdownID', { ascending: true });
 
           if (error) {
-            console.error('Error loading budget breakdown:', error);
             budgetBreakdownItems = [];
           } else {
             // Transform database items to local format
@@ -3104,7 +2951,6 @@
           renderBudgetBreakdown();
           updateBudgetTotal();
         } catch (err) {
-          console.error('Error loading budget breakdown:', err);
           budgetBreakdownItems = [];
           renderBudgetBreakdown();
         }
@@ -3541,8 +3387,7 @@
                 await saveBudgetBreakdownItems(newProject.preProjectID);
               }
 
-              // Create notification for captain
-              await createCaptainNotification(newProject.preProjectID, title);
+              // Notification handled by DB trigger (notify_new_project)
 
               showToast("Project submitted for Barangay Captain approval!");
             }
@@ -3558,16 +3403,17 @@
         });
 
       async function saveBudgetBreakdownItems(preProjectID) {
-        for (const item of budgetBreakdownItems) {
-          if (item.description && item.cost > 0) {
-            await supabaseClient
-              .from('BudgetBreakdown_Tbl')
-              .insert({
-                preProjectID,
-                description: item.description,
-                cost: Math.round(item.cost)
-              });
-          }
+        const items = budgetBreakdownItems
+          .filter(item => item.description && item.cost > 0)
+          .map(item => ({
+            preProjectID,
+            description: item.description,
+            cost: Math.round(item.cost)
+          }));
+        if (items.length > 0) {
+          await supabaseClient
+            .from('BudgetBreakdown_Tbl')
+            .insert(items);
         }
       }
 
@@ -3603,7 +3449,7 @@
               });
           }
         } catch (err) {
-          console.warn('Could not create captain notification:', err);
+          // non-critical - notification failed silently
         }
       }
 
@@ -3655,7 +3501,6 @@
           }
 
         } catch (err) {
-          console.error('Send reply exception:', err);
           showToast('An error occurred. Please try again.', 'error');
         }
       }
@@ -3689,55 +3534,10 @@
         renderProjects(filtered);
       }
 
-      // Toast notification system
-      function showToast(message, type = 'success') {
-        // Remove any existing toast
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-          existingToast.remove();
-        }
-
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-
-        // Icon based on type
-        let icon = '';
-        if (type === 'success') {
-          icon = '<svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-        } else if (type === 'error') {
-          icon = '<svg class="w-5 h-5 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
-        } else if (type === 'warning') {
-          icon = '<svg class="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
-        } else {
-          icon = '<svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        }
-
-        toast.innerHTML = `
-          ${icon}
-          <span class="text-sm text-gray-800 flex-1">${message}</span>
-          <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600 flex-shrink-0">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        `;
-
-        document.body.appendChild(toast);
-
-        // Trigger animation
-        setTimeout(() => toast.classList.add('show'), 10);
-
-        // Auto remove after 4 seconds
-        setTimeout(() => {
-          toast.classList.remove('show');
-          setTimeout(() => toast.remove(), 300);
-        }, 4000);
-      }
-
       // Confirmation modal system
       function showConfirm(title, message, onConfirm, confirmButtonText = 'Delete', confirmButtonColor = 'red') {
         const modal = document.getElementById('confirmModal');
-        const titleEl = document.getElementById('confirmTitle');
+        const titleEl = document.getElementById('confirmModalTitle');
         const messageEl = document.getElementById('confirmMessage');
         const confirmBtn = document.getElementById('confirmOk');
         const cancelBtn = document.getElementById('confirmCancel');
@@ -4200,7 +4000,7 @@
             <td class="px-3 py-3">
               <div class="flex items-center gap-2">
                 ${item.receiptPreview ? `
-                  <img src="${item.receiptPreview}" class="w-10 h-10 object-cover rounded border cursor-pointer" onclick="viewReceiptImage(${index})" title="Click to view" />
+                  <img src="${item.receiptPreview}" class="w-10 h-10 object-cover rounded border cursor-pointer" loading="lazy" onclick="viewReceiptImage(${index})" title="Click to view" />
                   <button onclick="removeReceipt(${index})" class="text-red-600 hover:text-red-800 text-xs">
                     <i class="fas fa-times"></i>
                   </button>
@@ -4296,7 +4096,7 @@
             <button onclick="this.closest('.fixed').remove()" class="absolute top-2 right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:bg-gray-100">
               <i class="fas fa-times"></i>
             </button>
-            <img src="${receipt.receiptPreview}" class="max-w-full max-h-[90vh] rounded shadow-2xl" />
+            <img src="${receipt.receiptPreview}" class="max-w-full max-h-[90vh] rounded shadow-2xl" loading="lazy" />
           </div>
         `;
         document.body.appendChild(modal);
@@ -4416,7 +4216,6 @@
             .eq('preProjectID', currentProjectId);
 
           if (projectError) {
-            console.error('Error updating project status:', projectError);
             showToast('Failed to mark project as complete. Please try again.', 'error');
             return;
           }
@@ -4435,22 +4234,22 @@
             .single();
 
           if (postError) {
-            console.error('Error creating post-project record:', postError);
             // Continue anyway - the project status is updated
           }
 
           // Save actual expense data
           if (actualBreakdownItems.length > 0 && postProject) {
-            for (const item of actualBreakdownItems) {
-              if (item.actualCost > 0) {
-                await supabaseClient
-                  .from('Expenses_Tbl')
-                  .insert({
-                    breakdownID: item.id,
-                    actualCost: item.actualCost,
-                    receiptURL: item.receipt || null
-                  });
-              }
+            const expenseItems = actualBreakdownItems
+              .filter(item => item.actualCost > 0)
+              .map(item => ({
+                breakdownID: item.id,
+                actualCost: item.actualCost,
+                receiptURL: item.receipt || null
+              }));
+            if (expenseItems.length > 0) {
+              await supabaseClient
+                .from('Expenses_Tbl')
+                .insert(expenseItems);
             }
           }
 
@@ -4459,7 +4258,6 @@
           await loadProjects(); // Reload projects to reflect changes
 
         } catch (err) {
-          console.error('Submit evaluation exception:', err);
           showToast('An error occurred. Please try again.', 'error');
         }
       }
@@ -4519,7 +4317,7 @@
 
             // If completed more than 3 months ago, auto-archive
             if (completedDate < threeMonthsAgo) {
-              console.log(`Auto-archiving project: ${project.title}`);
+              // auto-archive project completed >3 months ago
               projects = projects.filter(p => p.id !== project.id);
               showToast(`"${project.title}" was automatically archived (completed >3 months ago)`);
             }
@@ -4531,7 +4329,8 @@
 
       // Run auto-archive check on page load and every hour
       checkAutoArchive();
-      setInterval(checkAutoArchive, 3600000); // Check every hour
+      const autoArchiveInterval = setInterval(checkAutoArchive, 3600000); // Check every hour
+      window.addEventListener('beforeunload', () => clearInterval(autoArchiveInterval));
 
       // ========== DOWNLOAD REPORT MODAL FUNCTIONS ==========
 
@@ -4589,12 +4388,6 @@
         } else if (format === 'excel') {
           showToast('Generating Excel report...');
           setTimeout(() => {
-            console.log('Excel Report Data:', {
-              project: project.title,
-              successRate: project.successRate,
-              evaluation: project.evaluation,
-              volunteers: project.applications.filter(a => a.status === 'approved')
-            });
             showToast('Excel report downloaded successfully!');
             closeDownloadReportModal();
           }, 1000);

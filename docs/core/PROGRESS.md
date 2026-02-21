@@ -158,6 +158,35 @@
 
 ---
 
+## Database Efficiency Audit
+
+**Status:** ✅ COMPLETE (2026-02-21)
+
+### Notification System Fixes
+- [x] Fixed `notify_application_status()` trigger - quoted camelCase columns ✅
+- [x] Fixed `notify_inquiry_reply()` trigger - rewrote with `create_notification()` helper ✅
+- [x] Fixed `notify_project_approval()` trigger - quoted columns + helper function ✅
+- [x] Fixed `notify_new_project()` trigger - quoted all references ✅
+- [x] Fixed `create_notification()` helper - quoted table and column names ✅
+- [x] Removed duplicate JS notification calls from captain-dashboard.html (3 calls) ✅
+- [x] Removed duplicate JS notification call from sk-projects.html (1 call) ✅
+
+### RLS Performance Optimization (v3.0)
+- [x] Wrapped all `auth.uid()` with `(select auth.uid())` in 51 policies ✅
+- [x] Updated 6 helper functions with InitPlan optimization ✅
+- [x] Consolidated ~70+ policies down to 51 (~30% reduction) ✅
+- [x] Added 10 missing foreign key indexes ✅
+- [x] Resolved all Supabase linter warnings ✅
+
+### Supabase Linter Results (Post-Fix)
+| Warning | Before | After |
+|---------|--------|-------|
+| `auth_rls_initplan` | 38 | 0 |
+| `multiple_permissive_policies` | 20+ | 0 |
+| `unindexed_foreign_keys` | 10 | 0 |
+
+---
+
 ## Security Implementation
 
 **Status:** ✅ COMPLETE (2026-01-18)

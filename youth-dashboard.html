@@ -3,29 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Youth Dashboard - View announcements and barangay updates">
     <title>BIMS - Youth Volunteer Dashboard</title>
 
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS -->
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
+    <link href="css/toast.css" rel="stylesheet">
     <style>
       /* Enhanced Icon System */
       .icon-wrapper {
@@ -77,44 +64,6 @@
 
       .icon-glow {
         filter: drop-shadow(0 0 8px rgba(47, 110, 78, 0.3));
-      }
-
-      /* Toast Notification Styles */
-      .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        min-width: 300px;
-        background: white;
-        padding: 16px 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateX(400px);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 9999;
-      }
-
-      .toast.show {
-        transform: translateX(0);
-      }
-
-      .toast.success {
-        border-left: 4px solid #10b981;
-      }
-
-      .toast.error {
-        border-left: 4px solid #ef4444;
-      }
-
-      .toast.warning {
-        border-left: 4px solid #f59e0b;
-      }
-
-      .toast.info {
-        border-left: 4px solid #3b82f6;
       }
 
       /* Input validation states */
@@ -186,166 +135,11 @@
     </style>
   </head>
   <body class="bg-gray-50">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
     <div class="flex h-screen overflow-hidden">
       <!-- Sidebar -->
-      <aside
-        class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col"
-      >
-        <div class="p-6 flex-1 flex flex-col">
-          <!-- Logo -->
-          <div class="flex items-center space-x-4 mb-8">
-            <div
-              class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden"
-            >
-              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
-            </div>
-            <div>
-              <h1 class="text-xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-            </div>
-          </div>
-
-          <!-- Menu -->
-          <nav class="space-y-2">
-            <a
-              href="youth-dashboard.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group w-full"
-            >
-              <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
-                  ></path>
-                </svg>
-              </div>
-              <span>Dashboard</span>
-            </a>
-
-            <a
-              href="youth-files.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Files</span>
-            </a>
-
-            <a
-              href="youth-projects.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  ></path>
-                </svg>
-              </div>
-              <span>Projects</span>
-            </a>
-
-            <a
-              href="youth-calendar.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Calendar</span>
-            </a>
-
-            <a
-              href="youth-certificates.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Certificates</span>
-            </a>
-          </nav>
-
-          <div class="flex-1"></div>
-
-          <!-- Logout -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <button
-              onclick="handleLogout()"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
-            >
-              <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
-                </svg>
-              </div>
-              <span class="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col" data-role="youth"></aside>
+      <script src="js/components/sidebar.js"></script>
 
       <!-- Main -->
       <div class="flex-1 overflow-auto">
@@ -382,7 +176,7 @@
         </header>
 
         <!-- Content -->
-        <main class="px-6 py-6">
+        <main id="main-content" class="px-6 py-6">
           <div class="max-w-7xl mx-auto space-y-6">
             <!-- Announcements (read-only) -->
             <section class="bg-white rounded-xl shadow-sm p-6">
@@ -651,6 +445,9 @@
     <div
       id="announcementModal"
       class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="announceTitle"
     >
       <div
         class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
@@ -778,11 +575,14 @@
     <!-- ProfileModal component will be dynamically rendered here -->
 
     <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/auth.js"></script>
     <script src="js/auth/session.js"></script>
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
 
     <script type="module">
       // Import components
@@ -802,28 +602,8 @@
       const DEBUG_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
       const debug = {
-        log: (...args) => DEBUG_MODE && console.log('[YOUTH-DASHBOARD]', ...args),
-        warn: (...args) => DEBUG_MODE && console.warn('[YOUTH-DASHBOARD]', ...args),
         error: (...args) => console.error('[YOUTH-DASHBOARD]', ...args), // Always log errors
       };
-
-      // ============================================
-      // SECURITY: XSS Prevention Helpers
-      // ============================================
-      /**
-       * Escape HTML to prevent XSS attacks
-       * @param {string} unsafe - Unsafe string from user input or database
-       * @returns {string} - Safe HTML string
-       */
-      function escapeHTML(unsafe) {
-        if (typeof unsafe !== "string") return "";
-        return unsafe
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
 
       /**
        * SECURITY: Validate and sanitize image URLs
@@ -859,22 +639,16 @@
       const profileModal = new ProfileModal();
       profileModal.render();
       window.profileModal = profileModal;
-      console.log('[YOUTH DASHBOARD] ProfileModal component initialized');
 
       // Load user data from Supabase on page load
       async function loadUserProfile() {
         try {
-          console.log('[YOUTH DASHBOARD] Loading user profile...');
-
           // Use SessionManager for consistent authentication
           const sessionResult = await SessionManager.requireAuth(['YOUTH_VOLUNTEER']);
 
           if (!sessionResult.success) {
-            console.error('[YOUTH DASHBOARD] Authentication failed:', sessionResult.error);
             return; // SessionManager handles redirect
           }
-
-          console.log('[YOUTH DASHBOARD] Authentication successful!');
 
           const user = sessionResult.user;
           const userData = sessionResult.userData;
@@ -884,8 +658,6 @@
 
           // Update UI with loaded data
           updateProfileUI(user, userData);
-
-          console.log('[YOUTH DASHBOARD] User profile loaded successfully');
 
         } catch (error) {
           console.error('Error loading user profile:', error);
@@ -910,21 +682,18 @@
 
       // Update profile picture/initials in the UI
       function updateProfilePicture(userData) {
-        console.log('[UPDATE PICTURE] Starting update, userData.imagePathURL:', userData.imagePathURL);
-
         const firstInitial = userData.firstName ? userData.firstName.charAt(0).toUpperCase() : 'Y';
         const lastInitial = userData.lastName ? userData.lastName.charAt(0).toUpperCase() : 'V';
 
         // Update header avatar using element ID
         const headerAvatarDiv = document.getElementById('headerAvatar');
-        console.log('[UPDATE PICTURE] headerAvatar element found:', !!headerAvatarDiv);
 
         if (headerAvatarDiv) {
           // SECURITY: Sanitize profile picture URL
           const safeProfileUrl = sanitizeImageURL(userData.imagePathURL);
           if (safeProfileUrl) {
             // Show profile picture with sanitized URL
-            headerAvatarDiv.innerHTML = `<img src="${safeProfileUrl}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(firstInitial)}${escapeHTML(lastInitial)}</span>';" />`;
+            headerAvatarDiv.innerHTML = `<img src="${safeProfileUrl}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="handleAvatarError(this, '${escapeHTML(firstInitial)}${escapeHTML(lastInitial)}')" />`;
           } else {
             // Show initials
             headerAvatarDiv.innerHTML = `<span class="text-white font-semibold">${escapeHTML(firstInitial)}${escapeHTML(lastInitial)}</span>`;
@@ -1146,8 +915,6 @@
         const file = event.target.files[0];
         if (!file) return;
 
-        console.log('[PROFILE PICTURE] File selected:', file.name, file.type, file.size);
-
         // Validate file type
         if (!file.type.startsWith('image/')) {
           showToast('Please upload an image file', 'error');
@@ -1170,8 +937,6 @@
             return;
           }
 
-          console.log('[PROFILE PICTURE] User ID:', session.user.id);
-
           // Show loading state
           showToast('Uploading profile picture...', 'info');
 
@@ -1179,8 +944,6 @@
           const fileExt = file.name.split('.').pop();
           const fileName = `${session.user.id}_${Date.now()}.${fileExt}`;
           const filePath = `${session.user.id}/${fileName}`;
-
-          console.log('[PROFILE PICTURE] Upload path:', filePath);
 
           // Upload to Supabase Storage (user-images bucket)
           const { data: uploadData, error: uploadError } = await supabaseClient
@@ -1192,19 +955,14 @@
             });
 
           if (uploadError) {
-            console.error('[PROFILE PICTURE] Upload error:', uploadError);
             throw uploadError;
           }
-
-          console.log('[PROFILE PICTURE] Upload successful:', uploadData);
 
           // Get public URL
           const { data: { publicUrl } } = supabaseClient
             .storage
             .from('user-images')
             .getPublicUrl(filePath);
-
-          console.log('[PROFILE PICTURE] Public URL:', publicUrl);
 
           // Update database with new image URL
           const { data: dbUpdateData, error: updateError } = await supabaseClient
@@ -1227,25 +985,19 @@
             return;
           }
 
-          console.log('[PROFILE PICTURE] Database updated:', dbUpdateData[0]);
-
           // Update local profile
           userProfile.profilePicture = publicUrl;
-          console.log('[PROFILE PICTURE] Updated userProfile.profilePicture:', userProfile.profilePicture);
 
           // Update modal preview
           const previewDiv = document.getElementById('profilePicturePreview');
           if (previewDiv) {
-            previewDiv.innerHTML = `<img src="${publicUrl}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" onload="console.log('[PROFILE PICTURE] Modal image loaded successfully')" onerror="console.error('[PROFILE PICTURE] Modal image FAILED to load:', this.src)" />`;
-            console.log('[PROFILE PICTURE] Modal preview updated');
+            previewDiv.innerHTML = `<img src="${publicUrl}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" onerror="console.error('[PROFILE PICTURE] Modal image FAILED to load:', this.src)" />`;
           } else {
             console.error('[PROFILE PICTURE] profilePicturePreview element not found!');
           }
 
           // Update header avatar
-          console.log('[PROFILE PICTURE] Calling updateProfilePicture()...');
           updateProfilePicture();
-          console.log('[PROFILE PICTURE] updateProfilePicture() completed');
 
           showToast('Profile picture uploaded successfully!', 'success');
 
@@ -1373,7 +1125,6 @@
           };
 
           // Update database
-          console.log('[SAVE PROFILE] Updating database for userID:', session.user.id);
           const { data: updateData, error: updateError, count } = await supabaseClient
             .from('User_Tbl')
             .update({
@@ -1388,8 +1139,6 @@
             })
             .eq('userID', session.user.id)
             .select();
-
-          console.log('[SAVE PROFILE] Update result:', { data: updateData, error: updateError, count });
 
           if (updateError) {
             console.error('[SAVE PROFILE] Database update error:', updateError);
@@ -1408,8 +1157,6 @@
             showToast('Failed to update profile. Please check permissions.', 'error');
             return;
           }
-
-          console.log('[SAVE PROFILE] Profile updated successfully:', updateData[0]);
 
           // Update local userProfile object
           userProfile.firstName = formatName(firstName);
@@ -1483,7 +1230,7 @@
           // EFFICIENCY: Use .limit() to prevent loading too many records
           const { data, error } = await supabaseClient
             .from('Announcement_Tbl')
-            .select('*')
+            .select('announcementID, title, publishedDate, category, description, imagePathURL')
             .order('publishedDate', { ascending: false })
             .limit(MAX_ANNOUNCEMENTS);
 
@@ -1509,7 +1256,6 @@
             // Render announcements after loading
             renderAnnouncements();
           } else {
-            console.log('No announcements found');
             announcementsArray = [];
           }
 
@@ -1562,7 +1308,7 @@
 
           // Show image if available, otherwise show gradient with icon
           const imageSection = safeImageUrl
-            ? `<img src="${safeImageUrl}" alt="${escapeHTML(announcement.title)}" class="w-full h-36 object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            ? `<img src="${safeImageUrl}" alt="${escapeHTML(announcement.title)}" class="w-full h-36 object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                <div class="h-36 bg-gradient-to-br ${gradientColors[announcement.category] || gradientColors.general} items-center justify-center hidden">
                  <svg class="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPaths[announcement.category] || iconPaths.general}"></path>
@@ -1835,47 +1581,6 @@
         initializeStarRating();
       });
 
-      // Toast Notification System
-      function showToast(message, type = 'success') {
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-          existingToast.remove();
-        }
-
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-
-        let icon = '';
-        if (type === 'success') {
-          icon = '<svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        } else if (type === 'error') {
-          icon = '<svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        } else if (type === 'warning') {
-          icon = '<svg class="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
-        } else {
-          icon = '<svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        }
-
-        toast.innerHTML = `
-          ${icon}
-          <div class="flex-1">
-            <p class="text-sm font-medium text-gray-800">${message}</p>
-          </div>
-          <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        `;
-
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => {
-          toast.classList.remove('show');
-          setTimeout(() => toast.remove(), 300);
-        }, 4000);
-      }
-
       // Character counter for textareas
       function updateCharCount(inputId, counterId, maxLength) {
         const input = document.getElementById(inputId);
@@ -1990,8 +1695,6 @@
 
             if (insertError) throw insertError;
 
-            console.log("Testimony submitted successfully:", { testimony, rating });
-
             // Show success message
             showToast("Thank you for sharing your experience! Your testimony has been submitted for review.", "success");
 
@@ -2081,14 +1784,14 @@
 
 
     <!-- Testimony Submission Confirmation Modal -->
-    <div id="testimonyConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+    <div id="testimonyConfirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="testimonyConfirmModalTitle">
       <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
         <div class="flex items-center justify-center w-12 h-12 mx-auto bg-[#2f6e4e]/10 rounded-full mb-4">
           <svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
           </svg>
         </div>
-        <h3 class="text-lg font-bold text-gray-900 text-center mb-2">Submit Your Testimony</h3>
+        <h3 id="testimonyConfirmModalTitle" class="text-lg font-bold text-gray-900 text-center mb-2">Submit Your Testimony</h3>
         <p class="text-sm text-gray-600 text-center mb-6">Your testimony will be reviewed by SK officials before being published. Are you sure you want to submit?</p>
         <div class="flex gap-3">
           <button id="testimonyConfirmCancel" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Cancel</button>

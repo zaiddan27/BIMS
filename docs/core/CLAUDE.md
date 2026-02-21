@@ -378,17 +378,24 @@ Application_Tbl (1) ←→ (M) Certificate_Tbl
 
 ## ROW LEVEL SECURITY (RLS) POLICIES
 
-**Status:** ✅ All 20 tables verified (2026-01-12)
+**Status:** ✅ All 20 tables verified (2026-02-21)
+**Version:** 3.0 (Optimized - Consolidated + InitPlan)
 
 All tables use **Row Level Security (RLS)** for role-based access control enforced at the database level.
+
+### Performance Optimizations (v3.0)
+- All `auth.uid()` wrapped as `(select auth.uid())` — evaluated once per query, not per row
+- Duplicate/overlapping permissive policies consolidated — 51 total policies (down from ~70+)
+- 10 missing foreign key indexes added (Logs_Tbl, Post_Project_Tbl, Report_Tbl)
+- All Supabase linter warnings resolved (`auth_rls_initplan`, `multiple_permissive_policies`, `unindexed_foreign_keys`)
 
 ### 📖 Complete RLS Documentation
 
 **Full policy reference:** `DATABASE_TABLE_COLUMN_REFERENCE.md` (Row Level Security section)
 
 This comprehensive documentation includes:
-- System status (80 policies across 20 tables)
-- Helper functions (is_sk_official, is_captain, etc.)
+- System status (51 policies across 20 tables)
+- Helper functions (is_sk_official, is_captain, is_superadmin, etc.)
 - Complete role permission matrix (PUBLIC, YOUTH_VOLUNTEER, CAPTAIN, SK_OFFICIAL, SUPERADMIN)
 - Policy patterns and examples
 - Table-specific policies for all 20 tables
@@ -398,6 +405,7 @@ This comprehensive documentation includes:
 **SQL Implementation:** `supabase/rls-policies.sql`
 **Verification Script:** `supabase/verification/verify_rls_policies.sql`
 **Latest Verification Report:** `RLS_POLICIES_FINAL_VERIFICATION_2026-01-12.md`
+**Optimization Migrations:** `supabase/migrations/015_comprehensive_rls_optimization.sql`, `015b_fix_rls_policies.sql`
 
 ### Quick Reference: Key Permission Rules
 

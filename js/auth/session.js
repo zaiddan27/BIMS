@@ -34,7 +34,6 @@ const SessionManager = {
 
             if (!sessionResult.success || !sessionResult.session) {
                 // Not authenticated - redirect to login
-                console.log('⚠️ No active session. Redirecting to login...');
                 this.redirectToLogin();
                 return { success: false, error: 'Not authenticated' };
             }
@@ -43,14 +42,11 @@ const SessionManager = {
             const userResult = await AuthService.getCurrentUser();
 
             if (!userResult.success || !userResult.user) {
-                console.log('⚠️ Could not get user details. Redirecting to login...');
                 this.redirectToLogin();
                 return { success: false, error: 'User not found' };
             }
 
             const user = userResult.user;
-
-            console.log('[AUTH] Fetching user data for:', user.id, user.email);
 
             // Get user role and status from user_tbl (DATABASE, not metadata)
             const { data: userData, error: userError } = await supabaseClient
@@ -59,10 +55,7 @@ const SessionManager = {
                 .eq('userID', user.id)
                 .single();
 
-            console.log('[AUTH] Database query result:', { userData, userError });
-
             if (userError || !userData) {
-                console.error('[AUTH ERROR] Could not fetch user data from database:', userError);
                 this.redirectToLogin('User profile not found. Please contact administrator.');
                 return { success: false, error: 'User data not found' };
             }
@@ -70,28 +63,20 @@ const SessionManager = {
             const userRole = userData.role;
             const accountStatus = userData.accountStatus;
 
-            console.log('[AUTH] User role:', userRole, '| Status:', accountStatus);
-            console.log('[AUTH] Required roles:', allowedRoles);
-
             // Check if user role is allowed on this page
             if (allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
-                console.log(`[AUTH] Access denied. User role: ${userRole}, Required: ${allowedRoles.join(', ')}`);
                 this.redirectByRole(userRole);
                 return { success: false, error: 'Access denied' };
             }
 
-            console.log('[AUTH] Role check passed!');
-
             // Check account status
             if (accountStatus === 'INACTIVE') {
-                console.log('⚠️ Account is inactive. Contact administrator.');
                 await AuthService.logout();
                 this.redirectToLogin('Your account has been deactivated. Please contact administrator.');
                 return { success: false, error: 'Account inactive' };
             }
 
             if (accountStatus === 'PENDING') {
-                console.log('⚠️ Account is pending approval.');
                 await AuthService.logout();
                 this.redirectToLogin('Your account is pending approval.');
                 return { success: false, error: 'Account pending' };
@@ -111,7 +96,6 @@ const SessionManager = {
                     userData.birthday === '2000-01-01';
 
                 if (profileIncomplete) {
-                    console.log('⚠️ Profile incomplete - redirecting to complete-profile.html');
                     sessionStorage.setItem('profile_incomplete', 'true');
                     window.location.href = 'complete-profile.html';
                     return { success: false, error: 'Profile incomplete' };
@@ -124,9 +108,6 @@ const SessionManager = {
             localStorage.setItem('userEmail', user.email);
             localStorage.setItem('userID', user.id);
 
-            console.log('✅ Session initialized successfully!');
-            console.log('👤 User:', user.email, '| Role:', userRole, '| Status:', accountStatus);
-
             return {
                 success: true,
                 user: user,
@@ -136,7 +117,7 @@ const SessionManager = {
             };
 
         } catch (error) {
-            console.error('Session init exception:', error);
+            console.error('Session init error:', error.message);
             return { success: false, error: error.message };
         }
     },
@@ -147,13 +128,12 @@ const SessionManager = {
      */
     setupAuthListener() {
         supabaseClient.auth.onAuthStateChange((event, session) => {
-            console.log('🔄 Auth state changed:', event);
-
             if (event === 'SIGNED_OUT') {
-                // Clear local storage
+                // Clear all session data from local storage
                 localStorage.removeItem('userRole');
                 localStorage.removeItem('userName');
                 localStorage.removeItem('userEmail');
+                localStorage.removeItem('userID');
 
                 // Redirect to login if not already there
                 if (!window.location.pathname.includes('login.html') &&
@@ -161,14 +141,6 @@ const SessionManager = {
                     !window.location.pathname.includes('signup.html')) {
                     this.redirectToLogin('Your session has expired. Please login again.');
                 }
-            }
-
-            if (event === 'TOKEN_REFRESHED') {
-                console.log('✅ Session token refreshed automatically');
-            }
-
-            if (event === 'SIGNED_IN') {
-                console.log('✅ User signed in');
             }
         });
     },
@@ -257,7 +229,7 @@ const SessionManager = {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
 
         if (error) {
-            console.error('Error getting session:', error);
+            console.error('Session error:', error.message);
             return null;
         }
 
@@ -273,7 +245,7 @@ const SessionManager = {
             localStorage.clear();
             window.location.href = 'login.html';
         } catch (error) {
-            console.error('Logout error:', error);
+            console.error('Session error:', error.message);
             // Force redirect even if logout fails
             localStorage.clear();
             window.location.href = 'login.html';

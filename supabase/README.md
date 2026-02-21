@@ -16,7 +16,17 @@ The migrations are numbered in the order they should be executed:
 3. **003_row_level_security.sql** - Configures RLS policies for all tables
 4. **004_auth_sync_trigger.sql** - Sets up auth sync and notification triggers
 5. **005_captain_table.sql** - Creates Captain term tracking and succession management
-6. **006_add_superadmin_role.sql** - Adds SUPERADMIN role and restructures permissions (Option A)
+6. **006_add_superadmin_role.sql** - Adds SUPERADMIN role and restructures permissions
+7. **007_remove_sk_auditor.sql** - Removes SK_AUDITOR role
+8. **008_update_oauth_trigger.sql** - Updates OAuth/OIDC trigger
+9. **009_sample_announcements.sql** - Sample announcement data
+10. **010_add_gender_column.sql** - Adds gender column to User_Tbl
+11. **011_add_rating_to_testimonies.sql** - Adds rating column to Testimonies_Tbl
+12. **012_fix_application_status_trigger.sql** - Fixes trigger column quoting
+13. **013_fix_inquiry_reply_trigger.sql** - Fixes inquiry reply notification trigger
+14. **014_fix_superadmin_logs_access.sql** - Consolidates Logs_Tbl SELECT policies
+15. **015_comprehensive_rls_optimization.sql** - Updates helper functions, drops all old policies
+16. **015b_fix_rls_policies.sql** - Recreates optimized RLS policies + adds FK indexes
 
 ## Setup Instructions
 
@@ -81,15 +91,24 @@ supabase db push
 
 ## Row Level Security (RLS)
 
+**Version:** 3.0 (Optimized - 2026-02-21)
+**Total Policies:** 51 across 20 tables
+**Optimizations Applied:**
+- `auth.uid()` wrapped as `(select auth.uid())` for InitPlan optimization (evaluated once per query, not per row)
+- Duplicate/overlapping permissive policies consolidated (~30% reduction)
+- All policies use consistent `role_action_table` naming convention
+
 All tables have RLS enabled with the following general rules:
 
 ### Public Access
 
-- View active announcements
+- View all announcements
 - View approved projects
 - View SK Officials
 - View annual budgets
 - View testimonies (unfiltered)
+- View active files
+- View completed projects
 
 ### Youth Volunteers
 
@@ -121,9 +140,10 @@ All tables have RLS enabled with the following general rules:
 
 ### Barangay Captain
 
-- View announcements (read-only)
+- View all announcements (read-only)
 - Approve/reject/request revision for projects
-- View archives (projects and files, read-only)
+- View all files including archived (read-only)
+- View all system logs
 
 ## Important Helper Functions
 

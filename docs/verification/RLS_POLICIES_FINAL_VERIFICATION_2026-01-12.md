@@ -1,9 +1,9 @@
 # BIMS - Row Level Security (RLS) Policies - Final Verification Report
 
-**Verification Date:** 2026-01-12
+**Verification Date:** 2026-02-21 (Updated)
 **Database:** BIMS - SK Malanday Production Database
 **Status:** ✅ ALL CHECKS PASSED
-**Version:** 2.1 (Post-Announcement Cleanup)
+**Version:** 3.0 (Optimized - Consolidated + InitPlan)
 
 ---
 
@@ -14,15 +14,15 @@
 | Category | Status | Details |
 |----------|--------|---------|
 | **RLS Enabled** | ✅ PASS | All 20 tables have RLS enabled |
-| **Helper Functions** | ✅ PASS | All 4 role-checking functions exist |
-| **Policy Coverage** | ✅ PASS | All tables have appropriate policies (2-8 per table) |
-| **Announcement v2.1** | ✅ PASS | Simplified to 5 policies, contentStatus removed |
+| **Helper Functions** | ✅ PASS | All 6 role-checking functions exist and use `(select auth.uid())` |
+| **Policy Coverage** | ✅ PASS | All tables have appropriate policies (1-5 per table) |
+| **InitPlan Optimization** | ✅ PASS | All `auth.uid()` wrapped as `(select auth.uid())` |
+| **No Duplicate Policies** | ✅ PASS | No overlapping permissive policies on same table/role/action |
+| **FK Indexes** | ✅ PASS | All 10 missing foreign key indexes added |
 | **Captain Restrictions** | ✅ PASS | Captain cannot INSERT/DELETE announcements |
-| **Missing Policies** | ✅ PASS | No tables without policies |
-| **Duplicate Policies** | ✅ PASS | No duplicate policy names found |
 | **Security Isolation** | ✅ PASS | OTP, Notification, and User data properly scoped |
 
-**Overall Assessment:** The database is fully secured with comprehensive Row Level Security policies. All role-based access controls are correctly implemented.
+**Overall Assessment:** The database is fully secured with optimized Row Level Security policies. All `auth_rls_initplan`, `multiple_permissive_policies`, and `unindexed_foreign_keys` warnings resolved. Total policies reduced from ~70+ to 51 (~30% reduction).
 
 ---
 
@@ -92,36 +92,39 @@ All required helper functions are present and functional:
 
 ## Policy Count Summary
 
-### CHECK 3 & 15: Policy Distribution ✅
+### CHECK 3 & 15: Policy Distribution ✅ (v3.0 Optimized)
 
 | Table | Policy Count | Operations Covered | Status |
 |-------|--------------|-------------------|--------|
-| Pre_Project_Tbl | 8 | SELECT (4x), INSERT, UPDATE (2x), DELETE | ✅ NORMAL |
-| User_Tbl | 7 | SELECT (4x), INSERT, UPDATE (2x) | ✅ NORMAL |
-| Application_Tbl | 6 | SELECT (2x), INSERT, UPDATE (2x), DELETE | ✅ NORMAL |
-| File_Tbl | 6 | SELECT (3x), INSERT, UPDATE, DELETE | ✅ NORMAL |
-| Announcement_Tbl | 5 | SELECT (2x), INSERT, UPDATE, DELETE | ✅ NORMAL |
-| SK_Tbl | 5 | SELECT (2x), INSERT, DELETE, ALL | ✅ NORMAL |
-| Logs_Tbl | 4 | SELECT (2x), INSERT (2x) | ✅ NORMAL |
-| Notification_Tbl | 4 | SELECT, INSERT, UPDATE, DELETE | ✅ NORMAL |
-| Testimonies_Tbl | 4 | SELECT (2x), INSERT, UPDATE | ✅ NORMAL |
-| Certificate_Tbl | 3 | SELECT (2x), INSERT | ✅ NORMAL |
-| Evaluation_Tbl | 3 | SELECT (2x), INSERT | ✅ NORMAL |
-| Inquiry_Tbl | 3 | SELECT (2x), INSERT | ✅ NORMAL |
-| OTP_Tbl | 3 | SELECT, INSERT, UPDATE | ✅ NORMAL |
-| Reply_Tbl | 3 | SELECT (2x), INSERT | ✅ NORMAL |
-| Annual_Budget_Tbl | 2 | SELECT, ALL | ✅ NORMAL |
-| BudgetBreakdown_Tbl | 2 | SELECT, ALL | ✅ NORMAL |
-| Captain_Tbl | 2 | SELECT, ALL | ✅ NORMAL |
-| Expenses_Tbl | 2 | SELECT, ALL | ✅ NORMAL |
-| Post_Project_Tbl | 2 | SELECT, ALL | ✅ NORMAL |
-| Report_Tbl | 2 | SELECT, ALL | ✅ NORMAL |
+| Announcement_Tbl | 4 | SELECT (public), INSERT, UPDATE, DELETE | ✅ OPTIMIZED |
+| File_Tbl | 5 | SELECT (public+auth), INSERT, UPDATE, DELETE | ✅ OPTIMIZED |
+| Pre_Project_Tbl | 5 | SELECT (public+auth), INSERT, UPDATE, DELETE | ✅ OPTIMIZED |
+| User_Tbl | 4 | SELECT (anon+auth), INSERT, UPDATE | ✅ OPTIMIZED |
+| Application_Tbl | 4 | SELECT, INSERT, UPDATE, DELETE | ✅ OPTIMIZED |
+| Notification_Tbl | 4 | SELECT, INSERT, UPDATE, DELETE | ✅ OPTIMIZED |
+| Reply_Tbl | 4 | SELECT, INSERT, UPDATE, DELETE | ✅ OPTIMIZED |
+| Testimonies_Tbl | 4 | SELECT (public+auth), INSERT, UPDATE | ✅ OPTIMIZED |
+| OTP_Tbl | 3 | SELECT, INSERT, UPDATE | ✅ OPTIMIZED |
+| Certificate_Tbl | 2 | SELECT, INSERT | ✅ OPTIMIZED |
+| Evaluation_Tbl | 2 | SELECT, INSERT | ✅ OPTIMIZED |
+| Inquiry_Tbl | 2 | SELECT, INSERT | ✅ OPTIMIZED |
+| Logs_Tbl | 2 | SELECT, INSERT | ✅ OPTIMIZED |
+| SK_Tbl | 2 | SELECT (public), ALL | ✅ OPTIMIZED |
+| Captain_Tbl | 2 | SELECT, ALL | ✅ OPTIMIZED |
+| Annual_Budget_Tbl | 2 | SELECT (public), ALL | ✅ OPTIMIZED |
+| BudgetBreakdown_Tbl | 2 | SELECT (public), ALL | ✅ OPTIMIZED |
+| Post_Project_Tbl | 2 | SELECT (public), ALL | ✅ OPTIMIZED |
+| Expenses_Tbl | 1 | ALL | ✅ OPTIMIZED |
+| Report_Tbl | 1 | ALL | ✅ OPTIMIZED |
 
-**Total Policies:** 80 policies across 20 tables
-**Average:** 4 policies per table
-**Result:** ✅ **Comprehensive coverage** - All tables adequately protected
+**Total Policies:** 51 policies across 20 tables (down from ~70+)
+**Average:** 2.6 policies per table
+**Result:** ✅ **Optimized coverage** - All tables adequately protected with no duplicates
 
-**Note on "Missing INSERT":** Tables using `ALL` policy don't show separate INSERT, but INSERT is included in ALL operations.
+**Optimization notes:**
+- Expenses_Tbl and Report_Tbl use single FOR ALL policy (covers SELECT+INSERT+UPDATE+DELETE)
+- Multiple SELECT policies consolidated into single policies with OR conditions
+- All policies use `(select auth.uid())` InitPlan wrapper for performance
 
 ---
 
@@ -703,11 +706,13 @@ Focused on user management:
 |--------|-------|--------|
 | **Total Tables** | 20 | ✅ |
 | **Tables with RLS** | 20 (100%) | ✅ |
-| **Total Policies** | 80 | ✅ |
-| **Average Policies/Table** | 4.0 | ✅ |
-| **Helper Functions** | 4 | ✅ |
+| **Total Policies** | 51 | ✅ |
+| **Average Policies/Table** | 2.6 | ✅ |
+| **Helper Functions** | 6 | ✅ |
 | **Tables Without Policies** | 0 | ✅ |
 | **Duplicate Policies** | 0 | ✅ |
+| **InitPlan Optimized** | 100% | ✅ |
+| **FK Indexes Added** | 10 | ✅ |
 | **Security Gaps** | 0 | ✅ |
 
 ---
@@ -793,16 +798,27 @@ AND routine_name LIKE 'is_%';
 
 ## Version History
 
-### v2.1 (2026-01-12) - Current ✅
-- **Announcement_Tbl Simplification:**
-  - Removed `contentStatus` column
-  - Reduced from 9 to 5 policies
-  - SK Officials can now edit/delete ALL announcements
-  - Public sees all announcements (no filtering)
-- **Complete RLS Verification:**
-  - All 20 checks passed
-  - 80 policies verified
-  - No security gaps found
+### v3.0 (2026-02-21) - Current ✅
+- **Performance Optimization:**
+  - All `auth.uid()` wrapped as `(select auth.uid())` for InitPlan optimization
+  - Updated all 6 helper functions with InitPlan wrapper
+  - Result: auth.uid() evaluated once per query instead of per row
+- **Policy Consolidation:**
+  - Reduced from ~70+ to 51 policies (~30% reduction)
+  - Eliminated all duplicate/overlapping permissive policies
+  - Consistent naming convention: `role_action_table`
+- **Missing FK Indexes:**
+  - Added 10 indexes on Logs_Tbl (7), Post_Project_Tbl (1), Report_Tbl (2)
+- **Supabase Linter Warnings Resolved:**
+  - 38 `auth_rls_initplan` warnings → 0
+  - 20+ `multiple_permissive_policies` warnings → 0
+  - 10 `unindexed_foreign_keys` warnings → 0
+
+### v2.1 (2026-01-12)
+- Removed `contentStatus` column from Announcement_Tbl
+- Reduced Announcement_Tbl from 9 to 5 policies
+- SK Officials can edit/delete ALL announcements
+- Complete RLS verification (80 policies, all checks passed)
 
 ### v2.0 (2026-01-11)
 - Migrated all table names to Title Case

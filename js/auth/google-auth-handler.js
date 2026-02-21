@@ -10,8 +10,6 @@
  * Call this on page load for pages that receive OAuth redirects
  */
 async function handleGoogleAuthCallback() {
-  console.log('🔐 Checking for Google OAuth session...');
-
   try {
     // Get the current session from Supabase
     const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
@@ -20,18 +18,15 @@ async function handleGoogleAuthCallback() {
 
     // No session found - normal page load
     if (!session) {
-      console.log('ℹ️ No active session - normal page load');
       return false;
     }
 
     const user = session.user;
     const isGoogleUser = user.app_metadata?.provider === 'google';
-    console.log('✅ Session found for user:', user.email, '| Provider:', user.app_metadata?.provider);
 
     // If NOT a Google user, just redirect to dashboard directly
     // Don't handle profile completion here — SessionManager does that on dashboard pages
     if (!isGoogleUser) {
-      console.log('ℹ️ Non-Google session detected — redirecting to dashboard');
       await redirectToDashboard();
       return true;
     }
@@ -51,11 +46,8 @@ async function handleGoogleAuthCallback() {
 
     // If user exists and has complete profile, redirect to dashboard
     if (existingUser) {
-      console.log('✅ Existing Google user found');
-
       // Check account status first
       if (existingUser.accountStatus !== 'ACTIVE') {
-        console.log('⚠️ Account not active:', existingUser.accountStatus);
         if (typeof showToast === 'function') {
           showToast(`Account status: ${existingUser.accountStatus}. Please contact administrator.`, 'warning');
         }
@@ -73,7 +65,6 @@ async function handleGoogleAuthCallback() {
         !existingUser.address;
 
       if (profileIncomplete) {
-        console.log('⚠️ Profile incomplete - redirecting to complete-profile.html');
         if (typeof showToast === 'function') {
           showToast('Please complete your profile information.', 'info');
         }
@@ -87,7 +78,6 @@ async function handleGoogleAuthCallback() {
       }
 
       // Profile is complete - redirect to dashboard
-      console.log('✅ Profile complete - redirecting to dashboard');
       if (typeof showToast === 'function') {
         showToast(`Welcome back! Redirecting to your dashboard...`, 'success');
       }
@@ -100,7 +90,6 @@ async function handleGoogleAuthCallback() {
 
     // New OAuth user - user doesn't exist in User_Tbl yet
     // This handles the case where the trigger didn't run or failed
-    console.log('📝 New Google OAuth user - creating user record...');
 
     // Extract name from Google profile
     const fullName = user.user_metadata.full_name || user.user_metadata.name || '';
@@ -128,11 +117,8 @@ async function handleGoogleAuthCallback() {
       });
 
     if (insertError) {
-      console.error('❌ Error creating user record:', insertError);
       throw insertError;
     }
-
-    console.log('✅ User record created successfully');
 
     // Show welcome message and redirect to profile completion
     if (typeof showToast === 'function') {
@@ -147,7 +133,7 @@ async function handleGoogleAuthCallback() {
     return true;
 
   } catch (error) {
-    console.error('❌ Google OAuth callback error:', error);
+    console.error('Google OAuth callback error:', error);
     if (typeof showToast === 'function') {
       showToast('Authentication error. Please try again.', 'error');
     }
@@ -163,7 +149,6 @@ async function redirectToDashboard() {
     const { data: { session } } = await supabaseClient.auth.getSession();
 
     if (!session) {
-      console.log('❌ No session - redirecting to login');
       window.location.href = 'login.html';
       return;
     }
@@ -176,7 +161,7 @@ async function redirectToDashboard() {
       .single();
 
     if (error || !user) {
-      console.error('❌ Error fetching user role:', error);
+      console.error('Error fetching user role:', error);
       window.location.href = 'login.html';
       return;
     }
@@ -194,8 +179,6 @@ async function redirectToDashboard() {
     }
 
     // Role-based redirect
-    console.log('🔀 Redirecting to dashboard for role:', user.role);
-
     switch (user.role) {
       case 'CAPTAIN':
         window.location.href = 'captain-dashboard.html';
@@ -210,12 +193,11 @@ async function redirectToDashboard() {
         window.location.href = 'superadmin-dashboard.html';
         break;
       default:
-        console.log('⚠️ Unknown role - redirecting to home');
         window.location.href = 'index.html';
     }
 
   } catch (error) {
-    console.error('❌ Error redirecting to dashboard:', error);
+    console.error('Error redirecting to dashboard:', error);
     window.location.href = 'index.html';
   }
 }

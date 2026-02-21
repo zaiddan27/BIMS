@@ -29,3 +29,11 @@ credentials.json
 *.py
 __pycache__/
 *.pyc
+
+# Test and demo files (not for production)
+test-*.html
+DEMO_INSTRUCTIONS.html
+js/test/
+
+# Node
+node_modules/

@@ -74,11 +74,8 @@ const AuthService = {
             });
 
             if (authError) {
-                console.error('Sign up error:', authError);
                 return { success: false, error: authError.message };
             }
-
-            console.log('✅ Sign up successful! Check email for OTP verification.');
 
             return {
                 success: true,
@@ -87,7 +84,6 @@ const AuthService = {
             };
 
         } catch (error) {
-            console.error('Sign up exception:', error);
             return { success: false, error: error.message };
         }
     },
@@ -108,15 +104,12 @@ const AuthService = {
             });
 
             if (error) {
-                console.error('OTP verification error:', error);
                 return { success: false, error: error.message };
             }
 
-            console.log('✅ OTP verified successfully!');
             return { success: true, data: data };
 
         } catch (error) {
-            console.error('OTP verification exception:', error);
             return { success: false, error: error.message };
         }
     },
@@ -148,8 +141,6 @@ const AuthService = {
             });
 
             if (error) {
-                console.error('Login error:', error);
-
                 // Track failed attempt
                 this.recordFailedAttempt(email);
 
@@ -161,7 +152,6 @@ const AuthService = {
 
             // Check if user email is confirmed
             if (data.user && !data.user.email_confirmed_at) {
-                console.log('⚠️ Email not confirmed. OTP required.');
                 return {
                     success: false,
                     needsOTP: true,
@@ -170,11 +160,9 @@ const AuthService = {
                 };
             }
 
-            console.log('✅ Login successful!');
             return { success: true, data: data };
 
         } catch (error) {
-            console.error('Login exception:', error);
             return { success: false, error: error.message };
         }
     },
@@ -189,20 +177,18 @@ const AuthService = {
             const { error } = await supabaseClient.auth.signOut();
 
             if (error) {
-                console.error('Logout error:', error);
                 return { success: false, error: error.message };
             }
 
-            console.log('✅ Logout successful!');
-
-            // Clear any local storage data
+            // Clear all session data from local storage
             localStorage.removeItem('userRole');
             localStorage.removeItem('userName');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userID');
 
             return { success: true };
 
         } catch (error) {
-            console.error('Logout exception:', error);
             return { success: false, error: error.message };
         }
     },
@@ -220,18 +206,15 @@ const AuthService = {
             });
 
             if (error) {
-                console.error('Password reset request error:', error);
                 return { success: false, error: error.message };
             }
 
-            console.log('✅ Password reset email sent!');
             return {
                 success: true,
                 message: 'Password reset instructions sent to your email.'
             };
 
         } catch (error) {
-            console.error('Password reset exception:', error);
             return { success: false, error: error.message };
         }
     },
@@ -253,15 +236,12 @@ const AuthService = {
             });
 
             if (error) {
-                console.error('Password update error:', error);
                 return { success: false, error: error.message };
             }
 
-            console.log('✅ Password updated successfully!');
             return { success: true, message: 'Password updated successfully.' };
 
         } catch (error) {
-            console.error('Password update exception:', error);
             return { success: false, error: error.message };
         }
     },
@@ -276,7 +256,6 @@ const AuthService = {
             const { data: { user }, error } = await supabaseClient.auth.getUser();
 
             if (error) {
-                console.error('Get user error:', error);
                 return { success: false, error: error.message };
             }
 
@@ -287,7 +266,6 @@ const AuthService = {
             return { success: true, user: user };
 
         } catch (error) {
-            console.error('Get user exception:', error);
             return { success: false, error: error.message };
         }
     },
@@ -302,7 +280,6 @@ const AuthService = {
             const { data: { session }, error } = await supabaseClient.auth.getSession();
 
             if (error) {
-                console.error('Get session error:', error);
                 return { success: false, error: error.message };
             }
 
@@ -313,7 +290,6 @@ const AuthService = {
             return { success: true, session: session };
 
         } catch (error) {
-            console.error('Get session exception:', error);
             return { success: false, error: error.message };
         }
     },

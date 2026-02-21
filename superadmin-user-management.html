@@ -3,27 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="User Management - Manage BIMS user accounts and roles">
     <title>User Management - BIMS Superadmin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
+    <link href="css/toast.css" rel="stylesheet">
     <style>
       * {
         font-family: "Inter", system-ui, sans-serif;
@@ -46,39 +33,6 @@
         box-shadow: 0 2px 8px rgba(47, 110, 78, 0.15);
       }
 
-      /* Toast Notification Styles */
-      .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        min-width: 300px;
-        background: white;
-        padding: 16px 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateX(400px);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 9999;
-      }
-      .toast.show {
-        transform: translateX(0);
-      }
-      .toast.success {
-        border-left: 4px solid #10b981;
-      }
-      .toast.error {
-        border-left: 4px solid #ef4444;
-      }
-      .toast.warning {
-        border-left: 4px solid #f59e0b;
-      }
-      .toast.info {
-        border-left: 4px solid #3b82f6;
-      }
-
       /* Badge Styles */
       .badge-inactive {
         background-color: #6b7280;
@@ -97,12 +51,16 @@
     </style>
 
     <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/session.js"></script>
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
 </head>
 <body class="bg-gray-50">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
     <!-- Mobile Navigation Bar -->
     <div class="mobile-nav">
         <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle menu">
@@ -118,64 +76,8 @@
 
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <aside class="sidebar w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col">
-            <div class="p-6 flex-1 flex flex-col">
-                <!-- Logo -->
-                <div class="flex items-center space-x-4 mb-8">
-                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden">
-                        <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-black text-gray-800">BIMS</h1>
-                        <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-                    </div>
-                </div>
-
-                <!-- Navigation Menu -->
-                <nav class="space-y-2">
-                    <a href="superadmin-dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition">
-                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <span>System Overview</span>
-                    </a>
-
-                    <a href="superadmin-user-management.html" class="nav-link active-nav flex items-center space-x-3 px-4 py-3 rounded-lg font-medium group transition">
-                        <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </div>
-                        <span>User Management</span>
-                    </a>
-
-                    <a href="superadmin-activity-logs.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition">
-                        <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <span>Activity Logs</span>
-                    </a>
-                </nav>
-
-                <div class="flex-1"></div>
-
-                <!-- Logout -->
-                <div class="mt-8 pt-8 border-t border-gray-200">
-                    <button onclick="handleLogout()" class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group">
-                        <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                            </svg>
-                        </div>
-                        <span class="font-medium">Logout</span>
-                    </button>
-                </div>
-            </div>
-        </aside>
+        <aside class="sidebar w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col" data-role="superadmin"></aside>
+        <script src="js/components/sidebar.js"></script>
 
         <!-- Main Content -->
         <div class="flex-1 overflow-y-auto">
@@ -204,7 +106,7 @@
             </header>
 
             <!-- Main Content Area -->
-            <main class="p-4 sm:p-6 lg:p-8">
+            <main id="main-content" class="p-4 sm:p-6 lg:p-8">
                 <!-- Statistics Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
                     <div class="bg-white rounded-lg shadow p-6">
@@ -341,7 +243,7 @@
     </div>
 
     <!-- Promote to SK Modal -->
-    <div id="promoteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div id="promoteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="promoteModalTitle">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
             <!-- Modal Header -->
             <div class="bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] px-6 py-5 rounded-t-2xl">
@@ -353,7 +255,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white">Promote to SK Official</h3>
+                            <h3 id="promoteModalTitle" class="text-xl font-bold text-white">Promote to SK Official</h3>
                             <p class="text-white/80 text-sm">Assign position and term</p>
                         </div>
                     </div>
@@ -432,7 +334,7 @@
     </div>
 
     <!-- Demote User Modal -->
-    <div id="demoteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div id="demoteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="demoteModalTitle">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
             <!-- Modal Header -->
             <div class="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-5 rounded-t-2xl">
@@ -444,7 +346,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white">Remove Position</h3>
+                            <h3 id="demoteModalTitle" class="text-xl font-bold text-white">Remove Position</h3>
                             <p class="text-white/80 text-sm">Demote user to Youth Volunteer</p>
                         </div>
                     </div>
@@ -510,7 +412,7 @@
     </div>
 
     <!-- Deactivate User Modal -->
-    <div id="deactivateModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div id="deactivateModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="deactivateModalTitle">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
             <!-- Modal Header -->
             <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5 rounded-t-2xl">
@@ -522,7 +424,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white">Deactivate User Account</h3>
+                            <h3 id="deactivateModalTitle" class="text-xl font-bold text-white">Deactivate User Account</h3>
                             <p class="text-white/80 text-sm">This action will block user access</p>
                         </div>
                     </div>
@@ -611,7 +513,7 @@
     </div>
 
     <!-- Promotion Type Choice Modal -->
-    <div id="promotionTypeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div id="promotionTypeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="promotionTypeModalTitle">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all">
             <!-- Modal Header -->
             <div class="bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] px-6 py-5 rounded-t-2xl">
@@ -623,7 +525,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-white">Choose Promotion Type</h3>
+                            <h3 id="promotionTypeModalTitle" class="text-xl font-bold text-white">Choose Promotion Type</h3>
                             <p class="text-white/80 text-sm">Select role to assign</p>
                         </div>
                     </div>
@@ -694,12 +596,11 @@
          * Each admin page verifies SUPERADMIN role independently
          */
         async function checkAuth() {
-            console.log('🔐 User Management - Checking authentication...');
 
             const { data: { session } } = await supabaseClient.auth.getSession();
 
             if (!session) {
-                console.error('❌ No session found');
+                console.error('No session found');
                 window.location.href = 'login.html';
                 return false;
             }
@@ -707,12 +608,12 @@
             // Verify SUPERADMIN role
             const { data: user, error } = await supabaseClient
                 .from('User_Tbl')
-                .select('*')
+                .select('userID, role, firstName, lastName')
                 .eq('userID', session.user.id)
                 .single();
 
             if (error || !user || user.role !== 'SUPERADMIN') {
-                console.error('❌ Access denied. SUPERADMIN role required.');
+                console.error('Access denied. SUPERADMIN role required.');
                 showToast('Access denied. SUPERADMIN role required.', 'error');
                 setTimeout(() => {
                     window.location.href = 'index.html';
@@ -724,7 +625,6 @@
             document.getElementById('headerUserName').textContent = `${user.firstName || ''} ${user.lastName || ''}`;
             document.getElementById('headerAvatar').textContent = `${(user.firstName || 'S')[0]}${(user.lastName || 'A')[0]}`;
 
-            console.log('✅ Authentication successful:', user.role);
             return true;
         }
 
@@ -734,13 +634,12 @@
          */
         async function handleLogout() {
             try {
-                console.log('🚪 Logging out...');
 
                 // Sign out from Supabase
                 const { error } = await supabaseClient.auth.signOut();
 
                 if (error) {
-                    console.error('❌ Logout error:', error);
+                    console.error('Logout error:', error);
                     showToast('Error logging out. Please try again.', 'error');
                     return;
                 }
@@ -751,13 +650,12 @@
                 localStorage.removeItem('userEmail');
                 localStorage.removeItem('userID');
 
-                console.log('✅ Logout successful');
 
                 // Redirect to landing page
                 window.location.href = 'index.html';
 
             } catch (error) {
-                console.error('❌ Logout exception:', error);
+                console.error('Logout exception:', error);
                 showToast('Error logging out. Please try again.', 'error');
             }
         }
@@ -841,7 +739,7 @@
 
                 // Validate userID exists
                 if (!user.userID) {
-                    console.error('❌ User missing userID:', user);
+                    console.error('User missing userID:', user);
                     return '';
                 }
 
@@ -1055,18 +953,16 @@
 
         // Promote User - Show promotion type selection
         window.promoteToSK = function(userId, userName) {
-            console.log('🔍 promoteToSK called with:', { userId, userName, type: typeof userId });
 
             // Validate inputs
             if (!userId || userId === 'null' || userId === 'undefined' || userId === '') {
-                console.error('❌ Invalid userId passed to promoteToSK:', userId);
+                console.error('Invalid userId passed to promoteToSK:', userId);
                 showToast('Error: Invalid user data. Please refresh the page.', 'error');
                 return;
             }
 
             currentModalUserId = userId;
             currentModalUserName = userName;
-            console.log('✅ Set currentModalUserId to:', currentModalUserId);
 
             document.getElementById('promotionTypeUserName').textContent = userName;
             document.getElementById('promotionTypeModal').classList.remove('hidden');
@@ -1084,7 +980,6 @@
                 const savedUserId = currentModalUserId;
                 const savedUserName = currentModalUserName;
 
-                console.log('🔍 selectPromotionType - Saved values:', { savedUserId, savedUserName });
 
                 // Close promotion type modal (this will reset currentModalUserId to null)
                 document.getElementById('promotionTypeModal').classList.add('hidden');
@@ -1093,7 +988,6 @@
                 currentModalUserId = savedUserId;
                 currentModalUserName = savedUserName;
 
-                console.log('🔍 selectPromotionType - Restored values:', { currentModalUserId, currentModalUserName });
 
                 // Open SK promotion modal
                 document.getElementById('promoteUserName').textContent = currentModalUserName;
@@ -1177,7 +1071,7 @@
 
             // CRITICAL: Validate userID exists and is not null/undefined
             if (!currentModalUserId || currentModalUserId === 'null' || currentModalUserId === 'undefined') {
-                console.error('❌ Invalid userID:', currentModalUserId);
+                console.error('Invalid userID:', currentModalUserId);
                 showToast('Error: Invalid user ID. Please refresh the page and try again.', 'error');
                 closePromoteModal();
                 return;
@@ -1440,7 +1334,6 @@
 
                 // Log the action
                 const logMessage = `User ${currentModalUserName} deactivated. Reason: ${reason}${notes ? '. Notes: ' + notes : ''}`;
-                console.log(logMessage);
 
                 showToast(`${currentModalUserName} has been deactivated`, 'success');
                 closeDeactivateModal();
@@ -1472,26 +1365,6 @@
         };
 
         // ==================== UTILITIES ====================
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    ${type === 'success' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>' :
-                      type === 'error' ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>' :
-                      '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>'}
-                </svg>
-                <span class="flex-1">${message}</span>
-            `;
-
-            document.body.appendChild(toast);
-            setTimeout(() => toast.classList.add('show'), 100);
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
 
         function setCurrentDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -1521,7 +1394,6 @@
 
         // ==================== INITIALIZATION ====================
         window.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 User Management Page - Initializing...');
 
             const isAuthenticated = await checkAuth();
             if (!isAuthenticated) return;
@@ -1534,7 +1406,7 @@
             document.getElementById('roleFilter').addEventListener('change', filterUsers);
             document.getElementById('statusFilter').addEventListener('change', filterUsers);
 
-            console.log('✅ User Management Page loaded successfully!');
+
         });
     </script>
 </body>

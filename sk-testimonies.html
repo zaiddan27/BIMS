@@ -3,37 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SK Testimonies - Manage volunteer testimonies and feedback">
     <title>BIMS - Manage Testimonies</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link href="css/toast.css" rel="stylesheet">
 
     <!-- Supabase JS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
 
     <!-- BIMS Configuration -->
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/auth.js"></script>
     <script src="js/auth/session.js"></script>
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
 
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
     <style>
       .icon-wrapper { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
       .icon-wrapper:hover { transform: translateY(-2px); }
@@ -58,44 +48,6 @@
         }
       }
 
-      /* Toast Notification Styles */
-      .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        min-width: 300px;
-        background: white;
-        padding: 16px 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateX(400px);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 9999;
-      }
-
-      .toast.show {
-        transform: translateX(0);
-      }
-
-      .toast.success {
-        border-left: 4px solid #10b981;
-      }
-
-      .toast.error {
-        border-left: 4px solid #ef4444;
-      }
-
-      .toast.warning {
-        border-left: 4px solid #f59e0b;
-      }
-
-      .toast.info {
-        border-left: 4px solid #3b82f6;
-      }
-
       /* Pagination dots - consistent across all screen sizes */
       #paginationDots button {
         flex-shrink: 0;
@@ -113,186 +65,14 @@
     </style>
   </head>
   <body class="bg-gray-50 overflow-x-hidden">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
     <div class="flex h-screen overflow-hidden">
       <!-- Sidebar Navigation -->
-      <aside
-        class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col"
-      >
-        <div class="p-6 flex-1 flex flex-col">
-          <!-- Logo -->
-          <div class="flex items-center space-x-4 mb-8">
-            <div
-              class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden"
-            >
-              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
-            </div>
-            <div>
-              <h1 class="text-xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-            </div>
-          </div>
-
-          <!-- Navigation Menu -->
-          <nav class="space-y-2">
-            <a
-              href="sk-dashboard.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-green-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
-                  ></path>
-                </svg>
-              </div>
-              <span>Dashboard</span>
-            </a>
-            <a
-              href="sk-files.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-blue-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Manage Files</span>
-            </a>
-            <a
-              href="sk-projects.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-purple-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-purple-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  ></path>
-                </svg>
-              </div>
-              <span>Project Monitoring</span>
-            </a>
-            <a
-              href="sk-calendar.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-50 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-orange-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Calendar</span>
-            </a>
-            <a
-              href="sk-testimonies.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group"
-            >
-              <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Testimonies</span>
-            </a>
-            <a
-              href="sk-archive.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition">
-                <svg
-                  class="w-5 h-5 group-hover:text-gray-700 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                  ></path>
-                </svg>
-              </div>
-              <span>Archives</span>
-            </a>
-          </nav>
-
-          <div class="flex-1"></div>
-
-          <!-- Logout -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <button
-              onclick="handleLogout()"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
-            >
-              <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
-                </svg>
-              </div>
-              <span class="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col" data-role="sk"></aside>
+      <script src="js/components/sidebar.js"></script>
 
       <!-- Main Content -->
-      <div class="flex-1 overflow-auto">
+      <div id="main-content" class="flex-1 overflow-auto">
         <!-- Top Bar -->
         <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200">
           <div class="px-8 py-6">
@@ -465,11 +245,12 @@
     <div
       id="viewModal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      role="dialog" aria-modal="true" aria-labelledby="viewModalTitle"
     >
       <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-200">
           <div class="flex items-center justify-between">
-            <h3 class="text-2xl font-bold text-gray-800">Testimony Details</h3>
+            <h3 id="viewModalTitle" class="text-2xl font-bold text-gray-800">Testimony Details</h3>
             <button
               onclick="closeViewModal()"
               class="text-gray-400 hover:text-gray-600 transition"
@@ -537,14 +318,14 @@
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
       <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
         <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
           <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
           </svg>
         </div>
-        <h3 id="confirmTitle" class="text-lg font-bold text-gray-900 text-center mb-2">Confirm Action</h3>
+        <h3 id="confirmModalTitle" class="text-lg font-bold text-gray-900 text-center mb-2">Confirm Action</h3>
         <p id="confirmMessage" class="text-sm text-gray-600 text-center mb-6">Are you sure you want to proceed?</p>
         <div class="flex gap-3">
           <button id="confirmCancel" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Cancel</button>
@@ -554,14 +335,14 @@
     </div>
 
     <!-- Feature Info Modal -->
-    <div id="featureInfoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+    <div id="featureInfoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="featureInfoModalTitle">
       <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
         <div class="flex items-center justify-center w-12 h-12 mx-auto bg-yellow-100 rounded-full mb-4">
           <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
           </svg>
         </div>
-        <h3 id="featureInfoTitle" class="text-lg font-bold text-gray-900 text-center mb-2">Feature Testimony</h3>
+        <h3 id="featureInfoModalTitle" class="text-lg font-bold text-gray-900 text-center mb-2">Feature Testimony</h3>
         <p id="featureInfoMessage" class="text-sm text-gray-600 text-center mb-6">This testimony will be displayed on the homepage for public viewing. Featured testimonies help showcase the positive impact of our SK programs to the community.</p>
         <div class="flex gap-3">
           <button id="featureInfoCancel" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Cancel</button>
@@ -600,17 +381,6 @@
       // Pagination variables
       let currentPage = 0;
       const testimoniesPerPage = 6;
-
-      // SECURITY: Escape HTML to prevent XSS
-      function escapeHTML(unsafe) {
-        if (typeof unsafe !== "string") return "";
-        return unsafe
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
 
       // SECURITY: Validate and sanitize image URLs
       function sanitizeImageURL(url) {
@@ -687,7 +457,7 @@
         if (avatarElement) {
           const safeProfileUrl = sanitizeImageURL(currentUserData.imagePathURL);
           if (safeProfileUrl) {
-            avatarElement.innerHTML = `<img src="${safeProfileUrl}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML((currentUserData.firstName?.charAt(0) || '') + (currentUserData.lastName?.charAt(0) || '')).toUpperCase()}</span>';" />`;
+            avatarElement.innerHTML = `<img src="${safeProfileUrl}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="handleAvatarError(this, '${escapeHTML((currentUserData.firstName?.charAt(0) || '') + (currentUserData.lastName?.charAt(0) || '')).toUpperCase()}')" />`;
           } else {
             const initials = `${(currentUserData.firstName || 'S').charAt(0)}${(currentUserData.lastName || 'K').charAt(0)}`.toUpperCase();
             avatarElement.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
@@ -936,7 +706,7 @@
           // Build avatar HTML - show profile image if available
           const safeImageUrl = sanitizeImageURL(t.volunteerImage);
           const avatarHTML = safeImageUrl
-            ? `<img src="${safeImageUrl}" alt="${escapeHTML(t.volunteerName)}" class="w-12 h-12 rounded-full object-cover flex-shrink-0" onerror="this.outerHTML='<div class=\\'w-12 h-12 bg-[#2f6e4e] rounded-full flex items-center justify-center text-white font-bold flex-shrink-0\\'>${escapeHTML(t.volunteerInitials)}</div>'" />`
+            ? `<img src="${safeImageUrl}" alt="${escapeHTML(t.volunteerName)}" class="w-12 h-12 rounded-full object-cover flex-shrink-0" loading="lazy" onerror="handleAvatarError(this, '${escapeHTML(t.volunteerInitials)}')" />`
             : `<div class="w-12 h-12 bg-[#2f6e4e] rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">${escapeHTML(t.volunteerInitials)}</div>`;
 
           return `
@@ -1064,7 +834,7 @@
       // Show feature info modal
       function showFeatureInfoModal(testimony) {
         const modal = document.getElementById('featureInfoModal');
-        const titleEl = document.getElementById('featureInfoTitle');
+        const titleEl = document.getElementById('featureInfoModalTitle');
         const messageEl = document.getElementById('featureInfoMessage');
         const confirmBtn = document.getElementById('featureInfoOk');
         const cancelBtn = document.getElementById('featureInfoCancel');
@@ -1120,51 +890,10 @@
         });
       }
 
-      // Toast Notification System
-      function showToast(message, type = 'success') {
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-          existingToast.remove();
-        }
-
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-
-        let icon = '';
-        if (type === 'success') {
-          icon = '<svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        } else if (type === 'error') {
-          icon = '<svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        } else if (type === 'warning') {
-          icon = '<svg class="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
-        } else {
-          icon = '<svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        }
-
-        toast.innerHTML = `
-          ${icon}
-          <div class="flex-1">
-            <p class="text-sm font-medium text-gray-800">${message}</p>
-          </div>
-          <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        `;
-
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => {
-          toast.classList.remove('show');
-          setTimeout(() => toast.remove(), 300);
-        }, 4000);
-      }
-
       // Confirmation Modal
       function showConfirm(title, message, onConfirm, confirmButtonText = 'Delete', confirmButtonColor = 'red') {
         const modal = document.getElementById('confirmModal');
-        const titleEl = document.getElementById('confirmTitle');
+        const titleEl = document.getElementById('confirmModalTitle');
         const messageEl = document.getElementById('confirmMessage');
         const confirmBtn = document.getElementById('confirmOk');
         const cancelBtn = document.getElementById('confirmCancel');

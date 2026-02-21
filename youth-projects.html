@@ -3,37 +3,26 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Youth Projects - Browse and apply to volunteer projects">
     <title>BIMS - Youth Browse Projects</title>
 
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS -->
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link href="css/toast.css" rel="stylesheet">
 
     <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/auth.js"></script>
     <script src="js/auth/session.js"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
-
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
     <style>
       /* Enhanced Icon System */
       .icon-wrapper { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -116,44 +105,6 @@
         animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
 
-      /* Toast Notification Styles */
-      .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        min-width: 300px;
-        background: white;
-        padding: 16px 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateX(400px);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 9999;
-      }
-
-      .toast.show {
-        transform: translateX(0);
-      }
-
-      .toast.success {
-        border-left: 4px solid #10b981;
-      }
-
-      .toast.error {
-        border-left: 4px solid #ef4444;
-      }
-
-      .toast.warning {
-        border-left: 4px solid #f59e0b;
-      }
-
-      .toast.info {
-        border-left: 4px solid #3b82f6;
-      }
-
       /* Input validation states */
       .input-error {
         border-color: #ef4444 !important;
@@ -195,169 +146,14 @@
     </style>
   </head>
   <body class="bg-gray-50 overflow-x-hidden">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
     <div class="flex h-screen overflow-hidden">
       <!-- SIDEBAR -->
-      <aside
-        class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col"
-      >
-        <div class="p-6 flex-1 flex flex-col">
-          <!-- Logo Section -->
-          <div class="flex items-center space-x-4 mb-8">
-            <div
-              class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden"
-            >
-              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
-            </div>
-            <div>
-              <h1 class="text-xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-            </div>
-          </div>
-
-          <!-- Menu -->
-          <nav class="space-y-2">
-            <a
-              href="youth-dashboard.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
-                  ></path>
-                </svg>
-              </div>
-              <span>Dashboard</span>
-            </a>
-
-            <a
-              href="youth-files.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Files</span>
-            </a>
-
-            <a
-              href="youth-projects.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group w-full"
-            >
-              <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  ></path>
-                </svg>
-              </div>
-              <span>Projects</span>
-            </a>
-
-            <a
-              href="youth-calendar.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Calendar</span>
-            </a>
-
-            <a
-              href="youth-certificates.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Certificates</span>
-            </a>
-          </nav>
-
-          <div class="flex-1"></div>
-
-          <!-- Logout -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <button
-              onclick="handleLogout()"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
-            >
-              <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
-                </svg>
-              </div>
-              <span class="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col" data-role="youth"></aside>
+      <script src="js/components/sidebar.js"></script>
 
       <!-- MAIN CONTENT -->
-      <div class="flex-1 overflow-auto">
+      <div id="main-content" class="flex-1 overflow-auto">
         <!-- Header -->
         <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200">
           <div class="px-8 py-6">
@@ -685,7 +481,7 @@
     </div>
 
     <!-- APPLY TO PROJECT MODAL -->
-    <div id="applyModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div id="applyModal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="applyModalTitle">
       <div class="flex items-center justify-center min-h-screen px-4">
         <div
           class="fixed inset-0 bg-gray-500 opacity-75"
@@ -697,7 +493,7 @@
         >
           <div class="p-6 border-b">
             <div class="flex items-center justify-between">
-              <h3 class="text-2xl font-bold text-gray-800">Apply to Project</h3>
+              <h3 id="applyModalTitle" class="text-2xl font-bold text-gray-800">Apply to Project</h3>
               <button
                 onclick="closeApplyModal()"
                 class="text-gray-400 hover:text-gray-600"
@@ -1029,7 +825,7 @@
     </div>
 
     <!-- SEND INQUIRY MODAL -->
-    <div id="inquiryModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div id="inquiryModal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="inquiryModalTitle">
       <div class="flex items-center justify-center min-h-screen px-4">
         <div
           class="fixed inset-0 bg-gray-500 opacity-75"
@@ -1039,7 +835,7 @@
         <div class="relative bg-white rounded-xl shadow-2xl max-w-lg w-full">
           <div class="p-6 border-b">
             <div class="flex items-center justify-between">
-              <h3 class="text-xl font-bold text-gray-800">Send Inquiry</h3>
+              <h3 id="inquiryModalTitle" class="text-xl font-bold text-gray-800">Send Inquiry</h3>
               <button
                 onclick="closeInquiryModal()"
                 class="text-gray-400 hover:text-gray-600"
@@ -1114,14 +910,6 @@
       // =========================================
       // BIMS YOUTH PROJECTS - SUPABASE BACKEND
       // =========================================
-
-      // Security: XSS Prevention helpers
-      function escapeHTML(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-      }
 
       // State variables
       let currentUser = null;
@@ -1200,7 +988,7 @@
           const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
           if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('https://')) {
-            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="handleAvatarError(this, '${escapeHTML(initials)}')" />`;
           } else {
             avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
           }
@@ -1225,7 +1013,7 @@
           const initials = `${firstName.charAt(0) || ''}${lastName.charAt(0) || ''}`.toUpperCase();
           const imageUrl = profile.profilePicture || profile.userData?.imagePathURL;
           if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('https://')) {
-            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+            avatarEl.innerHTML = `<img src="${escapeHTML(imageUrl)}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="handleAvatarError(this, '${escapeHTML(initials)}')" />`;
           } else {
             avatarEl.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
           }
@@ -2694,97 +2482,6 @@
         renderProjects(filtered);
       }
 
-      // Toast notification
-      function showToast(message, type = 'success') {
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-          existingToast.remove();
-        }
-
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-
-        const icons = {
-          success: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
-          error: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
-          warning: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
-          info: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
-        };
-
-        toast.innerHTML = `
-          <div class="toast-icon">${icons[type]}</div>
-          <div class="toast-message">${message}</div>
-        `;
-
-        const styles = document.createElement('style');
-        if (!document.getElementById('toast-styles')) {
-          styles.id = 'toast-styles';
-          styles.textContent = `
-            .toast {
-              position: fixed;
-              top: 24px;
-              right: 24px;
-              min-width: 300px;
-              max-width: 500px;
-              padding: 16px;
-              border-radius: 12px;
-              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-              display: flex;
-              align-items: center;
-              gap: 12px;
-              z-index: 10000;
-              transform: translateX(400px);
-              transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-              font-family: 'Inter', sans-serif;
-            }
-            .toast.show {
-              transform: translateX(0);
-            }
-            .toast.success {
-              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-              color: white;
-            }
-            .toast.error {
-              background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-              color: white;
-            }
-            .toast.warning {
-              background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-              color: white;
-            }
-            .toast.info {
-              background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-              color: white;
-            }
-            .toast-icon {
-              flex-shrink: 0;
-              width: 20px;
-              height: 20px;
-            }
-            .toast-message {
-              flex: 1;
-              font-size: 14px;
-              font-weight: 500;
-              line-height: 1.5;
-            }
-          `;
-          document.head.appendChild(styles);
-        }
-
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-          toast.classList.add('show');
-        }, 10);
-
-        setTimeout(() => {
-          toast.classList.remove('show');
-          setTimeout(() => {
-            toast.remove();
-          }, 300);
-        }, 4000);
-      }
-
       // Initialize
       renderProjects(projects);
       renderMyApplicationsGrid();
@@ -2811,36 +2508,25 @@
         const projectId = urlParams.get("projectId");
         const tab = urlParams.get("tab");
 
-        console.log("URL Parameters:", { projectId, tab });
-
         if (projectId) {
           // Convert to number if it's a valid project ID
           const id = parseInt(projectId);
           const project = projects.find((p) => p.id === id);
 
-          console.log("Found project:", project);
-
           if (project) {
             // Open the project modal
             viewProject(id);
-            console.log("viewProject called for ID:", id);
 
             // If tab parameter is provided, switch to that tab
             if (tab === "inquiries") {
-              console.log("Switching to inquiries tab");
               // Use requestAnimationFrame to ensure DOM is updated before switching tabs
               requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                   switchTab("inquiries");
-                  console.log("Tab switched to inquiries");
                 });
               });
             }
-          } else {
-            console.log("No project found with ID:", id);
           }
-        } else {
-          console.log("No projectId in URL");
         }
       }
 

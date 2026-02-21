@@ -3,34 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Youth Certificates - View and download volunteer certificates">
     <title>My Certificates - BIMS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="css/toast.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/auth.js"></script>
     <script src="js/auth/session.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous" defer></script>
     <style>
       @media print {
         @page {
@@ -120,165 +110,14 @@
     </style>
   </head>
   <body class="bg-gray-50">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
     <div class="flex h-screen overflow-hidden">
       <!-- Sidebar -->
-      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col">
-        <div class="p-6 flex-1 flex flex-col">
-          <!-- Logo -->
-          <div class="flex items-center space-x-4 mb-8">
-            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden">
-              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
-            </div>
-            <div>
-              <h1 class="text-xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-            </div>
-          </div>
-
-          <!-- Menu -->
-          <nav class="space-y-2">
-            <a
-              href="youth-dashboard.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
-                  ></path>
-                </svg>
-              </div>
-              <span>Dashboard</span>
-            </a>
-
-            <a
-              href="youth-files.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Files</span>
-            </a>
-
-            <a
-              href="youth-projects.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  ></path>
-                </svg>
-              </div>
-              <span>Projects</span>
-            </a>
-
-            <a
-              href="youth-calendar.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full"
-            >
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Calendar</span>
-            </a>
-
-            <a
-              href="youth-certificates.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group w-full"
-            >
-              <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Certificates</span>
-            </a>
-          </nav>
-
-          <div class="flex-1"></div>
-
-          <!-- Logout -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <button
-              onclick="handleLogout()"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
-            >
-              <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
-                </svg>
-              </div>
-              <span class="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col" data-role="youth"></aside>
+      <script src="js/components/sidebar.js"></script>
 
       <!-- Main Content -->
-      <div class="flex-1 overflow-auto">
+      <div id="main-content" class="flex-1 overflow-auto">
         <!-- Header -->
         <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200">
           <div class="px-8 py-6">
@@ -373,12 +212,12 @@
     <div id="profileModalContainer"></div>
 
     <!-- SATISFACTION SURVEY MODAL -->
-    <div id="surveyModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50">
+    <div id="surveyModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50" role="dialog" aria-modal="true" aria-labelledby="surveyModalTitle">
       <div class="flex items-center justify-center min-h-screen px-4">
         <div class="relative bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           <!-- Header -->
           <div class="bg-gradient-to-r from-[#3d8b64] to-[#3d8b64] text-white p-6">
-            <h2 class="text-2xl font-bold mb-2">Volunteer Satisfaction Survey</h2>
+            <h2 id="surveyModalTitle" class="text-2xl font-bold mb-2">Volunteer Satisfaction Survey</h2>
             <p id="surveyProjectTitle" class="text-[#2f6e4e]/20"></p>
           </div>
 
@@ -507,7 +346,7 @@
     </div>
 
     <!-- CERTIFICATE PREVIEW MODAL WITH ZOOM -->
-    <div id="certificateModal" class="hidden fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm" style="z-index: 9999;">
+    <div id="certificateModal" class="hidden fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm" style="z-index: 9999;" role="dialog" aria-modal="true" aria-labelledby="certificateModalTitle">
       <div class="h-full flex flex-col">
         <!-- Enhanced Header Bar -->
         <div class="bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700 px-3 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4 flex-shrink-0">
@@ -519,7 +358,7 @@
                 </svg>
               </div>
               <div class="hidden md:block min-w-0">
-                <h3 class="text-white font-bold text-base lg:text-lg truncate">Certificate Preview</h3>
+                <h3 id="certificateModalTitle" class="text-white font-bold text-base lg:text-lg truncate">Certificate Preview</h3>
                 <p class="text-gray-400 text-xs truncate">Pinch or use controls to zoom</p>
               </div>
               <div class="block md:hidden min-w-0">
@@ -712,16 +551,6 @@
       import { NotificationModal } from './js/components/NotificationModal.js';
       import { ProfileModal } from './js/components/ProfileModal.js';
 
-      // =========================================
-      // XSS PREVENTION HELPERS
-      // =========================================
-      function escapeHTML(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
-      }
-
       function sanitizeImageURL(url) {
         if (!url) return '';
         try {
@@ -758,7 +587,7 @@
         if (headerAvatar) {
           const profileImageUrl = sanitizeImageURL(currentUserData.imagePathURL || currentUser.user_metadata?.profileImageUrl);
           if (profileImageUrl) {
-            headerAvatar.innerHTML = `<img src="${profileImageUrl}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
+            headerAvatar.innerHTML = `<img src="${escapeHTML(profileImageUrl)}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
           } else {
             headerAvatar.textContent = initials;
           }
@@ -1370,58 +1199,6 @@
       }
       updateCurrentDate();
 
-      // Toast Notification System
-      function showToast(message, type = 'success') {
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) existingToast.remove();
-
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-
-        const icons = {
-          success: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
-          error: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
-          warning: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
-          info: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
-        };
-
-        toast.innerHTML = `
-          <div class="toast-icon">${icons[type]}</div>
-          <div class="toast-message">${message}</div>
-        `;
-
-        if (!document.getElementById('toast-styles')) {
-          const styles = document.createElement('style');
-          styles.id = 'toast-styles';
-          styles.textContent = `
-            .toast {
-              position: fixed; top: 24px; right: 24px;
-              min-width: 300px; max-width: 500px; padding: 16px;
-              border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-              display: flex; align-items: center; gap: 12px;
-              z-index: 10000; transform: translateX(400px);
-              transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-              font-family: 'Inter', sans-serif;
-            }
-            .toast.show { transform: translateX(0); }
-            .toast.success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-            .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
-            .toast.warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
-            .toast.info { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
-            .toast-icon { flex-shrink: 0; width: 20px; height: 20px; }
-            .toast-message { flex: 1; font-size: 14px; font-weight: 500; line-height: 1.5; }
-          `;
-          document.head.appendChild(styles);
-        }
-
-        document.body.appendChild(toast);
-        setTimeout(() => { toast.classList.add('show'); }, 10);
-        setTimeout(() => {
-          toast.classList.remove('show');
-          setTimeout(() => { toast.remove(); }, 300);
-        }, 4000);
-      }
-
       // =========================================
       // INITIALIZE COMPONENTS
       // =========================================
@@ -1439,7 +1216,7 @@
       try {
         const { data: userData } = await supabaseClient
           .from('User_Tbl')
-          .select('*')
+          .select('userID, role, firstName, middleName, lastName, address, contactNumber, gender, birthday, imagePathURL')
           .eq('userID', currentUser.id)
           .single();
 
@@ -1468,7 +1245,7 @@
         if (headerAvatar) {
           const profileImageUrl = sanitizeImageURL(p.profileImageUrl || p.imagePathURL);
           if (profileImageUrl) {
-            headerAvatar.innerHTML = `<img src="${profileImageUrl}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
+            headerAvatar.innerHTML = `<img src="${escapeHTML(profileImageUrl)}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
           } else {
             headerAvatar.textContent = initials;
           }

@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SK Archives - View archived projects and documents">
     <title>Project Archives - SK Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,27 +13,16 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/responsive.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="css/toast.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/session.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous" defer></script>
     <style>
       @keyframes shake {
         0%,
@@ -86,200 +76,11 @@
     </style>
   </head>
   <body class="bg-gray-50">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
     <div class="flex h-screen overflow-hidden">
       <!-- Sidebar Navigation -->
-      <aside
-        class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col"
-      >
-        <div class="p-6 flex-1 flex flex-col">
-          <!-- Logo -->
-          <div class="flex items-center space-x-4 mb-8">
-            <div
-              class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden"
-            >
-              <img
-                src="asset/logo.svg"
-                alt="BIMS Logo"
-                class="w-full h-full object-contain p-1"
-              />
-            </div>
-            <div>
-              <h1 class="text-xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-            </div>
-          </div>
-
-          <!-- Navigation Menu -->
-          <nav class="space-y-2">
-            <a
-              href="sk-dashboard.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-green-50 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-green-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
-                  ></path>
-                </svg>
-              </div>
-              <span>Dashboard</span>
-            </a>
-            <a
-              href="sk-files.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-blue-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Manage Files</span>
-            </a>
-            <a
-              href="sk-projects.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-purple-50 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-purple-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  ></path>
-                </svg>
-              </div>
-              <span>Project Monitoring</span>
-            </a>
-            <a
-              href="sk-calendar.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-50 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-orange-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Calendar</span>
-            </a>
-            <a
-              href="sk-testimonies.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-50 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-indigo-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Testimonies</span>
-            </a>
-            <a
-              href="sk-archive.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group"
-            >
-              <div
-                class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition"
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                  ></path>
-                </svg>
-              </div>
-              <span>Archives</span>
-            </a>
-          </nav>
-
-          <div class="flex-1"></div>
-
-          <!-- Logout -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <button
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
-            >
-              <div
-                class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition"
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
-                </svg>
-              </div>
-              <span class="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col" data-role="sk"></aside>
+      <script src="js/components/sidebar.js"></script>
 
       <!-- Main Content -->
       <div class="flex-1 overflow-y-auto">
@@ -354,7 +155,7 @@
         </header>
 
         <!-- Main Content Area -->
-        <main class="p-8">
+        <main id="main-content" class="p-8">
           <!-- Stats Overview -->
           <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
             <!-- Total Reports Card -->
@@ -951,6 +752,7 @@
     <div
       id="projectModal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      role="dialog" aria-modal="true" aria-labelledby="modalProjectName"
     >
       <div
         class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
@@ -1776,7 +1578,7 @@
                 <p class="text-gray-500 text-sm">Loading preview...</p>
               </div>
               <div id="viewArchivedFilePreview" class="hidden w-full">
-                <img id="viewArchivedFileImg" class="hidden max-h-96 mx-auto rounded-lg" alt="File preview" />
+                <img id="viewArchivedFileImg" class="hidden max-h-96 mx-auto rounded-lg" alt="File preview" loading="lazy" />
                 <canvas id="archivedPdfCanvas" class="hidden max-h-96 mx-auto rounded-lg"></canvas>
               </div>
               <div id="viewArchivedFileIcon" class="hidden text-center">
@@ -1930,8 +1732,13 @@
       let currentQuarter = "Q4";
       let filteredProjects = [...archivedProjects];
 
-      // Initialize page
-      document.addEventListener("DOMContentLoaded", function () {
+      // Initialize page with auth check
+      document.addEventListener("DOMContentLoaded", async function () {
+        try {
+          await SessionManager.requireAuth(["SK_OFFICIAL", "CAPTAIN"]);
+        } catch (e) {
+          return; // requireAuth redirects to login
+        }
         renderProjects();
         attachFilterListeners();
       });
@@ -2055,100 +1862,6 @@
         if (rate >= 80) return "bg-blue-500";
         if (rate >= 70) return "bg-yellow-500";
         return "bg-red-500";
-      }
-
-      // Toast Notification System
-      function showToast(message, type = "success") {
-        const existingToast = document.querySelector(".toast");
-        if (existingToast) {
-          existingToast.remove();
-        }
-
-        const toast = document.createElement("div");
-        toast.className = `toast ${type}`;
-
-        const icons = {
-          success:
-            '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
-          error:
-            '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
-          warning:
-            '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
-          info: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
-        };
-
-        toast.innerHTML = `
-                <div class="toast-icon">${icons[type]}</div>
-                <div class="toast-message">${message}</div>
-            `;
-
-        const styles = document.createElement("style");
-        if (!document.getElementById("toast-styles")) {
-          styles.id = "toast-styles";
-          styles.textContent = `
-                    .toast {
-                        position: fixed;
-                        top: 24px;
-                        right: 24px;
-                        min-width: 300px;
-                        max-width: 500px;
-                        padding: 16px;
-                        border-radius: 12px;
-                        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        z-index: 10000;
-                        transform: translateX(400px);
-                        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                        font-family: 'Inter', sans-serif;
-                    }
-                    .toast.show {
-                        transform: translateX(0);
-                    }
-                    .toast.success {
-                        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                        color: white;
-                    }
-                    .toast.error {
-                        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-                        color: white;
-                    }
-                    .toast.warning {
-                        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-                        color: white;
-                    }
-                    .toast.info {
-                        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-                        color: white;
-                    }
-                    .toast-icon {
-                        flex-shrink: 0;
-                        width: 20px;
-                        height: 20px;
-                    }
-                    .toast-message {
-                        flex: 1;
-                        font-size: 14px;
-                        font-weight: 500;
-                        line-height: 1.5;
-                    }
-                `;
-          document.head.appendChild(styles);
-        }
-
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-          toast.classList.add("show");
-        }, 10);
-
-        setTimeout(() => {
-          toast.classList.remove("show");
-          setTimeout(() => {
-            toast.remove();
-          }, 300);
-        }, 4000);
       }
 
       function switchQuarter(quarter) {
@@ -3612,11 +3325,11 @@
         // Load profile picture preview
         const previewDiv = document.getElementById("profilePicturePreview");
         if (userProfile.profilePicture) {
-          previewDiv.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
+          previewDiv.innerHTML = `<img src="${escapeHTML(userProfile.profilePicture)}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
         } else {
           const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
           const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-          previewDiv.innerHTML = `<span id="profileInitials" class="text-white font-bold text-2xl">${firstInitial}${lastInitial}</span>`;
+          previewDiv.innerHTML = `<span id="profileInitials" class="text-white font-bold text-2xl">${escapeHTML(firstInitial)}${escapeHTML(lastInitial)}</span>`;
         }
 
         document.getElementById("profileModal").classList.remove("hidden");
@@ -3651,7 +3364,7 @@
 
           // Update modal preview
           const previewDiv = document.getElementById("profilePicturePreview");
-          previewDiv.innerHTML = `<img src="${imageData}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
+          previewDiv.innerHTML = `<img src="${escapeHTML(imageData)}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
 
           // Update header avatar
           updateHeaderAvatar();
@@ -3668,11 +3381,11 @@
         if (!headerAvatar) return;
 
         if (userProfile.profilePicture) {
-          headerAvatar.innerHTML = `<img src="${userProfile.profilePicture}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
+          headerAvatar.innerHTML = `<img src="${escapeHTML(userProfile.profilePicture)}" alt="Profile" class="w-full h-full object-cover rounded-full" />`;
         } else {
           const firstInitial = userProfile.firstName.charAt(0).toUpperCase();
           const lastInitial = userProfile.lastName.charAt(0).toUpperCase();
-          headerAvatar.innerHTML = `<span class="text-white font-bold">${firstInitial}${lastInitial}</span>`;
+          headerAvatar.innerHTML = `<span class="text-white font-bold">${escapeHTML(firstInitial)}${escapeHTML(lastInitial)}</span>`;
         }
       }
 
@@ -3694,8 +3407,6 @@
           return;
         }
 
-        // In production, this would save to the server
-        console.log("Profile saved:", userProfile);
 
         // Update header display
         const middleInitial = userProfile.middleName
@@ -3719,14 +3430,6 @@
       let archivedFiles = [];
       let currentArchiveType = "projects";
 
-      // Helper: escape HTML to prevent XSS
-      function escapeHTML(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-      }
-
       // Helper: sanitize file URL (only allow Supabase storage URLs)
       function sanitizeFileURL(url) {
         if (!url) return null;
@@ -3737,7 +3440,7 @@
             return url;
           }
         } catch (e) {
-          console.warn('Invalid URL:', url);
+          // invalid URL - ignore
         }
         return null;
       }
@@ -3758,7 +3461,7 @@
         try {
           const { data, error } = await supabaseClient
             .from('File_Tbl')
-            .select('*')
+            .select('fileID, fileName, fileType, dateUploaded, fileCategory, filePath, dateArchived, updated_at')
             .eq('fileStatus', 'ARCHIVED')
             .order('dateUploaded', { ascending: false });
 

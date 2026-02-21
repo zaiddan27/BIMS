@@ -1,12 +1,9 @@
 /**
  * Environment Configuration for BIMS
  *
- * IMPORTANT SECURITY NOTE:
- * - In production, these values should come from environment variables
- * - For development, we load from a config object
- * - NEVER commit actual API keys to Git
- *
- * TODO: Replace these placeholder values with your actual Supabase credentials
+ * NOTE: The Supabase anon key is designed for client-side use.
+ * All data access is protected by Row Level Security (RLS) policies.
+ * The anon key only grants access that RLS explicitly allows.
  */
 
 const ENV = {
@@ -15,7 +12,7 @@ const ENV = {
     SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyZXV2cHp4bnZyaGZ0YWZtYWRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc3ODE1OTMsImV4cCI6MjA4MzM1NzU5M30.NvyPWk24eMnyTcKE_yMqG8Pgal5yxQhLYJuyJtGgSJg',
 
     // Environment
-    NODE_ENV: 'development', // 'development' or 'production'
+    NODE_ENV: 'production',
 
     // API Configuration
     API_TIMEOUT: 30000, // 30 seconds

@@ -35,7 +35,13 @@ export class ProfileModal {
     this.currentUser = null;
     this.currentUserData = null;
 
-    console.log("[ProfileModal] Component created");
+    // XSS prevention helper
+    this._escapeHTML = (str) => {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(str));
+      return div.innerHTML;
+    };
   }
 
   /**
@@ -44,7 +50,7 @@ export class ProfileModal {
   getTemplate() {
     return `
       <!-- Profile Modal -->
-      <div id="${this.modalId}" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50">
+      <div id="${this.modalId}" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
         <div class="flex items-center justify-center min-h-screen px-4">
           <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
             <!-- Header -->
@@ -64,7 +70,7 @@ export class ProfileModal {
                     <input type="file" id="profilePictureInput" class="hidden" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" />
                   </div>
                   <div>
-                    <h2 class="text-2xl font-bold">Profile Settings</h2>
+                    <h2 id="profileModalTitle" class="text-2xl font-bold">Profile Settings</h2>
                     <p class="text-white/70 text-sm">Manage your account information</p>
                   </div>
                 </div>
@@ -196,11 +202,8 @@ export class ProfileModal {
    * Renders the profile modal into the DOM
    */
   render() {
-    console.log("[ProfileModal] Rendering...");
-
     // Check if modal already exists
     if (document.getElementById(this.modalId)) {
-      console.log("[ProfileModal] Modal already exists in DOM");
       return;
     }
 
@@ -212,8 +215,6 @@ export class ProfileModal {
 
     // Make instance globally accessible
     window.profileModal = this;
-
-    console.log("[ProfileModal] ✅ Rendered successfully");
   }
 
   /**
@@ -223,7 +224,6 @@ export class ProfileModal {
     const profilePictureInput = document.getElementById('profilePictureInput');
     if (profilePictureInput) {
       profilePictureInput.addEventListener('change', (e) => this.handleProfilePictureChange(e));
-      console.log("[ProfileModal] Event listeners attached");
     }
   }
 
@@ -231,8 +231,6 @@ export class ProfileModal {
    * Load user profile data from session
    */
   async loadUserData(user, userData) {
-    console.log("[ProfileModal] Loading user data:", { user, userData });
-
     this.currentUser = user;
     this.currentUserData = userData;
 
@@ -261,19 +259,14 @@ export class ProfileModal {
       birthday: userData.birthday || "",
       profilePicture: userData.imagePathURL || ""
     };
-
-    console.log("[ProfileModal] ✅ User profile loaded:", this.userProfile);
   }
 
   /**
    * Opens the profile modal and populates with user data
    */
   open() {
-    console.log("[ProfileModal] Opening modal...");
-
     const modal = document.getElementById(this.modalId);
     if (!modal) {
-      console.error("[ProfileModal] ❌ Modal element not found!");
       return;
     }
 
@@ -298,14 +291,12 @@ export class ProfileModal {
     this.toggleButtons(false);
 
     modal.classList.remove('hidden');
-    console.log("[ProfileModal] ✅ Modal opened in view mode");
   }
 
   /**
    * Closes the profile modal
    */
   close() {
-    console.log("[ProfileModal] Closing modal...");
     const modal = document.getElementById(this.modalId);
     if (modal) {
       modal.classList.add('hidden');
@@ -314,7 +305,6 @@ export class ProfileModal {
       this.setFieldsState(false);
       this.clearAllErrors();
       this.toggleButtons(false);
-      console.log("[ProfileModal] ✅ Modal closed");
     }
   }
 
@@ -326,13 +316,11 @@ export class ProfileModal {
     if (!previewDiv) return;
 
     if (this.userProfile.profilePicture) {
-      previewDiv.innerHTML = `<img src="${this.userProfile.profilePicture}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
-      console.log("[ProfileModal] Profile picture loaded:", this.userProfile.profilePicture);
+      previewDiv.innerHTML = `<img src="${this._escapeHTML(this.userProfile.profilePicture)}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" />`;
     } else {
       const firstInitial = this.userProfile.firstName ? this.userProfile.firstName.charAt(0).toUpperCase() : '-';
       const lastInitial = this.userProfile.lastName ? this.userProfile.lastName.charAt(0).toUpperCase() : '-';
       previewDiv.innerHTML = `<span class="text-white font-bold text-2xl">${firstInitial}${lastInitial}</span>`;
-      console.log("[ProfileModal] Showing initials:", `${firstInitial}${lastInitial}`);
     }
   }
 
@@ -340,8 +328,6 @@ export class ProfileModal {
    * Enter edit mode
    */
   enterEditMode() {
-    console.log("[ProfileModal] Entering edit mode...");
-
     // Save current state for potential cancel
     this.profileBackup = {
       firstName: document.getElementById('profileFirstName').value,
@@ -361,16 +347,12 @@ export class ProfileModal {
     // Show profile picture upload button
     const uploadBtn = document.getElementById('profilePictureUploadBtn');
     if (uploadBtn) uploadBtn.classList.remove('hidden');
-
-    console.log("[ProfileModal] ✅ Edit mode enabled");
   }
 
   /**
    * Cancel edit and restore backup
    */
   cancelEdit() {
-    console.log("[ProfileModal] Cancelling edit...");
-
     // Restore backed up values
     document.getElementById('profileFirstName').value = this.profileBackup.firstName;
     document.getElementById('profileMiddleName').value = this.profileBackup.middleName;
@@ -388,8 +370,6 @@ export class ProfileModal {
     // Hide profile picture upload button
     const uploadBtn = document.getElementById('profilePictureUploadBtn');
     if (uploadBtn) uploadBtn.classList.add('hidden');
-
-    console.log("[ProfileModal] ✅ Edit cancelled, data restored");
   }
 
   /**
@@ -427,8 +407,6 @@ export class ProfileModal {
         }
       }
     });
-
-    console.log("[ProfileModal] Fields set to:", editable ? "editable" : "disabled");
   }
 
   /**
@@ -442,7 +420,6 @@ export class ProfileModal {
       field.classList.remove('border-gray-300');
       error.textContent = message;
       error.classList.remove('hidden');
-      console.log(`[ProfileModal] ❌ Error on ${fieldId}:`, message);
     }
   }
 
@@ -513,15 +490,10 @@ export class ProfileModal {
    * Handle profile picture change
    */
   async handleProfilePictureChange(event) {
-    console.log("[ProfileModal] Profile picture change detected");
-
     const file = event.target.files[0];
     if (!file) {
-      console.log("[ProfileModal] No file selected");
       return;
     }
-
-    console.log("[ProfileModal] File selected:", file.name, file.type, file.size);
 
     // Validate file
     const validation = this.validateImageFile(file);
@@ -536,15 +508,13 @@ export class ProfileModal {
     reader.onload = (e) => {
       const previewDiv = document.getElementById('profilePicturePreview');
       if (previewDiv) {
-        previewDiv.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" class="w-full h-full object-cover rounded-full" />`;
-        console.log("[ProfileModal] ✅ Image preview updated");
+        previewDiv.innerHTML = `<img src="${this._escapeHTML(e.target.result)}" alt="Profile Preview" class="w-full h-full object-cover rounded-full" />`;
       }
     };
     reader.readAsDataURL(file);
 
     // Store file for upload during save
     this.pendingProfilePicture = file;
-    console.log("[ProfileModal] Profile picture ready for upload");
   }
 
   /**
@@ -569,8 +539,6 @@ export class ProfileModal {
    * Save profile changes
    */
   async save() {
-    console.log("[ProfileModal] 💾 Starting save process...");
-
     try {
       // Clear all previous errors
       this.clearAllErrors();
@@ -583,8 +551,6 @@ export class ProfileModal {
       const contact = document.getElementById('profileContact').value.trim();
       const birthday = document.getElementById('profileBirthday').value;
       const gender = document.getElementById('profileGender').value;
-
-      console.log("[ProfileModal] Form values:", { firstName, middleName, lastName, address, contact, birthday, gender });
 
       // Comprehensive validation
       let isValid = true;
@@ -655,12 +621,9 @@ export class ProfileModal {
       }) && isValid;
 
       if (!isValid) {
-        console.log("[ProfileModal] ❌ Validation failed");
         this.showToast('Please fix the errors before saving', 'error');
         return;
       }
-
-      console.log("[ProfileModal] ✅ Validation passed");
 
       // Get current session
       const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
@@ -671,8 +634,6 @@ export class ProfileModal {
         window.location.href = 'login.html';
         return;
       }
-
-      console.log("[ProfileModal] Session verified, userID:", session.user.id);
 
       // Format names to Title Case
       const formatName = (name) => {
@@ -698,12 +659,8 @@ export class ProfileModal {
         updatedAt: new Date().toISOString()
       };
 
-      console.log("[ProfileModal] Update data prepared:", updateData);
-
       // Upload profile picture if changed
       if (this.pendingProfilePicture) {
-        console.log("[ProfileModal] Uploading profile picture...");
-
         const fileExt = this.pendingProfilePicture.type.split('/')[1].replace('jpeg', 'jpg');
         const fileName = `profile_${Date.now()}.${fileExt}`;
         const filePath = `${session.user.id}/${fileName}`;
@@ -717,7 +674,6 @@ export class ProfileModal {
           });
 
         if (uploadError) {
-          console.error("[ProfileModal] ❌ Upload error:", uploadError);
           throw new Error(`Image upload failed: ${uploadError.message}`);
         }
 
@@ -726,11 +682,9 @@ export class ProfileModal {
           .getPublicUrl(filePath);
 
         updateData.imagePathURL = urlData.publicUrl;
-        console.log("[ProfileModal] ✅ Profile picture uploaded:", urlData.publicUrl);
       }
 
       // Update database
-      console.log("[ProfileModal] Updating database...");
       const { data, error } = await supabaseClient
         .from('User_Tbl')
         .update(updateData)
@@ -738,8 +692,6 @@ export class ProfileModal {
         .select();
 
       if (error) throw error;
-
-      console.log("[ProfileModal] ✅ Database updated successfully:", data);
 
       // Update local profile data
       this.userProfile.firstName = formattedFirstName;
@@ -766,14 +718,13 @@ export class ProfileModal {
       if (uploadBtn) uploadBtn.classList.add('hidden');
 
       this.showToast('Profile updated successfully!', 'success');
-      console.log("[ProfileModal] ✅ Save completed successfully");
 
       // Trigger update header event (if page needs to refresh header)
       const event = new CustomEvent('profileUpdated', { detail: this.userProfile });
       window.dispatchEvent(event);
 
     } catch (error) {
-      console.error("[ProfileModal] ❌ Save error:", error);
+      console.error("[ProfileModal] Save error:", error);
       this.showToast('Failed to update profile. Please try again.', 'error');
     }
   }
@@ -813,7 +764,5 @@ export class ProfileModal {
       toast.classList.remove('show');
       setTimeout(() => toast.remove(), 300);
     }, 3000);
-
-    console.log(`[ProfileModal] Toast shown: [${type}] ${message}`);
   }
 }

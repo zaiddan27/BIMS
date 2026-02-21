@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SK Official Dashboard - Manage barangay announcements and operations">
     <title>BIMS - SK Official Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,41 +13,31 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link href="css/toast.css" rel="stylesheet">
 
     <!-- Cropper.js CSS -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
+      integrity="sha384-1arqhTHsGLPVJdhZo8SAycbI+y5k+G7khi5bTZ4BxHJIpCfvWoeSDgXEXXRxB/9G"
+      crossorigin="anonymous"
     />
 
     <!-- Supabase JS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
 
     <!-- BIMS Configuration -->
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/auth.js"></script>
     <script src="js/auth/session.js"></script>
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
 
     <!-- Cropper.js JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" integrity="sha384-P65gU1u4/dZpqRQ0AVqW+DHPwXmNAR84Qk31dC95hjk0WatF1GsVF1zRm/0uB+o0" crossorigin="anonymous" defer></script>
 
-
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
     <style>
       /* Enhanced Icon System */
       .icon-wrapper {
@@ -85,44 +76,6 @@
       }
       .icon-glow {
         filter: drop-shadow(0 0 8px rgba(47, 110, 78, 0.3));
-      }
-
-      /* Toast Notification Styles */
-      .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        min-width: 300px;
-        background: white;
-        padding: 16px 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateX(400px);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 9999;
-      }
-
-      .toast.show {
-        transform: translateX(0);
-      }
-
-      .toast.success {
-        border-left: 4px solid #10b981;
-      }
-
-      .toast.error {
-        border-left: 4px solid #ef4444;
-      }
-
-      .toast.warning {
-        border-left: 4px solid #f59e0b;
-      }
-
-      .toast.info {
-        border-left: 4px solid #3b82f6;
       }
 
       /* Input validation states */
@@ -200,206 +153,17 @@
     </style>
   </head>
   <body class="bg-gray-50">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
     <div class="flex h-screen overflow-hidden">
       <!-- Sidebar Navigation -->
-      <aside
-        class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col"
-      >
-        <div class="p-6 flex-1 flex flex-col">
-          <!-- Logo -->
-          <div class="flex items-center space-x-4 mb-8">
-            <div
-              class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden"
-            >
-              <img
-                src="asset/logo.svg"
-                alt="BIMS Logo"
-                class="w-full h-full object-contain p-1"
-              />
-            </div>
-            <div>
-              <h1 class="text-xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-            </div>
-          </div>
-
-          <!-- Navigation Menu -->
-          <nav class="space-y-2">
-            <a
-              href="sk-dashboard.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group"
-            >
-              <div
-                class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition"
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
-                  ></path>
-                </svg>
-              </div>
-              <span>Dashboard</span>
-            </a>
-            <a
-              href="sk-files.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-blue-50 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-blue-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Manage Files</span>
-            </a>
-            <a
-              href="sk-projects.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-purple-50 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-purple-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  ></path>
-                </svg>
-              </div>
-              <span>Project Monitoring</span>
-            </a>
-            <a
-              href="sk-calendar.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-orange-50 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-orange-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Calendar</span>
-            </a>
-            <a
-              href="sk-testimonies.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-50 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-indigo-600 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  ></path>
-                </svg>
-              </div>
-              <span>Testimonies</span>
-            </a>
-            <a
-              href="sk-archive.html"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition group"
-            >
-              <div
-                class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition"
-              >
-                <svg
-                  class="w-5 h-5 group-hover:text-gray-700 transition"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                  ></path>
-                </svg>
-              </div>
-              <span>Archives</span>
-            </a>
-          </nav>
-
-          <div class="flex-1"></div>
-
-          <!-- Logout -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <button
-              onclick="handleLogout()"
-              class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group"
-            >
-              <div
-                class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition"
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  stroke-width="2"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  ></path>
-                </svg>
-              </div>
-              <span class="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col" data-role="sk"></aside>
+      <script src="js/components/sidebar.js"></script>
 
       <!-- Confirmation Modal -->
       <div
         id="confirmModal"
         class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4"
+        role="dialog" aria-modal="true" aria-labelledby="confirmTitle"
       >
         <div
           class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all"
@@ -448,7 +212,7 @@
       </div>
 
       <!-- Main Content -->
-      <div class="flex-1 overflow-auto">
+      <div id="main-content" class="flex-1 overflow-auto">
         <!-- Top Bar -->
         <header
           class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200"
@@ -1024,13 +788,14 @@
     <div
       id="createModal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      role="dialog" aria-modal="true" aria-labelledby="createModalTitle"
     >
       <div
         class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
         <div class="p-6 border-b border-gray-200">
           <div class="flex items-center justify-between">
-            <h3 class="text-2xl font-bold text-gray-800">
+            <h3 id="createModalTitle" class="text-2xl font-bold text-gray-800">
               Create New Announcement
             </h3>
             <button
@@ -1132,13 +897,14 @@
     <div
       id="editModal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      role="dialog" aria-modal="true" aria-labelledby="editModalTitle"
     >
       <div
         class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
         <div class="p-6 border-b border-gray-200">
           <div class="flex items-center justify-between">
-            <h3 class="text-2xl font-bold text-gray-800">Edit Announcement</h3>
+            <h3 id="editModalTitle" class="text-2xl font-bold text-gray-800">Edit Announcement</h3>
             <button
               onclick="closeEditModal()"
               class="text-gray-400 hover:text-gray-600 transition"
@@ -1262,6 +1028,7 @@
     <div
       id="viewModal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      role="dialog" aria-modal="true" aria-labelledby="viewTitle"
     >
       <div
         class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
@@ -1345,6 +1112,7 @@
     <div
       id="deleteModal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle"
     >
       <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
         <div class="p-6">
@@ -1365,7 +1133,7 @@
               ></path>
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-gray-800 text-center mb-2">
+          <h3 id="deleteModalTitle" class="text-xl font-bold text-gray-800 text-center mb-2">
             Delete Announcement?
           </h3>
           <p class="text-gray-600 text-center mb-6">
@@ -1396,13 +1164,14 @@
     <div
       id="budgetEditModal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      role="dialog" aria-modal="true" aria-labelledby="budgetEditModalTitle"
     >
       <div
         class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
       >
         <div class="p-6 border-b border-gray-200">
           <div class="flex items-center justify-between">
-            <h3 class="text-2xl font-bold text-gray-800">
+            <h3 id="budgetEditModalTitle" class="text-2xl font-bold text-gray-800">
               Edit Budget Allocation
             </h3>
             <button
@@ -1549,10 +1318,10 @@
     </div>
 
     <!-- Image Cropper Modal -->
-    <div id="cropperModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4">
+    <div id="cropperModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="cropperModalTitle">
       <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
         <div class="p-6 border-b border-gray-200">
-          <h3 class="text-2xl font-bold text-gray-800">Crop Image</h3>
+          <h3 id="cropperModalTitle" class="text-2xl font-bold text-gray-800">Crop Image</h3>
         </div>
         <div class="p-6">
           <div class="img-container max-h-[50vh]">
@@ -1575,23 +1344,15 @@
       import { NotificationModal } from "./js/components/NotificationModal.js";
       import { ProfileModal } from "./js/components/ProfileModal.js";
 
-      console.log("[SK DASHBOARD] Script loaded - starting execution");
-      console.log(
-        "[SK DASHBOARD] SessionManager available:",
-        typeof SessionManager !== "undefined"
-      );
-
       // Initialize NotificationModal component
       const notificationModal = new NotificationModal();
       notificationModal.render();
       window.notificationModal = notificationModal;
-      console.log("[SK DASHBOARD] NotificationModal component initialized");
 
       // Initialize ProfileModal component
       const profileModal = new ProfileModal();
       profileModal.render();
       window.profileModal = profileModal;
-      console.log("[SK DASHBOARD] ProfileModal component initialized");
 
       // Global variables
       let currentAnnouncementId = null;
@@ -1610,29 +1371,15 @@
        * @returns {Promise<void>}
        */
       async function initializeDashboard() {
-        console.log("[SK DASHBOARD] initializeDashboard() function called");
         try {
-          console.log("[SK DASHBOARD] Inside try block - Initializing...");
-
           // Require authentication - only SK_OFFICIAL allowed
-          console.log("[SK DASHBOARD] Checking authentication...");
           const sessionResult = await SessionManager.requireAuth([
             "SK_OFFICIAL",
           ]);
 
-          console.log("[SK DASHBOARD] Session result:", sessionResult);
-
           if (!sessionResult.success) {
-            console.error(
-              "[SK DASHBOARD ERROR] Authentication failed:",
-              sessionResult.error
-            );
             return; // Session manager handles redirect
           }
-
-          console.log("[SK DASHBOARD] Authentication successful!");
-          console.log("[SK DASHBOARD] User role:", sessionResult.role);
-          console.log("[SK DASHBOARD] User data:", sessionResult.userData);
 
           currentUser = sessionResult.user;
           currentUserData = sessionResult.userData;
@@ -1646,18 +1393,7 @@
           // EFFICIENCY: Load dashboard data in parallel
           await Promise.all([loadAnnouncements(), loadDashboardStatistics(), loadProjectMetrics()]);
 
-          // TODO: Load notifications after authentication completes
-          // loadSKNotifications();
-          // updateNotificationCount();
-
-          console.log("[SK DASHBOARD] Initialized successfully!");
         } catch (error) {
-          console.error("[SK DASHBOARD ERROR] Initialization error:", error);
-          console.error(
-            "[SK DASHBOARD ERROR] Error details:",
-            error.message,
-            error.stack
-          );
           SessionManager.redirectToLogin("Failed to initialize dashboard");
         }
       }
@@ -1769,12 +1505,12 @@
         if (avatarElement) {
           // SECURITY: Sanitize profile picture URL
           const safeProfileUrl = sanitizeImageURL(currentUserData.imagePathURL);
+          const initials = `${currentUserData.firstName?.charAt(0) || ''}${currentUserData.lastName?.charAt(0) || ''}`.toUpperCase();
           if (safeProfileUrl) {
             // Display profile picture with sanitized URL
-            avatarElement.innerHTML = `<img src="${safeProfileUrl}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(currentUserData.firstName?.charAt(0) || '')}${escapeHTML(currentUserData.lastName?.charAt(0) || '')}</span>'.toUpperCase();" />`;
+            avatarElement.innerHTML = `<img src="${safeProfileUrl}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="handleAvatarError(this, '${escapeHTML(initials)}')" />`;
           } else {
             // Display initials
-            const initials = `${currentUserData.firstName?.charAt(0) || ''}${currentUserData.lastName?.charAt(0) || ''}`.toUpperCase();
             avatarElement.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
           }
         }
@@ -1805,43 +1541,11 @@
       // Call init on page load - wrapped in DOMContentLoaded to ensure DOM is ready
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-          console.log("[SK DASHBOARD] DOM loaded, calling initializeDashboard()");
           initializeDashboard();
         });
       } else {
         // DOM already loaded
-        console.log("[SK DASHBOARD] DOM already loaded, calling initializeDashboard()");
         initializeDashboard();
-      }
-
-      // ============================================
-      // DEBUG: Production-safe logging utility
-      // Set DEBUG_MODE to false in production
-      // ============================================
-      const DEBUG_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
-      const debug = {
-        log: (...args) => DEBUG_MODE && console.log('[SK-DASHBOARD]', ...args),
-        warn: (...args) => DEBUG_MODE && console.warn('[SK-DASHBOARD]', ...args),
-        error: (...args) => console.error('[SK-DASHBOARD]', ...args), // Always log errors
-      };
-
-      // ============================================
-      // SECURITY: XSS Prevention Helper
-      // ============================================
-      /**
-       * Escape HTML to prevent XSS attacks
-       * @param {string} unsafe - Unsafe string from user input or database
-       * @returns {string} - Safe HTML string
-       */
-      function escapeHTML(unsafe) {
-        if (typeof unsafe !== "string") return "";
-        return unsafe
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
       }
 
       /**
@@ -1859,7 +1563,6 @@
 
         // Only allow https:// URLs (block javascript:, data:, etc.)
         if (!trimmedUrl.startsWith("https://")) {
-          console.warn("⚠️ Blocked non-HTTPS image URL:", trimmedUrl.substring(0, 50));
           return "";
         }
 
@@ -1878,13 +1581,11 @@
           );
 
           if (!isAllowedDomain) {
-            console.warn("⚠️ Image URL from untrusted domain:", parsedUrl.hostname);
-            // Still allow but log - remove this return to block untrusted domains
+            // Still allow - remove this return to block untrusted domains
           }
 
           return trimmedUrl;
         } catch (e) {
-          console.warn("⚠️ Invalid image URL format:", trimmedUrl.substring(0, 50));
           return "";
         }
       }
@@ -1910,18 +1611,9 @@
         ];
         const maxSize = 5 * 1024 * 1024; // 5MB
 
-        // Debug logging
-        console.log("📎 Validating file:", {
-          name: file.name,
-          type: file.type,
-          size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-          extension: file.name.split(".").pop().toLowerCase(),
-        });
-
         // Check MIME type
         if (!allowedTypes.includes(file.type)) {
           const error = `Invalid file type: ${file.type}. Only JPG, PNG, GIF, and WebP images are allowed`;
-          console.error("❌", error);
           return { valid: false, error: error };
         }
 
@@ -1930,7 +1622,6 @@
           const error = `Image size (${(file.size / 1024 / 1024).toFixed(
             2
           )} MB) exceeds 5MB limit`;
-          console.error("❌", error);
           return { valid: false, error: error };
         }
 
@@ -1943,11 +1634,9 @@
           !(extension === "jpg" && mimeExtension === "jpeg")
         ) {
           const error = `File extension (.${extension}) does not match MIME type (${file.type})`;
-          console.error("❌", error);
           return { valid: false, error: error };
         }
 
-        console.log("✅ File validation passed");
         return { valid: true };
       }
 
@@ -1978,8 +1667,6 @@
           if (error) throw error;
 
           if (data && data.length > 0) {
-            console.log("📥 Raw data from database:", data);
-
             // Convert to the format expected by the UI
             announcementsArray = data.map((announcement) => ({
               id: announcement.announcementID,
@@ -1998,21 +1685,15 @@
               announcements[ann.id] = ann;
             });
 
-            console.log("📦 Processed announcements object:", announcements);
-            console.log("📋 Announcements array:", announcementsArray);
-
             // Render announcements after loading
             renderAnnouncements();
             updateAnnouncementPagination();
 
-            console.log(`✅ Loaded ${announcementsArray.length} announcements`);
           } else {
-            console.log("No announcements found");
             announcementsArray = [];
             renderAnnouncements();
           }
         } catch (error) {
-          console.error("Error loading announcements:", error);
           showToast(
             "Failed to load announcements. Please refresh the page.",
             "error"
@@ -2032,8 +1713,6 @@
        */
       async function loadDashboardStatistics() {
         try {
-          console.log("📊 Loading dashboard statistics...");
-
           // EFFICIENCY: Load all counts in parallel using Promise.all
           const [
             filesResult,
@@ -2095,12 +1774,6 @@
           if (volunteersElement)
             volunteersElement.textContent = totalVolunteers;
 
-          console.log(" Statistics loaded:", {
-            files: totalFiles,
-            announcements: totalAnnouncements,
-            projects: activeProjects,
-            volunteers: totalVolunteers,
-          });
         } catch (error) {
           console.error("Error loading dashboard statistics:", error);
 
@@ -2116,8 +1789,6 @@
             if (element) element.textContent = "0";
           });
 
-          // Don't show error toast for statistics (non-critical feature)
-          console.warn("⚠️ Statistics unavailable, showing default values");
         }
       }
 
@@ -2171,7 +1842,6 @@
       // Add activity log entry
       function addActivityLog(action, itemName) {
         // In a real application, this would send to the backend
-        console.log(`Activity Log: SK Official ${action} - "${itemName}"`);
       }
 
       // Render announcements with pagination
@@ -2217,7 +1887,7 @@
           const hasImage = safeImageUrl !== '';
 
           const imageHtml = hasImage
-            ? `<img src="${safeImageUrl}" alt="${escapeHTML(announcement.title)}" class="w-full h-32 object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            ? `<img src="${safeImageUrl}" alt="${escapeHTML(announcement.title)}" class="w-full h-32 object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                <div class="h-32 bg-gradient-to-br ${colors.gradient} flex items-center justify-center" style="display: none;">
                  ${colors.icon}
                </div>`
@@ -2388,8 +2058,6 @@
             const fileExt = 'jpeg';
             const fileName = `announcement_${Date.now()}.${fileExt}`;
 
-            console.log("📤 Uploading cropped image to announcement-images bucket:", fileName);
-
             const { data: uploadData, error: uploadError } =
               await supabaseClient.storage
                 .from("announcement-images")
@@ -2404,13 +2072,9 @@
               throw new Error(`Image upload failed: ${uploadError.message}`);
             }
 
-            console.log("✅ Upload successful:", uploadData);
-
             const { data: urlData } = supabaseClient.storage
               .from("announcement-images")
               .getPublicUrl(fileName);
-
-            console.log("🔗 Public URL:", urlData.publicUrl);
 
             imagePath = urlData.publicUrl;
           }
@@ -2447,10 +2111,6 @@
       function openEditModal(id) {
         currentAnnouncementId = id;
         const announcement = announcements[id];
-
-        console.log("🔍 Opening edit modal for ID:", id);
-        console.log("📋 Announcement data:", announcement);
-        console.log("📦 All announcements:", announcements);
 
         if (!announcement) {
           showToast(
@@ -2557,8 +2217,6 @@
             const fileExt = 'jpeg';
             const fileName = `announcement_${Date.now()}.${fileExt}`;
 
-            console.log("📤 Uploading cropped image to announcement-images bucket:", fileName);
-
             const { data: uploadData, error: uploadError } =
               await supabaseClient.storage
                 .from("announcement-images")
@@ -2573,13 +2231,9 @@
               throw new Error(`Image upload failed: ${uploadError.message}`);
             }
 
-            console.log("✅ Upload successful:", uploadData);
-
             const { data: urlData } = supabaseClient.storage
               .from("announcement-images")
               .getPublicUrl(fileName);
-
-            console.log("🔗 Public URL:", urlData.publicUrl);
 
             imagePath = urlData.publicUrl;
           }
@@ -2651,7 +2305,7 @@
 
         if (hasImage) {
           // Show actual image with sanitized URL
-          viewImageDiv.innerHTML = `<img src="${safeImageUrl}" alt="${escapeHTML(announcement.title)}" class="w-full h-64 object-cover rounded-lg" onerror="this.style.display='none';" />`;
+          viewImageDiv.innerHTML = `<img src="${safeImageUrl}" alt="${escapeHTML(announcement.title)}" class="w-full h-64 object-cover rounded-lg" loading="lazy" onerror="this.style.display='none';" />`;
         } else {
           // Show placeholder icon
           const gradientColors = {
@@ -2680,9 +2334,6 @@
       // Delete Announcement
       function confirmDelete(id) {
         currentAnnouncementId = id;
-        console.log("🗑️ Confirming delete for ID:", id);
-        console.log("📋 Announcement to delete:", announcements[id]);
-
         if (!announcements[id]) {
           showToast(
             "Announcement not found. Please refresh the page.",
@@ -2709,9 +2360,6 @@
       async function deleteAnnouncement() {
         const announcement = announcements[currentAnnouncementId];
 
-        console.log("🗑️ Deleting announcement with ID:", currentAnnouncementId);
-        console.log("📋 Announcement details:", announcement);
-
         // Show loading state on delete button
         const deleteButton = document.querySelector(
           '#deleteModal button[onclick="deleteAnnouncement()"]'
@@ -2725,10 +2373,6 @@
 
         try {
           // HARD DELETE: Permanently remove announcement from database
-          console.log(
-            "📤 Sending delete request to database for announcementID:",
-            currentAnnouncementId
-          );
           const { data, error } = await supabaseClient
             .from("Announcement_Tbl")
             .delete()
@@ -2736,7 +2380,6 @@
 
           if (error) throw error;
 
-          console.log("✅ Announcement deleted successfully");
           showToast("Announcement deleted successfully!", "success");
 
           // RELIABILITY: Reload announcements to reflect changes immediately
@@ -2762,52 +2405,6 @@
             deleteButton.innerHTML = originalText;
           }
         }
-      }
-
-      // Toast notification
-      // Toast Notification System
-      function showToast(message, type = "success") {
-        const existingToast = document.querySelector(".toast");
-        if (existingToast) {
-          existingToast.remove();
-        }
-
-        const toast = document.createElement("div");
-        toast.className = `toast ${type}`;
-
-        let icon = "";
-        if (type === "success") {
-          icon =
-            '<svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        } else if (type === "error") {
-          icon =
-            '<svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        } else if (type === "warning") {
-          icon =
-            '<svg class="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
-        } else {
-          icon =
-            '<svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-        }
-
-        toast.innerHTML = `
-          ${icon}
-          <div class="flex-1">
-            <p class="text-sm font-medium text-gray-800">${message}</p>
-          </div>
-          <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
-        `;
-
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add("show"), 10);
-        setTimeout(() => {
-          toast.classList.remove("show");
-          setTimeout(() => toast.remove(), 300);
-        }, 4000);
       }
 
       // Confirmation modal system

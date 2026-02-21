@@ -2,6 +2,74 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026-02-21] - Comprehensive RLS & Database Optimization
+
+### Database Trigger Fixes
+- **Fixed `notify_application_status()`** - Quoted camelCase column names (`"applicationStatus"`, `"preProjectID"`, `"userID"`) to prevent PostgreSQL lowercase folding error
+- **Fixed `notify_inquiry_reply()`** - Rewrote to use `create_notification()` helper with properly quoted columns
+- **Fixed `notify_project_approval()`** - Quoted `"approvalStatus"`, `"userID"`, `"title"` and switched to `create_notification()` helper
+- **Fixed `notify_new_project()`** - Quoted all camelCase column and table references
+- **Fixed `create_notification()`** - Quoted table name `"Notification_Tbl"` and all column names to prevent relation-not-found errors
+
+### Duplicate Notification Elimination
+- **captain-dashboard.html** - Removed 3 duplicate `createSKNotificationDB()` JS calls (approved, rejected, revision-requested) since DB triggers already handle these
+- **sk-projects.html** - Removed 1 duplicate `createCaptainNotification()` JS call since `notify_new_project` trigger handles it
+- **sk-projects.html** - Fixed `applications.find(...)` → `project.applications.find(...)` bug at deep-link URL handler
+- **sk-projects.html** - Added missing `window.toggleAttendance = toggleAttendance` export
+
+### RLS Performance Optimization (Migration 015/015b)
+
+**Problem:** Supabase linter flagged 38 `auth_rls_initplan` warnings, 20+ `multiple_permissive_policies`, and 10 `unindexed_foreign_keys`.
+
+**Fix 1: InitPlan Optimization (`auth.uid()` wrapping)**
+- Wrapped all `auth.uid()` calls with `(select auth.uid())` in every RLS policy
+- Updated all 6 helper functions (`is_sk_official`, `is_captain`, `is_sk_official_or_captain`, `is_superadmin`, `is_superadmin_or_captain`, `get_user_role`)
+- Result: `auth.uid()` now evaluated once per query instead of once per row
+
+**Fix 2: Policy Consolidation**
+- Reduced total policies from ~70+ to 51 (~30% reduction)
+- Eliminated all duplicate/overlapping permissive policies
+- Key consolidations:
+  - User_Tbl: 7 → 4 policies (merged 3 SELECT into 1, merged 2 UPDATE into 1)
+  - Application_Tbl: 9 → 4 policies (removed 5 duplicates from overlapping migrations)
+  - Pre_Project_Tbl: 8 → 5 policies (merged 4 SELECT, merged 2 UPDATE)
+  - Inquiry_Tbl: 5 → 2 policies (removed 3 duplicates)
+  - Reply_Tbl: 7 → 4 policies (removed 3 duplicates)
+  - Expenses_Tbl: 2 → 1 policy (FOR ALL already covers SELECT)
+  - Report_Tbl: 2 → 1 policy (FOR ALL already covers SELECT)
+  - Logs_Tbl: 4+ → 2 policies (removed all duplicates)
+
+**Fix 3: Missing Foreign Key Indexes (10 new indexes)**
+- Logs_Tbl: Added 7 indexes (`replyID`, `postProjectID`, `applicationID`, `inquiryID`, `notificationID`, `fileID`, `testimonyID`)
+- Post_Project_Tbl: Added 1 index (`breakdownID`)
+- Report_Tbl: Added 2 indexes (`applicationID`, `evaluationID`)
+
+### Auth & Password Reset Fixes
+- **forgot-password.html** - Added account status check before sending reset link; generic message for non-existent accounts to prevent email enumeration
+- **reset-password.html** - Fixed redirect URL for GitHub Pages deployment
+- **login.html** - Fixed Google OAuth redirect URL
+- **verify-otp.html** - Bug fixes for OTP verification flow
+
+### Files Modified
+- `captain-dashboard.html` - Removed duplicate notification calls
+- `sk-projects.html` - Fixed deep-link bug, added window export, removed duplicate notification
+- `forgot-password.html` - Account status validation
+- `reset-password.html` - Redirect URL fix
+- `login.html` - OAuth redirect fix
+- `verify-otp.html` - OTP flow fixes
+- `youth-dashboard.html` - Bug fixes
+- `supabase/migrations/015_comprehensive_rls_optimization.sql` - Helper functions + DROP all old policies
+- `supabase/migrations/015b_fix_rls_policies.sql` - Recreate optimized policies + FK indexes
+- `supabase/rls-policies.sql` - Updated reference doc to v3.0
+
+### SQL Migrations Added
+| Migration | Purpose |
+|-----------|---------|
+| 015_comprehensive_rls_optimization.sql | Update helper functions, drop all old policies |
+| 015b_fix_rls_policies.sql | Create optimized policies with correct column names, add FK indexes |
+
+---
+
 ## [2025-12-29] - Responsive Design System Implementation
 
 ### 📱 Complete Mobile & Tablet Optimization

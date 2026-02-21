@@ -3,819 +3,43 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Youth Calendar - View upcoming events and schedules">
     <title>BIMS - Youth Browse Calendar</title>
 
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS -->
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link href="css/toast.css" rel="stylesheet">
+    <link href="css/calendar.css" rel="stylesheet">
 
     <!-- Supabase JS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
 
     <!-- BIMS Configuration -->
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
     <script src="js/auth/auth.js"></script>
     <script src="js/auth/session.js"></script>
-
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
 
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: 'Inter', sans-serif;
-        background: #fafafa;
-      }
-
-      /* Calendar Container */
-      .calendar-container {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      }
-
-      /* Calendar Header */
-      .calendar-header {
-        background: linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%);
-        padding: 1.5rem;
-        color: white;
-      }
-
-      .calendar-title {
-        font-family: 'Inter', sans-serif;
-        font-size: 2rem;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        margin-bottom: 0.5rem;
-      }
-
-      /* View Toggle */
-      .view-toggle {
-        display: inline-flex;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 4px;
-        backdrop-filter: blur(10px);
-      }
-
-      .view-toggle button {
-        padding: 0.5rem 1rem;
-        border: none;
-        background: transparent;
-        color: rgba(255, 255, 255, 0.7);
-        font-weight: 600;
-        font-size: 0.875rem;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .view-toggle button.active {
-        background: white;
-        color: #2f6e4e;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .view-toggle button:hover:not(.active) {
-        background: rgba(255, 255, 255, 0.15);
-        color: white;
-      }
-
-      /* Navigation */
-      .nav-btn {
-        background: rgba(255, 255, 255, 0.15);
-        border: 1.5px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-      }
-
-      .nav-btn:hover {
-        background: rgba(255, 255, 255, 0.25);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      .nav-btn-today {
-        width: auto;
-        padding: 0 1rem;
-      }
-
-      /* Calendar Grid */
-      .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        grid-auto-rows: 90px;
-        background: white;
-      }
-
-      /* Day Headers */
-      .day-header {
-        text-align: center;
-        padding: 0.75rem 0.5rem;
-        font-weight: 700;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #6b7280;
-        background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
-        border-bottom: 2px solid #e5e7eb;
-      }
-
-      /* Calendar Cells */
-      .calendar-cell {
-        height: 90px;
-        border: 1px solid #f0f0f0;
-        padding: 0.625rem;
-        background: white;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .calendar-cell:hover {
-        background: #fafafa;
-        box-shadow: inset 0 0 0 1px #2f6e4e20;
-      }
-
-      .calendar-cell.other-month {
-        background: #fafafa;
-        color: #9ca3af;
-      }
-
-      .calendar-cell.today {
-        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-        border-color: #2f6e4e;
-      }
-
-      .cell-date {
-        font-weight: 600;
-        font-size: 0.875rem;
-        color: #374151;
-        margin-bottom: 0.5rem;
-      }
-
-      .calendar-cell.today .cell-date {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        background: #2f6e4e;
-        color: white;
-        border-radius: 50%;
-        font-weight: 700;
-      }
-
-      .calendar-cell.other-month .cell-date {
-        color: #9ca3af;
-      }
-
-      /* Event Pills */
-      .event-pill {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
-        border-radius: 6px;
-        margin-bottom: 0.25rem;
-        font-weight: 500;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .event-pill:hover {
-        transform: translateX(2px);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .event-pill.project {
-        background: linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%);
-        color: white;
-      }
-
+      /* Youth-specific announcement colors (blue theme) */
       .event-pill.announcement {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
-      }
-
-      /* Week View */
-      .week-view-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        border-radius: 0 0 12px 12px;
-        position: relative;
-      }
-
-      /* Mobile scroll hint */
-      @media (max-width: 640px) {
-        .week-view-container::after {
-          content: '';
-          position: sticky;
-          right: 0;
-          top: 0;
-          width: 40px;
-          height: 100%;
-          background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
-          pointer-events: none;
-          float: right;
-        }
-      }
-
-      .week-view-container::-webkit-scrollbar {
-        height: 8px;
-      }
-
-      .week-view-container::-webkit-scrollbar-track {
-        background: #f0f0f0;
-        border-radius: 4px;
-      }
-
-      .week-view-container::-webkit-scrollbar-thumb {
-        background: #2f6e4e;
-        border-radius: 4px;
-      }
-
-      .week-view-container::-webkit-scrollbar-thumb:hover {
-        background: #3d8b64;
-      }
-
-      .week-view {
-        display: grid;
-        grid-template-columns: 80px repeat(7, minmax(100px, 1fr));
-        gap: 1px;
-        background: #e5e7eb;
-        min-width: min-content;
-      }
-
-      .time-slot {
-        background: white;
-        padding: 0.75rem;
-        border-bottom: 1px solid #f0f0f0;
-        font-size: 0.75rem;
-        color: #6b7280;
-        font-weight: 600;
-        white-space: nowrap;
-      }
-
-      .week-cell {
-        background: white;
-        padding: 0.5rem;
-        min-height: 60px;
-        position: relative;
-      }
-
-      @media (max-width: 768px) {
-        .week-view {
-          grid-template-columns: 60px repeat(7, minmax(80px, 120px));
-        }
-
-        .time-slot {
-          font-size: 0.625rem;
-          padding: 0.5rem 0.375rem;
-        }
-
-        .week-cell {
-          min-height: 50px;
-          padding: 0.25rem;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .week-view {
-          grid-template-columns: 50px repeat(7, 90px);
-        }
-
-        .time-slot {
-          font-size: 0.5625rem;
-          padding: 0.375rem 0.25rem;
-        }
-
-        .week-cell {
-          min-height: 45px;
-        }
-
-        .week-view-container::-webkit-scrollbar {
-          height: 6px;
-        }
-      }
-
-      /* Day View */
-      .day-view-container {
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-      }
-
-      .day-view-header {
-        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-        padding: 1.5rem;
-        border-bottom: 2px solid #e5e7eb;
-      }
-
-      .day-view-date {
-        font-family: 'Inter', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #1f2937;
-      }
-
-      .day-view-events {
-        padding: 1.5rem;
-      }
-
-      /* Event Card */
-      .event-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
-        border-left: 4px solid #2f6e4e;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-        cursor: pointer;
-        animation: slideUp 0.4s ease-out backwards;
-      }
-
-      .event-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(47, 110, 78, 0.12);
       }
 
       .event-card.announcement {
         border-left-color: #3b82f6;
       }
 
-      @keyframes slideUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .event-card:nth-child(1) { animation-delay: 0.05s; }
-      .event-card:nth-child(2) { animation-delay: 0.1s; }
-      .event-card:nth-child(3) { animation-delay: 0.15s; }
-      .event-card:nth-child(4) { animation-delay: 0.2s; }
-
-      .event-time {
-        font-size: 0.75rem;
-        color: #6b7280;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-      }
-
-      .event-title {
-        font-weight: 700;
-        font-size: 1rem;
-        color: #1f2937;
-        margin-bottom: 0.25rem;
-      }
-
-      .event-description {
-        font-size: 0.875rem;
-        color: #6b7280;
-        margin-bottom: 0.75rem;
-      }
-
-      .event-meta {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        font-size: 0.75rem;
-        color: #9ca3af;
-      }
-
-      /* Events Sidebar */
-      .events-sidebar {
-        background: white;
-        border-radius: 20px;
-        padding: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      }
-
-      .events-sidebar-section {
-        margin-bottom: 2rem;
-      }
-
-      .events-sidebar-title {
-        font-family: 'Inter', sans-serif;
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: #1f2937;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .upcoming-event {
-        background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
-        border-radius: 12px;
-        padding: 1rem;
-        margin-bottom: 0.75rem;
-        border-left-width: 3px;
-        border-left-style: solid;
-        transition: all 0.3s ease;
-        cursor: pointer;
-      }
-
-      .upcoming-event.border-\[#2f6e4e\] {
-        border-left-color: #2f6e4e;
-      }
-
       .upcoming-event.border-blue-500 {
         border-left-color: #3b82f6;
-      }
-
-      .upcoming-event:hover {
-        transform: translateX(4px);
-        box-shadow: 0 4px 12px rgba(47, 110, 78, 0.1);
-      }
-
-      /* Responsive */
-      @media (max-width: 1024px) {
-        .events-sidebar {
-          margin-top: 1.5rem;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .calendar-header {
-          padding: 1.25rem;
-        }
-
-        .calendar-header > div {
-          flex-direction: column;
-          gap: 1rem;
-          align-items: stretch;
-        }
-
-        .calendar-header > div > div:first-child {
-          width: 100%;
-          justify-content: center;
-        }
-
-        .calendar-title {
-          font-size: 1.25rem;
-          text-align: center;
-          flex: 1;
-        }
-
-        .view-toggle {
-          width: 100%;
-          justify-content: center;
-        }
-
-        .view-toggle button {
-          flex: 1;
-          padding: 0.625rem 0.5rem;
-          font-size: 0.8125rem;
-        }
-
-        .nav-btn {
-          width: 36px;
-          height: 36px;
-        }
-
-        .calendar-cell {
-          height: 80px;
-          padding: 0.5rem;
-        }
-
-        .cell-date {
-          font-size: 0.75rem;
-        }
-
-        .event-pill {
-          font-size: 0.625rem;
-          padding: 0.125rem 0.375rem;
-        }
-
-        .day-header {
-          padding: 0.875rem 0.5rem;
-          font-size: 0.6875rem;
-        }
-      }
-
-      /* Large phones (430px - 640px) */
-      @media (min-width: 430px) and (max-width: 640px) {
-        .calendar-header > div > div:first-child {
-          gap: 0.625rem;
-        }
-
-        .calendar-title {
-          font-size: 1.125rem;
-        }
-
-        .nav-btn {
-          width: 34px;
-          height: 34px;
-        }
-
-        .view-toggle button {
-          padding: 0.5625rem 0.5rem;
-          font-size: 0.8125rem;
-        }
-
-        .calendar-cell {
-          height: 70px;
-        }
-
-        .day-header {
-          padding: 0.8125rem 0.375rem;
-          font-size: 0.6875rem;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .calendar-header {
-          padding: 1rem;
-        }
-
-        .calendar-header > div {
-          flex-direction: column;
-          gap: 0.875rem;
-          align-items: stretch;
-        }
-
-        .calendar-header > div > div:first-child {
-          width: 100%;
-          justify-content: center;
-          gap: 0.5rem;
-        }
-
-        .calendar-title {
-          font-size: 1rem;
-          margin: 0;
-          min-width: 0;
-          flex: 1;
-          text-align: center;
-        }
-
-        .nav-btn {
-          width: 32px;
-          height: 32px;
-          border-radius: 8px;
-          flex-shrink: 0;
-        }
-
-        .nav-btn svg {
-          width: 1rem;
-          height: 1rem;
-        }
-
-        .nav-btn-today {
-          display: none;
-        }
-
-        .view-toggle {
-          width: 100%;
-        }
-
-        .view-toggle button {
-          padding: 0.5rem 0.375rem;
-          font-size: 0.75rem;
-          flex: 1;
-        }
-
-        .calendar-cell {
-          height: 60px;
-          padding: 0.375rem;
-        }
-
-        .cell-date {
-          font-size: 0.6875rem;
-        }
-
-        .day-header {
-          padding: 0.75rem 0.25rem;
-          font-size: 0.625rem;
-          letter-spacing: 0.05em;
-        }
-
-        .event-pill {
-          display: none;
-        }
-
-        .calendar-cell::after {
-          content: '';
-          position: absolute;
-          bottom: 4px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 6px;
-          height: 6px;
-          background: #2f6e4e;
-          border-radius: 50%;
-        }
-
-        .calendar-cell.no-events::after {
-          display: none;
-        }
-
-        .events-sidebar-title {
-          font-size: 1rem;
-        }
-
-        .upcoming-event {
-          padding: 0.875rem;
-        }
-      }
-
-      /* Extra small phones */
-      @media (max-width: 375px) {
-        .calendar-header {
-          padding: 0.875rem 0.75rem;
-        }
-
-        .calendar-header > div {
-          gap: 0.75rem;
-        }
-
-        .calendar-header > div > div:first-child {
-          gap: 0.375rem;
-        }
-
-        .calendar-title {
-          font-size: 0.875rem;
-        }
-
-        .nav-btn {
-          width: 28px;
-          height: 28px;
-        }
-
-        .nav-btn svg {
-          width: 0.875rem;
-          height: 0.875rem;
-        }
-
-        .view-toggle {
-          padding: 3px;
-        }
-
-        .view-toggle button {
-          padding: 0.4375rem 0.25rem;
-          font-size: 0.6875rem;
-          border-radius: 6px;
-        }
-
-        .day-header {
-          padding: 0.625rem 0.125rem;
-          font-size: 0.5625rem;
-        }
-
-        .calendar-cell {
-          height: 50px;
-          padding: 0.25rem;
-        }
-
-        .cell-date {
-          font-size: 0.625rem;
-        }
-
-        .calendar-cell.today .cell-date {
-          width: 24px;
-          height: 24px;
-          font-size: 0.625rem;
-        }
-      }
-
-      /* Landscape orientation */
-      @media (max-width: 932px) and (orientation: landscape) {
-        .calendar-header {
-          padding: 0.875rem 1rem;
-        }
-
-        .calendar-header > div {
-          flex-direction: row;
-        }
-
-        .view-toggle {
-          width: auto;
-        }
-
-        .calendar-cell {
-          height: 70px;
-        }
-      }
-
-      /* Modal */
-      .modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        z-index: 50;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-      }
-
-      .modal.active {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      .modal-content {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        max-width: 600px;
-        width: 100%;
-        max-height: 90vh;
-        overflow-y: auto;
-        transform: scale(0.95);
-        transition: transform 0.3s ease;
-      }
-
-      .modal.active .modal-content {
-        transform: scale(1);
-      }
-
-      /* Icons */
-      .icon-wrapper {
-        transition: all 0.3s ease;
-      }
-
-      .icon-wrapper:hover {
-        transform: translateY(-2px);
-      }
-
-      .nav-link svg {
-        transition: all 0.3s ease;
-      }
-
-      .nav-link:hover svg {
-        transform: scale(1.1);
-      }
-
-      .icon-badge {
-        box-shadow: 0 2px 8px rgba(47, 110, 78, 0.15);
-      }
-
-      .notification-icon {
-        position: relative;
-      }
-
-      .notification-icon:hover {
-        transform: rotate(15deg) scale(1.1);
-        transition: transform 0.3s ease;
-      }
-
-      /* Loading Animation */
-      @keyframes pulse {
-        0%, 100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
-      }
-
-      .loading {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
 
       /* Toast Notification Animation */
@@ -833,95 +57,17 @@
       .animate-slideIn {
         animation: slideIn 0.3s ease-out forwards;
       }
-
-      /* Add to Calendar Buttons */
-      .add-to-calendar-btn {
-        transition: all 0.2s ease;
-      }
-
-      .add-to-calendar-btn:active {
-        transform: scale(0.95);
-      }
     </style>
   </head>
   <body class="bg-gray-50">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
     <div class="flex h-screen overflow-hidden">
       <!-- SIDEBAR -->
-      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col">
-        <div class="p-6 flex-1 flex flex-col">
-          <!-- Logo -->
-          <div class="flex items-center space-x-4 mb-8">
-            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg icon-badge overflow-hidden">
-              <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
-            </div>
-            <div>
-              <h1 class="text-xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
-            </div>
-          </div>
-
-          <!-- Navigation Menu -->
-          <nav class="space-y-2">
-            <a href="youth-dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full">
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"></path>
-                </svg>
-              </div>
-              <span>Dashboard</span>
-            </a>
-            <a href="youth-files.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full">
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-              </div>
-              <span>Files</span>
-            </a>
-            <a href="youth-projects.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full">
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                </svg>
-              </div>
-              <span>Projects</span>
-            </a>
-            <a href="youth-calendar.html" class="nav-link flex items-center space-x-3 px-4 py-3 bg-[#2f6e4e]/10 text-[#2f6e4e] rounded-lg font-medium group w-full">
-              <div class="w-9 h-9 bg-[#2f6e4e]/20 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/30 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-              </div>
-              <span>Calendar</span>
-            </a>
-            <a href="youth-certificates.html" class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-lg font-medium group transition w-full">
-              <div class="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-[#2f6e4e]/20 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-                </svg>
-              </div>
-              <span>Certificates</span>
-            </a>
-          </nav>
-
-          <div class="flex-1"></div>
-
-          <!-- Logout -->
-          <div class="mt-8 pt-8 border-t border-gray-200">
-            <button onclick="handleLogout()" class="nav-link flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition w-full group">
-              <div class="w-9 h-9 bg-red-50 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                </svg>
-              </div>
-              <span class="font-medium">Logout</span>
-            </button>
-          </div>
-        </div>
-      </aside>
+      <aside class="w-64 bg-white shadow-lg flex-shrink-0 h-screen flex flex-col" data-role="youth"></aside>
+      <script src="js/components/sidebar.js"></script>
 
       <!-- MAIN CONTENT -->
-      <div class="flex-1 overflow-auto">
+      <div id="main-content" class="flex-1 overflow-auto">
         <!-- Top Bar -->
         <header class="bg-gradient-to-r from-[#2f6e4e]/10 to-white border-b border-gray-200">
           <div class="px-8 py-6">
@@ -1087,7 +233,7 @@
     <div id="profileModalContainer"></div>
 
     <!-- Project/Announcement Detail Modal -->
-    <div id="eventModal" class="modal">
+    <div id="eventModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalEventTitle">
       <div class="modal-content">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-2xl font-bold text-gray-800" id="modalEventTitle">Project Title</h3>
@@ -1108,20 +254,15 @@
       import { NotificationModal } from "./js/components/NotificationModal.js";
       import { ProfileModal } from "./js/components/ProfileModal.js";
 
-      console.log("[YOUTH CALENDAR] Script loaded - starting execution");
-      console.log("[YOUTH CALENDAR] SessionManager available:", typeof SessionManager !== "undefined");
-
       // Initialize NotificationModal component
       const notificationModal = new NotificationModal();
       notificationModal.render();
       window.notificationModal = notificationModal;
-      console.log("[YOUTH CALENDAR] NotificationModal component initialized");
 
       // Initialize ProfileModal component
       const profileModal = new ProfileModal();
       profileModal.render();
       window.profileModal = profileModal;
-      console.log("[YOUTH CALENDAR] ProfileModal component initialized");
 
       // Global variables
       let currentUser = null;
@@ -1133,26 +274,12 @@
       let currentView = 'month';
       let selectedDate = null;
 
-      // ============================================
-      // SECURITY: XSS Prevention Helpers
-      // ============================================
-      function escapeHTML(unsafe) {
-        if (typeof unsafe !== "string") return "";
-        return unsafe
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
-
       function sanitizeImageURL(url) {
         if (!url || typeof url !== "string") return "";
         const trimmedUrl = url.trim();
         if (!trimmedUrl) return "";
 
         if (!trimmedUrl.startsWith("https://")) {
-          console.warn("Blocked non-HTTPS image URL:", trimmedUrl.substring(0, 50));
           return "";
         }
 
@@ -1162,12 +289,8 @@
           const isAllowedDomain = allowedDomains.some(domain =>
             parsedUrl.hostname.endsWith(domain)
           );
-          if (!isAllowedDomain) {
-            console.warn("Image URL from untrusted domain:", parsedUrl.hostname);
-          }
           return trimmedUrl;
         } catch (e) {
-          console.warn("Invalid image URL format:", trimmedUrl.substring(0, 50));
           return "";
         }
       }
@@ -1176,20 +299,12 @@
       // Authentication & Initialization
       // ============================================
       async function initializeCalendar() {
-        console.log("[YOUTH CALENDAR] initializeCalendar() function called");
         try {
-          console.log("[YOUTH CALENDAR] Checking authentication...");
           const sessionResult = await SessionManager.requireAuth(["YOUTH_VOLUNTEER"]);
 
-          console.log("[YOUTH CALENDAR] Session result:", sessionResult);
-
           if (!sessionResult.success) {
-            console.error("[YOUTH CALENDAR ERROR] Authentication failed:", sessionResult.error);
             return;
           }
-
-          console.log("[YOUTH CALENDAR] Authentication successful!");
-          console.log("[YOUTH CALENDAR] User role:", sessionResult.role);
 
           currentUser = sessionResult.user;
           currentUserData = sessionResult.userData;
@@ -1210,13 +325,12 @@
           renderRecentAnnouncements();
 
           // Refresh sidebar every minute
-          setInterval(() => {
+          const sidebarRefreshInterval = setInterval(() => {
             renderUpcomingProjects();
           }, 60000);
+          window.addEventListener('beforeunload', () => clearInterval(sidebarRefreshInterval));
 
-          console.log("[YOUTH CALENDAR] Initialized successfully!");
         } catch (error) {
-          console.error("[YOUTH CALENDAR ERROR] Initialization error:", error);
           SessionManager.redirectToLogin("Failed to initialize calendar");
         }
       }
@@ -1242,7 +356,7 @@
           const initials = `${currentUserData.firstName?.charAt(0) || ''}${currentUserData.lastName?.charAt(0) || ''}`.toUpperCase();
 
           if (safeProfileUrl) {
-            avatarElement.innerHTML = `<img src="${safeProfileUrl}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'text-white font-semibold\\'>${escapeHTML(initials)}</span>';" />`;
+            avatarElement.innerHTML = `<img src="${safeProfileUrl}" alt="Profile" class="w-full h-full object-cover rounded-full" onerror="handleAvatarError(this, '${escapeHTML(initials)}')" />`;
           } else {
             avatarElement.innerHTML = `<span class="text-white font-semibold">${escapeHTML(initials)}</span>`;
           }
@@ -1251,7 +365,6 @@
 
       // Listen for profile updates from ProfileModal
       document.addEventListener("profileUpdated", async (e) => {
-        console.log("[YOUTH CALENDAR] Profile updated event received:", e.detail);
         if (e.detail && e.detail.userData) {
           currentUserData = e.detail.userData;
           updateUserProfile();
@@ -1259,7 +372,6 @@
       });
 
       async function loadEventsFromDatabase() {
-        console.log("[YOUTH CALENDAR] Loading events from database...");
         try {
           // Load APPROVED projects from Pre_Project_Tbl
           const { data: projects, error: projectsError } = await supabaseClient
@@ -1283,10 +395,6 @@
             .eq("approvalStatus", "APPROVED")
             .order("startDateTime", { ascending: true });
 
-          if (projectsError) {
-            console.error("[YOUTH CALENDAR] Error loading projects:", projectsError);
-          }
-
           // Load announcements from Announcement_Tbl
           const { data: announcements, error: announcementsError } = await supabaseClient
             .from("Announcement_Tbl")
@@ -1302,10 +410,6 @@
               )
             `)
             .order("publishedDate", { ascending: true });
-
-          if (announcementsError) {
-            console.error("[YOUTH CALENDAR] Error loading announcements:", announcementsError);
-          }
 
           // Transform projects to calendar events
           const projectEvents = (projects || []).map(project => {
@@ -1347,7 +451,6 @@
 
           // Combine all events
           events = [...projectEvents, ...announcementEvents];
-          console.log("[YOUTH CALENDAR] Loaded", events.length, "events from database");
 
         } catch (error) {
           console.error("[YOUTH CALENDAR] Error loading events:", error);
@@ -1907,26 +1010,6 @@
           office365: `https://outlook.office.com/calendar/0/deeplink/compose?subject=${title}&startdt=${formatOutlookDate(start)}&enddt=${formatOutlookDate(end)}&body=${description}&location=${location}`,
           yahoo: `https://calendar.yahoo.com/?v=60&title=${title}&st=${formatGoogleDate(start)}&et=${formatGoogleDate(end)}&desc=${description}&in_loc=${location}`
         };
-      }
-
-      // Toast Notification
-      function showToast(message) {
-        const toast = document.createElement('div');
-        toast.className = 'fixed bottom-6 right-6 bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 z-50 animate-slideIn';
-        toast.innerHTML = `
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          <span class="font-medium">${message}</span>
-        `;
-
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateY(20px)';
-          setTimeout(() => document.body.removeChild(toast), 300);
-        }, 3000);
       }
 
       // ============================================

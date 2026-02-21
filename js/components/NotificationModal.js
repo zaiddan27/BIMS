@@ -23,6 +23,9 @@ export class NotificationModal {
       <div
         id="${this.modalId}"
         class="hidden fixed inset-0 md:inset-auto md:top-16 md:right-4 bg-black bg-opacity-40 md:bg-transparent z-50 flex items-center justify-center md:justify-end md:items-start p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="notificationModalTitle"
         onclick="window.notificationModal.close()"
       >
         <div
@@ -30,7 +33,7 @@ export class NotificationModal {
           onclick="event.stopPropagation()"
         >
           <div class="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-            <h3 class="font-bold text-gray-800">Notifications</h3>
+            <h3 id="notificationModalTitle" class="font-bold text-gray-800">Notifications</h3>
             <div class="flex items-center gap-3">
               <button
                 onclick="window.notificationModal.markAllAsRead()"
@@ -61,7 +64,6 @@ export class NotificationModal {
   render() {
     // Check if modal already exists
     if (document.getElementById(this.modalId)) {
-      console.log("[NotificationModal] Modal already exists in DOM");
       return;
     }
 
@@ -70,8 +72,6 @@ export class NotificationModal {
 
     // Make instance globally accessible
     window.notificationModal = this;
-
-    console.log("[NotificationModal] Rendered successfully");
   }
 
   /**
@@ -117,10 +117,7 @@ export class NotificationModal {
       const {
         data: { user },
       } = await supabaseClient.auth.getUser();
-      if (!user) {
-        console.error("[NotificationModal] No authenticated user");
-        return;
-      }
+      if (!user) return;
 
       // Fetch notifications from database
       const { data: notifications, error } = await supabaseClient
@@ -136,7 +133,6 @@ export class NotificationModal {
       this.renderNotifications();
       this.updateBadgeCount();
     } catch (error) {
-      console.error("[NotificationModal] Error loading notifications:", error);
       this.showError("Failed to load notifications");
     }
   }
@@ -264,14 +260,9 @@ export class NotificationModal {
 
       // Route based on type
       // This should be customized based on your app's routing
-      console.log("[NotificationModal] Clicked notification:", notif);
-
       this.close();
     } catch (error) {
-      console.error(
-        "[NotificationModal] Error handling notification click:",
-        error
-      );
+      // Notification click handling failed silently
     }
   }
 
@@ -297,7 +288,7 @@ export class NotificationModal {
 
       this.updateBadgeCount();
     } catch (error) {
-      console.error("[NotificationModal] Error marking as read:", error);
+      // Mark as read failed silently
     }
   }
 
@@ -325,7 +316,7 @@ export class NotificationModal {
       this.renderNotifications();
       this.updateBadgeCount();
     } catch (error) {
-      console.error("[NotificationModal] Error marking all as read:", error);
+      // Mark all as read failed silently
     }
   }
 
@@ -384,7 +375,7 @@ export class NotificationModal {
         <svg class="w-16 h-16 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <p class="font-medium">${message}</p>
+        <p class="font-medium">${this.escapeHtml(message)}</p>
       </div>
     `;
   }

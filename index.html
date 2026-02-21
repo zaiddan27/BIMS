@@ -3,30 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="BIMS - Barangay Information Management System for SK Malanday, Marikina City">
     <title>BIMS - Barangay Information Management System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: "#2f6e4e",
-              secondary: "#3d8b64",
-            },
-            fontFamily: {
-              sans: ["Inter", "system-ui", "sans-serif"],
-            },
-          },
-        },
-      };
-    </script>
     <link rel="stylesheet" href="css/responsive.css?v=2" />
+    <link href="css/toast.css" rel="stylesheet">
     <style>
       * {
         font-family: "Inter", system-ui, sans-serif;
@@ -928,19 +915,14 @@
     </footer>
 
     <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
+    <script src="js/utils/sanitize.js"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/focus-trap.js"></script>
 
     <script>
-      // === Security Helpers (XSS Prevention) ===
-      function escapeHTML(str) {
-        if (!str) return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-      }
-
       function sanitizeImageURL(url) {
         if (!url) return null;
         try {
@@ -1037,7 +1019,7 @@
 
         const imgURL = sanitizeImageURL(project.imagePathURL);
         const imgEl = imgURL
-          ? '<img src="' + escapeHTML(imgURL) + '" alt="' + escapeHTML(project.title) + '" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display=\'none\'">'
+          ? '<img src="' + escapeHTML(imgURL) + '" alt="' + escapeHTML(project.title) + '" class="absolute inset-0 w-full h-full object-cover" loading="lazy" onerror="this.style.display=\'none\'">'
           : '';
 
         return '<div class="project-card group cursor-pointer" data-status="' + statusLower + '">' +
@@ -1089,7 +1071,7 @@
 
       function createTestimonyCard(t) {
         const avatarHTML = t.imageURL
-          ? '<img src="' + escapeHTML(t.imageURL) + '" alt="" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.textContent=\'' + escapeHTML(t.initials) + '\'">'
+          ? '<img src="' + escapeHTML(t.imageURL) + '" alt="" class="w-full h-full object-cover rounded-full" loading="lazy" onerror="this.parentElement.textContent=\'' + escapeHTML(t.initials) + '\'">'
           : escapeHTML(t.initials);
 
         return '<div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition h-full flex flex-col">' +
@@ -1352,36 +1334,6 @@
         } else {
           showToast('Unable to download file.', 'error');
         }
-      }
-
-      // === Toast Notification ===
-      function showToast(message, type) {
-        type = type || 'success';
-        var existing = document.querySelector('.toast');
-        if (existing) existing.remove();
-
-        var toast = document.createElement('div');
-        toast.className = 'toast ' + type;
-
-        var icons = {
-          success: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
-          error: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
-          warning: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
-          info: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
-        };
-
-        toast.innerHTML = '<div class="toast-icon">' + (icons[type] || icons.info) + '</div><div class="toast-message">' + escapeHTML(message) + '</div>';
-
-        if (!document.getElementById('toast-styles')) {
-          var styles = document.createElement('style');
-          styles.id = 'toast-styles';
-          styles.textContent = '.toast{position:fixed;top:24px;right:24px;min-width:300px;max-width:500px;padding:16px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.2);display:flex;align-items:center;gap:12px;z-index:10000;transform:translateX(400px);transition:transform .3s cubic-bezier(.4,0,.2,1);font-family:Inter,sans-serif}.toast.show{transform:translateX(0)}.toast.success{background:linear-gradient(135deg,#10b981,#059669);color:#fff}.toast.error{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}.toast.warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}.toast.info{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}.toast-icon{flex-shrink:0;width:20px;height:20px}.toast-message{flex:1;font-size:14px;font-weight:500;line-height:1.5}';
-          document.head.appendChild(styles);
-        }
-
-        document.body.appendChild(toast);
-        setTimeout(function() { toast.classList.add('show'); }, 10);
-        setTimeout(function() { toast.classList.remove('show'); setTimeout(function() { toast.remove(); }, 300); }, 4000);
       }
 
       // === Page Initialization ===
