@@ -450,10 +450,10 @@
             return;
           }
 
-          // Query User_Tbl to get actual user role and account status
+          // Query User_Tbl to get actual user role, account status, and profile completeness
           const { data: userData, error: userError } = await supabaseClient
             .from('User_Tbl')
-            .select('role, accountStatus, firstName, lastName')
+            .select('role, accountStatus, firstName, lastName, contactNumber, address, gender, birthday')
             .eq('userID', data.user.id)
             .single();
 
@@ -473,6 +473,23 @@
             await supabaseClient.auth.signOut();
             submitButton.disabled = false;
             submitButton.innerHTML = originalButtonText;
+            return;
+          }
+
+          // Check if profile is incomplete (missing essential fields)
+          const profileIncomplete =
+            !userData.contactNumber ||
+            !userData.address ||
+            !userData.gender ||
+            !userData.birthday ||
+            userData.birthday === '2000-01-01';
+
+          if (profileIncomplete) {
+            showToast('Welcome! Please complete your profile to continue.', 'info');
+            sessionStorage.setItem('profile_incomplete', 'true');
+            setTimeout(() => {
+              window.location.href = 'complete-profile.html';
+            }, 1000);
             return;
           }
 

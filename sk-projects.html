@@ -3891,6 +3891,7 @@
       window.selectAchievementSuggestion = selectAchievementSuggestion;
       window.removeAchievement = removeAchievement;
       window.showAchievementSuggestions = showAchievementSuggestions;
+      window.toggleAttendance = toggleAttendance;
       window.generateAttendancePDF = generateAttendancePDF;
       window.uploadAttendancePDF = uploadAttendancePDF;
       window.viewReceiptImage = viewReceiptImage;
@@ -3929,7 +3930,7 @@
                   // If applicantId is provided, open that applicant's details modal
                   if (applicantId) {
                     requestAnimationFrame(() => {
-                      const applicant = applications.find(
+                      const applicant = project.applications.find(
                         (a) => a.id === parseInt(applicantId)
                       );
                       if (applicant) {

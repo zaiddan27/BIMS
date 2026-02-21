@@ -615,9 +615,9 @@
                     id="testimonyText"
                     rows="5"
                     required
+                    maxlength="500"
                     placeholder="Share your experience, what you learned, and how the project impacted you..."
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
-                    oninput="updateCharCount('testimonyText', 'testimonyCharCount', 500)"
                   ></textarea>
                   <div class="flex justify-between items-center">
                     <p class="text-xs text-gray-500 mt-1">Minimum 50 characters</p>
@@ -1881,10 +1881,7 @@
         const input = document.getElementById(inputId);
         const counter = document.getElementById(counterId);
 
-        // Enforce max length programmatically to avoid browser \r\n double-counting
-        if (input.value.length > maxLength) {
-          input.value = input.value.substring(0, maxLength);
-        }
+        if (!input || !counter) return;
 
         const currentLength = input.value.length;
         counter.textContent = `${currentLength}/${maxLength} characters`;
@@ -1897,6 +1894,14 @@
         }
       }
       window.updateCharCount = updateCharCount;
+
+      // Attach character counter via addEventListener (reliable in module scope)
+      const testimonyTextarea = document.getElementById('testimonyText');
+      if (testimonyTextarea) {
+        testimonyTextarea.addEventListener('input', function() {
+          updateCharCount('testimonyText', 'testimonyCharCount', 500);
+        });
+      }
 
       // Input validation helper
       function setInputState(inputElement, isValid) {
@@ -2036,6 +2041,8 @@
         document.getElementById("satisfactionScore").value = 0;
         updateStarDisplay(0);
         document.getElementById('ratingText').textContent = 'No rating selected';
+        document.getElementById('testimonyCharCount').textContent = '0/500 characters';
+        document.getElementById('testimonyCharCount').classList.remove('warning', 'error');
       }
 
       // Update current date
