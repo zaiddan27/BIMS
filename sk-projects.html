@@ -1018,27 +1018,20 @@
                   <label class="text-xs text-gray-600"
                     >Parental Consent (Minor Applicant)</label
                   >
-                  <div class="p-3 bg-gray-50 rounded-lg text-sm">
-                    <a
-                      id="appParentalConsent"
-                      href="#"
-                      download
-                      class="text-blue-600 hover:underline inline-flex items-center gap-2"
-                    >
-                      <svg
-                        class="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        ></path>
+                  <div id="appConsentContainer" class="p-3 bg-gray-50 rounded-lg text-sm flex items-center gap-3">
+                    <span id="appParentalConsentText" class="text-gray-500"></span>
+                    <a id="appConsentView" href="#" class="hidden text-blue-600 hover:underline inline-flex items-center gap-1 cursor-pointer text-xs font-medium px-2 py-1 bg-blue-50 rounded">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                       </svg>
-                      <span id="appParentalConsentText"></span>
+                      View
+                    </a>
+                    <a id="appConsentDownload" href="#" class="hidden text-green-600 hover:underline inline-flex items-center gap-1 cursor-pointer text-xs font-medium px-2 py-1 bg-green-50 rounded">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                      </svg>
+                      Download
                     </a>
                   </div>
                 </div>
@@ -2789,18 +2782,63 @@
         );
         if (app.age < 18) {
           consentSection.classList.remove("hidden");
-          const consentLink = document.getElementById("appParentalConsent");
           const consentText = document.getElementById("appParentalConsentText");
+          const viewBtn = document.getElementById("appConsentView");
+          const downloadBtn = document.getElementById("appConsentDownload");
+
+          // Clone buttons to remove old event listeners
+          const newViewBtn = viewBtn.cloneNode(true);
+          const newDownloadBtn = downloadBtn.cloneNode(true);
+          viewBtn.parentNode.replaceChild(newViewBtn, viewBtn);
+          downloadBtn.parentNode.replaceChild(newDownloadBtn, downloadBtn);
 
           if (app.parentalConsent) {
-            consentLink.href = "#"; // In a real app, this would be the actual file URL
-            consentLink.download = app.parentalConsent;
-            consentText.textContent = app.parentalConsent;
+            consentText.textContent = "Parental consent file";
+            consentText.classList.remove("text-gray-500");
+            consentText.classList.add("text-green-700");
+            newViewBtn.classList.remove("hidden");
+            newDownloadBtn.classList.remove("hidden");
+
+            // View: opens in new tab
+            newViewBtn.addEventListener('click', async (e) => {
+              e.preventDefault();
+              newViewBtn.textContent = "Loading...";
+              const { data, error } = await supabaseClient.storage
+                .from('consent-forms')
+                .createSignedUrl(app.parentalConsent, 300);
+              if (data?.signedUrl) {
+                window.open(data.signedUrl, '_blank');
+              } else {
+                showToast('Failed to load consent file', 'error');
+              }
+              newViewBtn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> View';
+            });
+
+            // Download: triggers file download
+            newDownloadBtn.addEventListener('click', async (e) => {
+              e.preventDefault();
+              newDownloadBtn.textContent = "Loading...";
+              const { data, error } = await supabaseClient.storage
+                .from('consent-forms')
+                .createSignedUrl(app.parentalConsent, 300, { download: true });
+              if (data?.signedUrl) {
+                const a = document.createElement('a');
+                a.href = data.signedUrl;
+                a.download = app.parentalConsent.split('/').pop();
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              } else {
+                showToast('Failed to download consent file', 'error');
+              }
+              newDownloadBtn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Download';
+            });
           } else {
             consentText.textContent = "Not uploaded";
-            consentLink.removeAttribute("href");
-            consentLink.classList.remove("text-blue-600", "hover:underline");
-            consentLink.classList.add("text-gray-500");
+            consentText.classList.remove("text-green-700");
+            consentText.classList.add("text-gray-500");
+            newViewBtn.classList.add("hidden");
+            newDownloadBtn.classList.add("hidden");
           }
         } else {
           consentSection.classList.add("hidden");
@@ -2830,6 +2868,9 @@
       async function updateStatus(newStatus) {
         if (!currentApp) return;
 
+        // Save reference before closing modal (closeApplicantModal sets currentApp to null)
+        const appRef = currentApp;
+
         try {
           // Map status to database format
           const dbStatus = newStatus.toUpperCase();
@@ -2840,7 +2881,7 @@
             .update({
               applicationStatus: dbStatus
             })
-            .eq('applicationID', currentApp.id);
+            .eq('applicationID', appRef.id);
 
           if (error) {
             console.error('Error updating application status:', error);
@@ -2849,13 +2890,13 @@
           }
 
           // Update local state
-          currentApp.status = newStatus;
+          appRef.status = newStatus;
           showToast(`Application status updated to ${newStatus}`);
           closeApplicantModal();
 
           // Refresh the view
           const project = projects.find((p) =>
-            p.applications.some((a) => a.id === currentApp.id)
+            p.applications.some((a) => a.id === appRef.id)
           );
           if (project) {
             // Reload applications from database
@@ -3316,9 +3357,8 @@
           try {
             if (editingProjectId) {
               // Update existing project
-              const { data, error } = await supabaseClient
-                .from('Pre_Project_Tbl')
-                .update({
+              const editingProject = projects.find(p => p.id === editingProjectId);
+              const updateData = {
                   title,
                   category,
                   description,
@@ -3329,7 +3369,17 @@
                   endDateTime,
                   location,
                   updatedAt: new Date().toISOString()
-                })
+              };
+
+              // If project was in REVISION status, resubmit for captain approval
+              if (editingProject && editingProject.approvalStatus === 'REVISION') {
+                updateData.approvalStatus = 'PENDING';
+                updateData.submittedDate = new Date().toISOString();
+              }
+
+              const { data, error } = await supabaseClient
+                .from('Pre_Project_Tbl')
+                .update(updateData)
                 .eq('preProjectID', editingProjectId)
                 .select();
 
@@ -3347,7 +3397,8 @@
               // Update budget breakdown items
               await updateBudgetBreakdownItems(editingProjectId);
 
-              showToast("Project updated successfully");
+              const resubmitted = editingProject && editingProject.approvalStatus === 'REVISION';
+              showToast(resubmitted ? "Project resubmitted for Barangay Captain approval!" : "Project updated successfully");
             } else {
               // Create new project
               const { data: newProject, error } = await supabaseClient

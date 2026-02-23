@@ -43,6 +43,12 @@
         font-weight: 600;
       }
 
+      /* Notification Icon */
+      .notification-icon:hover {
+        transform: rotate(15deg) scale(1.1);
+        transition: transform 0.3s ease;
+      }
+
       /* Navigation */
       .nav-link.active-nav {
         background-color: rgba(47, 110, 78, 0.1);
@@ -91,7 +97,15 @@
                             <p class="text-sm text-gray-600 mt-1">Manage user roles, SK Official positions, and account status</p>
                         </div>
                         <div class="flex items-center space-x-4">
-                            <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group">
+                            <div class="relative">
+                                <button onclick="window.notificationModal.toggle()" class="notification-icon p-2.5 text-gray-600 hover:bg-[#2f6e4e]/10 hover:text-[#2f6e4e] rounded-xl transition-all duration-300" title="Notifications">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                    </svg>
+                                    <span id="notificationBadge" class="hidden absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg shadow-red-500/50 animate-pulse"></span>
+                                </button>
+                            </div>
+                            <div class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-xl px-3 py-2 transition-all duration-300 group" onclick="window.profileModal.open()">
                                 <div class="text-right">
                                     <p class="text-sm font-medium text-gray-700 group-hover:text-[#2f6e4e] transition" id="headerUserName">System Administrator</p>
                                     <p class="text-xs text-gray-500">Technical Admin</p>
@@ -587,6 +601,46 @@
             </div>
         </div>
     </div>
+
+    <!-- Profile & Notification Components -->
+    <script type="module">
+        import { NotificationModal } from './js/components/NotificationModal.js';
+        import { ProfileModal } from './js/components/ProfileModal.js';
+
+        const notificationModal = new NotificationModal();
+        notificationModal.render();
+        window.notificationModal = notificationModal;
+
+        const profileModal = new ProfileModal();
+        profileModal.render();
+        window.profileModal = profileModal;
+
+        async function loadProfileData() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) return;
+
+                const { data: userData, error } = await supabaseClient
+                    .from('User_Tbl')
+                    .select('firstName, middleName, lastName, role, contactNumber, address, gender, birthday, imagePathURL')
+                    .eq('userID', session.user.id)
+                    .single();
+
+                if (error || !userData) return;
+
+                await profileModal.loadUserData(session.user, userData);
+                await notificationModal.loadNotifications();
+            } catch (error) {
+                console.error('Error loading profile data:', error);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => setTimeout(loadProfileData, 500));
+        } else {
+            setTimeout(loadProfileData, 500);
+        }
+    </script>
 
     <!-- Main Script -->
     <script>

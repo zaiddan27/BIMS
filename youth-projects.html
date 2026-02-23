@@ -1237,7 +1237,8 @@
                 email: user.email || currentUser?.email || '',
                 address: user.address || '',
                 role: app.preferredRole || '',
-                status: app.applicationStatus?.toLowerCase() || 'pending'
+                status: app.applicationStatus?.toLowerCase() || 'pending',
+                parentConsentFile: app.parentConsentFile || null
               };
             });
           }
@@ -1788,17 +1789,36 @@
 
           if (userError) throw userError;
 
+          // Upload parental consent file if under 18
+          let consentFilePath = null;
+          if (calculateAge(birthday) < 18) {
+            const consentFile = document.getElementById("appParentalConsent").files[0];
+            if (consentFile) {
+              const fileExt = consentFile.name.split('.').pop();
+              consentFilePath = `${currentUser.id}/${Date.now()}_consent.${fileExt}`;
+              const { error: uploadError } = await supabaseClient.storage
+                .from('consent-forms')
+                .upload(consentFilePath, consentFile, { cacheControl: '3600', upsert: true });
+              if (uploadError) throw new Error(`Consent upload failed: ${uploadError.message}`);
+            }
+          }
+
           // Insert application into Application_Tbl
-          const { data, error } = await supabaseClient
-            .from('Application_Tbl')
-            .insert({
+          const insertData = {
               userID: currentUser.id,
               preProjectID: applyingToProjectId,
               preferredRole: role,
               applicationStatus: 'PENDING',
               appliedDate: new Date().toISOString(),
               createdAt: new Date().toISOString()
-            })
+          };
+          if (consentFilePath) {
+            insertData.parentConsentFile = consentFilePath;
+          }
+
+          const { data, error } = await supabaseClient
+            .from('Application_Tbl')
+            .insert(insertData)
             .select()
             .single();
 
@@ -1831,6 +1851,7 @@
             address: address,
             role: role,
             status: "pending",
+            parentConsentFile: consentFilePath || null,
           });
 
           showToast("Application submitted successfully!", "success");
@@ -1886,6 +1907,38 @@
           );
         }
 
+        // Show existing parental consent file info
+        const consentSection = document.getElementById("editParentalConsentSection");
+        let existingConsentInfo = consentSection.querySelector('.existing-consent-info');
+        if (existingConsentInfo) existingConsentInfo.remove();
+        if (app.parentConsentFile) {
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'existing-consent-info mt-2 p-2 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2';
+          infoDiv.innerHTML = `
+            <svg class="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm text-green-700">Current file uploaded</span>
+            <a href="#" class="text-sm text-blue-600 hover:underline ml-auto view-consent-link">View</a>
+          `;
+          consentSection.appendChild(infoDiv);
+          // Generate signed URL for private bucket
+          infoDiv.querySelector('.view-consent-link').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const { data, error } = await supabaseClient.storage
+              .from('consent-forms')
+              .createSignedUrl(app.parentConsentFile, 300);
+            if (data?.signedUrl) {
+              window.open(data.signedUrl, '_blank');
+            } else {
+              showToast('Failed to load consent file', 'error');
+            }
+          });
+        }
+
+        // Reset file input
+        document.getElementById("editAppParentalConsent").value = "";
+
         document
           .getElementById("editApplicationModal")
           .classList.remove("hidden");
@@ -1938,10 +1991,34 @@
         }
 
         try {
-          // Update preferred role in Application_Tbl
+          // Upload new parental consent file if selected
+          let consentFilePath = app.parentConsentFile || null;
+          const editConsentFile = document.getElementById("editAppParentalConsent").files[0];
+          if (editConsentFile) {
+            const age = calculateAge(birthday);
+            if (age < 18) {
+              if (editConsentFile.size > 5 * 1024 * 1024) {
+                showToast("Parental consent file must be under 5MB", "warning");
+                if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Changes'; }
+                return;
+              }
+              const fileExt = editConsentFile.name.split('.').pop();
+              consentFilePath = `${currentUser.id}/${Date.now()}_consent.${fileExt}`;
+              const { error: uploadError } = await supabaseClient.storage
+                .from('consent-forms')
+                .upload(consentFilePath, editConsentFile, { cacheControl: '3600', upsert: true });
+              if (uploadError) throw new Error(`Consent upload failed: ${uploadError.message}`);
+            }
+          }
+
+          // Update Application_Tbl (role + parental consent)
+          const appUpdateData = { preferredRole: role };
+          if (consentFilePath) {
+            appUpdateData.parentConsentFile = consentFilePath;
+          }
           const { error: appError } = await supabaseClient
             .from('Application_Tbl')
-            .update({ preferredRole: role })
+            .update(appUpdateData)
             .eq('applicationID', editingApplicationId);
 
           if (appError) throw appError;
@@ -1970,6 +2047,7 @@
           app.email = email;
           app.address = address;
           app.role = role;
+          if (consentFilePath) app.parentConsentFile = consentFilePath;
 
           // Keep currentUserData in sync so apply form pre-fills correctly
           if (currentUserData) {
@@ -1981,12 +2059,13 @@
             currentUserData.address = address;
           }
 
-          showToast("Application updated successfully!");
+          const consentMsg = (editConsentFile && consentFilePath) ? " Parental consent uploaded." : "";
+          showToast(`Application updated successfully!${consentMsg}`);
           closeEditApplicationModal();
           renderMyApplicationsGrid();
         } catch (err) {
           console.error('Error saving application:', err);
-          showToast("Failed to save changes. Please try again.", "error");
+          showToast(`Failed to save changes: ${err.message}`, "error");
         } finally {
           if (saveBtn) {
             saveBtn.disabled = false;

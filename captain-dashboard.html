@@ -2296,7 +2296,7 @@
                             cost
                         )
                     `)
-                    .in('approvalStatus', ['PENDING', 'APPROVED', 'REJECTED', 'REVISION_REQUESTED'])
+                    .in('approvalStatus', ['PENDING', 'APPROVED', 'REJECTED', 'REVISION', 'REVISION_REQUESTED'])
                     .order('submittedDate', { ascending: false });
 
                 if (error) throw error;
@@ -2313,7 +2313,7 @@
                         let uiStatus = 'pending';
                         if (project.approvalStatus === 'APPROVED') uiStatus = 'approved';
                         else if (project.approvalStatus === 'REJECTED') uiStatus = 'rejected';
-                        else if (project.approvalStatus === 'REVISION_REQUESTED') uiStatus = 'revision-requested';
+                        else if (project.approvalStatus === 'REVISION' || project.approvalStatus === 'REVISION_REQUESTED') uiStatus = 'revision-requested';
 
                         // Get budget breakdown from related table
                         const budgetBreakdown = project.BudgetBreakdown_Tbl || [];

@@ -93,6 +93,33 @@
       .hero-fade-in-6 {
         animation: heroFadeIn 0.8s ease-out 1.2s both;
       }
+
+      /* Testimonial Card Text Clamp */
+      .testimony-text-clamp {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Testimonial Modal */
+      .testimony-modal-overlay {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .testimony-modal-overlay.active {
+        opacity: 1;
+      }
+      .testimony-modal-card {
+        transform: scale(0.9) translateY(20px);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+      .testimony-modal-overlay.active .testimony-modal-card {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
     </style>
   </head>
   <body class="bg-white">
@@ -497,6 +524,16 @@
           </div>
         </div>
 
+        <!-- Pagination Controls -->
+        <div class="flex items-center justify-between mt-8">
+          <div></div>
+          <div id="projectPaginationDots" class="flex justify-center gap-2 hidden"></div>
+          <nav id="projectPaginationNav" class="hidden inline-flex rounded-md shadow-sm" role="navigation" aria-label="Projects pagination">
+            <button onclick="navigateProjectPage(-1)" class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium">Prev</button>
+            <button onclick="navigateProjectPage(1)" class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium">Next</button>
+          </nav>
+        </div>
+
         <!-- View All Button -->
         <div class="text-center mt-12">
           <a
@@ -825,6 +862,34 @@
       </div>
     </section>
 
+    <!-- Testimonial Detail Modal -->
+    <div id="testimonyModal" class="testimony-modal-overlay hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeTestimonyModal()">
+      <div class="testimony-modal-card bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="gradient-bg p-6 flex items-center justify-between flex-shrink-0">
+          <div class="flex items-center gap-4">
+            <div id="modalAvatar" class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-xl overflow-hidden flex-shrink-0">
+              --
+            </div>
+            <div>
+              <h3 id="modalName" class="text-lg font-bold text-white"></h3>
+              <p id="modalRole" class="text-white/80 text-sm"></p>
+            </div>
+          </div>
+          <button onclick="closeTestimonyModal()" class="text-white/80 hover:text-white hover:bg-white/10 rounded-lg p-2 transition flex-shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <!-- Modal Body -->
+        <div class="p-6 overflow-y-auto">
+          <div id="modalStars" class="flex mb-4"></div>
+          <p id="modalTestimony" class="text-gray-700 leading-relaxed text-base italic" style="overflow-wrap: break-word; word-break: break-word;"></p>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12">
       <div class="max-w-7xl mx-auto px-6">
@@ -946,7 +1011,6 @@
 
       // === Project Filtering ===
       function filterProjects(status) {
-        const cards = document.querySelectorAll('.project-card');
         const buttons = document.querySelectorAll('.filter-btn');
 
         buttons.forEach(btn => {
@@ -963,9 +1027,15 @@
         event.target.style.boxShadow = '0 3px 8px rgba(47, 110, 78, 0.35), 0 1px 3px rgba(0, 0, 0, 0.12)';
         event.target.style.fontWeight = '700';
 
-        cards.forEach(card => {
-          card.style.display = (status === 'all' || card.dataset.status === status) ? 'block' : 'none';
-        });
+        if (status === 'all') {
+          filteredProjectsData = allProjectsData;
+        } else {
+          filteredProjectsData = allProjectsData.filter(function(p) {
+            return (p.status || 'ONGOING').toLowerCase() === status;
+          });
+        }
+        projectCurrentPage = 0;
+        renderProjectPage();
       }
 
       // Smooth scroll for anchor links (skip bare "#" hrefs)
@@ -980,6 +1050,11 @@
       });
 
       // === Load Projects from Supabase ===
+      let allProjectsData = [];
+      let filteredProjectsData = [];
+      let projectCurrentPage = 0;
+      const projectsPerPage = 3;
+
       async function loadProjects() {
         const grid = document.getElementById('projectsGrid');
         try {
@@ -987,8 +1062,7 @@
             .from('Pre_Project_Tbl')
             .select('preProjectID, title, description, status, volunteers, startDateTime, endDateTime, imagePathURL, category')
             .eq('approvalStatus', 'APPROVED')
-            .order('startDateTime', { ascending: false })
-            .limit(6);
+            .order('startDateTime', { ascending: false });
 
           if (error) throw error;
 
@@ -997,11 +1071,62 @@
             return;
           }
 
-          grid.innerHTML = projects.map(p => createProjectCard(p)).join('');
+          allProjectsData = projects;
+          filteredProjectsData = projects;
+          projectCurrentPage = 0;
+          renderProjectPage();
         } catch (err) {
           console.error('[BIMS] Failed to load projects:', err);
           grid.innerHTML = '<p class="text-center text-gray-500 col-span-full py-12">Unable to load projects.</p>';
         }
+      }
+
+      function renderProjectPage() {
+        const grid = document.getElementById('projectsGrid');
+        const startIndex = projectCurrentPage * projectsPerPage;
+        const endIndex = startIndex + projectsPerPage;
+        const projectsToShow = filteredProjectsData.slice(startIndex, endIndex);
+
+        if (projectsToShow.length === 0) {
+          grid.innerHTML = '<p class="text-center text-gray-500 col-span-full py-12">No projects found.</p>';
+        } else {
+          grid.innerHTML = projectsToShow.map(p => createProjectCard(p)).join('');
+        }
+        updateProjectPagination();
+      }
+
+      function updateProjectPagination() {
+        const totalPages = Math.ceil(filteredProjectsData.length / projectsPerPage);
+        var dotsContainer = document.getElementById('projectPaginationDots');
+        var navContainer = document.getElementById('projectPaginationNav');
+
+        if (totalPages <= 1) {
+          dotsContainer.classList.add('hidden');
+          navContainer.classList.add('hidden');
+          return;
+        }
+
+        dotsContainer.classList.remove('hidden');
+        navContainer.classList.remove('hidden');
+
+        dotsContainer.innerHTML = Array.from({ length: totalPages }, function(_, i) {
+          return '<button onclick="goToProjectPage(' + i + ')" class="h-2 rounded-full transition-all duration-300 ' +
+            (i === projectCurrentPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2') +
+            '" style="min-height: 8px; flex-shrink: 0; cursor: pointer;" aria-label="Go to page ' + (i + 1) + '"></button>';
+        }).join('');
+      }
+
+      function navigateProjectPage(direction) {
+        var totalPages = Math.ceil(filteredProjectsData.length / projectsPerPage);
+        projectCurrentPage += direction;
+        if (projectCurrentPage < 0) projectCurrentPage = totalPages - 1;
+        if (projectCurrentPage >= totalPages) projectCurrentPage = 0;
+        renderProjectPage();
+      }
+
+      function goToProjectPage(pageIndex) {
+        projectCurrentPage = pageIndex;
+        renderProjectPage();
       }
 
       function createProjectCard(project) {
@@ -1023,7 +1148,7 @@
           : '';
 
         return '<div class="project-card group cursor-pointer" data-status="' + statusLower + '">' +
-          '<div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1">' +
+          '<div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full flex flex-col">' +
             '<div class="relative h-44 ' + s.bg + ' flex items-center justify-center overflow-hidden">' +
               imgEl +
               '<div class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>' +
@@ -1037,10 +1162,10 @@
                 '</span>' +
               '</div>' +
             '</div>' +
-            '<div class="p-7">' +
+            '<div class="p-7 flex flex-col flex-1">' +
               '<h3 class="text-xl font-bold text-gray-900 mb-2.5 group-hover:text-[#2f6e4e] transition-colors">' + escapeHTML(project.title) + '</h3>' +
-              '<p class="text-gray-600 text-[15px] leading-relaxed mb-5 line-clamp-2">' + escapeHTML(project.description) + '</p>' +
-              '<div class="flex items-center justify-between pt-4 border-t border-gray-100">' +
+              '<p class="text-gray-600 text-[15px] leading-relaxed mb-5 line-clamp-2 flex-1">' + escapeHTML(project.description) + '</p>' +
+              '<div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">' +
                 '<span class="text-sm text-gray-500 font-medium">' + escapeHTML(dateText) + '</span>' +
                 '<span class="text-sm font-semibold text-[#2f6e4e] flex items-center gap-1.5">' +
                   '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>' +
@@ -1074,18 +1199,75 @@
           ? '<img src="' + escapeHTML(t.imageURL) + '" alt="" class="w-full h-full object-cover rounded-full" loading="lazy" onerror="this.parentElement.textContent=\'' + escapeHTML(t.initials) + '\'">'
           : escapeHTML(t.initials);
 
-        return '<div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition h-full flex flex-col">' +
+        // Store data as JSON-safe attributes for the modal
+        const safeId = t.id || 0;
+
+        return '<div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition h-full flex flex-col overflow-hidden cursor-pointer group" onclick="openTestimonyModal(' + safeId + ')">' +
           '<div class="flex items-center mb-6">' +
             '<div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 overflow-hidden">' + avatarHTML + '</div>' +
-            '<div class="ml-4">' +
-              '<h4 class="font-bold text-gray-800 text-lg">' + escapeHTML(t.name) + '</h4>' +
-              '<p class="text-sm text-gray-500">' + escapeHTML(t.role) + '</p>' +
+            '<div class="ml-4 overflow-hidden">' +
+              '<h4 class="font-bold text-gray-800 text-lg truncate group-hover:text-[#2f6e4e] transition-colors">' + escapeHTML(t.name) + '</h4>' +
+              '<p class="text-sm text-gray-500 truncate">' + escapeHTML(t.role) + '</p>' +
             '</div>' +
           '</div>' +
           '<div class="flex mb-4">' + generateStars(t.rating) + '</div>' +
-          '<p class="text-gray-600 leading-relaxed italic flex-1">&ldquo;' + escapeHTML(t.testimony) + '&rdquo;</p>' +
+          '<p class="text-gray-600 leading-relaxed italic flex-1 testimony-text-clamp" style="overflow-wrap: break-word; word-break: break-word;">&ldquo;' + escapeHTML(t.testimony) + '&rdquo;</p>' +
+          '<div class="mt-4 pt-3 border-t border-gray-100 text-center">' +
+            '<span class="text-sm font-medium text-[#2f6e4e] group-hover:text-[#3d8b64] transition-colors">Read full testimonial &rarr;</span>' +
+          '</div>' +
         '</div>';
       }
+
+      // === Testimonial Detail Modal ===
+      function openTestimonyModal(testimonyId) {
+        const t = testimoniesData.find(item => item.id === testimonyId);
+        if (!t) return;
+
+        const modal = document.getElementById('testimonyModal');
+
+        // Populate modal
+        const avatarEl = document.getElementById('modalAvatar');
+        if (t.imageURL) {
+          avatarEl.innerHTML = '<img src="' + escapeHTML(t.imageURL) + '" alt="" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.textContent=\'' + escapeHTML(t.initials) + '\'">';
+        } else {
+          avatarEl.textContent = t.initials;
+        }
+
+        document.getElementById('modalName').textContent = t.name;
+        document.getElementById('modalRole').textContent = t.role;
+        document.getElementById('modalStars').innerHTML = generateStars(t.rating);
+        document.getElementById('modalTestimony').innerHTML = '&ldquo;' + escapeHTML(t.testimony) + '&rdquo;';
+
+        // Show modal with animation
+        modal.classList.remove('hidden');
+        requestAnimationFrame(function() {
+          modal.classList.add('active');
+        });
+
+        // Pause carousel auto-slide
+        clearInterval(autoSlideInterval);
+      }
+
+      function closeTestimonyModal() {
+        const modal = document.getElementById('testimonyModal');
+        modal.classList.remove('active');
+        setTimeout(function() {
+          modal.classList.add('hidden');
+        }, 300);
+
+        // Resume carousel auto-slide
+        startAutoSlide();
+      }
+
+      // Close on Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          var modal = document.getElementById('testimonyModal');
+          if (modal && !modal.classList.contains('hidden')) {
+            closeTestimonyModal();
+          }
+        }
+      });
 
       function initCarousel(testimonies) {
         testimoniesData = testimonies;
