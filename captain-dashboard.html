@@ -1033,6 +1033,9 @@
                 await loadAnnouncements();
                 window.announcementsLoaded = true;
 
+                // Handle deep linking from notifications
+                await handleURLParameters();
+
             } catch (error) {
                 console.error('[CAPTAIN DASHBOARD] Initialization error:', error);
                 showToast('Failed to initialize page. Please refresh.', 'error');
@@ -1944,16 +1947,13 @@
                         : `Revision Requested: ${project.name}`;
                 }
 
-                // Insert notification into Notification_Tbl
-                // Columns: userID, notificationType, title, isRead, createdAt
-                const { error } = await supabaseClient
-                    .from('Notification_Tbl')
-                    .insert({
-                        userID: projectData.userID,
-                        notificationType: notificationType,
-                        title: title,
-                        isRead: false
-                    });
+                // Use create_notification() RPC (SECURITY DEFINER, bypasses RLS)
+                const { error } = await supabaseClient.rpc('create_notification', {
+                    p_user_id: projectData.userID,
+                    p_notification_type: notificationType,
+                    p_title: title,
+                    p_reference_id: project.id
+                });
 
                 if (error) throw error;
 
@@ -1998,6 +1998,28 @@
             // Save to localStorage
             localStorage.setItem('skNotifications', JSON.stringify(skNotifications));
 
+        }
+
+        // Handle URL parameters for deep linking from notifications
+        async function handleURLParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get("projectId");
+
+            if (projectId) {
+                // Switch to approvals section and load projects
+                switchSection('approvals');
+                // loadProjectApprovals is async but switchSection doesn't await it,
+                // so we call it directly and await it
+                if (!projects || projects.length === 0) {
+                    await loadProjectApprovals();
+                }
+
+                const id = parseInt(projectId);
+                const project = projects.find(p => p.id === id);
+                if (project) {
+                    viewProjectDetails(id);
+                }
+            }
         }
 
         // Section Switching Function
@@ -2529,6 +2551,7 @@
         // EXPOSE FUNCTIONS TO WINDOW (for onclick handlers)
         // =========================================
         window.handleLogout = handleLogout;
+        window.handleURLParameters = handleURLParameters;
         window.switchSection = switchSection;
         window.switchTab = switchTab;
         window.switchArchiveTab = switchArchiveTab;

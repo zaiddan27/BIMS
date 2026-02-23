@@ -797,8 +797,16 @@
                 id="editAppParentalConsent"
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                class="hidden"
               />
+              <div
+                id="editConsentFileDisplay"
+                onclick="document.getElementById('editAppParentalConsent').click()"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 flex items-center gap-2 bg-white"
+              >
+                <span class="inline-flex items-center px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm text-gray-700 font-medium flex-shrink-0">Browse...</span>
+                <span id="editConsentFileName" class="text-sm text-gray-500 truncate">No file selected.</span>
+              </div>
               <p class="text-xs text-gray-500 mt-1">
                 Upload signed parental consent form. Accepted formats: PDF, JPG,
                 PNG (Max 5MB)
@@ -956,6 +964,9 @@
           // Initial render
           renderProjects(projects);
           renderMyApplicationsGrid();
+
+          // Handle deep linking from calendar/notifications
+          handleURLParameters();
 
         } catch (error) {
           console.error('Page initialization error:', error);
@@ -1679,7 +1690,7 @@
         }
 
         // Clear any previous error highlights
-        ['appFirstName', 'appLastName', 'appBirthday', 'appAddress', 'appRole'].forEach(id => {
+        ['appFirstName', 'appLastName', 'appBirthday', 'appAddress'].forEach(id => {
           const el = document.getElementById(id);
           el.classList.remove('input-error');
           el.addEventListener('input', function() { this.classList.remove('input-error'); });
@@ -1711,7 +1722,7 @@
         const role = document.getElementById("appRole").value.trim();
 
         // Clear previous error highlights
-        const formFields = ['appFirstName', 'appLastName', 'appBirthday', 'appAddress', 'appRole'];
+        const formFields = ['appFirstName', 'appLastName', 'appBirthday', 'appAddress'];
         formFields.forEach(id => {
           document.getElementById(id).classList.remove('input-error');
         });
@@ -1722,7 +1733,6 @@
         if (!firstName) { missingFields.push('First Name'); document.getElementById('appFirstName').classList.add('input-error'); }
         if (!birthday) { missingFields.push('Birthday'); document.getElementById('appBirthday').classList.add('input-error'); }
         if (!address) { missingFields.push('Address'); document.getElementById('appAddress').classList.add('input-error'); }
-        if (!role) { missingFields.push('Preferred Role'); document.getElementById('appRole').classList.add('input-error'); }
 
         if (missingFields.length > 0) {
           showToast(`Please fill in: ${missingFields.join(', ')}`, "warning");
@@ -1854,6 +1864,43 @@
             parentConsentFile: consentFilePath || null,
           });
 
+          // Notify project head(s) about new application
+          try {
+            const { data: projData } = await supabaseClient
+              .from('Pre_Project_Tbl')
+              .select('skID, userID, SK_Tbl ( userID )')
+              .eq('preProjectID', applyingToProjectId)
+              .single();
+
+            if (projData) {
+              const notifiedIds = new Set();
+              const applicantName = `${firstName} ${lastName}`;
+
+              // Notify the project head (SK official via skID)
+              if (projData.SK_Tbl?.userID) {
+                notifiedIds.add(projData.SK_Tbl.userID);
+                await supabaseClient.rpc('create_notification', {
+                  p_user_id: projData.SK_Tbl.userID,
+                  p_notification_type: 'new_application',
+                  p_title: `New volunteer application from ${applicantName} for "${project.title}"`,
+                  p_reference_id: applyingToProjectId
+                });
+              }
+
+              // Also notify the project creator if different from head
+              if (projData.userID && !notifiedIds.has(projData.userID)) {
+                await supabaseClient.rpc('create_notification', {
+                  p_user_id: projData.userID,
+                  p_notification_type: 'new_application',
+                  p_title: `New volunteer application from ${applicantName} for "${project.title}"`,
+                  p_reference_id: applyingToProjectId
+                });
+              }
+            }
+          } catch (notifErr) {
+            console.error('Notification error (non-critical):', notifErr);
+          }
+
           showToast("Application submitted successfully!", "success");
           closeApplyModal();
           renderProjects(currentFilteredProjects.length > 0 ? currentFilteredProjects : projects);
@@ -1907,11 +1954,19 @@
           );
         }
 
-        // Show existing parental consent file info
+        // Show existing parental consent filename in the custom file display
         const consentSection = document.getElementById("editParentalConsentSection");
+        const consentNameSpan = document.getElementById("editConsentFileName");
         let existingConsentInfo = consentSection.querySelector('.existing-consent-info');
         if (existingConsentInfo) existingConsentInfo.remove();
+
         if (app.parentConsentFile) {
+          // Extract and display the filename from the stored path
+          const storedFileName = app.parentConsentFile.split('/').pop();
+          consentNameSpan.textContent = storedFileName;
+          consentNameSpan.classList.remove("text-gray-500");
+          consentNameSpan.classList.add("text-gray-800");
+
           const infoDiv = document.createElement('div');
           infoDiv.className = 'existing-consent-info mt-2 p-2 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2';
           infoDiv.innerHTML = `
@@ -1934,6 +1989,10 @@
               showToast('Failed to load consent file', 'error');
             }
           });
+        } else {
+          consentNameSpan.textContent = "No file selected.";
+          consentNameSpan.classList.remove("text-gray-800");
+          consentNameSpan.classList.add("text-gray-500");
         }
 
         // Reset file input
@@ -2579,6 +2638,22 @@
             this.value,
             "editParentalConsentSection"
           );
+        });
+
+      // Update custom file display when a new file is selected
+      document
+        .getElementById("editAppParentalConsent")
+        .addEventListener("change", function () {
+          const nameSpan = document.getElementById("editConsentFileName");
+          if (this.files && this.files[0]) {
+            nameSpan.textContent = this.files[0].name;
+            nameSpan.classList.remove("text-gray-500");
+            nameSpan.classList.add("text-gray-800");
+          } else {
+            nameSpan.textContent = "No file selected.";
+            nameSpan.classList.remove("text-gray-800");
+            nameSpan.classList.add("text-gray-500");
+          }
         });
 
       // Handle URL parameters for deep linking from notifications

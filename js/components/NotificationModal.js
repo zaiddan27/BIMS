@@ -245,7 +245,7 @@ export class NotificationModal {
   }
 
   /**
-   * Handles click on a notification
+   * Handles click on a notification — marks as read and navigates to relevant page
    */
   async handleNotificationClick(notificationId) {
     try {
@@ -258,11 +258,156 @@ export class NotificationModal {
       );
       if (!notif) return;
 
-      // Route based on type
-      // This should be customized based on your app's routing
+      // Close the modal
       this.close();
+
+      // Route based on notification type
+      const route = this.getRouteForNotification(notif);
+      if (!route) return;
+
+      // Determine current page
+      const currentPage = window.location.pathname.split("/").pop() || "";
+
+      if (currentPage === route.page) {
+        // Already on the correct page — handle locally without full reload
+        this.handleLocalNavigation(route);
+      } else {
+        // Navigate to the target page with query parameters
+        const params = new URLSearchParams();
+        if (route.projectId) params.set("projectId", route.projectId);
+        if (route.tab) params.set("tab", route.tab);
+
+        const queryString = params.toString();
+        window.location.href = route.page + (queryString ? "?" + queryString : "");
+      }
     } catch (error) {
       // Notification click handling failed silently
+    }
+  }
+
+  /**
+   * Maps notification type to destination page and parameters
+   */
+  getRouteForNotification(notif) {
+    const referenceID = notif.referenceID;
+
+    const routeMap = {
+      new_application: {
+        page: "sk-projects.html",
+        projectId: referenceID,
+        tab: "applications",
+      },
+      project_awaiting_approval: {
+        page: "captain-dashboard.html",
+        projectId: referenceID,
+      },
+      project_approved: {
+        page: "sk-projects.html",
+        projectId: referenceID,
+      },
+      project_rejected: {
+        page: "sk-projects.html",
+        projectId: referenceID,
+      },
+      revision_requested: {
+        page: "sk-projects.html",
+        projectId: referenceID,
+      },
+      application_approved: {
+        page: "youth-projects.html",
+        projectId: referenceID,
+      },
+      application_pending: {
+        page: "youth-projects.html",
+        projectId: referenceID,
+      },
+      inquiry_update: {
+        page: "youth-projects.html",
+        projectId: referenceID,
+        tab: "inquiries",
+      },
+      new_inquiry: {
+        page: "sk-projects.html",
+        projectId: referenceID,
+        tab: "inquiries",
+      },
+      new_project: {
+        page: "youth-projects.html",
+        projectId: referenceID,
+      },
+    };
+
+    const route = routeMap[notif.notificationType];
+
+    // Types without a route (new_announcement, user_promoted, etc.) — no navigation
+    if (!route || !route.page) return null;
+
+    // If referenceID is missing (legacy notification), still navigate to page but skip deep link
+    if (!route.projectId) {
+      return { page: route.page };
+    }
+
+    return route;
+  }
+
+  /**
+   * Handles navigation when already on the target page (avoids full reload)
+   */
+  handleLocalNavigation(route) {
+    if (!route.projectId) return;
+
+    const currentPage = window.location.pathname.split("/").pop() || "";
+    const projectId = parseInt(route.projectId);
+
+    if (currentPage === "sk-projects.html") {
+      if (typeof window.viewProject === "function") {
+        window.viewProject(projectId);
+        if (route.tab) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (typeof window.switchTab === "function") {
+                // URL param "applications" maps to internal tab name "applicants"
+                const tabMap = { applications: "applicants", inquiries: "inquiries" };
+                window.switchTab(tabMap[route.tab] || route.tab);
+              }
+            });
+          });
+        }
+      }
+    } else if (currentPage === "youth-projects.html") {
+      if (typeof window.viewProject === "function") {
+        window.viewProject(projectId);
+        if (route.tab) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (typeof window.switchTab === "function") {
+                window.switchTab(route.tab);
+              }
+            });
+          });
+        }
+      }
+    } else if (currentPage === "captain-dashboard.html") {
+      if (typeof window.viewProjectDetails === "function") {
+        // May need to load approvals section first
+        if (typeof window.switchSection === "function") {
+          window.switchSection("approvals");
+        }
+        // Wait for projects to load, then open the specific project
+        const waitForLoad = setInterval(() => {
+          if (typeof window.viewProjectDetails === "function") {
+            clearInterval(waitForLoad);
+            setTimeout(() => window.viewProjectDetails(projectId), 300);
+          }
+        }, 100);
+        setTimeout(() => clearInterval(waitForLoad), 5000);
+      }
+    } else {
+      // Fallback: reload with URL parameters
+      const params = new URLSearchParams();
+      if (route.projectId) params.set("projectId", route.projectId);
+      if (route.tab) params.set("tab", route.tab);
+      window.location.href = currentPage + "?" + params.toString();
     }
   }
 

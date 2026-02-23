@@ -500,8 +500,11 @@
           calendarDays.appendChild(cell);
         }
 
+        // Next month days - only fill to complete the last row
         const totalCells = calendarDays.children.length;
-        const remainingCells = 42 - totalCells;
+        const rows = Math.ceil(totalCells / 7);
+        const targetCells = rows * 7;
+        const remainingCells = targetCells - totalCells;
         for (let day = 1; day <= remainingCells; day++) {
           const cell = createDayCell(day, true, year, month + 1);
           calendarDays.appendChild(cell);

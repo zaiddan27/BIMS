@@ -424,6 +424,13 @@
               >
                 Inquiries (<span id="inquiryCount">0</span>)
               </button>
+              <button
+                onclick="switchTab('feedback')"
+                id="tabFeedback"
+                class="tab-btn whitespace-nowrap"
+              >
+                Feedback (<span id="feedbackCount">0</span>)
+              </button>
             </nav>
           </div>
 
@@ -572,6 +579,67 @@
             <div id="tabContentInquiries" class="hidden p-4 sm:p-6">
               <div id="inquiriesList" class="space-y-4">
                 <!-- Inquiries will be inserted here -->
+              </div>
+            </div>
+
+            <!-- Feedback Tab -->
+            <div id="tabContentFeedback" class="hidden p-4 sm:p-6">
+              <div id="feedbackTabContent">
+                <div id="feedbackLoading" class="text-center py-8 text-gray-500">
+                  <svg class="animate-spin h-6 w-6 mx-auto mb-2 text-purple-500" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  </svg>
+                  Loading feedback...
+                </div>
+                <div id="feedbackEmpty" class="hidden text-center py-8">
+                  <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                  </svg>
+                  <p class="text-gray-500 font-medium">No survey feedback yet</p>
+                  <p class="text-gray-400 text-sm mt-1">Volunteers can submit feedback after participating in this project</p>
+                </div>
+                <div id="feedbackResults" class="hidden">
+                  <!-- Summary -->
+                  <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <h4 class="font-semibold text-purple-800">Survey Summary</h4>
+                      <span id="feedbackSummaryCount" class="text-sm text-purple-600"></span>
+                    </div>
+                    <div class="grid grid-cols-5 gap-2 mb-3">
+                      <div class="text-center bg-white rounded-lg p-2 border border-purple-100">
+                        <div class="text-[10px] text-gray-500">Overall</div>
+                        <div id="feedbackAvgQ1" class="text-sm font-bold text-purple-700">-</div>
+                      </div>
+                      <div class="text-center bg-white rounded-lg p-2 border border-purple-100">
+                        <div class="text-[10px] text-gray-500">Skills</div>
+                        <div id="feedbackAvgQ2" class="text-sm font-bold text-purple-700">-</div>
+                      </div>
+                      <div class="text-center bg-white rounded-lg p-2 border border-purple-100">
+                        <div class="text-[10px] text-gray-500">Teamwork</div>
+                        <div id="feedbackAvgQ3" class="text-sm font-bold text-purple-700">-</div>
+                      </div>
+                      <div class="text-center bg-white rounded-lg p-2 border border-purple-100">
+                        <div class="text-[10px] text-gray-500">Impact</div>
+                        <div id="feedbackAvgQ4" class="text-sm font-bold text-purple-700">-</div>
+                      </div>
+                      <div class="text-center bg-white rounded-lg p-2 border border-purple-100">
+                        <div class="text-[10px] text-gray-500">Recommend</div>
+                        <div id="feedbackAvgQ5" class="text-sm font-bold text-purple-700">-</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm text-purple-700 font-medium">Average:</span>
+                      <div class="flex-1 bg-purple-100 rounded-full h-2.5">
+                        <div id="feedbackAvgBar" class="bg-purple-600 h-2.5 rounded-full" style="width: 0%"></div>
+                      </div>
+                      <span id="feedbackAvgScore" class="text-sm font-bold text-purple-700">-</span>
+                    </div>
+                  </div>
+                  <!-- Individual responses -->
+                  <h4 class="font-semibold text-gray-700 mb-3">Individual Responses</h4>
+                  <div id="feedbackResponsesList" class="space-y-3"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -964,43 +1032,43 @@
             <!-- Personal Information -->
             <div class="mb-6">
               <h3 class="text-lg font-semibold mb-4">Personal Information</h3>
-              <div class="bg-gray-50 p-4 rounded-lg space-y-3">
-                <div class="grid grid-cols-4 gap-4">
-                  <div class="col-span-2">
-                    <label class="text-xs text-gray-600">Last Name</label>
-                    <p id="appLastName" class="font-medium"></p>
+              <div class="bg-gray-50 p-4 rounded-lg space-y-4">
+                <div class="grid grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">Last Name</label>
+                    <p id="appLastName" class="font-semibold text-gray-900"></p>
                   </div>
-                  <div class="col-span-1">
-                    <label class="text-xs text-gray-600">First Name</label>
-                    <p id="appFirstName" class="font-medium"></p>
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">First Name</label>
+                    <p id="appFirstName" class="font-semibold text-gray-900"></p>
                   </div>
-                  <div class="col-span-1">
-                    <label class="text-xs text-gray-600">MI</label>
-                    <p id="appMiddleName" class="font-medium"></p>
+                  <div>
+                    <label class="block text-xs text-gray-500 mb-1">MI</label>
+                    <p id="appMiddleName" class="font-semibold text-gray-900"></p>
                   </div>
                 </div>
                 <div class="grid grid-cols-3 gap-4">
                   <div>
-                    <label class="text-xs text-gray-600">Birthday</label>
-                    <p id="appBirthday" class="font-medium"></p>
+                    <label class="block text-xs text-gray-500 mb-1">Birthday</label>
+                    <p id="appBirthday" class="font-semibold text-gray-900"></p>
                   </div>
                   <div>
-                    <label class="text-xs text-gray-600">Age</label>
-                    <p id="appAge" class="font-medium"></p>
+                    <label class="block text-xs text-gray-500 mb-1">Age</label>
+                    <p id="appAge" class="font-semibold text-gray-900"></p>
                   </div>
                   <div>
-                    <label class="text-xs text-gray-600">Contact</label>
-                    <p id="appContact" class="font-medium"></p>
+                    <label class="block text-xs text-gray-500 mb-1">Contact</label>
+                    <p id="appContact" class="font-semibold text-gray-900"></p>
                   </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="text-xs text-gray-600">Email</label>
-                    <p id="appEmail" class="font-medium"></p>
+                    <label class="block text-xs text-gray-500 mb-1">Email</label>
+                    <p id="appEmail" class="font-semibold text-gray-900"></p>
                   </div>
                   <div>
-                    <label class="text-xs text-gray-600">Address</label>
-                    <p id="appAddress" class="font-medium"></p>
+                    <label class="block text-xs text-gray-500 mb-1">Address</label>
+                    <p id="appAddress" class="font-semibold text-gray-900"></p>
                   </div>
                 </div>
               </div>
@@ -1034,6 +1102,22 @@
                       Download
                     </a>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Volunteer Survey Feedback -->
+            <div id="appFeedbackSection" class="border-t pt-4 hidden">
+              <h3 class="text-lg font-semibold mb-3">Survey Feedback</h3>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-sm font-medium text-gray-600">Overall Score</span>
+                  <span id="appFeedbackScore" class="text-lg font-bold text-purple-600"></span>
+                </div>
+                <div id="appFeedbackScores" class="grid grid-cols-5 gap-2 mb-3"></div>
+                <div id="appFeedbackMessageSection" class="hidden pt-3 border-t border-gray-200">
+                  <p class="text-xs font-medium text-gray-500 mb-1">Additional Feedback:</p>
+                  <p id="appFeedbackMessage" class="text-sm text-gray-700 italic"></p>
                 </div>
               </div>
             </div>
@@ -1292,6 +1376,12 @@
                     </div>
                   </div>
                 </div>
+              </div>
+
+              <!-- Individual Volunteer Feedback -->
+              <div id="volunteerFeedbackList" class="mt-4 hidden">
+                <h4 class="text-sm font-semibold text-gray-700 mb-3">Volunteer Survey Responses</h4>
+                <div id="feedbackCards" class="space-y-3 max-h-[300px] overflow-y-auto"></div>
               </div>
             </div>
 
@@ -1655,7 +1745,7 @@
         try {
           const { data, error } = await supabaseClient
             .from('SK_Tbl')
-            .select('skID, userID, position, committee')
+            .select('skID, userID, position')
             .eq('userID', currentUser.id)
             .single();
 
@@ -1755,6 +1845,7 @@
                 preferredRole,
                 parentConsentFile,
                 applicationStatus,
+                attended,
                 appliedDate,
                 User_Tbl (
                   firstName,
@@ -1764,6 +1855,11 @@
                   contactNumber,
                   address,
                   email
+                ),
+                Evaluation_Tbl (
+                  q1, q2, q3, q4, q5,
+                  message,
+                  timeStamp
                 )
               ),
               Inquiry_Tbl (
@@ -1807,6 +1903,12 @@
                 const birthday = user.birthday ? new Date(user.birthday) : null;
                 const age = birthday ? Math.floor((new Date() - birthday) / (365.25 * 24 * 60 * 60 * 1000)) : null;
 
+                // Get evaluation data if volunteer submitted a survey
+                const eval_ = (app.Evaluation_Tbl || [])[0] || null;
+                const satisfactionScore = eval_
+                  ? parseFloat(((eval_.q1 + eval_.q2 + eval_.q3 + eval_.q4 + eval_.q5) / 5).toFixed(1))
+                  : null;
+
                 return {
                   id: app.applicationID,
                   projectId: app.preProjectID,
@@ -1822,8 +1924,13 @@
                   preferredRole: app.preferredRole,
                   parentalConsent: app.parentConsentFile,
                   status: (app.applicationStatus || 'pending').toLowerCase(),
+                  attended: app.attended || false,
                   appliedDate: app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : '',
-                  userID: app.userID
+                  userID: app.userID,
+                  satisfactionScore: satisfactionScore,
+                  feedbackMessage: eval_ ? eval_.message : null,
+                  feedbackDate: eval_ ? eval_.timeStamp : null,
+                  feedbackScores: eval_ ? { q1: eval_.q1, q2: eval_.q2, q3: eval_.q3, q4: eval_.q4, q5: eval_.q5 } : null
                 };
               });
 
@@ -1949,6 +2056,11 @@
                 contactNumber,
                 address,
                 email
+              ),
+              Evaluation_Tbl (
+                q1, q2, q3, q4, q5,
+                message,
+                timeStamp
               )
             `)
             .eq('preProjectID', preProjectID);
@@ -1961,6 +2073,11 @@
             const user = app.User_Tbl || {};
             const birthday = user.birthday ? new Date(user.birthday) : null;
             const age = birthday ? Math.floor((new Date() - birthday) / (365.25 * 24 * 60 * 60 * 1000)) : null;
+
+            const eval_ = (app.Evaluation_Tbl || [])[0] || null;
+            const satisfactionScore = eval_
+              ? parseFloat(((eval_.q1 + eval_.q2 + eval_.q3 + eval_.q4 + eval_.q5) / 5).toFixed(1))
+              : null;
 
             return {
               id: app.applicationID,
@@ -1978,7 +2095,11 @@
               parentalConsent: app.parentConsentFile,
               status: (app.applicationStatus || 'pending').toLowerCase(),
               appliedDate: app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : '',
-              userID: app.userID
+              userID: app.userID,
+              satisfactionScore: satisfactionScore,
+              feedbackMessage: eval_ ? eval_.message : null,
+              feedbackDate: eval_ ? eval_.timeStamp : null,
+              feedbackScores: eval_ ? { q1: eval_.q1, q2: eval_.q2, q3: eval_.q3, q4: eval_.q4, q5: eval_.q5 } : null
             };
           });
         } catch (err) {
@@ -2429,9 +2550,25 @@
                 : ""
             }
 
-            <!-- Mark as Complete Button (for active/ongoing projects) -->
+            <!-- Start Project Button (for upcoming projects) -->
             ${
-              isHead && (project.status === "Ongoing" || project.status === "Upcoming")
+              isHead && project.status === "Upcoming"
+                ? `
+              <button onclick="startProject(${project.id})"
+                      class="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium mb-3 transition flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Start Project
+              </button>
+            `
+                : ""
+            }
+
+            <!-- Mark as Complete Button (for ongoing projects) -->
+            ${
+              isHead && project.status === "Ongoing"
                 ? `
               <button onclick="openEvaluationModal(${project.id})"
                       class="w-full px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium mb-3 transition flex items-center justify-center gap-2">
@@ -2540,6 +2677,15 @@
         // Load inquiries
         loadInquiries(project);
 
+        // Set feedback count from already-loaded data
+        const feedbackCountFromData = project.applications.filter(a => a.satisfactionScore).length;
+        document.getElementById("feedbackCount").textContent = feedbackCountFromData;
+
+        // Reset feedback tab state
+        document.getElementById("feedbackLoading").classList.add("hidden");
+        document.getElementById("feedbackEmpty").classList.add("hidden");
+        document.getElementById("feedbackResults").classList.add("hidden");
+
         // Show modal
         document.getElementById("projectViewModal").classList.remove("hidden");
         switchTab("details");
@@ -2553,7 +2699,7 @@
       // Tab switching
       function switchTab(tab) {
         // Update tab buttons
-        ["details", "applicants", "inquiries"].forEach((t) => {
+        ["details", "applicants", "inquiries", "feedback"].forEach((t) => {
           const tabBtn = document.getElementById(
             `tab${t.charAt(0).toUpperCase() + t.slice(1)}`
           );
@@ -2569,6 +2715,122 @@
             tabContent.classList.add("hidden");
           }
         });
+
+        // Load feedback data when tab is clicked
+        if (tab === 'feedback' && currentProjectId) {
+          loadFeedbackTab(currentProjectId);
+        }
+      }
+
+      // Load feedback tab - fetches evaluations directly from Supabase
+      async function loadFeedbackTab(projectId) {
+        const loading = document.getElementById('feedbackLoading');
+        const empty = document.getElementById('feedbackEmpty');
+        const results = document.getElementById('feedbackResults');
+
+        loading.classList.remove('hidden');
+        empty.classList.add('hidden');
+        results.classList.add('hidden');
+
+        try {
+          // Fetch evaluations for this project's applications directly
+          const { data: evaluations, error } = await supabaseClient
+            .from('Evaluation_Tbl')
+            .select(`
+              evaluationID, q1, q2, q3, q4, q5, message, timeStamp,
+              Application_Tbl!inner (
+                applicationID,
+                preProjectID,
+                User_Tbl (
+                  firstName,
+                  lastName
+                )
+              )
+            `)
+            .eq('Application_Tbl.preProjectID', projectId);
+
+          loading.classList.add('hidden');
+
+          if (error) {
+            console.error('Error loading feedback:', error);
+            empty.classList.remove('hidden');
+            return;
+          }
+
+          if (!evaluations || evaluations.length === 0) {
+            empty.classList.remove('hidden');
+            document.getElementById('feedbackCount').textContent = '0';
+            return;
+          }
+
+          // Update count
+          document.getElementById('feedbackCount').textContent = evaluations.length;
+
+          // Calculate averages
+          const avgQ1 = (evaluations.reduce((s, e) => s + e.q1, 0) / evaluations.length).toFixed(1);
+          const avgQ2 = (evaluations.reduce((s, e) => s + e.q2, 0) / evaluations.length).toFixed(1);
+          const avgQ3 = (evaluations.reduce((s, e) => s + e.q3, 0) / evaluations.length).toFixed(1);
+          const avgQ4 = (evaluations.reduce((s, e) => s + e.q4, 0) / evaluations.length).toFixed(1);
+          const avgQ5 = (evaluations.reduce((s, e) => s + e.q5, 0) / evaluations.length).toFixed(1);
+          const overallAvg = ((parseFloat(avgQ1) + parseFloat(avgQ2) + parseFloat(avgQ3) + parseFloat(avgQ4) + parseFloat(avgQ5)) / 5).toFixed(1);
+
+          document.getElementById('feedbackAvgQ1').textContent = avgQ1;
+          document.getElementById('feedbackAvgQ2').textContent = avgQ2;
+          document.getElementById('feedbackAvgQ3').textContent = avgQ3;
+          document.getElementById('feedbackAvgQ4').textContent = avgQ4;
+          document.getElementById('feedbackAvgQ5').textContent = avgQ5;
+          document.getElementById('feedbackAvgScore').textContent = `${overallAvg}/5`;
+          document.getElementById('feedbackAvgBar').style.width = `${(parseFloat(overallAvg) / 5) * 100}%`;
+          document.getElementById('feedbackSummaryCount').textContent = `${evaluations.length} volunteer(s) responded`;
+
+          // Render individual responses
+          const list = document.getElementById('feedbackResponsesList');
+          list.innerHTML = evaluations.map(ev => {
+            const user = ev.Application_Tbl?.User_Tbl;
+            const name = user ? `${user.firstName} ${user.lastName}`.trim() : 'Anonymous';
+            const avg = ((ev.q1 + ev.q2 + ev.q3 + ev.q4 + ev.q5) / 5).toFixed(1);
+            const date = ev.timeStamp ? new Date(ev.timeStamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+            const labels = ['Overall', 'Skills', 'Teamwork', 'Impact', 'Recommend'];
+            const scores = [ev.q1, ev.q2, ev.q3, ev.q4, ev.q5];
+
+            return `
+              <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                      <span class="text-sm font-bold text-purple-700">${name.charAt(0)}</span>
+                    </div>
+                    <div>
+                      <span class="text-sm font-semibold text-gray-800">${name}</span>
+                      <p class="text-xs text-gray-400">${date}</p>
+                    </div>
+                  </div>
+                  <span class="text-sm font-bold px-2.5 py-1 rounded-full ${parseFloat(avg) >= 4 ? 'bg-green-100 text-green-700' : parseFloat(avg) >= 3 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}">${avg}/5</span>
+                </div>
+                <div class="grid grid-cols-5 gap-1.5 mb-2">
+                  ${scores.map((s, i) => `
+                    <div class="text-center bg-white rounded p-1.5 border border-gray-100">
+                      <div class="text-[10px] text-gray-500">${labels[i]}</div>
+                      <div class="text-xs font-bold ${s >= 4 ? 'text-green-600' : s >= 3 ? 'text-yellow-600' : 'text-red-600'}">${s}/5</div>
+                    </div>
+                  `).join('')}
+                </div>
+                ${ev.message ? `
+                <div class="mt-3 pt-3 border-t border-gray-200">
+                  <p class="text-xs font-medium text-gray-500 mb-1">Additional Feedback:</p>
+                  <p class="text-sm text-gray-700 bg-white rounded p-3 border border-gray-100 italic">"${ev.message}"</p>
+                </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('');
+
+          results.classList.remove('hidden');
+        } catch (err) {
+          console.error('Feedback load error:', err);
+          loading.classList.add('hidden');
+          empty.classList.remove('hidden');
+        }
       }
 
       // Load applicants
@@ -2600,7 +2862,7 @@
           <div class="flex flex-col gap-2.5">
             <!-- Row 1: Checkbox + Name & Role -->
             <div class="flex items-start gap-3">
-              ${project.status === 'Completed' && app.status === 'approved' ? `
+              ${(project.status === 'Ongoing' || project.status === 'Completed') && app.status === 'approved' ? `
                 <div class="pt-0.5" onclick="event.stopPropagation()">
                   <input type="checkbox" ${app.attended ? 'checked' : ''}
                          onchange="toggleAttendance(${project.id}, ${app.id}, this.checked)"
@@ -2608,14 +2870,17 @@
                 </div>
               ` : ''}
               <div class="flex-1 min-w-0">
-                <h4 class="font-semibold text-gray-900 mb-0.5">${app.fullName}</h4>
+                <div class="flex items-center gap-2">
+                  <h4 class="font-semibold text-gray-900 mb-0.5">${app.fullName}</h4>
+                  ${app.satisfactionScore ? `<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-700 font-semibold" title="Survey submitted: ${app.satisfactionScore}/5">★ ${app.satisfactionScore}</span>` : ''}
+                </div>
                 <p class="text-sm text-gray-600">${app.preferredRole} • Age ${app.age}</p>
               </div>
             </div>
 
             <!-- Row 2: Mark Attended Label + Status Badge -->
-            <div class="flex items-center justify-between gap-3 ${project.status === 'Completed' && app.status === 'approved' ? 'pl-8' : ''}">
-              ${project.status === 'Completed' && app.status === 'approved' ? `
+            <div class="flex items-center justify-between gap-3 ${(project.status === 'Ongoing' || project.status === 'Completed') && app.status === 'approved' ? 'pl-8' : ''}">
+              ${(project.status === 'Ongoing' || project.status === 'Completed') && app.status === 'approved' ? `
                 <span class="text-sm font-semibold ${app.attended ? 'text-[#2f6e4e]' : 'text-gray-600'}" style="white-space: nowrap;">
                   Mark Attended
                 </span>
@@ -2644,12 +2909,23 @@
       }
 
       // Toggle attendance for approved volunteers
-      function toggleAttendance(projectId, applicantId, attended) {
+      async function toggleAttendance(projectId, applicantId, attended) {
         const project = projects.find(p => p.id === projectId);
         if (!project) return;
 
         const applicant = project.applications.find(a => a.id === applicantId);
         if (!applicant) return;
+
+        // Save to database
+        const { error } = await supabaseClient
+          .from('Application_Tbl')
+          .update({ attended: attended })
+          .eq('applicationID', applicantId);
+
+        if (error) {
+          showToast('Failed to update attendance. Please try again.', 'error');
+          return;
+        }
 
         applicant.attended = attended;
 
@@ -2856,6 +3132,30 @@
         document.getElementById("appDate").textContent = new Date(
           app.appliedDate
         ).toLocaleDateString();
+
+        // Show volunteer survey feedback if available
+        const feedbackSection = document.getElementById("appFeedbackSection");
+        if (app.satisfactionScore && app.feedbackScores) {
+          feedbackSection.classList.remove("hidden");
+          document.getElementById("appFeedbackScore").textContent = `${app.satisfactionScore}/5`;
+          const labels = ['Overall', 'Skills', 'Teamwork', 'Impact', 'Recommend'];
+          const scores = app.feedbackScores;
+          document.getElementById("appFeedbackScores").innerHTML = [scores.q1, scores.q2, scores.q3, scores.q4, scores.q5].map((s, i) => `
+            <div class="text-center bg-white rounded p-1.5 border">
+              <div class="text-[10px] text-gray-500">${labels[i]}</div>
+              <div class="text-sm font-bold ${s >= 4 ? 'text-green-600' : s >= 3 ? 'text-yellow-600' : 'text-red-600'}">${s}/5</div>
+            </div>
+          `).join('');
+          const msgSection = document.getElementById("appFeedbackMessageSection");
+          if (app.feedbackMessage) {
+            msgSection.classList.remove("hidden");
+            document.getElementById("appFeedbackMessage").textContent = `"${app.feedbackMessage}"`;
+          } else {
+            msgSection.classList.add("hidden");
+          }
+        } else {
+          feedbackSection.classList.add("hidden");
+        }
 
         document.getElementById("applicantModal").classList.remove("hidden");
       }
@@ -3490,14 +3790,12 @@
             .single();
 
           if (captainData) {
-            await supabaseClient
-              .from('Notification_Tbl')
-              .insert({
-                userID: captainData.userID,
-                notificationType: 'project_awaiting_approval',
-                title: `New project awaiting approval: ${projectTitle}`,
-                isRead: false
-              });
+            await supabaseClient.rpc('create_notification', {
+              p_user_id: captainData.userID,
+              p_notification_type: 'project_awaiting_approval',
+              p_title: `New project awaiting approval: ${projectTitle}`,
+              p_reference_id: preProjectID
+            });
           }
         } catch (err) {
           // non-critical - notification failed silently
@@ -3735,6 +4033,7 @@
       window.openDownloadReportModal = openDownloadReportModal;
       window.closeDownloadReportModal = closeDownloadReportModal;
       window.downloadReport = downloadReport;
+      window.startProject = startProject;
       window.archiveProject = archiveProject;
       window.goToPage = goToPage;
       window.addQuickAchievement = addQuickAchievement;
@@ -3753,6 +4052,9 @@
       window.updateBudgetRemaining = updateBudgetRemaining;
       window.addActualBreakdownRow = addActualBreakdownRow;
       window.deleteActualBreakdownRow = deleteActualBreakdownRow;
+      window.updateActualBreakdownDescription = updateActualBreakdownDescription;
+      window.updateActualBreakdownCost = updateActualBreakdownCost;
+      window.uploadReceipt = uploadReceipt;
       window.removeReceipt = removeReceipt;
       // Handle URL parameters for deep linking to inquiries
       function handleURLParameters() {
@@ -3809,16 +4111,16 @@
         // Auto-fill from project proposal data
         document.getElementById('budgetPlanned').value = project.budget || '';
         document.getElementById('volunteersTarget').value = project.expectedVolunteers || '';
-        document.getElementById('beneficiariesTarget').value = project.targetBeneficiaries || '';
+        document.getElementById('beneficiariesTarget').value = project.beneficiaries || '';
 
-        // Load actual budget breakdown (auto-fills from planned, user can edit)
-        loadActualBreakdownFromPlanned(projectId);
-
-        // Reset actual values
-        document.getElementById('budgetActual').value = '';
+        // Reset actual values first (before loading breakdown which auto-calculates budgetActual)
         document.getElementById('volunteersActual').value = '';
         document.getElementById('timelineStatus').value = '';
         document.getElementById('beneficiariesActual').value = '';
+
+        // Load actual budget breakdown (auto-fills from planned, user can edit)
+        // This also auto-calculates budgetActual via updateActualBreakdownTotals()
+        loadActualBreakdownFromPlanned(projectId);
 
         // Load volunteer feedback data from project
         const approvedVolunteers = project.applications.filter(a => a.status === 'approved');
@@ -3827,9 +4129,12 @@
           ? (volunteersWithFeedback.reduce((sum, v) => sum + v.satisfactionScore, 0) / volunteersWithFeedback.length).toFixed(1)
           : '-';
 
-        document.getElementById('autoFeedbackScore').textContent = avgSatisfaction !== '-' ? `${avgSatisfaction}/4` : '-';
+        document.getElementById('autoFeedbackScore').textContent = avgSatisfaction !== '-' ? `${avgSatisfaction}/5` : '-';
         document.getElementById('surveyCount').textContent = volunteersWithFeedback.length;
         document.getElementById('totalVolunteers').textContent = approvedVolunteers.length;
+
+        // Render individual volunteer feedback cards
+        renderVolunteerFeedback(volunteersWithFeedback);
 
         calculateSuccessRate();
       }
@@ -3842,6 +4147,50 @@
         document.getElementById('achievementsList').innerHTML = '';
         document.getElementById('achievementInput').value = '';
         document.getElementById('achievementNumber').textContent = '1';
+      }
+
+      function renderVolunteerFeedback(volunteersWithFeedback) {
+        const container = document.getElementById('feedbackCards');
+        const wrapper = document.getElementById('volunteerFeedbackList');
+
+        if (!volunteersWithFeedback || volunteersWithFeedback.length === 0) {
+          wrapper.classList.add('hidden');
+          return;
+        }
+
+        wrapper.classList.remove('hidden');
+        const questionLabels = ['Overall Satisfaction', 'Skills Learned', 'Teamwork', 'Community Impact', 'Would Recommend'];
+
+        container.innerHTML = volunteersWithFeedback.map(v => {
+          const scores = v.feedbackScores;
+          const date = v.feedbackDate ? new Date(v.feedbackDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+
+          return `
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-semibold text-gray-800">${v.fullName || (v.firstName + ' ' + v.lastName)}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs text-gray-500">${date}</span>
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full ${v.satisfactionScore >= 4 ? 'bg-green-100 text-green-700' : v.satisfactionScore >= 3 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}">${v.satisfactionScore}/5</span>
+                </div>
+              </div>
+              ${scores ? `
+              <div class="grid grid-cols-5 gap-1 mb-2">
+                ${[scores.q1, scores.q2, scores.q3, scores.q4, scores.q5].map((s, i) => `
+                  <div class="text-center">
+                    <div class="text-[10px] text-gray-500 truncate" title="${questionLabels[i]}">${questionLabels[i]}</div>
+                    <div class="text-xs font-semibold ${s >= 4 ? 'text-green-600' : s >= 3 ? 'text-yellow-600' : 'text-red-600'}">${s}/5</div>
+                  </div>
+                `).join('')}
+              </div>` : ''}
+              ${v.feedbackMessage ? `
+              <div class="mt-2 pt-2 border-t border-gray-200">
+                <p class="text-xs text-gray-500 font-medium mb-1">Additional Feedback:</p>
+                <p class="text-sm text-gray-700 italic">"${v.feedbackMessage}"</p>
+              </div>` : ''}
+            </div>
+          `;
+        }).join('');
       }
 
       // ========== ACHIEVEMENTS FUNCTIONS ==========
@@ -4040,24 +4389,24 @@
           row.className = 'border-b border-gray-200 hover:bg-gray-50';
           row.innerHTML = `
             <td class="px-3 py-3">
-              <input type="text" value="${item.description}" onchange="updateActualBreakdownDescription(${index}, this.value)"
+              <input type="text" value="${item.description}" oninput="updateActualBreakdownDescription(${index}, this.value)"
                      class="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-[#3d8b64] text-sm" />
             </td>
             <td class="px-3 py-3 text-gray-600">₱${item.plannedCost.toLocaleString()}</td>
             <td class="px-3 py-3">
-              <input type="number" value="${item.actualCost}" onchange="updateActualBreakdownCost(${index}, this.value)"
+              <input type="number" value="${item.actualCost}" oninput="updateActualBreakdownCost(${index}, this.value)"
                      class="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-[#3d8b64] text-sm" min="0" />
             </td>
             <td class="px-3 py-3">
               <div class="flex items-center gap-2">
                 ${item.receiptPreview ? `
                   <img src="${item.receiptPreview}" class="w-10 h-10 object-cover rounded border cursor-pointer" loading="lazy" onclick="viewReceiptImage(${index})" title="Click to view" />
-                  <button onclick="removeReceipt(${index})" class="text-red-600 hover:text-red-800 text-xs">
-                    <i class="fas fa-times"></i>
+                  <button onclick="removeReceipt(${index})" class="text-red-600 hover:text-red-800 text-xs" title="Remove receipt">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                   </button>
                 ` : `
-                  <label class="cursor-pointer text-[#2f6e4e] hover:text-[#2f6e4e] text-xs flex items-center gap-1">
-                    <i class="fas fa-upload"></i>
+                  <label class="cursor-pointer text-[#2f6e4e] hover:text-[#1d5438] text-xs flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     <span>Upload</span>
                     <input type="file" accept="image/*" onchange="uploadReceipt(${index}, event)" class="hidden" />
                   </label>
@@ -4065,8 +4414,8 @@
               </div>
             </td>
             <td class="px-3 py-3 text-center">
-              <button onclick="deleteActualBreakdownRow(${index})" class="text-red-600 hover:text-red-800" title="Remove item">
-                <i class="fas fa-times text-sm"></i>
+              <button onclick="deleteActualBreakdownRow(${index})" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded transition" title="Remove item">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
               </button>
             </td>
           `;
@@ -4102,7 +4451,11 @@
         showConfirm(
           'Remove Budget Item',
           'Remove this budget item?',
-          () => {
+          async () => {
+            const storagePath = actualBreakdownItems[index].receipt;
+            if (storagePath) {
+              await supabaseClient.storage.from('receipts').remove([storagePath]);
+            }
             actualBreakdownItems.splice(index, 1);
             renderActualBreakdownTable();
           },
@@ -4111,7 +4464,7 @@
         );
       }
 
-      function uploadReceipt(index, event) {
+      async function uploadReceipt(index, event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -4120,16 +4473,46 @@
           return;
         }
 
+        // Show local preview immediately
         const reader = new FileReader();
         reader.onload = function(e) {
-          actualBreakdownItems[index].receipt = file.name;
           actualBreakdownItems[index].receiptPreview = e.target.result;
           renderActualBreakdownTable();
         };
         reader.readAsDataURL(file);
+
+        // Upload to Supabase Storage
+        try {
+          const ext = file.name.split('.').pop();
+          const filePath = `${currentProjectId}/${Date.now()}_${index}.${ext}`;
+
+          const { data, error } = await supabaseClient.storage
+            .from('receipts')
+            .upload(filePath, file, { upsert: true });
+
+          if (error) {
+            showToast('Failed to upload receipt: ' + error.message, 'error');
+            actualBreakdownItems[index].receipt = null;
+            actualBreakdownItems[index].receiptPreview = null;
+            renderActualBreakdownTable();
+            return;
+          }
+
+          actualBreakdownItems[index].receipt = data.path;
+          showToast('Receipt uploaded successfully');
+        } catch (err) {
+          showToast('Failed to upload receipt', 'error');
+          actualBreakdownItems[index].receipt = null;
+          actualBreakdownItems[index].receiptPreview = null;
+          renderActualBreakdownTable();
+        }
       }
 
-      function removeReceipt(index) {
+      async function removeReceipt(index) {
+        const storagePath = actualBreakdownItems[index].receipt;
+        if (storagePath) {
+          await supabaseClient.storage.from('receipts').remove([storagePath]);
+        }
         actualBreakdownItems[index].receipt = null;
         actualBreakdownItems[index].receiptPreview = null;
         renderActualBreakdownTable();
@@ -4182,10 +4565,11 @@
         const beneficiariesActual = parseFloat(document.getElementById('beneficiariesActual').value) || 0;
 
         // Calculate Budget Efficiency (25%) - closer to planned is better
+        // Both overspending AND underspending reflect inefficiency
         let budgetScore = 0;
-        if (budgetPlanned > 0) {
-          const budgetEfficiency = Math.min((budgetPlanned / budgetActual) * 100, 100);
-          budgetScore = budgetEfficiency;
+        if (budgetPlanned > 0 && budgetActual > 0) {
+          const deviation = Math.abs(budgetActual - budgetPlanned) / budgetPlanned;
+          budgetScore = Math.max(0, (1 - deviation) * 100);
         }
 
         // Calculate Volunteer Participation (20%)
@@ -4212,7 +4596,7 @@
         // Calculate Volunteer Feedback (15%) - Auto-calculated from volunteer surveys
         const feedbackText = document.getElementById('autoFeedbackScore').textContent;
         const feedbackRating = feedbackText !== '-' ? parseFloat(feedbackText.split('/')[0]) : 0;
-        const feedbackScore = (feedbackRating / 4) * 100;
+        const feedbackScore = (feedbackRating / 5) * 100;
 
         // Weighted calculation
         const successRate = Math.round(
@@ -4311,6 +4695,41 @@
         } catch (err) {
           showToast('An error occurred. Please try again.', 'error');
         }
+      }
+
+      // ========== START PROJECT FUNCTION ==========
+
+      function startProject(projectId) {
+        const project = projects.find(p => p.id === projectId);
+        if (!project) return;
+
+        showConfirm(
+          'Start Project',
+          `Are you sure you want to start "${escapeHTML(project.title)}"?\n\nThis will change the status from Upcoming to Ongoing.`,
+          async () => {
+            try {
+              const { error } = await supabaseClient
+                .from('Pre_Project_Tbl')
+                .update({
+                  startDateTime: new Date().toISOString(),
+                  updatedAt: new Date().toISOString()
+                })
+                .eq('preProjectID', projectId);
+
+              if (error) {
+                showToast('Failed to start project. Please try again.', 'error');
+                return;
+              }
+
+              showToast('Project is now Ongoing!');
+              await loadProjects();
+            } catch (err) {
+              showToast('An error occurred. Please try again.', 'error');
+            }
+          },
+          'Start Project',
+          'green'
+        );
       }
 
       // ========== ARCHIVE PROJECT FUNCTIONS ==========

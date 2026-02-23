@@ -8,7 +8,7 @@
     <link href="css/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
     <link href="css/toast.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
@@ -160,7 +160,7 @@
                 <div>
                   <p class="text-sm text-blue-800 font-semibold mb-1">Complete Satisfaction Survey to Get Certificate</p>
                   <p class="text-sm text-blue-700 mb-2">
-                    Only completed projects where you were marked as "attended" by SK officials will appear here. You must fill out a satisfaction survey before you can download your Certificate of Participation.
+                    Projects where you were marked as "attended" by SK officials will appear here. You can fill out the satisfaction survey while the project is ongoing or after completion. Your certificate will be available once the project is marked as completed.
                   </p>
                   <p class="text-xs text-blue-600 italic">
                     <i class="fas fa-check-circle mr-1"></i> Your feedback helps improve future volunteer opportunities!
@@ -611,6 +611,7 @@
               applicationID,
               preProjectID,
               applicationStatus,
+              attended,
               Pre_Project_Tbl (
                 preProjectID,
                 title,
@@ -619,7 +620,8 @@
               )
             `)
             .eq('userID', currentUser.id)
-            .eq('applicationStatus', 'APPROVED');
+            .eq('applicationStatus', 'APPROVED')
+            .eq('attended', true);
 
           if (appError) {
             console.error('Error loading applications:', appError);
@@ -629,19 +631,19 @@
             return;
           }
 
-          // Filter to only completed projects
-          const completedApps = (applications || []).filter(
-            app => app.Pre_Project_Tbl && app.Pre_Project_Tbl.status === 'COMPLETED'
+          // Filter to ongoing or completed projects (volunteers can give feedback once marked attended)
+          const eligibleApps = (applications || []).filter(
+            app => app.Pre_Project_Tbl && (app.Pre_Project_Tbl.status === 'COMPLETED' || app.Pre_Project_Tbl.status === 'ONGOING')
           );
 
-          if (completedApps.length === 0) {
+          if (eligibleApps.length === 0) {
             completedProjects = [];
             renderProjects();
             return;
           }
 
           // Get post-project data for completed projects
-          const preProjectIds = completedApps.map(a => a.Pre_Project_Tbl.preProjectID);
+          const preProjectIds = eligibleApps.map(a => a.Pre_Project_Tbl.preProjectID);
           const { data: postProjects, error: postError } = await supabaseClient
             .from('Post_Project_Tbl')
             .select('postProjectID, preProjectID')
@@ -652,7 +654,7 @@
           }
 
           // Get evaluation data for user's applications
-          const applicationIds = completedApps.map(a => a.applicationID);
+          const applicationIds = eligibleApps.map(a => a.applicationID);
           const { data: evaluations, error: evalError } = await supabaseClient
             .from('Evaluation_Tbl')
             .select('evaluationID, postProjectID, applicationID, q1, q2, q3, q4, q5, hasCertificate')
@@ -662,9 +664,10 @@
             console.error('Error loading evaluations:', evalError);
           }
 
-          // Build completed projects array
-          completedProjects = completedApps.map(app => {
+          // Build projects array
+          completedProjects = eligibleApps.map(app => {
             const project = app.Pre_Project_Tbl;
+            const isCompleted = project.status === 'COMPLETED';
             const postProject = (postProjects || []).find(pp => pp.preProjectID === project.preProjectID);
             const evaluation = (evaluations || []).find(ev => ev.applicationID === app.applicationID);
 
@@ -679,9 +682,10 @@
               postProjectID: postProject ? postProject.postProjectID : null,
               title: project.title,
               completedDate: project.endDateTime,
+              projectStatus: project.status,
               surveyCompleted: !!evaluation,
               satisfactionScore: satisfactionScore,
-              hasCertificate: evaluation ? evaluation.hasCertificate : false,
+              hasCertificate: isCompleted && evaluation ? evaluation.hasCertificate : false,
               attended: true
             };
           });
@@ -733,47 +737,79 @@
             ? new Date(project.completedDate).toLocaleDateString()
             : 'N/A';
 
+          const isCompleted = project.projectStatus === 'COMPLETED';
+          const isOngoing = project.projectStatus === 'ONGOING';
+
+          // Status badge
+          let statusBadge = '';
+          if (project.surveyCompleted) {
+            statusBadge = '<span class="px-3 py-1 bg-[#2f6e4e]/20 text-[#2f6e4e] text-xs font-semibold rounded-full">Survey Complete</span>';
+          } else if (isOngoing) {
+            statusBadge = '<span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">Ongoing</span>';
+          } else {
+            statusBadge = '<span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">Survey Pending</span>';
+          }
+
+          // Action button
+          let actionButton = '';
+          if (project.surveyCompleted && isCompleted) {
+            // Survey done + project completed = can view certificate
+            actionButton = `
+              <div class="mb-4 p-3 bg-[#2f6e4e]/10 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-semibold text-[#1a3d2a]">Your Satisfaction Score</span>
+                  <span class="text-2xl font-bold text-[#2f6e4e]">${project.satisfactionScore}/5</span>
+                </div>
+                <div class="h-2 bg-[#2f6e4e]/30 rounded-full overflow-hidden">
+                  <div class="h-full bg-[#2f6e4e] rounded-full" style="width: ${(project.satisfactionScore/5)*100}%"></div>
+                </div>
+              </div>
+              <button onclick="viewCertificate(${project.id})"
+                      class="w-full px-4 py-3 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#3d8b64] font-semibold flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                </svg>
+                View Certificate
+              </button>`;
+          } else if (project.surveyCompleted && isOngoing) {
+            // Survey done but project still ongoing = waiting for completion
+            actionButton = `
+              <div class="mb-4 p-3 bg-[#2f6e4e]/10 rounded-lg">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-semibold text-[#1a3d2a]">Your Satisfaction Score</span>
+                  <span class="text-2xl font-bold text-[#2f6e4e]">${project.satisfactionScore}/5</span>
+                </div>
+                <div class="h-2 bg-[#2f6e4e]/30 rounded-full overflow-hidden">
+                  <div class="h-full bg-[#2f6e4e] rounded-full" style="width: ${(project.satisfactionScore/5)*100}%"></div>
+                </div>
+              </div>
+              <div class="w-full px-4 py-3 bg-gray-100 text-gray-600 rounded-lg font-semibold flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Survey submitted — certificate available once project is completed
+              </div>`;
+          } else {
+            // Survey not yet done = show survey button
+            actionButton = `
+              <button onclick="openSurveyModal(${project.id})"
+                      class="w-full px-4 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-semibold flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+                Complete Satisfaction Survey
+              </button>`;
+          }
+
           card.innerHTML = `
             <div class="flex items-start justify-between mb-4">
               <div class="flex-1">
                 <h3 class="text-lg font-bold text-gray-800 mb-2">${safeTitle}</h3>
-                <p class="text-sm text-gray-600">Completed: ${completedDate}</p>
+                <p class="text-sm text-gray-600">${isCompleted ? 'Completed' : 'Ongoing'}: ${completedDate}</p>
               </div>
-              ${project.surveyCompleted
-                ? '<span class="px-3 py-1 bg-[#2f6e4e]/20 text-[#2f6e4e] text-xs font-semibold rounded-full">Survey Complete</span>'
-                : '<span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">Survey Pending</span>'
-              }
+              ${statusBadge}
             </div>
-
-            ${project.surveyCompleted
-              ? `
-                <div class="mb-4 p-3 bg-[#2f6e4e]/10 rounded-lg">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-semibold text-[#1a3d2a]">Your Satisfaction Score</span>
-                    <span class="text-2xl font-bold text-[#2f6e4e]">${project.satisfactionScore}/5</span>
-                  </div>
-                  <div class="h-2 bg-[#2f6e4e]/30 rounded-full overflow-hidden">
-                    <div class="h-full bg-[#2f6e4e] rounded-full" style="width: ${(project.satisfactionScore/5)*100}%"></div>
-                  </div>
-                </div>
-                <button onclick="viewCertificate(${project.id})"
-                        class="w-full px-4 py-3 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#3d8b64] font-semibold flex items-center justify-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-                  </svg>
-                  View Certificate
-                </button>
-              `
-              : `
-                <button onclick="openSurveyModal(${project.id})"
-                        class="w-full px-4 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-semibold flex items-center justify-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                  </svg>
-                  Complete Survey to Get Certificate
-                </button>
-              `
-            }
+            ${actionButton}
           `;
 
           grid.appendChild(card);
@@ -861,20 +897,17 @@
         const project = completedProjects.find(p => p.id === currentProjectId);
         if (!project) return;
 
-        // If postProjectID is missing, try to fetch it first
+        // Try to fetch postProjectID if missing (may not exist yet for ongoing projects)
         if (!project.postProjectID) {
-          const { data: postData, error: postError } = await supabaseClient
+          const { data: postData } = await supabaseClient
             .from('Post_Project_Tbl')
             .select('postProjectID')
             .eq('preProjectID', project.id)
-            .single();
+            .maybeSingle();
 
-          if (postError || !postData) {
-            console.error('No post-project record found:', postError);
-            showToast('This project has not been finalized yet. Please contact an SK Official.', 'warning');
-            return;
+          if (postData) {
+            project.postProjectID = postData.postProjectID;
           }
-          project.postProjectID = postData.postProjectID;
         }
 
         try {
@@ -887,12 +920,12 @@
             q4: q4,
             q5: q5,
             message: comments || null,
-            hasCertificate: true,
+            hasCertificate: project.projectStatus === 'COMPLETED',
             timeStamp: new Date().toISOString(),
             createdAt: new Date().toISOString()
           };
 
-          // Only include postProjectID if it exists (column may be nullable)
+          // Only include postProjectID if it exists (project may still be ongoing)
           if (project.postProjectID) {
             evalRecord.postProjectID = project.postProjectID;
           }

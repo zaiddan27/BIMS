@@ -17,6 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.97.0" integrity="sha384-1+ItoWbWcmVSm+Y+dJaUt4SEWNA21/jxef+Z0TSHHVy/dEUxEUEnZ1bHn6GT5hj+" crossorigin="anonymous"></script>
     <script src="js/config/env.js"></script>
     <script src="js/config/supabase.js"></script>
+    <script src="js/auth/auth.js"></script>
     <script src="js/auth/session.js"></script>
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
@@ -190,7 +191,7 @@
                 class="text-4xl font-extrabold text-gray-900 mb-1"
                 id="totalReportsCount"
               >
-                156
+                0
               </p>
               <p class="text-xs text-gray-500 flex items-center gap-1">
                 <svg
@@ -236,7 +237,7 @@
               >
                 Archived Projects
               </p>
-              <p class="text-4xl font-extrabold text-gray-900 mb-1">38</p>
+              <p class="text-4xl font-extrabold text-gray-900 mb-1" id="archivedProjectsCount">0</p>
               <p class="text-xs text-gray-500">Completed & stored</p>
             </div>
 
@@ -268,7 +269,7 @@
               >
                 Total Budget
               </p>
-              <p class="text-4xl font-extrabold text-gray-900 mb-1">₱1.2M</p>
+              <p class="text-4xl font-extrabold text-gray-900 mb-1" id="totalBudgetCount">₱0</p>
               <p class="text-xs text-gray-500">Allocated funds</p>
             </div>
 
@@ -300,7 +301,7 @@
               >
                 Volunteers
               </p>
-              <p class="text-4xl font-extrabold text-gray-900 mb-1">287</p>
+              <p class="text-4xl font-extrabold text-gray-900 mb-1" id="totalVolunteersCount">0</p>
               <p class="text-xs text-gray-500">Active participants</p>
             </div>
 
@@ -332,7 +333,7 @@
               >
                 Success Rate
               </p>
-              <p class="text-4xl font-extrabold text-gray-900 mb-1">89%</p>
+              <p class="text-4xl font-extrabold text-gray-900 mb-1" id="avgSuccessRate">0%</p>
               <p class="text-xs text-gray-500 flex items-center gap-1">
                 <svg
                   class="w-3 h-3 text-emerald-500"
@@ -433,7 +434,7 @@
               </div>
 
               <!-- Search and Filter Bar - PROJECTS -->
-              <div class="bg-gray-50 rounded-xl p-6 mb-6">
+              <div id="projectsFilters" class="bg-gray-50 rounded-xl p-6 mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-2"
@@ -470,10 +471,10 @@
                       id="yearFilter"
                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
                     >
-                      <option value="all">All Years</option>
-                      <option value="2025" selected>2025</option>
+                      <option value="all" selected>All Years</option>
+                      <option value="2026">2026</option>
+                      <option value="2025">2025</option>
                       <option value="2024">2024</option>
-                      <option value="2023">2023</option>
                     </select>
                   </div>
 
@@ -521,6 +522,7 @@
 
               <!-- Bulk Report Download Section -->
               <div
+                id="bulkReportsSection"
                 class="bg-gradient-to-r from-[#2f6e4e]/10 to-white rounded-xl p-6 mb-6 border border-[#2f6e4e]/20"
               >
                 <div class="flex items-center justify-between">
@@ -633,7 +635,7 @@
             <!-- FILES TAB CONTENT -->
             <div id="filesTabContent" class="hidden p-6">
               <!-- Search and Filter Bar - FILES -->
-              <div class="bg-gray-50 rounded-xl p-6 mb-6">
+              <div id="filesFilters" class="bg-gray-50 rounded-xl p-6 mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div class="md:col-span-1">
                     <label class="block text-sm font-medium text-gray-700 mb-2"
@@ -687,10 +689,10 @@
                       id="fileYearFilter"
                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent"
                     >
-                      <option value="all">All Years</option>
-                      <option value="2025" selected>2025</option>
+                      <option value="all" selected>All Years</option>
+                      <option value="2026">2026</option>
+                      <option value="2025">2025</option>
                       <option value="2024">2024</option>
-                      <option value="2023">2023</option>
                     </select>
                   </div>
                 </div>
@@ -755,10 +757,10 @@
       role="dialog" aria-modal="true" aria-labelledby="modalProjectName"
     >
       <div
-        class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col"
       >
         <div
-          class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between"
+          class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0"
         >
           <h2
             class="text-xl font-bold text-gray-800"
@@ -772,7 +774,7 @@
           </button>
         </div>
 
-        <div class="p-6">
+        <div class="p-6 overflow-y-auto flex-1">
           <!-- Project Metadata -->
           <div class="mb-6 pb-4 border-b border-gray-200">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -1136,60 +1138,72 @@
             </div>
           </div>
 
-          <!-- Actions -->
-          <div
-            class="flex justify-between items-center pt-4 border-t border-gray-200"
-          >
+        </div>
+
+        <!-- Actions (sticky footer) -->
+        <div
+          class="flex justify-between items-center px-6 py-4 border-t border-gray-200 bg-white rounded-b-xl flex-shrink-0"
+        >
+          <div class="flex space-x-3">
+            <button
+              onclick="unarchiveProject()"
+              class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition flex items-center cursor-pointer"
+            >
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+              Unarchive
+            </button>
             <button
               onclick="confirmPermanentDelete()"
-              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center cursor-pointer"
             >
-              <i class="fas fa-trash-alt mr-2"></i> Permanent Delete
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              Permanent Delete
             </button>
-            <div class="flex space-x-3">
-              <!-- Download Report Dropdown -->
-              <div class="relative">
-                <button
-                  onclick="toggleDownloadMenu()"
-                  class="px-4 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] transition flex items-center"
-                >
-                  <i class="fas fa-download mr-2"></i> Download Report
-                  <i class="fas fa-chevron-down ml-2 text-xs"></i>
-                </button>
-                <div
-                  id="downloadMenu"
-                  class="hidden absolute bottom-full mb-2 right-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[180px] z-50"
-                >
-                  <button
-                    onclick="exportProject('pdf')"
-                    class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2"
-                  >
-                    <i class="fas fa-file-pdf text-red-600"></i>
-                    <span class="text-gray-700">PDF Document</span>
-                  </button>
-                  <button
-                    onclick="exportProject('csv')"
-                    class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2"
-                  >
-                    <i class="fas fa-file-csv text-green-600"></i>
-                    <span class="text-gray-700">CSV Spreadsheet</span>
-                  </button>
-                  <button
-                    onclick="exportProject('txt')"
-                    class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2"
-                  >
-                    <i class="fas fa-file-alt text-blue-600"></i>
-                    <span class="text-gray-700">Text Document</span>
-                  </button>
-                </div>
-              </div>
+          </div>
+          <div class="flex space-x-3">
+            <!-- Download Report Dropdown -->
+            <div class="relative">
               <button
-                onclick="closeModal()"
-                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                onclick="toggleDownloadMenu()"
+                class="px-4 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e] transition flex items-center"
               >
-                Close
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Download Report
+                <svg class="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
               </button>
+              <div
+                id="downloadMenu"
+                class="hidden absolute bottom-full mb-2 right-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[180px] z-50"
+              >
+                <button
+                  onclick="exportProject('pdf')"
+                  class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2"
+                >
+                  <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
+                  <span class="text-gray-700">PDF Document</span>
+                </button>
+                <button
+                  onclick="exportProject('csv')"
+                  class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2"
+                >
+                  <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6z" clip-rule="evenodd"></path></svg>
+                  <span class="text-gray-700">CSV Spreadsheet</span>
+                </button>
+                <button
+                  onclick="exportProject('txt')"
+                  class="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2"
+                >
+                  <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
+                  <span class="text-gray-700">Text Document</span>
+                </button>
+              </div>
             </div>
+            <button
+              onclick="closeModal()"
+              class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>
@@ -1601,136 +1615,291 @@
       </div>
     </div>
 
-    <script>
-      // Sample archived projects data
-      const archivedProjects = [
-        {
-          id: 1,
-          name: "Community Clean-Up Drive 2025: Malanday River Rehabilitation",
-          quarter: "Q4",
-          year: 2025,
-          category: "Environment",
-          period: "Dec 2, 2025 – Dec 2, 2025",
-          startDate: "2025-12-02",
-          budget: 30000,
-          spent: 29400,
-          volunteers: 38,
-          totalApplicants: 40,
-          approvedVolunteers: 38,
-          pendingReview: 2,
-          successRate: 98,
-          budgetScore: 98,
-          participationScore: 95,
-          timelineScore: 100,
-          impactScore: 96,
-          feedbackScore: 97,
-          feedbackSubmitted: 36,
-          avgSatisfaction: 4.9,
-          targetBeneficiaries: 200,
-          actualBeneficiaries: 240,
-          communityEngagement: "High",
-          location: "Malanday River and surrounding areas",
-          heads: ["Andrea Pelias", "Kyleen Nicdao"],
-          description:
-            "A comprehensive environmental initiative focused on rehabilitating the Malanday River system through organized clean-up operations, waste segregation education, tree-planting activities, and active community participation. The project aimed to promote environmental responsibility among residents while addressing long-standing waste accumulation issues along the riverbanks.",
-          achievements: [
-            "Collected 2 tons of waste",
-            "Engaged 38 active volunteers",
-            "Cleaned entire Malanday River stretch",
-            "240 community members benefited",
-            "Volunteers reported excellent coordination",
-          ],
-          budgetBreakdown: [
-            {
-              id: 1,
-              description: "Cleaning supplies and equipment",
-              cost: 7000,
-            },
-            { id: 2, description: "Trash bags and waste bins", cost: 3000 },
-            { id: 3, description: "Refreshments for volunteers", cost: 4500 },
-            {
-              id: 4,
-              description: "Tree saplings and planting materials",
-              cost: 6500,
-            },
-            {
-              id: 5,
-              description: "Signage and educational materials",
-              cost: 3500,
-            },
-            { id: 6, description: "First aid supplies", cost: 1800 },
-            { id: 7, description: "Transportation and logistics", cost: 2600 },
-            { id: 8, description: "Documentation (photos/videos)", cost: 1500 },
-          ],
-          volunteerList: [
-            { name: "Juan Dela Cruz", age: 19, contact: "0912-345-6789" },
-            { name: "Maria Santos", age: 21, contact: "0923-456-7890" },
-            { name: "Pedro Garcia", age: 18, contact: "0934-567-8901" },
-            { name: "Ana Reyes", age: 20, contact: "0945-678-9012" },
-            { name: "Miguel Torres", age: 22, contact: "0956-789-0123" },
-            { name: "Sofia Ramos", age: 19, contact: "0967-890-1234" },
-            { name: "Carlos Mendoza", age: 21, contact: "0978-901-2345" },
-            { name: "Isabel Cruz", age: 18, contact: "0989-012-3456" },
-            { name: "Diego Lopez", age: 20, contact: "0910-123-4567" },
-            { name: "Camila Flores", age: 19, contact: "0921-234-5678" },
-            { name: "Lucas Rivera", age: 22, contact: "0932-345-6789" },
-            { name: "Valentina Morales", age: 21, contact: "0943-456-7890" },
-            { name: "Mateo Castillo", age: 19, contact: "0954-567-8901" },
-            { name: "Emma Navarro", age: 20, contact: "0965-678-9012" },
-            { name: "Gabriel Herrera", age: 18, contact: "0976-789-0123" },
-            { name: "Olivia Jimenez", age: 21, contact: "0987-890-1234" },
-            { name: "Sebastian Ruiz", age: 19, contact: "0998-901-2345" },
-            { name: "Mia Gutierrez", age: 22, contact: "0909-012-3456" },
-            { name: "Daniel Ortiz", age: 20, contact: "0920-123-4567" },
-            { name: "Luna Diaz", age: 19, contact: "0931-234-5678" },
-            { name: "Adrian Vargas", age: 21, contact: "0942-345-6789" },
-            { name: "Zoe Fernandez", age: 18, contact: "0953-456-7890" },
-            { name: "Ethan Ramirez", age: 20, contact: "0964-567-8901" },
-            { name: "Chloe Martinez", age: 19, contact: "0975-678-9012" },
-            { name: "Ryan Alvarez", age: 22, contact: "0986-789-0123" },
-            { name: "Lily Sanchez", age: 21, contact: "0997-890-1234" },
-            { name: "Nathan Gomez", age: 19, contact: "0908-901-2345" },
-            { name: "Grace Perez", age: 20, contact: "0919-012-3456" },
-            { name: "Aaron Tan", age: 18, contact: "0930-123-4567" },
-            { name: "Hannah Lim", age: 21, contact: "0941-234-5678" },
-            { name: "Joshua Ong", age: 19, contact: "0952-345-6789" },
-            { name: "Sarah Lee", age: 22, contact: "0963-456-7890" },
-            { name: "David Chua", age: 20, contact: "0974-567-8901" },
-            { name: "Rachel Sy", age: 19, contact: "0985-678-9012" },
-            { name: "Matthew Go", age: 21, contact: "0996-789-0123" },
-            { name: "Jessica Uy", age: 18, contact: "0907-890-1234" },
-            { name: "Andrew Yap", age: 20, contact: "0918-901-2345" },
-            { name: "Nicole Dy", age: 19, contact: "0929-012-3456" },
-          ],
-        },
-        {
-          id: 2,
-          name: "Youth Leadership Summit",
-          quarter: "Q4",
-          year: 2025,
-          period: "Oct 20-22, 2025",
-          budget: 45000,
-          spent: 42000,
-          volunteers: 60,
-          successRate: 92,
-          budgetScore: 93,
-          participationScore: 95,
-          timelineScore: 90,
-          impactScore: 88,
-          feedbackScore: 94,
-          description:
-            "Three-day leadership training for SK officers and youth leaders.",
-          achievements: [
-            "Trained 60 youth leaders",
-            "5 expert speakers",
-            "Leadership certification",
-            "92% completion rate",
-          ],
-        },
-      ];
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-black/50">
+      <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+        <div class="p-6">
+          <h3 id="confirmModalTitle" class="text-lg font-bold text-gray-800 mb-2"></h3>
+          <p id="confirmMessage" class="text-gray-600 text-sm whitespace-pre-line"></p>
+        </div>
+        <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+          <button onclick="closeConfirmModal()" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">Cancel</button>
+          <button id="confirmActionBtn" class="px-4 py-2 text-white rounded-lg transition font-medium"></button>
+        </div>
+      </div>
+    </div>
 
-      let currentQuarter = "Q4";
-      let filteredProjects = [...archivedProjects];
+    <script>
+      // Confirm modal logic
+      let confirmCallback = null;
+
+      function showConfirm(title, message, onConfirm, confirmButtonText = 'Confirm', confirmButtonColor = 'yellow') {
+        const modal = document.getElementById('confirmModal');
+        document.getElementById('confirmModalTitle').textContent = title;
+        document.getElementById('confirmMessage').textContent = message;
+        const btn = document.getElementById('confirmActionBtn');
+        btn.textContent = confirmButtonText;
+        const colorMap = {
+          red: 'bg-red-600 hover:bg-red-700',
+          yellow: 'bg-yellow-500 hover:bg-yellow-600',
+          green: 'bg-[#2f6e4e] hover:bg-[#3d8b64]'
+        };
+        btn.className = `px-4 py-2 text-white rounded-lg transition font-medium ${colorMap[confirmButtonColor] || colorMap.yellow}`;
+        confirmCallback = onConfirm;
+        btn.onclick = async () => {
+          const cb = confirmCallback;
+          closeConfirmModal();
+          if (cb) await cb();
+        };
+        modal.classList.remove('hidden');
+      }
+
+      function closeConfirmModal() {
+        document.getElementById('confirmModal').classList.add('hidden');
+        confirmCallback = null;
+      }
+
+      // Archived projects loaded from Supabase
+      let archivedProjects = [];
+
+      let currentQuarter = "all";
+      let filteredProjects = [];
+
+      // Load archived projects from Supabase (status = 'CANCELLED')
+      async function loadArchivedProjects() {
+        try {
+          const { data: projectsData, error } = await supabaseClient
+            .from('Pre_Project_Tbl')
+            .select(`
+              preProjectID, title, category, status, approvalStatus,
+              startDateTime, endDateTime, location, description, budget,
+              volunteers, beneficiaries, createdAt, updatedAt,
+              SK_Tbl (
+                User_Tbl (firstName, lastName)
+              ),
+              Application_Tbl (
+                applicationID, userID, applicationStatus, attended,
+                User_Tbl (firstName, lastName, middleName, birthday, contactNumber, address, email),
+                Evaluation_Tbl (evaluationID, q1, q2, q3, q4, q5, message)
+              ),
+              BudgetBreakdown_Tbl (
+                breakdownID, description, cost,
+                Expenses_Tbl (expenseID, actualCost, receiptURL)
+              ),
+              Post_Project_Tbl (
+                postProjectID, actualVolunteer, timelineAdherence,
+                beneficiariesReached, projectAchievement
+              )
+            `)
+            .eq('status', 'CANCELLED')
+            .order('updatedAt', { ascending: false });
+
+          if (error) {
+            console.error('Error loading archived projects:', error);
+            showToast('Failed to load archived projects.', 'error');
+            archivedProjects = [];
+            return;
+          }
+
+          archivedProjects = (projectsData || []).map(project => {
+            const startDate = project.startDateTime ? new Date(project.startDateTime) : null;
+            const endDate = project.endDateTime ? new Date(project.endDateTime) : null;
+
+            // Compute quarter and year from start date
+            const year = startDate ? startDate.getFullYear() : new Date(project.createdAt).getFullYear();
+            const month = startDate ? startDate.getMonth() : new Date(project.createdAt).getMonth();
+            const quarter = `Q${Math.floor(month / 3) + 1}`;
+
+            // Format period
+            const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
+            const period = startDate && endDate
+              ? `${startDate.toLocaleDateString('en-US', dateOpts)} – ${endDate.toLocaleDateString('en-US', dateOpts)}`
+              : startDate
+                ? startDate.toLocaleDateString('en-US', dateOpts)
+                : 'N/A';
+
+            // Project head name
+            const headName = project.SK_Tbl?.User_Tbl
+              ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
+              : 'Unknown';
+
+            // Applications data
+            const applications = project.Application_Tbl || [];
+            const totalApplicants = applications.length;
+            const approvedApps = applications.filter(a => a.applicationStatus === 'APPROVED');
+            const approvedVolunteers = approvedApps.length;
+            const pendingReview = applications.filter(a => a.applicationStatus === 'PENDING').length;
+
+            // Volunteer list for modal
+            const volunteerList = approvedApps.map(app => {
+              const u = app.User_Tbl || {};
+              const bday = u.birthday ? new Date(u.birthday) : null;
+              const age = bday ? Math.floor((new Date() - bday) / (365.25 * 24 * 60 * 60 * 1000)) : null;
+              return {
+                name: `${u.firstName || ''} ${u.lastName || ''}`.trim(),
+                age: age,
+                contact: u.contactNumber || 'N/A'
+              };
+            });
+
+            // Budget breakdown & actual spending
+            const budgetBreakdown = (project.BudgetBreakdown_Tbl || []).map(item => ({
+              id: item.breakdownID,
+              description: item.description,
+              cost: item.cost || 0
+            }));
+            const totalPlanned = project.budget || 0;
+            const totalSpent = (project.BudgetBreakdown_Tbl || []).reduce((sum, item) => {
+              const expenses = item.Expenses_Tbl || [];
+              return sum + expenses.reduce((s, e) => s + (parseFloat(e.actualCost) || 0), 0);
+            }, 0);
+
+            // Post-project data
+            const postProject = Array.isArray(project.Post_Project_Tbl)
+              ? project.Post_Project_Tbl[0]
+              : project.Post_Project_Tbl;
+
+            // --- Compute Evaluation Scores ---
+
+            // 1. Budget Efficiency (25%)
+            const budgetScore = totalPlanned > 0
+              ? Math.round(Math.max(0, (1 - Math.abs(totalSpent - totalPlanned) / totalPlanned) * 100))
+              : 0;
+
+            // 2. Volunteer Participation (20%)
+            const participationScore = totalApplicants > 0
+              ? Math.round((approvedVolunteers / totalApplicants) * 100)
+              : 0;
+
+            // 3. Timeline Adherence (20%)
+            const timelineMap = {
+              'Completed_On_Time': 100,
+              'Slightly_Delayed': 80,
+              'Delayed': 60,
+              'Significantly_Delayed': 40
+            };
+            const timelineScore = postProject
+              ? (timelineMap[postProject.timelineAdherence] || 0)
+              : 0;
+
+            // 4. Community Impact (20%)
+            const targetBeneficiaries = project.beneficiaries || 0;
+            const actualBeneficiaries = postProject ? (postProject.beneficiariesReached || 0) : 0;
+            const impactScore = targetBeneficiaries > 0
+              ? Math.round(Math.min((actualBeneficiaries / targetBeneficiaries) * 100, 100))
+              : 0;
+
+            // 5. Volunteer Feedback (15%) - average of all evaluation scores
+            const allEvals = applications.flatMap(app => app.Evaluation_Tbl || []);
+            let feedbackScore = 0;
+            let avgSatisfaction = 0;
+            if (allEvals.length > 0) {
+              const evalAverages = allEvals.map(ev => (ev.q1 + ev.q2 + ev.q3 + ev.q4 + ev.q5) / 5);
+              avgSatisfaction = parseFloat((evalAverages.reduce((a, b) => a + b, 0) / evalAverages.length).toFixed(1));
+              feedbackScore = Math.round((avgSatisfaction / 5) * 100);
+            }
+
+            // Weighted success rate
+            const successRate = Math.round(
+              (budgetScore * 0.25) +
+              (participationScore * 0.20) +
+              (timelineScore * 0.20) +
+              (impactScore * 0.20) +
+              (feedbackScore * 0.15)
+            );
+
+            // Engagement level label
+            let communityEngagement = 'N/A';
+            if (impactScore >= 90) communityEngagement = 'High';
+            else if (impactScore >= 70) communityEngagement = 'Moderate';
+            else if (impactScore >= 50) communityEngagement = 'Low';
+            else if (impactScore > 0) communityEngagement = 'Minimal';
+
+            // Achievements from post-project
+            const achievements = postProject && postProject.projectAchievement
+              ? postProject.projectAchievement.split('\n').filter(a => a.trim())
+              : [];
+
+            return {
+              id: project.preProjectID,
+              name: project.title,
+              category: project.category || 'General',
+              quarter: quarter,
+              year: year,
+              period: period,
+              startDate: startDate ? startDate.toISOString().split('T')[0] : '',
+              budget: totalPlanned,
+              spent: totalSpent,
+              volunteers: approvedVolunteers,
+              totalApplicants: totalApplicants,
+              approvedVolunteers: approvedVolunteers,
+              pendingReview: pendingReview,
+              successRate: successRate,
+              budgetScore: budgetScore,
+              participationScore: participationScore,
+              timelineScore: timelineScore,
+              impactScore: impactScore,
+              feedbackScore: feedbackScore,
+              feedbackSubmitted: allEvals.length,
+              avgSatisfaction: avgSatisfaction,
+              targetBeneficiaries: targetBeneficiaries,
+              actualBeneficiaries: actualBeneficiaries,
+              communityEngagement: communityEngagement,
+              location: project.location || 'Barangay Malanday',
+              heads: [headName],
+              description: project.description || '',
+              achievements: achievements,
+              budgetBreakdown: budgetBreakdown,
+              volunteerList: volunteerList,
+              approvalStatus: project.approvalStatus
+            };
+          });
+
+          filteredProjects = [...archivedProjects];
+        } catch (err) {
+          console.error('Exception loading archived projects:', err);
+          showToast('An error occurred while loading archived projects.', 'error');
+          archivedProjects = [];
+        }
+      }
+
+      // Update overview stat cards from actual data
+      function updateOverviewStats() {
+        const count = archivedProjects.length;
+
+        // Total Reports = number of archived projects (each has a post-project report)
+        const reportsEl = document.getElementById('totalReportsCount');
+        if (reportsEl) reportsEl.textContent = count;
+
+        // Archived Projects count
+        const archivedEl = document.getElementById('archivedProjectsCount');
+        if (archivedEl) archivedEl.textContent = count;
+
+        // Total Budget = sum of all project budgets
+        const totalBudget = archivedProjects.reduce((sum, p) => sum + (p.budget || 0), 0);
+        const budgetEl = document.getElementById('totalBudgetCount');
+        if (budgetEl) {
+          if (totalBudget >= 1000000) {
+            budgetEl.textContent = '₱' + (totalBudget / 1000000).toFixed(1) + 'M';
+          } else if (totalBudget >= 1000) {
+            budgetEl.textContent = '₱' + (totalBudget / 1000).toFixed(1) + 'K';
+          } else {
+            budgetEl.textContent = '₱' + totalBudget.toLocaleString();
+          }
+        }
+
+        // Volunteers = sum of approved volunteers across all archived projects
+        const totalVolunteers = archivedProjects.reduce((sum, p) => sum + (p.approvedVolunteers || 0), 0);
+        const volunteersEl = document.getElementById('totalVolunteersCount');
+        if (volunteersEl) volunteersEl.textContent = totalVolunteers;
+
+        // Average Success Rate
+        const avgSuccess = count > 0
+          ? Math.round(archivedProjects.reduce((sum, p) => sum + (p.successRate || 0), 0) / count)
+          : 0;
+        const successEl = document.getElementById('avgSuccessRate');
+        if (successEl) successEl.textContent = avgSuccess + '%';
+      }
 
       // Initialize page with auth check
       document.addEventListener("DOMContentLoaded", async function () {
@@ -1739,13 +1908,20 @@
         } catch (e) {
           return; // requireAuth redirects to login
         }
+        await loadArchivedProjects();
+        updateOverviewStats();
         renderProjects();
+        updateQuarterSummary();
         attachFilterListeners();
       });
 
       function renderProjects() {
         const projectsList = document.getElementById("projectsList");
         const emptyState = document.getElementById("emptyState");
+
+        // Update tab count badge
+        const projectsCountEl = document.getElementById("projectsCount");
+        if (projectsCountEl) projectsCountEl.textContent = archivedProjects.length;
 
         if (filteredProjects.length === 0) {
           projectsList.innerHTML = "";
@@ -1789,10 +1965,10 @@
                                     </span>
                                 </div>
                                 <div class="flex items-center space-x-4 text-sm text-gray-500">
-                                    <span><i class="far fa-calendar mr-1"></i> ${
+                                    <span><svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>${
                                       project.period
                                     }</span>
-                                    <span><i class="fas fa-tag mr-1"></i> ${
+                                    <span><svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>${
                                       project.quarter
                                     } ${project.year}</span>
                                 </div>
@@ -1801,7 +1977,7 @@
                         <button onclick="viewProject(${
                           project.id
                         })" class="px-4 py-2 bg-[#2f6e4e] text-white text-sm rounded-lg hover:bg-[#2f6e4e] transition">
-                            <i class="fas fa-eye mr-1"></i> View Details
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> View Details
                         </button>
                     </div>
 
@@ -1930,9 +2106,9 @@
       }
 
       function updateQuarterSummary() {
-        const quarterProjects = filteredProjects.filter(
-          (p) => p.quarter === currentQuarter,
-        );
+        const quarterProjects = currentQuarter === "all"
+          ? filteredProjects
+          : filteredProjects.filter((p) => p.quarter === currentQuarter);
         const totalBudget = quarterProjects.reduce(
           (sum, p) => sum + p.spent,
           0,
@@ -1975,7 +2151,7 @@
 
       function resetFilters() {
         document.getElementById("searchInput").value = "";
-        document.getElementById("yearFilter").value = "2025";
+        document.getElementById("yearFilter").value = "all";
         document.getElementById("quarterFilter").value = "all";
         applyFilters();
       }
@@ -1983,7 +2159,7 @@
       function resetFileFilters() {
         document.getElementById("fileSearchInput").value = "";
         document.getElementById("fileTypeFilter").value = "all";
-        document.getElementById("fileYearFilter").value = "2025";
+        document.getElementById("fileYearFilter").value = "all";
         renderArchivedFiles();
       }
 
@@ -2277,7 +2453,7 @@
         document.getElementById("deleteErrorMsg").classList.add("hidden");
       }
 
-      function executeDelete() {
+      async function executeDelete() {
         // Collect all characters
         let userInput = "";
         for (let i = 0; i < 6; i++) {
@@ -2288,22 +2464,37 @@
 
         if (userInput === "DELETE") {
           const projectName = currentProjectForExport.name;
+          const projectId = currentProjectForExport.id;
 
-          // Remove from array
-          const index = archivedProjects.findIndex(
-            (p) => p.id === currentProjectForExport.id,
-          );
-          if (index !== -1) {
-            archivedProjects.splice(index, 1);
+          try {
+            // Delete from Supabase
+            const { error } = await supabaseClient
+              .from('Pre_Project_Tbl')
+              .delete()
+              .eq('preProjectID', projectId);
+
+            if (error) {
+              console.error('Error deleting project:', error);
+              showToast('Failed to delete project from database.', 'error');
+              return;
+            }
+
+            // Remove from local array
+            const index = archivedProjects.findIndex((p) => p.id === projectId);
+            if (index !== -1) archivedProjects.splice(index, 1);
+
             closeDeleteModal();
             closeModal();
-            filterProjects();
+            filteredProjects = [...archivedProjects];
+            applyFilters();
 
-            // Show success message
             showToast(
               `Project "${projectName}" has been permanently deleted.`,
               "success",
             );
+          } catch (err) {
+            console.error('Delete exception:', err);
+            showToast('An error occurred while deleting.', 'error');
           }
         } else {
           // Show error message
@@ -2324,6 +2515,59 @@
           }
           document.getElementById("deleteChar0").focus();
         }
+      }
+
+      // Unarchive project - restore it back to sk-projects
+      async function unarchiveProject() {
+        if (!currentProjectForExport) return;
+
+        const project = currentProjectForExport;
+        const projectName = project.name;
+
+        showConfirm(
+          'Unarchive Project',
+          `Are you sure you want to unarchive "${projectName}"?\n\nThis will restore the project back to the SK Projects page.`,
+          async () => {
+            try {
+              // Determine the restored status based on approvalStatus
+              let restoredStatus = 'COMPLETED';
+              if (project.approvalStatus === 'REJECTED') {
+                restoredStatus = 'ONGOING';
+              } else if (project.approvalStatus === 'REVISION') {
+                restoredStatus = 'ONGOING';
+              }
+
+              const { error } = await supabaseClient
+                .from('Pre_Project_Tbl')
+                .update({
+                  status: restoredStatus,
+                  updatedAt: new Date().toISOString()
+                })
+                .eq('preProjectID', project.id);
+
+              if (error) {
+                console.error('Error unarchiving project:', error);
+                showToast('Failed to unarchive project.', 'error');
+                return;
+              }
+
+              // Remove from local array
+              const index = archivedProjects.findIndex((p) => p.id === project.id);
+              if (index !== -1) archivedProjects.splice(index, 1);
+
+              closeModal();
+              filteredProjects = [...archivedProjects];
+              applyFilters();
+
+              showToast(`"${projectName}" has been unarchived and restored to SK Projects.`, 'success');
+            } catch (err) {
+              console.error('Unarchive exception:', err);
+              showToast('An error occurred while unarchiving.', 'error');
+            }
+          },
+          'Unarchive',
+          'yellow'
+        );
       }
 
       // Update delete button state
@@ -3461,7 +3705,7 @@
         try {
           const { data, error } = await supabaseClient
             .from('File_Tbl')
-            .select('fileID, fileName, fileType, dateUploaded, fileCategory, filePath, dateArchived, updated_at')
+            .select('fileID, fileName, fileType, dateUploaded, fileCategory, filePath, createdAt')
             .eq('fileStatus', 'ARCHIVED')
             .order('dateUploaded', { ascending: false });
 
@@ -3478,7 +3722,7 @@
               uploadedDate: file.dateUploaded ? new Date(file.dateUploaded) : null,
               category: file.fileCategory?.toLowerCase() || 'general',
               url: file.filePath,
-              archivedDate: formatFileDate(file.dateArchived || file.updated_at)
+              archivedDate: formatFileDate(file.createdAt || file.dateUploaded)
             }));
           }
         } catch (err) {

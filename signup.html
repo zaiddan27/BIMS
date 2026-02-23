@@ -36,6 +36,30 @@
         border-color: #10b981 !important;
       }
 
+      /* Password requirements checklist */
+      .pw-req-list {
+        margin-top: 8px;
+        padding: 0;
+        list-style: none;
+      }
+      .pw-req-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #9ca3af;
+        transition: color 0.2s;
+        padding: 2px 0;
+      }
+      .pw-req-item.met {
+        color: #10b981;
+      }
+      .pw-req-icon {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+      }
+
       /* Loading spinner */
       .spinner {
         border: 2px solid rgba(255, 255, 255, 0.3);
@@ -213,6 +237,28 @@
                   required
                   class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-transparent outline-none transition text-gray-800 placeholder-gray-400"
                 />
+                <ul id="pwReqList" class="pw-req-list">
+                  <li class="pw-req-item" data-req="length">
+                    <svg class="pw-req-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>
+                    <span>At least 8 characters</span>
+                  </li>
+                  <li class="pw-req-item" data-req="uppercase">
+                    <svg class="pw-req-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>
+                    <span>One uppercase letter (A-Z)</span>
+                  </li>
+                  <li class="pw-req-item" data-req="lowercase">
+                    <svg class="pw-req-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>
+                    <span>One lowercase letter (a-z)</span>
+                  </li>
+                  <li class="pw-req-item" data-req="number">
+                    <svg class="pw-req-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>
+                    <span>One number (0-9)</span>
+                  </li>
+                  <li class="pw-req-item" data-req="special">
+                    <svg class="pw-req-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>
+                    <span>One special character (!@#$%^&*)</span>
+                  </li>
+                </ul>
               </div>
               <div>
                 <label
@@ -327,7 +373,34 @@
       }
 
       function isValidPassword(password) {
-        return password.length >= 8;
+        return password.length >= 8 &&
+          /[A-Z]/.test(password) &&
+          /[a-z]/.test(password) &&
+          /[0-9]/.test(password) &&
+          /[!@#$%^&*()_+\-=\[\]{}|;:'",.<>\/?\\`~]/.test(password);
+      }
+
+      // SVG icons for password requirements
+      const circleIcon = '<svg class="pw-req-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>';
+      const checkIcon = '<svg class="pw-req-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+
+      function updatePasswordRequirements(password) {
+        const requirements = {
+          length: password.length >= 8,
+          uppercase: /[A-Z]/.test(password),
+          lowercase: /[a-z]/.test(password),
+          number: /[0-9]/.test(password),
+          special: /[!@#$%^&*()_+\-=\[\]{}|;:'",.<>\/?\\`~]/.test(password)
+        };
+
+        document.querySelectorAll('#pwReqList .pw-req-item').forEach(item => {
+          const req = item.dataset.req;
+          const met = requirements[req];
+          item.classList.toggle('met', met);
+          item.querySelector('svg').outerHTML = met ? checkIcon : circleIcon;
+        });
+
+        return Object.values(requirements).every(Boolean);
       }
 
       function isValidName(name) {
@@ -404,15 +477,28 @@
         }
       });
 
-      // Real-time validation for password
-      passwordInput.addEventListener('blur', function() {
-        if (this.value) {
-          if (isValidPassword(this.value)) {
-            setInputState(this, true);
+      // Real-time password complexity check on each keystroke
+      passwordInput.addEventListener('input', function() {
+        const allMet = updatePasswordRequirements(this.value);
+        this.classList.remove('input-error', 'input-success');
+        if (this.value && allMet) {
+          this.classList.add('input-success');
+        }
+        // Also revalidate confirm password if it has a value
+        if (confirmPasswordInput.value) {
+          if (confirmPasswordInput.value === this.value) {
+            setInputState(confirmPasswordInput, true);
           } else {
-            setInputState(this, false);
-            showToast('Password must be at least 8 characters', 'warning');
+            setInputState(confirmPasswordInput, false);
           }
+        }
+      });
+
+      // Blur validation for password
+      passwordInput.addEventListener('blur', function() {
+        if (this.value && !isValidPassword(this.value)) {
+          setInputState(this, false);
+          showToast('Password does not meet all complexity requirements', 'warning');
         }
       });
 
@@ -428,8 +514,8 @@
         }
       });
 
-      // Clear error states on input
-      [firstNameInput, lastNameInput, middleNameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+      // Clear error states on input (password handled separately above)
+      [firstNameInput, lastNameInput, middleNameInput, emailInput, confirmPasswordInput].forEach(input => {
         input.addEventListener('input', function() {
           if (this.classList.contains('input-error')) {
             this.classList.remove('input-error');
@@ -503,7 +589,8 @@
           isValid = false;
         } else if (!isValidPassword(password)) {
           setInputState(passwordInput, false);
-          showToast('Password must be at least 8 characters', 'error');
+          updatePasswordRequirements(password);
+          showToast('Password does not meet all complexity requirements', 'error');
           isValid = false;
         } else {
           setInputState(passwordInput, true);
