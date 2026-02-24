@@ -201,9 +201,7 @@ const AuthService = {
      */
     async requestPasswordReset(email) {
         try {
-            const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/reset-password.html`,
-            });
+            const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email);
 
             if (error) {
                 return { success: false, error: error.message };
