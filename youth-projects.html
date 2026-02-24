@@ -1444,7 +1444,10 @@
       function viewProject(id) {
         currentProjectId = id;
         const project = projects.find((p) => p.id === id);
-        if (!project) return;
+        if (!project) {
+          showToast("This project has been archived and is no longer available.", "warning");
+          return;
+        }
 
         document.getElementById("viewProjectTitle").textContent = project.title;
         document.getElementById(
@@ -2450,19 +2453,18 @@
           };
 
           const status = statusColors[app.status];
+          const isArchived = !projects.some((p) => p.id === app.projectId);
 
           const card = document.createElement("div");
-          card.className =
-            "bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition";
+          card.className = `bg-white border border-gray-200 rounded-lg p-6 transition ${isArchived ? 'opacity-75' : 'hover:shadow-md'}`;
 
           card.innerHTML = `
           <div class="flex items-start justify-between">
             <div class="flex items-start gap-4">
-              <div class="w-12 h-12 ${
-                status.bg
-              } rounded-lg flex items-center justify-center flex-shrink-0">
-                ${
-                  app.status === "approved"
+              <div class="w-12 h-12 ${isArchived ? 'bg-gray-100' : status.bg} rounded-lg flex items-center justify-center flex-shrink-0">
+                ${isArchived
+                    ? '<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>'
+                    : app.status === "approved"
                     ? '<svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>'
                     : app.status === "rejected"
                     ? '<svg class="w-6 h-6 text-red-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>'
@@ -2472,9 +2474,8 @@
                 }
               </div>
               <div class="flex-1">
-                <h3 class="text-lg font-bold text-gray-800 mb-1">${
-                  app.projectTitle
-                }</h3>
+                <h3 class="text-lg font-bold ${isArchived ? 'text-gray-500' : 'text-gray-800'} mb-1">${app.projectTitle}</h3>
+                ${isArchived ? '<p class="text-xs text-orange-600 font-medium mb-1">This project has been archived</p>' : ''}
                 <p class="text-sm text-gray-600 mb-2">Applied on: ${new Date(
                   app.appliedDate
                 ).toLocaleDateString()}</p>
@@ -2482,17 +2483,13 @@
               </div>
             </div>
             <div class="text-right">
-              <span class="px-3 py-1 ${status.bg} ${
-            status.text
-          } text-xs rounded-md font-medium inline-block mb-3">
-                ${status.label}
+              <span class="px-3 py-1 ${isArchived ? 'bg-gray-100 text-gray-500' : status.bg + ' ' + status.text} text-xs rounded-md font-medium inline-block mb-3">
+                ${isArchived ? 'Archived' : status.label}
               </span>
-              <button onclick="viewProject(${
-                app.projectId
-              }); showProjectsView();" 
+              ${isArchived ? '' : `<button onclick="viewProject(${app.projectId}); showProjectsView();"
                       class="block px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm">
                 Details
-              </button>
+              </button>`}
             </div>
           </div>
         `;
@@ -2535,24 +2532,19 @@
           };
 
           const status = statusConfig[app.status];
+          const isArchived = !projects.some((p) => p.id === app.projectId);
 
           const card = document.createElement("div");
-          card.className =
-            "bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition";
+          card.className = `bg-white border border-gray-200 rounded-lg p-4 transition ${isArchived ? 'opacity-75' : 'hover:shadow-md'}`;
 
           card.innerHTML = `
           <div class="flex items-start gap-4">
-            <div class="w-12 h-12 ${
-              status.bg
-            } rounded-lg flex items-center justify-center ${
-            status.text
-          } flex-shrink-0">
-              ${status.icon}
+            <div class="w-12 h-12 ${isArchived ? 'bg-gray-100' : status.bg} rounded-lg flex items-center justify-center ${isArchived ? 'text-gray-400' : status.text} flex-shrink-0">
+              ${isArchived ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>' : status.icon}
             </div>
             <div class="flex-1 min-w-0">
-              <h4 class="font-semibold text-gray-900 mb-1">${
-                app.projectTitle
-              }</h4>
+              <h4 class="font-semibold ${isArchived ? 'text-gray-500' : 'text-gray-900'} mb-1">${app.projectTitle}</h4>
+              ${isArchived ? '<p class="text-xs text-orange-600 font-medium mb-1">This project has been archived</p>' : ''}
               <p class="text-xs text-gray-600 mb-1">Applied on: ${new Date(
                 app.appliedDate
               ).toLocaleDateString("en-US", {
@@ -2563,12 +2555,10 @@
               <p class="text-sm text-gray-700">Role: ${app.role}</p>
             </div>
             <div class="text-right flex flex-col items-end gap-2">
-              <span class="px-3 py-1 ${status.bg} ${
-            status.text
-          } text-xs rounded-md font-medium whitespace-nowrap">
-                ${status.label}
+              <span class="px-3 py-1 ${isArchived ? 'bg-gray-100 text-gray-500' : status.bg + ' ' + status.text} text-xs rounded-md font-medium whitespace-nowrap">
+                ${isArchived ? 'Archived' : status.label}
               </span>
-              <div class="flex gap-2">
+              ${isArchived ? '' : `<div class="flex gap-2">
                 ${
                   app.status === "pending"
                     ? `
@@ -2583,7 +2573,7 @@
                         class="px-4 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm">
                   Details
                 </button>
-              </div>
+              </div>`}
             </div>
           </div>
         `;

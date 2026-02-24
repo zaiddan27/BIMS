@@ -377,7 +377,7 @@
                   <span
                     class="ml-2 px-2 py-1 text-xs bg-[#2f6e4e]/20 rounded-full"
                     id="projectsCount"
-                    >38</span
+                    >0</span
                   >
                 </button>
                 <button
@@ -417,19 +417,19 @@
               >
                 <div class="text-center p-4 bg-gray-50 rounded-lg">
                   <p class="text-sm text-gray-500">Projects</p>
-                  <p class="text-2xl font-bold text-gray-800 mt-1">8</p>
+                  <p class="text-2xl font-bold text-gray-800 mt-1">0</p>
                 </div>
                 <div class="text-center p-4 bg-gray-50 rounded-lg">
                   <p class="text-sm text-gray-500">Budget Used</p>
-                  <p class="text-2xl font-bold text-gray-800 mt-1">₱285K</p>
+                  <p class="text-2xl font-bold text-gray-800 mt-1">₱0</p>
                 </div>
                 <div class="text-center p-4 bg-gray-50 rounded-lg">
                   <p class="text-sm text-gray-500">Volunteers</p>
-                  <p class="text-2xl font-bold text-gray-800 mt-1">68</p>
+                  <p class="text-2xl font-bold text-gray-800 mt-1">0</p>
                 </div>
                 <div class="text-center p-4 bg-gray-50 rounded-lg">
                   <p class="text-sm text-gray-500">Avg Success</p>
-                  <p class="text-2xl font-bold text-gray-800 mt-1">91%</p>
+                  <p class="text-2xl font-bold text-gray-800 mt-1">0%</p>
                 </div>
               </div>
 
@@ -3782,42 +3782,18 @@
           }
         });
 
-        // Show/hide appropriate content
-        const projectsList = document.getElementById("projectsList");
-        const filesList = document.getElementById("filesList");
-        const emptyState = document.getElementById("emptyState");
-        const emptyFilesState = document.getElementById("emptyFilesState");
-        const quarterSummary =
-          document.getElementById("quarterSummary").parentElement;
-
-        // Show/hide appropriate filters
-        const projectsFilters = document.getElementById("projectsFilters");
-        const filesFilters = document.getElementById("filesFilters");
-        const bulkReportsSection =
-          document.getElementById("bulkReportsSection");
+        // Show/hide tab content containers
+        const projectsTabContent = document.getElementById("projectsTabContent");
+        const filesTabContent = document.getElementById("filesTabContent");
 
         if (type === "projects") {
-          projectsList.classList.remove("hidden");
-          filesList.classList.add("hidden");
-          emptyFilesState.classList.add("hidden");
-          quarterSummary.classList.remove("hidden");
-
-          // Show project filters, hide file filters
-          projectsFilters.classList.remove("hidden");
-          filesFilters.classList.add("hidden");
-          bulkReportsSection.classList.remove("hidden");
+          projectsTabContent.classList.remove("hidden");
+          filesTabContent.classList.add("hidden");
 
           renderProjects();
         } else {
-          projectsList.classList.add("hidden");
-          emptyState.classList.add("hidden");
-          filesList.classList.remove("hidden");
-          quarterSummary.classList.add("hidden");
-
-          // Show file filters, hide project filters
-          projectsFilters.classList.add("hidden");
-          filesFilters.classList.remove("hidden");
-          bulkReportsSection.classList.add("hidden");
+          projectsTabContent.classList.add("hidden");
+          filesTabContent.classList.remove("hidden");
 
           renderArchivedFiles();
         }
