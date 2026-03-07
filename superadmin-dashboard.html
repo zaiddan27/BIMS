@@ -140,11 +140,20 @@
             <main id="main-content" class="p-4 sm:p-6 lg:p-8">
                 <!-- System Overview Section -->
                 <div id="dashboardSection">
-                    <h1 class="text-2xl font-bold text-gray-800 mb-6">System Overview</h1>
-                    <p class="text-gray-600 mb-8">Monitor system health, database statistics, and Captain term status</p>
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-800">System Overview</h1>
+                            <p class="text-gray-600 mt-1">Monitor system health, database statistics, and Captain term status</p>
+                        </div>
+                        <!-- System Status Indicator -->
+                        <div id="systemStatus" class="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
+                            <div id="statusDot" class="w-3 h-3 rounded-full bg-gray-400 animate-pulse"></div>
+                            <span id="statusText" class="text-sm font-medium text-gray-500">Checking...</span>
+                        </div>
+                    </div>
 
-                    <!-- System Stats -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Primary Stats (Row 1) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                         <div class="bg-white rounded-lg shadow p-6">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -162,11 +171,56 @@
                         <div class="bg-white rounded-lg shadow p-6">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm text-gray-600">Total Projects</p>
-                                    <p id="statsProjects" class="text-3xl font-bold text-green-600">0</p>
+                                    <p class="text-sm text-gray-600">Active Users</p>
+                                    <p id="statsActiveUsers" class="text-3xl font-bold text-green-600">0</p>
                                 </div>
                                 <div class="bg-green-100 p-3 rounded-lg">
                                     <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Pending Accounts</p>
+                                    <p id="statsPendingUsers" class="text-3xl font-bold text-yellow-600">0</p>
+                                </div>
+                                <div class="bg-yellow-100 p-3 rounded-lg">
+                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Deactivated</p>
+                                    <p id="statsDeactivatedUsers" class="text-3xl font-bold text-red-600">0</p>
+                                </div>
+                                <div class="bg-red-100 p-3 rounded-lg">
+                                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Stats (Row 2) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Total Projects</p>
+                                    <p id="statsProjects" class="text-3xl font-bold text-[#2f6e4e]">0</p>
+                                </div>
+                                <div class="bg-[#2f6e4e]/10 p-3 rounded-lg">
+                                    <svg class="w-6 h-6 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                     </svg>
                                 </div>
@@ -177,11 +231,25 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm text-gray-600">Applications</p>
-                                    <p id="statsApplications" class="text-3xl font-bold text-yellow-600">0</p>
+                                    <p id="statsApplications" class="text-3xl font-bold text-indigo-600">0</p>
                                 </div>
-                                <div class="bg-yellow-100 p-3 rounded-lg">
-                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="bg-indigo-100 p-3 rounded-lg">
+                                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Today's Activity</p>
+                                    <p id="statsTodayLogs" class="text-3xl font-bold text-orange-600">0</p>
+                                </div>
+                                <div class="bg-orange-100 p-3 rounded-lg">
+                                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                     </svg>
                                 </div>
                             </div>
@@ -211,7 +279,7 @@
                                 </svg>
                             </div>
                             <div class="ml-4 flex-1">
-                                <h3 class="text-lg font-bold text-red-800">⚠️ Captain Term Expiration Alert</h3>
+                                <h3 class="text-lg font-bold text-red-800">Captain Term Expiration Alert</h3>
                                 <p id="captainTermMessage" class="text-sm text-red-700 mt-2"></p>
                                 <div class="mt-4 p-4 bg-white rounded-lg">
                                     <div class="grid grid-cols-2 gap-4 text-sm">
@@ -226,8 +294,30 @@
                                     </div>
                                 </div>
                                 <p class="text-xs text-red-600 mt-3">
-                                    ⚠️ Use the designate_new_captain() SQL function to assign a new Captain. See CAPTAIN_SUCCESSION_GUIDE.md for instructions.
+                                    Use the designate_new_captain() SQL function to assign a new Captain. See CAPTAIN_SUCCESSION_GUIDE.md for instructions.
                                 </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users by Role + Recent Audit Events (Side by Side) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Users by Role -->
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">Users by Role</h3>
+                            <div id="usersByRole" class="space-y-3">
+                                <p class="text-gray-500 text-center py-4">Loading...</p>
+                            </div>
+                        </div>
+
+                        <!-- Recent Audit Events -->
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-gray-800">Recent Audit Events</h3>
+                                <a href="superadmin-activity-logs.html" class="text-sm text-[#2f6e4e] hover:underline font-medium">View all</a>
+                            </div>
+                            <div id="recentAuditEvents" class="space-y-2">
+                                <p class="text-gray-500 text-center py-4">Loading...</p>
                             </div>
                         </div>
                     </div>
@@ -294,7 +384,7 @@
                 await profileModal.loadUserData(session.user, userData);
                 await notificationModal.loadNotifications();
             } catch (error) {
-                console.error('Error loading profile data:', error);
+                console.error('Error loading profile data');
             }
         }
 
@@ -355,7 +445,7 @@
                 const { error } = await supabaseClient.auth.signOut();
 
                 if (error) {
-                    console.error('Logout error:', error);
+                    console.error('Logout error');
                     showToast('Error logging out. Please try again.', 'error');
                     return;
                 }
@@ -371,36 +461,189 @@
                 window.location.href = 'index.html';
 
             } catch (error) {
-                console.error('Logout exception:', error);
+                console.error('Logout exception');
                 showToast('Error logging out. Please try again.', 'error');
+            }
+        }
+
+        // ==================== SYSTEM STATUS CHECK ====================
+        async function checkSystemStatus() {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            const container = document.getElementById('systemStatus');
+            try {
+                const start = performance.now();
+                const { error } = await supabaseClient.from('User_Tbl').select('userID', { count: 'exact', head: true });
+                const latency = Math.round(performance.now() - start);
+
+                if (error) throw error;
+
+                dot.className = 'w-3 h-3 rounded-full bg-green-500';
+                dot.classList.remove('animate-pulse');
+                text.textContent = `Online (${latency}ms)`;
+                text.className = 'text-sm font-medium text-green-700';
+                container.className = 'flex items-center gap-2 bg-green-50 border border-green-200 px-4 py-2 rounded-lg';
+            } catch {
+                dot.className = 'w-3 h-3 rounded-full bg-red-500';
+                dot.classList.remove('animate-pulse');
+                text.textContent = 'Connection Issue';
+                text.className = 'text-sm font-medium text-red-700';
+                container.className = 'flex items-center gap-2 bg-red-50 border border-red-200 px-4 py-2 rounded-lg';
             }
         }
 
         // ==================== DASHBOARD LOADING ====================
         async function loadDashboard() {
             try {
-                // Get stats
-                const [users, projects, applications, logs] = await Promise.all([
+                // Check system status
+                await checkSystemStatus();
+
+                // Get today's date for filtering
+                const today = new Date();
+                const todayStr = today.toISOString().split('T')[0];
+
+                // Get all stats in parallel
+                const [users, activeUsers, pendingUsers, deactivatedUsers, projects, applications, logs, todayLogs] = await Promise.all([
                     supabaseClient.from('User_Tbl').select('*', { count: 'exact', head: true }),
+                    supabaseClient.from('User_Tbl').select('*', { count: 'exact', head: true }).eq('accountStatus', 'ACTIVE'),
+                    supabaseClient.from('User_Tbl').select('*', { count: 'exact', head: true }).eq('accountStatus', 'PENDING'),
+                    supabaseClient.from('User_Tbl').select('*', { count: 'exact', head: true }).eq('accountStatus', 'DEACTIVATED'),
                     supabaseClient.from('Pre_Project_Tbl').select('*', { count: 'exact', head: true }),
                     supabaseClient.from('Application_Tbl').select('*', { count: 'exact', head: true }),
-                    supabaseClient.from('Logs_Tbl').select('*', { count: 'exact', head: true })
+                    supabaseClient.from('Logs_Tbl').select('*', { count: 'exact', head: true }),
+                    supabaseClient.from('Logs_Tbl').select('*', { count: 'exact', head: true }).gte('timestamp', `${todayStr}T00:00:00`)
                 ]);
 
                 document.getElementById('statsUsers').textContent = users.count || 0;
+                document.getElementById('statsActiveUsers').textContent = activeUsers.count || 0;
+                document.getElementById('statsPendingUsers').textContent = pendingUsers.count || 0;
+                document.getElementById('statsDeactivatedUsers').textContent = deactivatedUsers.count || 0;
                 document.getElementById('statsProjects').textContent = projects.count || 0;
                 document.getElementById('statsApplications').textContent = applications.count || 0;
                 document.getElementById('statsLogs').textContent = logs.count || 0;
+                document.getElementById('statsTodayLogs').textContent = todayLogs.count || 0;
 
-                // Check Captain term expiration
-                await checkCaptainTermExpiration();
-
-                // Load recent activity
-                await loadRecentActivity();
+                // Load additional sections in parallel
+                await Promise.all([
+                    checkCaptainTermExpiration(),
+                    loadUsersByRole(),
+                    loadRecentAuditEvents(),
+                    loadRecentActivity()
+                ]);
             } catch (error) {
-                console.error('Error loading dashboard:', error);
+                console.error('Error loading dashboard');
                 showToast('Error loading dashboard data', 'error');
             }
+        }
+
+        // ==================== USERS BY ROLE ====================
+        async function loadUsersByRole() {
+            const container = document.getElementById('usersByRole');
+            try {
+                const { data: users, error } = await supabaseClient
+                    .from('User_Tbl')
+                    .select('role, accountStatus');
+
+                if (error) throw error;
+
+                // Count by role (active only)
+                const activeUsers = users.filter(u => u.accountStatus === 'ACTIVE');
+                const roleCounts = {};
+                activeUsers.forEach(u => {
+                    roleCounts[u.role] = (roleCounts[u.role] || 0) + 1;
+                });
+
+                const roleConfig = {
+                    'SUPERADMIN': { label: 'System Admin', color: 'purple' },
+                    'CAPTAIN': { label: 'Captain', color: 'red' },
+                    'SK_OFFICIAL': { label: 'SK Officials', color: 'blue' },
+                    'YOUTH_VOLUNTEER': { label: 'Youth Volunteers', color: 'green' }
+                };
+
+                const totalActive = activeUsers.length || 1;
+
+                container.innerHTML = Object.entries(roleConfig).map(([role, config]) => {
+                    const count = roleCounts[role] || 0;
+                    const pct = Math.round((count / totalActive) * 100);
+                    return `
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3 flex-1">
+                                <div class="w-3 h-3 rounded-full bg-${config.color}-500 flex-shrink-0"></div>
+                                <span class="text-sm text-gray-700">${config.label}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-24 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-${config.color}-500 h-2 rounded-full" style="width: ${pct}%"></div>
+                                </div>
+                                <span class="text-sm font-semibold text-gray-800 w-8 text-right">${count}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading users by role');
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">Failed to load</p>';
+            }
+        }
+
+        // ==================== RECENT AUDIT EVENTS ====================
+        async function loadRecentAuditEvents() {
+            const container = document.getElementById('recentAuditEvents');
+            try {
+                const { data: auditLogs, error } = await supabaseClient
+                    .from('Logs_Tbl')
+                    .select('action, timestamp, User_Tbl(firstName, lastName)')
+                    .ilike('action', '%[AUDIT]%')
+                    .order('timestamp', { ascending: false })
+                    .limit(8);
+
+                if (error) throw error;
+
+                if (!auditLogs || auditLogs.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-4">No audit events found</p>';
+                    return;
+                }
+
+                container.innerHTML = auditLogs.map(log => {
+                    const action = (log.action || '').replace('[AUDIT]', '').trim();
+                    const timeAgo = getTimeAgo(new Date(log.timestamp));
+                    return `
+                        <div class="flex items-start space-x-3 p-2.5 hover:bg-gray-50 rounded-lg transition">
+                            <div class="flex-shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-800 truncate">${action}</p>
+                                <p class="text-xs text-gray-500 mt-0.5">
+                                    ${log.User_Tbl?.firstName || ''} ${log.User_Tbl?.lastName || ''} &middot; ${timeAgo}
+                                </p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading audit events');
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">Failed to load</p>';
+            }
+        }
+
+        // Helper: time ago
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
         }
 
         // Check Captain term expiration

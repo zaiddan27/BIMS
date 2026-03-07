@@ -89,7 +89,7 @@ password: TEXT (NOT NULL - Supabase Auth handles)
 firstName: VARCHAR(100) (NOT NULL, min 2 characters)
 lastName: VARCHAR(100) (NOT NULL, min 2 characters)
 middleName: VARCHAR(100) (NULLABLE, no minimum length - can be single letter or initial)
-role: VARCHAR(20) ('SK_OFFICIAL', 'YOUTH_VOLUNTEER', 'CAPTAIN')
+role: VARCHAR(20) ('SUPERADMIN', 'CAPTAIN', 'SK_OFFICIAL', 'YOUTH_VOLUNTEER')
 birthday: DATE (NOT NULL)
 contactNumber: VARCHAR(13) (NOT NULL)
 address: TEXT (NOT NULL)
@@ -206,6 +206,7 @@ preferredRole: VARCHAR(100) (NOT NULL)
 parentConsentFile: TEXT (NOT NULL if under 18)
 applicationStatus: VARCHAR(20) ('PENDING', 'APPROVED', 'REJECTED') (DEFAULT: 'PENDING')
 appliedDate: TIMESTAMPTZ (DEFAULT: CURRENT_TIMESTAMP)
+attended: BOOLEAN (DEFAULT: FALSE, tracks project attendance)
 createdAt: TIMESTAMPTZ (DEFAULT: NOW())
 ```
 
@@ -234,9 +235,10 @@ createdAt: TIMESTAMPTZ (DEFAULT: NOW())
 ```
 notificationID: SERIAL (PRIMARY KEY)
 userID: UUID (FOREIGN KEY → User_Tbl.userID)
-notificationType: VARCHAR(50) ('new_announcement', 'inquiry_update', 'new_project', 'application_approved', 'application_pending', 'project_approved', 'project_rejected', 'revision_requested', 'new_inquiry', 'new_application', 'project_awaiting_approval')
+notificationType: VARCHAR(50) ('new_announcement', 'inquiry_update', 'new_project', 'application_approved', 'application_pending', 'project_approved', 'project_rejected', 'revision_requested', 'new_inquiry', 'new_application', 'project_awaiting_approval', 'user_promoted', 'user_deactivated', 'user_reactivated', 'captain_term_expiring', 'captain_term_expired')
 title: VARCHAR(255) (NOT NULL)
 isRead: BOOLEAN (DEFAULT: FALSE)
+referenceID: INTEGER (NULLABLE, deep link to related entity e.g. preProjectID)
 createdAt: TIMESTAMPTZ (NOT NULL, DEFAULT: NOW())
 ```
 
@@ -265,7 +267,7 @@ createdAt: TIMESTAMPTZ (DEFAULT: NOW())
 ### Evaluation_Tbl (Project Evaluations)
 ```
 evaluationID: SERIAL (PRIMARY KEY)
-postProjectID: INTEGER (FOREIGN KEY → Post_Project_Tbl.postProjectID)
+postProjectID: INTEGER (NULLABLE, FOREIGN KEY → Post_Project_Tbl.postProjectID)
 applicationID: INTEGER (FOREIGN KEY → Application_Tbl.applicationID)
 q1: INTEGER (NOT NULL, rating 1-5, CHECK (q1 BETWEEN 1 AND 5))
 q2: INTEGER (NOT NULL, rating 1-5, CHECK (q2 BETWEEN 1 AND 5))
@@ -596,6 +598,43 @@ supabase/
 - Archive redundant migrations to `supabase/migrations/archived/`
 - Use `supabase/verification/` for verification scripts only
 - NEVER create SQL files in project root
+
+---
+
+## SUPABASE CLI & DATABASE TOOLS
+
+### Running SQL Directly
+Use the `run-sql.sh` script to execute SQL against the remote Supabase database instead of manually copy-pasting into the dashboard:
+
+```bash
+# Run inline SQL
+bash supabase/run-sql.sh "SELECT * FROM \"User_Tbl\" LIMIT 5;"
+
+# Run a SQL file
+bash supabase/run-sql.sh supabase/migrations/018_fix_testimony_and_archive_delete.sql
+```
+
+### Migration Management
+```bash
+# Preview which migrations would be applied
+npx supabase db push --dry-run
+
+# Push pending migrations to remote database
+npx supabase db push
+
+# List projects
+npx supabase projects list
+```
+
+### When to Use
+- **New migration files** → Run them with `bash supabase/run-sql.sh path/to/file.sql`
+- **Debugging database issues** → Query directly with `bash supabase/run-sql.sh "SELECT ..."`
+- **Verifying schema/data** → Use run-sql.sh instead of asking the user to check the dashboard
+- **Batch migrations** → Use `npx supabase db push`
+
+### Configuration
+- Access token stored in `.env.supabase` (gitignored)
+- Project linked to `vreuvpzxnvrhftafmado` (BIMS)
 
 ---
 

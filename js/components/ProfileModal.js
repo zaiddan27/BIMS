@@ -724,7 +724,7 @@ export class ProfileModal {
       window.dispatchEvent(event);
 
     } catch (error) {
-      console.error("[ProfileModal] Save error:", error);
+      console.error("[ProfileModal] Save error");
       this.showToast('Failed to update profile. Please try again.', 'error');
     }
   }

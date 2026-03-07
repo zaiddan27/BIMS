@@ -1695,7 +1695,7 @@
             .order('updatedAt', { ascending: false });
 
           if (error) {
-            console.error('Error loading archived projects:', error);
+            console.error('Error loading archived projects');
             showToast('Failed to load archived projects.', 'error');
             archivedProjects = [];
             return;
@@ -1857,7 +1857,7 @@
 
           filteredProjects = [...archivedProjects];
         } catch (err) {
-          console.error('Exception loading archived projects:', err);
+          console.error('Exception loading archived projects');
           showToast('An error occurred while loading archived projects.', 'error');
           archivedProjects = [];
         }
@@ -2468,14 +2468,21 @@
 
           try {
             // Delete from Supabase
-            const { error } = await supabaseClient
+            const { data: deleted, error } = await supabaseClient
               .from('Pre_Project_Tbl')
               .delete()
-              .eq('preProjectID', projectId);
+              .eq('preProjectID', projectId)
+              .select();
 
             if (error) {
-              console.error('Error deleting project:', error);
+              console.error('Error deleting project');
               showToast('Failed to delete project from database.', 'error');
+              return;
+            }
+
+            if (!deleted || deleted.length === 0) {
+              console.error('Delete affected 0 rows — possible RLS policy issue');
+              showToast('Failed to delete project. You may not have permission.', 'error');
               return;
             }
 
@@ -2493,7 +2500,7 @@
               "success",
             );
           } catch (err) {
-            console.error('Delete exception:', err);
+            console.error('Delete exception');
             showToast('An error occurred while deleting.', 'error');
           }
         } else {
@@ -2537,17 +2544,24 @@
                 restoredStatus = 'ONGOING';
               }
 
-              const { error } = await supabaseClient
+              const { data: updated, error } = await supabaseClient
                 .from('Pre_Project_Tbl')
                 .update({
                   status: restoredStatus,
                   updatedAt: new Date().toISOString()
                 })
-                .eq('preProjectID', project.id);
+                .eq('preProjectID', project.id)
+                .select();
 
               if (error) {
-                console.error('Error unarchiving project:', error);
+                console.error('Error unarchiving project');
                 showToast('Failed to unarchive project.', 'error');
+                return;
+              }
+
+              if (!updated || updated.length === 0) {
+                console.error('Unarchive update affected 0 rows — possible RLS policy issue');
+                showToast('Failed to unarchive project. You may not have permission.', 'error');
                 return;
               }
 
@@ -2561,7 +2575,7 @@
 
               showToast(`"${projectName}" has been unarchived and restored to SK Projects.`, 'success');
             } catch (err) {
-              console.error('Unarchive exception:', err);
+              console.error('Unarchive exception');
               showToast('An error occurred while unarchiving.', 'error');
             }
           },
@@ -3710,7 +3724,7 @@
             .order('dateUploaded', { ascending: false });
 
           if (error) {
-            console.error('Error loading archived files:', error);
+            console.error('Error loading archived files');
             showToast('Failed to load archived files.', 'error');
             archivedFiles = [];
           } else {
@@ -3726,7 +3740,7 @@
             }));
           }
         } catch (err) {
-          console.error('Load archived files exception:', err);
+          console.error('Load archived files exception');
           archivedFiles = [];
         }
         updateFilesCount();
@@ -4026,7 +4040,7 @@
           document.getElementById("viewArchivedFilePreview").classList.remove("hidden");
           canvas.classList.remove("hidden");
         } catch (e) {
-          console.error('PDF preview error:', e);
+          console.error('PDF preview error');
           showArchivedFileIconFallback('pdf');
         }
       }
@@ -4073,7 +4087,7 @@
           closeRestoreFileModal();
           await loadArchivedFiles();
         } catch (error) {
-          console.error('Restore error:', error);
+          console.error('Restore error');
           showToast("Failed to restore file. Please try again.", "error");
         } finally {
           isRestoringFile = false;
@@ -4135,7 +4149,7 @@
           closeDeleteArchivedFileModal();
           await loadArchivedFiles();
         } catch (error) {
-          console.error('Delete error:', error);
+          console.error('Delete error');
           showToast("Failed to delete file. Please try again.", "error");
         } finally {
           isDeletingFile = false;
@@ -4394,6 +4408,17 @@
 
       // Initialize notification count on page load
       updateNotificationCount();
+
+      // Logout handler
+      async function handleLogout() {
+        try {
+          await SessionManager.logout();
+        } catch (error) {
+          console.error('Logout error');
+          showToast('Failed to logout. Please try again.', 'error');
+        }
+      }
+      window.handleLogout = handleLogout;
     </script>
 
     <!-- Profile Modal -->

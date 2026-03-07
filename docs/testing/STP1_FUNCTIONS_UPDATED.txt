@@ -1,0 +1,283 @@
+======================================================================
+         1.1 TEST ITEMS (UPDATED) - STP-1 FUNCTIONS
+         Barangay Information Management System (BIMS)
+======================================================================
+
+The following system components and modules will undergo testing.
+These items correspond directly to the functional and architectural
+descriptions provided in the SRS, SDD, and module trackers.
+
+NOTE: Items marked [NEW] were added to reflect actual system
+functionality not covered in the original STP-1 document.
+
+======================================================================
+FUNCTION 1: LOGIN / AUTHENTICATION
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+1.   Login with correct credentials
+2.   Login with incorrect credentials
+3.   Login with incorrect password but valid email
+4.   Sign up with complete details
+5.   Sign up with missing or invalid details
+6.   Sign up with Google account                                  [NEW]
+7.   Use "Forgot Password" to reset account
+8.   Missing details in Forget Password
+9.   Unequal Password
+10.  Valid OTP
+11.  Invalid OTP
+12.  Expired OTP (after 10-minute timer)                          [NEW]
+13.  Resend OTP (with 60-second cooldown)                         [NEW]
+14.  Complete Profile after first login                           [NEW]
+15.  Account lockout after 5 failed login attempts                [NEW]
+16.  Login with inactive/deactivated account                      [NEW]
+
+======================================================================
+FUNCTION 2: MANAGE FILES
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+17.  Upload file within size limit (10MB max)
+18.  Upload file exceeding size limit
+19.  Upload unsupported file type                                 [NEW]
+20.  Delete file with confirmation
+21.  Download file
+22.  Search file by keyword
+23.  Filter file by category (General Files, Project Files)
+24.  View file details / Preview file (PDF and images)
+25.  Publish file to homepage transparency section                [NEW]
+26.  Unpublish file from homepage                                 [NEW]
+27.  Archive file with confirmation                               [NEW]
+28.  Restore archived file                                        [NEW]
+29.  View files as Youth Volunteer (read-only access)             [NEW]
+
+======================================================================
+FUNCTION 3: MANAGE CONTENT (ANNOUNCEMENTS)
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+30.  Create announcement with title, category, and description
+31.  Create announcement with image upload (16:9 cropper)         [NEW]
+32.  Edit announcement (update title, category, description)
+33.  Edit announcement image                                      [NEW]
+34.  Delete announcement with confirmation
+35.  View announcement details in modal
+36.  Announcement pagination (3 per page)                         [NEW]
+37.  View announcements as Captain (read-only)                    [NEW]
+38.  View announcements as Youth Volunteer (read-only)            [NEW]
+
+======================================================================
+FUNCTION 4: PROJECT MONITORING
+======================================================================
+
+--- 4A: Project Management (SK Official) ---
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+39.  Create new project
+40.  Edit project details
+41.  View project details (budget, beneficiaries, timeline)
+42.  Search project by keyword
+43.  Filter project by type/category
+44.  Delete project
+45.  Submit project for Barangay Captain approval
+46.  Cancel project approval request                              [NEW]
+47.  Resubmit project after revision request                      [NEW]
+
+--- 4B: Project Inquiries ---
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+48.  Submit project inquiry (Youth Volunteer)
+49.  Reply to inquiry (SK Official)
+50.  Reply to inquiry (Youth Volunteer in thread)                 [NEW]
+51.  View inquiry thread with timestamps                          [NEW]
+
+--- 4C: Volunteer Application ---
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+52.  Register as volunteer to a project (apply)
+53.  Upload parental consent form (minor applicants under 18)     [NEW]
+54.  Edit pending application before review                       [NEW]
+55.  Track application status (Pending, Accepted, Rejected)       [NEW]
+56.  View projects by status (through filter projects)
+
+--- 4D: Application Management (SK Official) ---
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+57.  View applications list with applicant details
+58.  Approve or reject applications
+59.  Revert application to pending status                         [NEW]
+60.  Toggle attendance for applicants                             [NEW]
+61.  Filter applicants by status                                  [NEW]
+
+--- 4E: Project Approval (Barangay Captain) ---
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+62.  View pending projects for approval                           [NEW]
+63.  Approve project with optional notes                          [NEW]
+64.  Reject project with required reason                          [NEW]
+65.  Request project revision with required details               [NEW]
+66.  Confirmation dialog before approval actions                  [NEW]
+67.  View approved projects tab                                   [NEW]
+68.  View rejected projects tab                                   [NEW]
+
+--- 4F: Project Evaluation & Reporting (SK Official) ---
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+69.  Submit project evaluation (5 weighted criteria)              [NEW]
+70.  Upload receipts for budget breakdown                         [NEW]
+71.  Generate attendance sheet PDF                                [NEW]
+72.  Add project achievements                                     [NEW]
+73.  Download project report (PDF format)                         [NEW]
+74.  Download project report (Excel format)                       [NEW]
+75.  Start project (change status)                                [NEW]
+76.  Archive completed project                                    [NEW]
+
+======================================================================
+FUNCTION 5: VIEW CALENDAR
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+77.  View calendar in month view
+78.  View calendar in week view                                   [NEW]
+79.  View calendar in day view                                    [NEW]
+80.  Export events to Google Calendar                              [NEW]
+81.  Export events to Outlook                                     [NEW]
+82.  Export events to iCal                                        [NEW]
+
+======================================================================
+FUNCTION 6: TESTIMONIES                                         [NEW]
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+83.  Submit testimony with star rating (Youth Volunteer)          [NEW]
+84.  View all volunteer testimonies (SK Official)                 [NEW]
+85.  Search testimonies by keyword                                [NEW]
+86.  Feature testimony for homepage display                       [NEW]
+87.  Unfeature testimony from homepage                            [NEW]
+
+======================================================================
+FUNCTION 7: CERTIFICATES                                        [NEW]
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+88.  Complete satisfaction survey after project                   [NEW]
+89.  View certificate of participation                            [NEW]
+90.  Download certificate as PDF                                  [NEW]
+91.  Zoom/preview controls for certificate                        [NEW]
+
+======================================================================
+FUNCTION 8: ARCHIVES                                            [NEW]
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+92.  View archived projects with evaluation metrics               [NEW]
+93.  View archived files                                          [NEW]
+94.  Search/filter archived items by name, year, quarter          [NEW]
+95.  Download project report from archives (PDF)                  [NEW]
+96.  Restore archived file to active status                       [NEW]
+
+======================================================================
+FUNCTION 9: USER MANAGEMENT (SUPERADMIN)                        [NEW]
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+97.  View all registered users with roles and status              [NEW]
+98.  Search users by name or email                                [NEW]
+99.  Filter users by role and account status                      [NEW]
+100. Promote Youth Volunteer to SK Official                       [NEW]
+101. Promote user to Barangay Captain                             [NEW]
+102. Enforce position limits (1 Chairman, 1 Secretary,            [NEW]
+     1 Treasurer, max 7 Kagawads)
+103. Demote SK Official or Captain to Youth Volunteer             [NEW]
+104. Deactivate user account with reason                          [NEW]
+105. Reactivate previously deactivated account                    [NEW]
+
+======================================================================
+FUNCTION 10: ACTIVITY LOGS & AUDIT (SUPERADMIN)                 [NEW]
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+106. View all activity logs with timestamps                       [NEW]
+107. Filter activity logs by date                                 [NEW]
+108. View audit trail (role changes, promotions, status changes)  [NEW]
+109. View database statistics (record counts per table)           [NEW]
+110. View storage buckets information                             [NEW]
+
+======================================================================
+FUNCTION 11: NOTIFICATIONS                                      [NEW]
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+111. Receive notification for relevant updates                    [NEW]
+112. View notification bell with unread count                     [NEW]
+113. Mark notifications as read                                   [NEW]
+114. Click notification to navigate to relevant section           [NEW]
+
+======================================================================
+FUNCTION 12: PROFILE MANAGEMENT                                 [NEW]
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+115. View and update profile information                          [NEW]
+116. Change password from dashboard                               [NEW]
+117. Upload/change profile picture                                [NEW]
+
+======================================================================
+FUNCTION 13: DASHBOARD                                          [NEW]
+======================================================================
+
+NO.  TEST ITEM
+---  ------------------------------------------------------------------
+118. View dashboard statistics per role                           [NEW]
+119. Pages and modals load without noticeable delays              [NEW]
+120. Role-based redirect after login                              [NEW]
+
+======================================================================
+SUMMARY
+======================================================================
+
+Original STP-1 Test Items:    33
+New Test Items Added:         87
+Total Updated Test Items:     120
+
+FUNCTION BREAKDOWN:
+---  ------------------------------------------------------------------
+1.   Login / Authentication .................... 16 items (was 10)
+2.   Manage Files .............................. 13 items (was 7)
+3.   Manage Content (Announcements) ............ 9 items  (was 4)
+4.   Project Monitoring ........................ 38 items (was 12)
+     4A. Project Management (SK) ............... 9 items
+     4B. Project Inquiries .................... 4 items
+     4C. Volunteer Application ................ 5 items
+     4D. Application Management (SK) .......... 5 items
+     4E. Project Approval (Captain) ........... 7 items
+     4F. Project Evaluation & Reporting ....... 8 items
+5.   View Calendar ............................. 6 items  (was 1)
+6.   Testimonies ............................... 5 items  (NEW)
+7.   Certificates .............................. 4 items  (NEW)
+8.   Archives .................................. 5 items  (NEW)
+9.   User Management (Superadmin) .............. 9 items  (NEW)
+10.  Activity Logs & Audit (Superadmin) ........ 5 items  (NEW)
+11.  Notifications ............................. 4 items  (NEW)
+12.  Profile Management ........................ 3 items  (NEW)
+13.  Dashboard ................................. 3 items  (NEW)
+----------------------------------------------------------------------
+TOTAL ......................................... 120 items
+======================================================================

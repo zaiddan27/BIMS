@@ -133,7 +133,7 @@ async function handleGoogleAuthCallback() {
     return true;
 
   } catch (error) {
-    console.error('Google OAuth callback error:', error);
+    console.error('Google OAuth callback error');
     if (typeof showToast === 'function') {
       showToast('Authentication error. Please try again.', 'error');
     }
@@ -161,7 +161,7 @@ async function redirectToDashboard() {
       .single();
 
     if (error || !user) {
-      console.error('Error fetching user role:', error);
+      console.error('Error fetching user role');
       window.location.href = 'login.html';
       return;
     }
@@ -197,7 +197,7 @@ async function redirectToDashboard() {
     }
 
   } catch (error) {
-    console.error('Error redirecting to dashboard:', error);
+    console.error('Error redirecting to dashboard');
     window.location.href = 'index.html';
   }
 }

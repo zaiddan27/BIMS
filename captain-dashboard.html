@@ -1010,7 +1010,7 @@
                 const sessionResult = await SessionManager.init(['CAPTAIN', 'SUPERADMIN']);
 
                 if (!sessionResult.success) {
-                    console.error('[CAPTAIN DASHBOARD] Session failed:', sessionResult.error);
+                    console.error('[CAPTAIN DASHBOARD] Session failed');
                     return; // SessionManager handles redirect
                 }
 
@@ -1037,7 +1037,7 @@
                 await handleURLParameters();
 
             } catch (error) {
-                console.error('[CAPTAIN DASHBOARD] Initialization error:', error);
+                console.error('[CAPTAIN DASHBOARD] Initialization error');
                 showToast('Failed to initialize page. Please refresh.', 'error');
             }
         }
@@ -1752,7 +1752,7 @@
 
                         showToast(`✓ Project "${projectName}" has been approved!`, 'success');
                     } catch (error) {
-                        console.error('Error approving project:', error);
+                        console.error('Error approving project');
                         showToast('Failed to approve project. Please try again.', 'error');
                     }
                 },
@@ -1799,7 +1799,7 @@
 
                         showToast(`✗ Project "${projectName}" has been rejected.`, 'error');
                     } catch (error) {
-                        console.error('Error rejecting project:', error);
+                        console.error('Error rejecting project');
                         showToast('Failed to reject project. Please try again.', 'error');
                     }
                 },
@@ -1846,7 +1846,7 @@
 
                         showToast(`✎ Revision request sent for "${projectName}".`, 'info');
                     } catch (error) {
-                        console.error('Error requesting revision:', error);
+                        console.error('Error requesting revision');
                         showToast('Failed to send revision request. Please try again.', 'error');
                     }
                 }
@@ -1958,7 +1958,7 @@
                 if (error) throw error;
 
             } catch (error) {
-                console.error('[CAPTAIN DASHBOARD] Error creating notification:', error);
+                console.error('[CAPTAIN DASHBOARD] Error creating notification');
             }
         }
 
@@ -2134,7 +2134,7 @@
                 // Render announcements with pagination
                 renderAnnouncements();
             } catch (error) {
-                console.error('Error loading announcements:', error);
+                console.error('Error loading announcements');
                 showToast('Error loading announcements', 'error');
                 announcementsArray = [];
             }
@@ -2376,7 +2376,7 @@
                 updateStatistics();
                 renderProjects();
             } catch (error) {
-                console.error('[CAPTAIN DASHBOARD] Error loading projects:', error);
+                console.error('[CAPTAIN DASHBOARD] Error loading projects');
                 showToast('Error loading projects', 'error');
                 projects = [];
                 // Still update UI to show empty state
@@ -2428,9 +2428,9 @@
             try {
                 const { data: projects, error } = await supabaseClient
                     .from('Pre_Project_Tbl')
-                    .select('*, User_Tbl (firstName, lastName)')
-                    .eq('status', 'ARCHIVED')
-                    .order('submittedDate', { ascending: false });
+                    .select('*, SK_Tbl (User_Tbl (firstName, lastName))')
+                    .eq('status', 'CANCELLED')
+                    .order('updatedAt', { ascending: false });
 
                 if (error) throw error;
 
@@ -2463,13 +2463,13 @@
                         <h3 class="text-lg font-bold text-gray-700 mb-2">${escapeHTML(project.title)}</h3>
                         <p class="text-gray-600 text-sm mb-3 line-clamp-2">${escapeHTML(project.description || '')}</p>
                         <div class="text-xs text-gray-500">
-                            <p>Created by: ${escapeHTML(project.User_Tbl?.firstName || '')} ${escapeHTML(project.User_Tbl?.lastName || '')}</p>
-                            <p>Date: ${new Date(project.submittedDate).toLocaleDateString()}</p>
+                            <p>Created by: ${escapeHTML(project.SK_Tbl?.User_Tbl?.firstName || '')} ${escapeHTML(project.SK_Tbl?.User_Tbl?.lastName || '')}</p>
+                            <p>Archived: ${project.updatedAt ? new Date(project.updatedAt).toLocaleDateString() : 'N/A'}</p>
                         </div>
                     </div>
                 `).join('');
             } catch (error) {
-                console.error('Error loading archived projects:', error);
+                console.error('Error loading archived projects');
                 showToast('Error loading archived projects', 'error');
             }
         }
@@ -2529,7 +2529,7 @@
                     </tr>
                 `).join('');
             } catch (error) {
-                console.error('Error loading archived files:', error);
+                console.error('Error loading archived files');
                 showToast('Error loading archived files', 'error');
             }
         }
@@ -2541,7 +2541,7 @@
             try {
                 await SessionManager.logout();
             } catch (error) {
-                console.error('[CAPTAIN DASHBOARD] Logout error:', error);
+                console.error('[CAPTAIN DASHBOARD] Logout error');
                 // Force logout even if there's an error
                 window.location.href = 'login.html';
             }

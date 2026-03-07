@@ -1076,7 +1076,7 @@
           projectCurrentPage = 0;
           renderProjectPage();
         } catch (err) {
-          console.error('[BIMS] Failed to load projects:', err);
+          console.error('[BIMS] Failed to load projects');
           grid.innerHTML = '<p class="text-center text-gray-500 col-span-full py-12">Unable to load projects.</p>';
         }
       }
@@ -1324,6 +1324,7 @@
           const { data: testimonies, error } = await supabaseClient
             .from('Testimonies_Tbl')
             .select('testimonyID, message, rating, timeStamp, User_Tbl ( firstName, lastName, imagePathURL, role )')
+            .eq('isFiltered', true)
             .order('timeStamp', { ascending: false })
             .limit(12);
 
@@ -1353,7 +1354,7 @@
 
           initCarousel(mapped);
         } catch (err) {
-          console.error('[BIMS] Failed to load testimonials:', err);
+          console.error('[BIMS] Failed to load testimonials');
           document.getElementById('testimonialsCarousel').innerHTML =
             '<div class="min-w-full flex items-center justify-center py-12"><p class="text-gray-500">Unable to load testimonials.</p></div>';
         }
@@ -1410,7 +1411,7 @@
           const totalEl = document.getElementById('totalBudgetDisplay');
           if (totalEl) totalEl.textContent = formatCurrency(total);
         } catch (err) {
-          console.error('[BIMS] Failed to load budget:', err);
+          console.error('[BIMS] Failed to load budget');
         }
       }
 
@@ -1445,7 +1446,7 @@
             if (el) el.textContent = val;
           });
         } catch (err) {
-          console.error('[BIMS] Failed to load project metrics:', err);
+          console.error('[BIMS] Failed to load project metrics');
         }
       }
 
@@ -1494,7 +1495,7 @@
               '</svg></button>';
           }).join('');
         } catch (err) {
-          console.error('[BIMS] Failed to load published files:', err);
+          console.error('[BIMS] Failed to load published files');
           grid.classList.add('hidden');
           noFilesDiv.classList.remove('hidden');
         }

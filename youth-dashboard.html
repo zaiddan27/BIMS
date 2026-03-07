@@ -595,16 +595,6 @@
       let profileBackup = {};
       let isEditMode = false;
 
-      // ============================================
-      // DEBUG: Production-safe logging utility
-      // Set DEBUG_MODE to false in production
-      // ============================================
-      const DEBUG_MODE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
-      const debug = {
-        error: (...args) => console.error('[YOUTH-DASHBOARD]', ...args), // Always log errors
-      };
-
       /**
        * SECURITY: Validate and sanitize image URLs
        * Only allows https URLs and Supabase storage URLs
@@ -655,12 +645,13 @@
 
           // Load user data into ProfileModal component
           await profileModal.loadUserData(user, userData);
+          await notificationModal.loadNotifications();
 
           // Update UI with loaded data
           updateProfileUI(user, userData);
 
         } catch (error) {
-          console.error('Error loading user profile:', error);
+          console.error('Error loading user profile');
           // Don't show toast - SessionManager already handles redirects
         }
       }
@@ -975,12 +966,12 @@
             .select();
 
           if (updateError) {
-            console.error('[PROFILE PICTURE] DB update error:', updateError);
+            console.error('[PROFILE PICTURE] DB update error');
             throw updateError;
           }
 
           if (!dbUpdateData || dbUpdateData.length === 0) {
-            console.error('[PROFILE PICTURE] No rows updated in database');
+            console.error('Profile picture DB update failed');
             showToast('Failed to save profile picture URL to database', 'error');
             return;
           }
@@ -991,9 +982,9 @@
           // Update modal preview
           const previewDiv = document.getElementById('profilePicturePreview');
           if (previewDiv) {
-            previewDiv.innerHTML = `<img src="${publicUrl}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" onerror="console.error('[PROFILE PICTURE] Modal image FAILED to load:', this.src)" />`;
+            previewDiv.innerHTML = `<img src="${publicUrl}" alt="Profile Picture" class="w-full h-full object-cover rounded-full" onerror="" />`;
           } else {
-            console.error('[PROFILE PICTURE] profilePicturePreview element not found!');
+            console.error('Profile picture preview element not found');
           }
 
           // Update header avatar
@@ -1002,7 +993,7 @@
           showToast('Profile picture uploaded successfully!', 'success');
 
         } catch (error) {
-          console.error('[PROFILE PICTURE] Error:', error);
+          console.error('Profile picture upload failed');
           showToast(`Failed to upload: ${error.message || 'Unknown error'}`, 'error');
         }
       }
@@ -1141,19 +1132,13 @@
             .select();
 
           if (updateError) {
-            console.error('[SAVE PROFILE] Database update error:', updateError);
-            console.error('[SAVE PROFILE] Error details:', {
-              message: updateError.message,
-              code: updateError.code,
-              details: updateError.details,
-              hint: updateError.hint
-            });
+            console.error('Profile database update error');
             showToast(`Database error: ${updateError.message}`, 'error');
             throw updateError;
           }
 
           if (!updateData || updateData.length === 0) {
-            console.error('[SAVE PROFILE] No rows updated. Check RLS policies.');
+            console.error('Profile update failed - no rows updated');
             showToast('Failed to update profile. Please check permissions.', 'error');
             return;
           }
@@ -1174,7 +1159,7 @@
           closeProfileModal();
 
         } catch (error) {
-          console.error('Error saving profile:', error);
+          console.error('Error saving profile');
           showToast('Failed to save profile. Please try again.', 'error');
         }
       }
@@ -1260,7 +1245,7 @@
           }
 
         } catch (error) {
-          console.error('Error loading announcements:', error);
+          console.error('Error loading announcements');
           showToast('Failed to load announcements', 'error');
           announcementsArray = [];
         }
@@ -1706,7 +1691,7 @@
             document.getElementById('testimonyCharCount').textContent = '0/500 characters';
 
           } catch (error) {
-            console.error('Error submitting testimony:', error);
+            console.error('Error submitting testimony');
             showToast('Failed to submit testimony. Please try again.', 'error');
           } finally {
             // Re-enable button
@@ -1764,7 +1749,7 @@
         try {
           await SessionManager.logout();
         } catch (error) {
-          console.error('Logout error:', error);
+          console.error('Logout error');
           // Force logout even if there's an error
           window.location.href = 'login.html';
         }

@@ -670,7 +670,7 @@
           }, 1500);
 
         } catch (error) {
-          console.error('Signup error:', error);
+          console.error('Signup error');
           showToast(error.message || 'Registration failed. Please try again.', 'error');
           submitButton.disabled = false;
           submitButton.innerHTML = originalButtonText;
@@ -701,7 +701,7 @@
           // After approval, they'll be redirected back to index.html
 
         } catch (error) {
-          console.error('Google OAuth error:', error);
+          console.error('Google OAuth error');
           showToast('Google sign up failed. Please try again.', 'error');
         }
       }

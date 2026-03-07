@@ -631,7 +631,7 @@
                 await profileModal.loadUserData(session.user, userData);
                 await notificationModal.loadNotifications();
             } catch (error) {
-                console.error('Error loading profile data:', error);
+                console.error('Error loading profile data');
             }
         }
 
@@ -693,7 +693,7 @@
                 const { error } = await supabaseClient.auth.signOut();
 
                 if (error) {
-                    console.error('Logout error:', error);
+                    console.error('Logout error');
                     showToast('Error logging out. Please try again.', 'error');
                     return;
                 }
@@ -709,7 +709,7 @@
                 window.location.href = 'index.html';
 
             } catch (error) {
-                console.error('Logout exception:', error);
+                console.error('Logout exception');
                 showToast('Error logging out. Please try again.', 'error');
             }
         }
@@ -749,7 +749,7 @@
                 updateUserStats(users);
                 renderUsers(users);
             } catch (error) {
-                console.error('Error loading users:', error);
+                console.error('Error loading users');
                 showToast('Error loading users', 'error');
             }
         }
@@ -793,7 +793,7 @@
 
                 // Validate userID exists
                 if (!user.userID) {
-                    console.error('User missing userID:', user);
+                    console.error('User missing userID');
                     return '';
                 }
 
@@ -1010,7 +1010,7 @@
 
             // Validate inputs
             if (!userId || userId === 'null' || userId === 'undefined' || userId === '') {
-                console.error('Invalid userId passed to promoteToSK:', userId);
+                console.error('Invalid userId passed to promoteToSK');
                 showToast('Error: Invalid user data. Please refresh the page.', 'error');
                 return;
             }
@@ -1107,7 +1107,7 @@
                 closePromotionTypeModal();
                 loadUsers();
             } catch (error) {
-                console.error('Error promoting to Captain:', error);
+                console.error('Error promoting to Captain');
                 showToast('Error promoting to Captain: ' + error.message, 'error');
             }
         }
@@ -1125,7 +1125,7 @@
 
             // CRITICAL: Validate userID exists and is not null/undefined
             if (!currentModalUserId || currentModalUserId === 'null' || currentModalUserId === 'undefined') {
-                console.error('Invalid userID:', currentModalUserId);
+                console.error('Invalid userID');
                 showToast('Error: Invalid user ID. Please refresh the page and try again.', 'error');
                 closePromoteModal();
                 return;
@@ -1251,7 +1251,7 @@
                 closePromoteModal();
                 loadUsers();
             } catch (error) {
-                console.error('Error promoting user:', error);
+                console.error('Error promoting user');
                 showToast('Error promoting user: ' + error.message, 'error');
             }
         };
@@ -1337,7 +1337,7 @@
                 closeDemoteModal();
                 loadUsers();
             } catch (error) {
-                console.error('Error demoting user:', error);
+                console.error('Error demoting user');
                 showToast('Error demoting user: ' + error.message, 'error');
             }
         };
@@ -1393,7 +1393,7 @@
                 closeDeactivateModal();
                 loadUsers();
             } catch (error) {
-                console.error('Error deactivating user:', error);
+                console.error('Error deactivating user');
                 showToast('Error deactivating user: ' + error.message, 'error');
             }
         };
@@ -1413,7 +1413,7 @@
                 showToast(`${userName} has been reactivated`, 'success');
                 loadUsers();
             } catch (error) {
-                console.error('Error reactivating user:', error);
+                console.error('Error reactivating user');
                 showToast('Error reactivating user', 'error');
             }
         };

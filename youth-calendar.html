@@ -314,6 +314,7 @@
 
           // Load user profile data into ProfileModal component
           await profileModal.loadUserData(currentUser, currentUserData);
+          await notificationModal.loadNotifications();
 
           // Load calendar events from database
           await loadEventsFromDatabase();
@@ -453,7 +454,7 @@
           events = [...projectEvents, ...announcementEvents];
 
         } catch (error) {
-          console.error("[YOUTH CALENDAR] Error loading events:", error);
+          console.error('Error loading events');
           events = [];
         }
       }
@@ -1037,7 +1038,7 @@
         try {
           await SessionManager.logout();
         } catch (error) {
-          console.error("[YOUTH CALENDAR] Logout error:", error);
+          console.error('Logout error');
           window.location.href = "login.html";
         }
       }

@@ -1,0 +1,205 @@
+======================================================================
+              USER ACCEPTANCE TESTING (UAT) QUESTIONNAIRE
+              Barangay Information Management System (BIMS)
+======================================================================
+
+Project:       SK Malanday BIMS
+Group:         4 - 3ITA
+Course:        ICS 26011 - Software Engineering 2
+Institution:   University of Santo Tomas (UST CICS)
+
+PURPOSE:
+This User Acceptance Testing (UAT) questionnaire is conducted by
+Group 4-3ITA as part of the fulfillment of course requirements for
+ICS 26011 - Software Engineering 2 at the University of Santo Tomas,
+College of Information and Computing Sciences (UST CICS).
+
+The purpose of this evaluation is to assess the Barangay Information
+Management System (BIMS) developed for SK Barangay Malanday,
+Marikina City, focusing on its usability, reliability, performance,
+and overall functionality from the end-user perspective.
+
+The information collected through this questionnaire will be used
+solely for system improvement and academic purposes. Your responses
+will help identify areas for enhancement and ensure the BIMS meets
+the operational needs of SK Barangay Malanday. All feedback is
+confidential and will be handled in accordance with data privacy
+standards.
+
+----------------------------------------------------------------------
+USER PROFILING
+----------------------------------------------------------------------
+Name (Optional): _____________________________________________________
+Email (Optional): ____________________________________________________
+SK Position: _________________________________________________________
+
+Internet Connectivity:
+[ ] Wifi
+[ ] Mobile Data
+
+Device Used:
+[ ] PC/Laptop
+[ ] Tablet
+[ ] Mobile Phone
+
+Web Browser:
+[ ] Google Chrome
+[ ] Firefox
+[ ] Safari
+[ ] Others: ________________
+
+----------------------------------------------------------------------
+INSTRUCTIONS
+----------------------------------------------------------------------
+This questionnaire evaluates the Barangay Information Management
+System's usability, reliability, and performance from the end-user
+perspective. Please answer each question based on your actual
+experience testing the system.
+
+Rating Scale:
+4 = Strongly Agree
+3 = Agree
+2 = Disagree
+1 = Strongly Disagree
+
+======================================================================
+SK OFFICIAL USER EVALUATION (25 Items)
+======================================================================
+
+--- AUTHENTICATION & ACCESS (Items 1-3) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+1.   I can log in with valid credentials and am           |   |   |   |   |
+     redirected to the SK Dashboard.                      |   |   |   |   |
+                                                          |   |   |   |   |
+2.   The system masks my password during login and        |   |   |   |   |
+     locks my account after multiple failed attempts.     |   |   |   |   |
+                                                          |   |   |   |   |
+3.   OTP verification codes are delivered promptly        |   |   |   |   |
+     during sign-up and password reset.                   |   |   |   |   |
+
+--- DASHBOARD & PERFORMANCE (Items 4-5) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+4.   Pages and dashboards load quickly without            |   |   |   |   |
+     noticeable delays.                                   |   |   |   |   |
+                                                          |   |   |   |   |
+5.   The SK Dashboard displays accurate statistics        |   |   |   |   |
+     (files, announcements, projects, volunteers)         |   |   |   |   |
+     and budget allocation clearly.                       |   |   |   |   |
+
+--- ANNOUNCEMENT MANAGEMENT (Items 6-8) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+6.   I can publish a new announcement with a title,       |   |   |   |   |
+     category, description, and optional image.           |   |   |   |   |
+                                                          |   |   |   |   |
+7.   I can edit an existing announcement and the          |   |   |   |   |
+     changes are reflected immediately.                   |   |   |   |   |
+                                                          |   |   |   |   |
+8.   The system asks for confirmation before              |   |   |   |   |
+     permanently deleting an announcement.                |   |   |   |   |
+
+--- FILE MANAGEMENT (Items 9-12) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+9.   I can upload files successfully with clear           |   |   |   |   |
+     confirmation messages.                               |   |   |   |   |
+                                                          |   |   |   |   |
+10.  File type and size restrictions are properly         |   |   |   |   |
+     enforced during upload.                              |   |   |   |   |
+                                                          |   |   |   |   |
+11.  I can preview uploaded files (PDF and images)        |   |   |   |   |
+     directly in the system.                              |   |   |   |   |
+                                                          |   |   |   |   |
+12.  I can search and filter files by name and            |   |   |   |   |
+     category, and publish files to the homepage          |   |   |   |   |
+     transparency section.                                |   |   |   |   |
+
+--- PROJECT MANAGEMENT (Items 13-16) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+13.  I can view complete project details including        |   |   |   |   |
+     budget breakdown, beneficiaries, and timeline.       |   |   |   |   |
+                                                          |   |   |   |   |
+14.  I can submit projects for Barangay Captain           |   |   |   |   |
+     approval and track the approval status.              |   |   |   |   |
+                                                          |   |   |   |   |
+15.  I can view the list of project applicants and        |   |   |   |   |
+     their details (contact info, requirements).          |   |   |   |   |
+                                                          |   |   |   |   |
+16.  I can approve, reject, or revert applicants to       |   |   |   |   |
+     pending with correct status updates.                 |   |   |   |   |
+
+--- CALENDAR (Items 17-18) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+17.  The calendar displays all events with accurate       |   |   |   |   |
+     dates, details, and color-coded categories           |   |   |   |   |
+     across month, week, and day views.                   |   |   |   |   |
+                                                          |   |   |   |   |
+18.  I can export calendar events to external             |   |   |   |   |
+     platforms (Google Calendar, Outlook, iCal).          |   |   |   |   |
+
+--- TESTIMONIES (Items 19-20) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+19.  I can view and search all volunteer testimonies      |   |   |   |   |
+     with star ratings and submission details.            |   |   |   |   |
+                                                          |   |   |   |   |
+20.  I can feature or unfeature testimonies for           |   |   |   |   |
+     public display on the homepage.                      |   |   |   |   |
+
+--- ARCHIVES (Items 21-23) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+21.  I can view archived projects with detailed           |   |   |   |   |
+     evaluation metrics and financial summaries.          |   |   |   |   |
+                                                          |   |   |   |   |
+22.  I can search and filter archived items by            |   |   |   |   |
+     name, year, quarter, and file type.                  |   |   |   |   |
+                                                          |   |   |   |   |
+23.  I can download individual or bulk project            |   |   |   |   |
+     reports as PDF from the archives.                    |   |   |   |   |
+
+--- NOTIFICATIONS & USABILITY (Items 24-25) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+24.  I receive notifications for relevant updates         |   |   |   |   |
+     and clicking them navigates to the correct           |   |   |   |   |
+     section.                                             |   |   |   |   |
+                                                          |   |   |   |   |
+25.  Error messages, confirmation prompts, buttons,       |   |   |   |   |
+     labels, and icons are clear, informative, and        |   |   |   |   |
+     easy to understand.                                  |   |   |   |   |
+
+----------------------------------------------------------------------
+COMMENTS OR SUGGESTIONS
+----------------------------------------------------------------------
+Please share any additional feedback, issues encountered, or
+suggestions for improvement:
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+----------------------------------------------------------------------
+End of Questionnaire
+Thank you for participating in this User Acceptance Testing.
+Your feedback is valuable in improving the BIMS.
+----------------------------------------------------------------------

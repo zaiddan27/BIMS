@@ -593,7 +593,7 @@
           }
         }
       } catch (error) {
-        console.error('Auth error:', error);
+        console.error('Auth error');
         throw error;
       }
 
@@ -624,7 +624,7 @@
             .eq('attended', true);
 
           if (appError) {
-            console.error('Error loading applications:', appError);
+            console.error('Error loading applications');
             showToast('Failed to load your applications. Please try again later.', 'error');
             completedProjects = [];
             renderProjects();
@@ -650,7 +650,7 @@
             .in('preProjectID', preProjectIds);
 
           if (postError) {
-            console.error('Error loading post projects:', postError);
+            console.error('Error loading post projects');
           }
 
           // Get evaluation data for user's applications
@@ -661,7 +661,7 @@
             .in('applicationID', applicationIds);
 
           if (evalError) {
-            console.error('Error loading evaluations:', evalError);
+            console.error('Error loading evaluations');
           }
 
           // Build projects array
@@ -693,7 +693,7 @@
           completedProjects.sort((a, b) => new Date(b.completedDate) - new Date(a.completedDate));
 
         } catch (error) {
-          console.error('Error loading completed projects:', error);
+          console.error('Error loading completed projects');
           showToast('An error occurred while loading certificates data.', 'error');
         }
 
@@ -938,7 +938,7 @@
             .single();
 
           if (error) {
-            console.error('Error submitting survey:', error);
+            console.error('Error submitting survey');
             if (error.message?.includes('postProjectID') || error.code === '23502') {
               showToast('This project has not been finalized by SK officials yet. Survey cannot be submitted.', 'warning');
             } else if (error.code === '23505') {
@@ -970,7 +970,7 @@
           }, 500);
 
         } catch (error) {
-          console.error('Error submitting survey:', error);
+          console.error('Error submitting survey');
           showToast('Failed to submit survey. Please try again.', 'error');
         }
       }
@@ -1207,7 +1207,7 @@
           showToast('Certificate downloaded successfully!', 'success');
 
         } catch (error) {
-          console.error('Error generating PDF:', error);
+          console.error('Error generating PDF');
           showToast('Failed to generate PDF. Please try again.', 'error');
 
           const downloadBtn = event.target.closest('button');
@@ -1255,9 +1255,10 @@
 
         if (userData) {
           await profileModal.loadUserData(currentUser, userData);
+          await notificationModal.loadNotifications();
         }
       } catch (error) {
-        console.error('Error loading profile:', error);
+        console.error('Error loading profile');
       }
 
       // Listen for profile updates - also update currentUserData so certificate uses correct name
@@ -1292,7 +1293,7 @@
         try {
           await SessionManager.logout();
         } catch (error) {
-          console.error('Logout error:', error);
+          console.error('Logout error');
           showToast('Failed to logout. Please try again.', 'error');
         }
       }

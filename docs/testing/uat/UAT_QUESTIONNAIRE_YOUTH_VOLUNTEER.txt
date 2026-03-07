@@ -1,0 +1,202 @@
+======================================================================
+              USER ACCEPTANCE TESTING (UAT) QUESTIONNAIRE
+              Barangay Information Management System (BIMS)
+======================================================================
+
+Project:       SK Malanday BIMS
+Group:         4 - 3ITA
+Course:        ICS 26011 - Software Engineering 2
+Institution:   University of Santo Tomas (UST CICS)
+
+PURPOSE:
+This User Acceptance Testing (UAT) questionnaire is conducted by
+Group 4-3ITA as part of the fulfillment of course requirements for
+ICS 26011 - Software Engineering 2 at the University of Santo Tomas,
+College of Information and Computing Sciences (UST CICS).
+
+The purpose of this evaluation is to assess the Barangay Information
+Management System (BIMS) developed for SK Barangay Malanday,
+Marikina City, focusing on its usability, reliability, performance,
+and overall functionality from the end-user perspective.
+
+The information collected through this questionnaire will be used
+solely for system improvement and academic purposes. Your responses
+will help identify areas for enhancement and ensure the BIMS meets
+the operational needs of SK Barangay Malanday. All feedback is
+confidential and will be handled in accordance with data privacy
+standards.
+
+----------------------------------------------------------------------
+USER PROFILING
+----------------------------------------------------------------------
+Name (Optional): _____________________________________________________
+Email (Optional): ____________________________________________________
+Location: ____________________________________________________________
+Age: _______________
+
+Internet Connectivity:
+[ ] Wifi
+[ ] Mobile Data
+
+Device Used:
+[ ] PC/Laptop
+[ ] Tablet
+[ ] Mobile Phone
+
+Web Browser:
+[ ] Google Chrome
+[ ] Firefox
+[ ] Safari
+[ ] Others: ________________
+
+----------------------------------------------------------------------
+INSTRUCTIONS
+----------------------------------------------------------------------
+This questionnaire evaluates the Barangay Information Management
+System's usability, reliability, and performance from the end-user
+perspective. Please answer each question based on your actual
+experience testing the system.
+
+Rating Scale:
+4 = Strongly Agree
+3 = Agree
+2 = Disagree
+1 = Strongly Disagree
+
+======================================================================
+YOUTH VOLUNTEER USER EVALUATION (25 Items)
+======================================================================
+
+--- AUTHENTICATION & REGISTRATION (Items 1-4) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+1.   I can log in with valid credentials and am           |   |   |   |   |
+     redirected to the Youth Dashboard.                   |   |   |   |   |
+                                                          |   |   |   |   |
+2.   I can register a new account and receive an          |   |   |   |   |
+     email verification code to confirm my account.       |   |   |   |   |
+                                                          |   |   |   |   |
+3.   OTP verification codes are delivered promptly        |   |   |   |   |
+     during sign-up and password reset.                   |   |   |   |   |
+                                                          |   |   |   |   |
+4.   The system masks passwords during login and          |   |   |   |   |
+     registration for security.                           |   |   |   |   |
+
+--- DASHBOARD & NAVIGATION (Items 5-6) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+5.   The Youth Dashboard displays announcements and       |   |   |   |   |
+     my application status updates clearly.               |   |   |   |   |
+                                                          |   |   |   |   |
+6.   I can navigate to all sections (Files, Projects,     |   |   |   |   |
+     Calendar, Certificates) easily from the sidebar.     |   |   |   |   |
+
+--- FILE MANAGEMENT (Items 7-8) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+7.   I can view and download available files with         |   |   |   |   |
+     preview support (PDF and images).                    |   |   |   |   |
+                                                          |   |   |   |   |
+8.   I can search and filter files by name and            |   |   |   |   |
+     category to find what I need.                        |   |   |   |   |
+
+--- PROJECT BROWSING & APPLICATION (Items 9-14) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+9.   I can view all available projects with complete      |   |   |   |   |
+     details (title, description, location, timeline).    |   |   |   |   |
+                                                          |   |   |   |   |
+10.  I can search projects by keyword and filter by       |   |   |   |   |
+     category with accurate results.                      |   |   |   |   |
+                                                          |   |   |   |   |
+11.  I can successfully submit my application to a        |   |   |   |   |
+     project with the required information.               |   |   |   |   |
+                                                          |   |   |   |   |
+12.  I can upload a parental consent form when            |   |   |   |   |
+     required (applicants under 18).                      |   |   |   |   |
+                                                          |   |   |   |   |
+13.  I can view and edit my pending application           |   |   |   |   |
+     before it is reviewed.                               |   |   |   |   |
+                                                          |   |   |   |   |
+14.  I can track my application status (Pending           |   |   |   |   |
+     Review, Approved, Rejected) clearly.                 |   |   |   |   |
+
+--- PROJECT INQUIRIES (Items 15-16) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+15.  I can submit inquiries about a project through       |   |   |   |   |
+     the inquiry feature.                                 |   |   |   |   |
+                                                          |   |   |   |   |
+16.  I can view replies to my inquiries and continue      |   |   |   |   |
+     the conversation in the thread.                      |   |   |   |   |
+
+--- CALENDAR (Items 17-18) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+17.  The calendar displays events with accurate dates     |   |   |   |   |
+     across month, week, and day views.                   |   |   |   |   |
+                                                          |   |   |   |   |
+18.  I can export calendar events to external             |   |   |   |   |
+     platforms (Google Calendar, Outlook, iCal).          |   |   |   |   |
+
+--- TESTIMONIES (Item 19) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+19.  I can submit a testimony with a star rating and      |   |   |   |   |
+     written feedback for attended projects.              |   |   |   |   |
+
+--- CERTIFICATES (Items 20-22) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+20.  I can complete a satisfaction survey after            |   |   |   |   |
+     attending a project.                                 |   |   |   |   |
+                                                          |   |   |   |   |
+21.  I can view my certificate of participation once      |   |   |   |   |
+     the survey is done and the project is completed.     |   |   |   |   |
+                                                          |   |   |   |   |
+22.  I can download the certificate as PDF and use        |   |   |   |   |
+     zoom controls to preview it.                         |   |   |   |   |
+
+--- NOTIFICATIONS & USABILITY (Items 23-25) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+23.  I receive notifications for relevant updates and     |   |   |   |   |
+     clicking them navigates to the correct section.      |   |   |   |   |
+                                                          |   |   |   |   |
+24.  Pages and dashboards load quickly without            |   |   |   |   |
+     noticeable delays.                                   |   |   |   |   |
+                                                          |   |   |   |   |
+25.  Error messages, confirmation prompts, buttons,       |   |   |   |   |
+     and labels are clear, informative, and easy          |   |   |   |   |
+     to understand.                                       |   |   |   |   |
+
+----------------------------------------------------------------------
+COMMENTS OR SUGGESTIONS
+----------------------------------------------------------------------
+Please share any additional feedback, issues encountered, or
+suggestions for improvement:
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+----------------------------------------------------------------------
+End of Questionnaire
+Thank you for participating in this User Acceptance Testing.
+Your feedback is valuable in improving the BIMS.
+----------------------------------------------------------------------

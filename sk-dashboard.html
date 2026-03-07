@@ -1390,6 +1390,9 @@
           // Load user profile data into ProfileModal component
           await profileModal.loadUserData(currentUser, currentUserData);
 
+          // Load notifications for badge count
+          await notificationModal.loadNotifications();
+
           // EFFICIENCY: Load dashboard data in parallel
           await Promise.all([loadAnnouncements(), loadDashboardStatistics(), loadProjectMetrics()]);
 
@@ -1775,7 +1778,7 @@
             volunteersElement.textContent = totalVolunteers;
 
         } catch (error) {
-          console.error("Error loading dashboard statistics:", error);
+          console.error("Error loading dashboard statistics");
 
           // RELIABLE: Show 0 instead of leaving loading animation on error
           const defaultElements = [
@@ -2068,7 +2071,7 @@
                 });
 
             if (uploadError) {
-              console.error("❌ Upload error:", uploadError);
+              console.error("Upload error");
               throw new Error(`Image upload failed: ${uploadError.message}`);
             }
 
@@ -2098,7 +2101,7 @@
           await Promise.all([loadAnnouncements(), loadDashboardStatistics()]);
 
         } catch (error) {
-          console.error("Error posting announcement:", error);
+          console.error("Error posting announcement");
           showToast(error.message, "error");
         } finally {
           document.getElementById('loadingOverlay').classList.add('hidden');
@@ -2227,7 +2230,7 @@
                 });
 
             if (uploadError) {
-              console.error("❌ Upload error:", uploadError);
+              console.error("Upload error");
               throw new Error(`Image upload failed: ${uploadError.message}`);
             }
 
@@ -2256,7 +2259,7 @@
           await Promise.all([loadAnnouncements(), loadDashboardStatistics()]);
 
         } catch (error) {
-          console.error("Error updating announcement:", error);
+          console.error("Error updating announcement");
           showToast(error.message, "error");
         } finally {
           document.getElementById('loadingOverlay').classList.add('hidden');
@@ -2390,8 +2393,7 @@
 
           closeDeleteModal();
         } catch (error) {
-          // SECURITY: Log full error for debugging (console only)
-          console.error("Error deleting announcement:", error);
+          console.error("Error deleting announcement");
 
           // Show generic message to user
           showToast(
@@ -2561,7 +2563,7 @@
             .lte('createdAt', yearEnd);
 
           if (error) {
-            console.error('Error loading project metrics:', error);
+            console.error('Error loading project metrics');
             return;
           }
 
@@ -2581,7 +2583,7 @@
 
           updateMetricsDisplay();
         } catch (err) {
-          console.error('Load project metrics exception:', err);
+          console.error('Load project metrics exception');
         }
       }
 
@@ -2792,7 +2794,7 @@
         try {
           await SessionManager.logout();
         } catch (error) {
-          console.error("Logout error:", error);
+          console.error("Logout error");
           // Force logout even if there's an error
           window.location.href = "login.html";
         }

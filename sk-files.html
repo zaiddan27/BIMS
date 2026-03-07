@@ -727,6 +727,9 @@
           // Load profile modal data
           await profileModal.loadUserData(currentUser, sessionResult.userData);
 
+          // Load notifications for badge count
+          await notificationModal.loadNotifications();
+
           // Load files from Supabase
           await loadFiles();
 
@@ -734,7 +737,7 @@
           updateCurrentDate();
 
         } catch (error) {
-          console.error('Page initialization error:', error);
+          console.error('Page initialization error');
           showToast('Failed to initialize page. Please refresh.', 'error');
         }
       }
@@ -808,7 +811,7 @@
             .order('dateUploaded', { ascending: false });
 
           if (error) {
-            console.error('Error loading files:', error);
+            console.error('Error loading files');
             showToast('Failed to load files. Please try again.', 'error');
             fileStore = [];
           } else {
@@ -831,7 +834,7 @@
           renderFiles(fileStore);
 
         } catch (err) {
-          console.error('Load files exception:', err);
+          console.error('Load files exception');
           showToast('An error occurred while loading files.', 'error');
           showLoadingSkeleton(false);
           fileStore = [];
@@ -1117,6 +1120,16 @@
           const categoryUpper = category.toUpperCase();
           const filePath = `${uniqueFileName}`;
 
+          // Map file extension to allowed DB fileType values: PDF, XLSX, JPG, PNG, DOC
+          const fileTypeMap = {
+            'pdf': 'PDF',
+            'xlsx': 'XLSX', 'xls': 'XLSX', 'csv': 'XLSX',
+            'jpg': 'JPG', 'jpeg': 'JPG',
+            'png': 'PNG', 'gif': 'PNG', 'webp': 'PNG',
+            'doc': 'DOC', 'docx': 'DOC', 'txt': 'DOC', 'rtf': 'DOC'
+          };
+          const dbFileType = fileTypeMap[ext] || 'DOC';
+
           // Select bucket based on category
           const storageBucket = STORAGE_BUCKETS[categoryUpper] || 'general-files';
 
@@ -1146,7 +1159,7 @@
             .insert({
               userID: currentUser.id,
               fileName: fileName,
-              fileType: ext.toUpperCase(),
+              fileType: dbFileType,
               fileStatus: 'ACTIVE',
               filePath: publicUrl,
               fileCategory: categoryUpper,
@@ -1179,7 +1192,7 @@
           }, 500);
 
         } catch (error) {
-          console.error('Upload error:', error);
+          console.error('Upload error');
           showToast(error.message || 'Failed to upload file. Please try again.', 'error');
         } finally {
           isLoading = false;
@@ -1248,7 +1261,7 @@
             showFileIconFallback(fileType);
           }
         } catch (error) {
-          console.error('Preview error:', error);
+          console.error('Preview error');
           showFileIconFallback(fileType);
         }
       }
@@ -1274,7 +1287,7 @@
           previewEl.classList.remove("hidden");
           canvas.classList.remove("hidden");
         } catch (error) {
-          console.error('PDF render error:', error);
+          console.error('PDF render error');
           showFileIconFallback('pdf');
         }
       }
@@ -1356,7 +1369,7 @@
           await loadFiles();
 
         } catch (error) {
-          console.error('Archive error:', error);
+          console.error('Archive error');
           showToast('Failed to archive file. Please try again.', 'error');
         } finally {
           isLoading = false;
@@ -1421,7 +1434,7 @@
           await loadFiles();
 
         } catch (error) {
-          console.error('Delete error:', error);
+          console.error('Delete error');
           showToast('Failed to delete file. Please try again.', 'error');
         } finally {
           isLoading = false;
@@ -1478,7 +1491,7 @@
           closePublishModal();
           await loadFiles();
         } catch (error) {
-          console.error('Publish error:', error);
+          console.error('Publish error');
           showToast('Failed to publish file. Please try again.', 'error');
         } finally {
           isLoading = false;
@@ -1502,7 +1515,7 @@
           showToast('File removed from homepage.', 'info');
           await loadFiles();
         } catch (error) {
-          console.error('Unpublish error:', error);
+          console.error('Unpublish error');
           showToast('Failed to unpublish file. Please try again.', 'error');
         } finally {
           isLoading = false;
@@ -1547,7 +1560,7 @@
           await SessionManager.logout();
           // SessionManager handles redirect to login page
         } catch (error) {
-          console.error('Logout error:', error);
+          console.error('Logout error');
           showToast('Failed to logout. Please try again.', 'error');
         }
       }

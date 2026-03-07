@@ -694,85 +694,96 @@
           </div>
 
           <div class="p-6 space-y-4">
+            <!-- Personal Info (read-only — edit from Profile settings) -->
+            <p class="text-xs text-gray-400 italic">Personal details are from your profile and cannot be changed here.</p>
             <div class="grid grid-cols-8 gap-4">
               <div class="col-span-3">
-                <label class="block text-sm font-semibold text-gray-700 mb-2"
+                <label class="block text-sm font-semibold text-gray-400 mb-2"
                   >Last Name</label
                 >
                 <input
                   id="editAppLastName"
                   type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  disabled
+                  class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
                 />
               </div>
               <div class="col-span-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2"
+                <label class="block text-sm font-semibold text-gray-400 mb-2"
                   >First Name</label
                 >
                 <input
                   id="editAppFirstName"
                   type="text"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  disabled
+                  class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
                 />
               </div>
               <div class="col-span-1">
-                <label class="block text-sm font-semibold text-gray-700 mb-2"
+                <label class="block text-sm font-semibold text-gray-400 mb-2"
                   >MI</label
                 >
                 <input
                   id="editAppMiddleName"
                   type="text"
                   maxlength="2"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center"
+                  disabled
+                  class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 text-center cursor-not-allowed"
                 />
               </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2"
+                <label class="block text-sm font-semibold text-gray-400 mb-2"
                   >Birthday</label
                 >
                 <input
                   id="editAppBirthday"
                   type="date"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  disabled
+                  class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
                 />
               </div>
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2"
+                <label class="block text-sm font-semibold text-gray-400 mb-2"
                   >Contact Number</label
                 >
                 <input
                   id="editAppContact"
                   type="tel"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                  disabled
+                  class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
                 />
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2"
+              <label class="block text-sm font-semibold text-gray-400 mb-2"
                 >Email</label
               >
               <input
                 id="editAppEmail"
                 type="email"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                disabled
+                class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2"
+              <label class="block text-sm font-semibold text-gray-400 mb-2"
                 >Complete Address</label
               >
               <input
                 id="editAppAddress"
                 type="text"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                disabled
+                class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
               />
             </div>
 
+            <!-- Editable fields -->
+            <hr class="border-gray-200">
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-2"
                 >Preferred Role</label
@@ -951,6 +962,7 @@
 
           // Load profile modal data
           await profileModal.loadUserData(currentUser, sessionResult.userData);
+          await notificationModal.loadNotifications();
 
           // Load projects from Supabase
           await loadProjects();
@@ -969,7 +981,7 @@
           handleURLParameters();
 
         } catch (error) {
-          console.error('Page initialization error:', error);
+          console.error('Page initialization error');
           showToast('Failed to initialize page. Please refresh.', 'error');
         } finally {
           showLoadingSkeleton(false);
@@ -1067,7 +1079,7 @@
             .order('createdAt', { ascending: false });
 
           if (error) {
-            console.error('Error loading projects:', error);
+            console.error('Error loading projects');
             showToast('Failed to load projects. Please try again.', 'error');
             projects = [];
           } else {
@@ -1110,7 +1122,7 @@
             }));
           }
         } catch (err) {
-          console.error('Load projects exception:', err);
+          console.error('Load projects exception');
           showToast('An error occurred while loading projects.', 'error');
           projects = [];
         }
@@ -1147,7 +1159,7 @@
             .order('timeStamp', { ascending: false });
 
           if (error) {
-            console.error('Error loading inquiries:', error);
+            console.error('Error loading inquiries');
             return [];
           }
 
@@ -1166,7 +1178,7 @@
 
           return inquiriesWithReplies;
         } catch (err) {
-          console.error('Load inquiries exception:', err);
+          console.error('Load inquiries exception');
           return [];
         }
       }
@@ -1186,7 +1198,7 @@
             .order('timeStamp', { ascending: true });
 
           if (error) {
-            console.error('Error loading replies:', error);
+            console.error('Error loading replies');
             return [];
           }
 
@@ -1197,7 +1209,7 @@
             repliedAt: formatTimeAgo(reply.timeStamp)
           }));
         } catch (err) {
-          console.error('Load replies exception:', err);
+          console.error('Load replies exception');
           return [];
         }
       }
@@ -1230,7 +1242,7 @@
             .order('appliedDate', { ascending: false });
 
           if (error) {
-            console.error('Error loading applications:', error);
+            console.error('Error loading applications');
             myApplications = [];
           } else {
             myApplications = (data || []).map(app => {
@@ -1254,7 +1266,7 @@
             });
           }
         } catch (err) {
-          console.error('Load applications exception:', err);
+          console.error('Load applications exception');
           myApplications = [];
         }
       }
@@ -1901,7 +1913,7 @@
               }
             }
           } catch (notifErr) {
-            console.error('Notification error (non-critical):', notifErr);
+            console.error('Notification error (non-critical)');
           }
 
           showToast("Application submitted successfully!", "success");
@@ -1910,7 +1922,7 @@
           renderMyApplicationsGrid();
 
         } catch (err) {
-          console.error('Submit application error:', err);
+          console.error('Submit application error');
           showToast('Failed to submit application. Please try again.', 'error');
         } finally {
           isLoading = false;
@@ -2012,31 +2024,10 @@
       }
 
       async function saveEditedApplication() {
-        const firstName = document
-          .getElementById("editAppFirstName")
-          .value.trim();
-        const middleName = document
-          .getElementById("editAppMiddleName")
-          .value.trim();
-        const lastName = document
-          .getElementById("editAppLastName")
-          .value.trim();
-        const birthday = document.getElementById("editAppBirthday").value;
-        const contact = document.getElementById("editAppContact").value.trim();
-        const email = document.getElementById("editAppEmail").value.trim();
-        const address = document.getElementById("editAppAddress").value.trim();
         const role = document.getElementById("editAppRole").value.trim();
 
-        if (
-          !firstName ||
-          !lastName ||
-          !birthday ||
-          !contact ||
-          !email ||
-          !address ||
-          !role
-        ) {
-          showToast("Please fill in all required fields", "warning");
+        if (!role) {
+          showToast("Please fill in the preferred role", "warning");
           return;
         }
 
@@ -2057,7 +2048,7 @@
           let consentFilePath = app.parentConsentFile || null;
           const editConsentFile = document.getElementById("editAppParentalConsent").files[0];
           if (editConsentFile) {
-            const age = calculateAge(birthday);
+            const age = calculateAge(app.birthday);
             if (age < 18) {
               if (editConsentFile.size > 5 * 1024 * 1024) {
                 showToast("Parental consent file must be under 5MB", "warning");
@@ -2073,7 +2064,7 @@
             }
           }
 
-          // Update Application_Tbl (role + parental consent)
+          // Update Application_Tbl (role + parental consent only)
           const appUpdateData = { preferredRole: role };
           if (consentFilePath) {
             appUpdateData.parentConsentFile = consentFilePath;
@@ -2085,48 +2076,16 @@
 
           if (appError) throw appError;
 
-          // Update user profile in User_Tbl
-          const { error: userError } = await supabaseClient
-            .from('User_Tbl')
-            .update({
-              firstName,
-              lastName,
-              middleName,
-              birthday,
-              contactNumber: contact,
-              address
-            })
-            .eq('userID', currentUser.id);
-
-          if (userError) throw userError;
-
           // Update local application data
-          app.firstName = firstName;
-          app.middleName = middleName;
-          app.lastName = lastName;
-          app.birthday = birthday;
-          app.contact = contact;
-          app.email = email;
-          app.address = address;
           app.role = role;
           if (consentFilePath) app.parentConsentFile = consentFilePath;
-
-          // Keep currentUserData in sync so apply form pre-fills correctly
-          if (currentUserData) {
-            currentUserData.firstName = firstName;
-            currentUserData.lastName = lastName;
-            currentUserData.middleName = middleName;
-            currentUserData.birthday = birthday;
-            currentUserData.contactNumber = contact;
-            currentUserData.address = address;
-          }
 
           const consentMsg = (editConsentFile && consentFilePath) ? " Parental consent uploaded." : "";
           showToast(`Application updated successfully!${consentMsg}`);
           closeEditApplicationModal();
           renderMyApplicationsGrid();
         } catch (err) {
-          console.error('Error saving application:', err);
+          console.error('Error saving application');
           showToast(`Failed to save changes: ${err.message}`, "error");
         } finally {
           if (saveBtn) {
@@ -2210,11 +2169,48 @@
             userID: currentUser.id
           });
 
+          // Notify SK project head(s) about the new inquiry
+          try {
+            const { data: projData } = await supabaseClient
+              .from('Pre_Project_Tbl')
+              .select('skID, userID, SK_Tbl ( userID )')
+              .eq('preProjectID', inquiryToProjectId)
+              .single();
+
+            if (projData) {
+              const notifiedIds = new Set();
+              const inquirerName = currentUserData
+                ? `${currentUserData.firstName} ${currentUserData.lastName}`.trim()
+                : 'A volunteer';
+
+              if (projData.SK_Tbl?.userID) {
+                notifiedIds.add(projData.SK_Tbl.userID);
+                await supabaseClient.rpc('create_notification', {
+                  p_user_id: projData.SK_Tbl.userID,
+                  p_notification_type: 'new_inquiry',
+                  p_title: `New inquiry from ${inquirerName} on "${project.title}"`,
+                  p_reference_id: inquiryToProjectId
+                });
+              }
+
+              if (projData.userID && !notifiedIds.has(projData.userID)) {
+                await supabaseClient.rpc('create_notification', {
+                  p_user_id: projData.userID,
+                  p_notification_type: 'new_inquiry',
+                  p_title: `New inquiry from ${inquirerName} on "${project.title}"`,
+                  p_reference_id: inquiryToProjectId
+                });
+              }
+            }
+          } catch (notifErr) {
+            console.error('Inquiry notification error (non-critical)');
+          }
+
           showToast("Inquiry sent successfully!", "success");
           closeInquiryModal();
 
         } catch (err) {
-          console.error('Submit inquiry error:', err);
+          console.error('Submit inquiry error');
           showToast('Failed to send inquiry. Please try again.', 'error');
         } finally {
           isLoading = false;
@@ -2287,7 +2283,7 @@
           }
 
         } catch (err) {
-          console.error('Send reply error:', err);
+          console.error('Send reply error');
           showToast('Failed to send reply. Please try again.', 'error');
         } finally {
           isLoading = false;
@@ -2698,7 +2694,7 @@
           await SessionManager.logout();
           // SessionManager handles redirect to login page
         } catch (error) {
-          console.error('Logout error:', error);
+          console.error('Logout error');
           showToast('Failed to logout. Please try again.', 'error');
         }
       }

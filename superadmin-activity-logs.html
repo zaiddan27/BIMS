@@ -265,7 +265,7 @@
                 await profileModal.loadUserData(session.user, userData);
                 await notificationModal.loadNotifications();
             } catch (error) {
-                console.error('Error loading profile data:', error);
+                console.error('Error loading profile data');
             }
         }
 
@@ -327,7 +327,7 @@
                 const { error } = await supabaseClient.auth.signOut();
 
                 if (error) {
-                    console.error('Logout error:', error);
+                    console.error('Logout error');
                     showToast('Error logging out. Please try again.', 'error');
                     return;
                 }
@@ -343,7 +343,7 @@
                 window.location.href = 'index.html';
 
             } catch (error) {
-                console.error('Logout exception:', error);
+                console.error('Logout exception');
                 showToast('Error logging out. Please try again.', 'error');
             }
         }
@@ -422,7 +422,7 @@
                 totalLogsCount = count || 0;
                 renderLogs(logs);
             } catch (error) {
-                console.error('Error loading logs:', error);
+                console.error('Error loading logs');
                 container.innerHTML = '<p class="text-red-500 text-center py-4">Error loading logs</p>';
             }
         }
@@ -524,7 +524,7 @@
                 totalAuditCount = count || 0;
                 renderAudit(logs);
             } catch (error) {
-                console.error('Error loading audit trail:', error);
+                console.error('Error loading audit trail');
                 container.innerHTML = '<p class="text-red-500 text-center py-4">Error loading audit trail</p>';
             }
         }
@@ -625,7 +625,7 @@
                     </div>
                 `).join('');
             } catch (error) {
-                console.error('Error loading database stats:', error);
+                console.error('Error loading database stats');
                 document.getElementById('tableCounts').innerHTML =
                     '<p class="text-red-500 text-center py-4">Error loading stats</p>';
             }

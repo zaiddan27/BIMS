@@ -310,12 +310,13 @@
 
           // Load profile modal data
           await profileModal.loadUserData(currentUser, sessionResult.userData);
+          await notificationModal.loadNotifications();
 
           // Load files from Supabase
           await loadFiles();
 
         } catch (error) {
-          console.error('Page initialization error:', error);
+          console.error('Page initialization error');
           showToast('Failed to initialize page. Please refresh.', 'error');
         }
       }
@@ -326,7 +327,7 @@
           await SessionManager.logout();
           // SessionManager handles redirect to login page
         } catch (error) {
-          console.error('Logout error:', error);
+          console.error('Logout error');
           showToast('Failed to logout. Please try again.', 'error');
         }
       }
@@ -405,7 +406,7 @@
             .order('dateUploaded', { ascending: false });
 
           if (error) {
-            console.error('Error loading files:', error);
+            console.error('Error loading files');
             showToast('Failed to load files. Please try again.', 'error');
             fileStore = [];
           } else {
@@ -425,7 +426,7 @@
           renderFiles(fileStore);
 
         } catch (err) {
-          console.error('Load files exception:', err);
+          console.error('Load files exception');
           showToast('An error occurred while loading files.', 'error');
           fileStore = [];
           renderFiles([]);
@@ -634,7 +635,7 @@
             loadingIndicator.classList.add("hidden");
             pdfCanvas.classList.remove("hidden");
           } catch (err) {
-            console.error('PDF preview error:', err);
+            console.error('PDF preview error');
             loadingIndicator.innerHTML = `
               <div class="text-center text-gray-500">
                 <svg class="w-16 h-16 mx-auto mb-3 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

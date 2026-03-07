@@ -1,0 +1,154 @@
+======================================================================
+              USER ACCEPTANCE TESTING (UAT) QUESTIONNAIRE
+              Barangay Information Management System (BIMS)
+======================================================================
+
+Project:       SK Malanday BIMS
+Group:         4 - 3ITA
+Course:        ICS 26011 - Software Engineering 2
+Institution:   University of Santo Tomas (UST CICS)
+
+PURPOSE:
+To assess the BIMS developed for SK Barangay Malanday, Marikina City,
+focusing on usability, reliability, performance, and functionality.
+Feedback is confidential and used for academic/improvement purposes.
+
+----------------------------------------------------------------------
+USER PROFILING
+----------------------------------------------------------------------
+Name (Optional): _____________________________________________________
+Email (Optional): ____________________________________________________
+Age: _______________
+
+Internet Connectivity:
+[ ] Wifi
+[ ] Mobile Data
+
+Device Used:
+[ ] PC/Laptop
+[ ] Tablet
+[ ] Mobile Phone
+
+Web Browser:
+[ ] Google Chrome
+[ ] Firefox
+[ ] Safari
+[ ] Others: ________________
+
+----------------------------------------------------------------------
+INSTRUCTIONS
+----------------------------------------------------------------------
+Please answer based on your actual experience testing the system.
+
+Rating Scale:
+4 = Strongly Agree
+3 = Agree
+2 = Disagree
+1 = Strongly Disagree
+
+======================================================================
+BARANGAY CAPTAIN USER EVALUATION (18 Items)
+======================================================================
+
+--- AUTHENTICATION & ACCESS (Items 1-3) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+1.   I can log in with valid credentials and get          |   |   |   |   |
+     redirected to the Captain Dashboard.                 |   |   |   |   |
+                                                          |   |   |   |   |
+2.   The system masks my password during login and        |   |   |   |   |
+     locks my account after multiple failed attempts.     |   |   |   |   |
+                                                          |   |   |   |   |
+3.   OTP verification codes are delivered promptly        |   |   |   |   |
+     for email verification and password reset.           |   |   |   |   |
+
+--- DASHBOARD & OVERVIEW (Items 4-6) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+4.   The dashboard pages and modals load quickly          |   |   |   |   |
+     without noticeable delays.                           |   |   |   |   |
+                                                          |   |   |   |   |
+5.   The Project Approvals overview displays accurate     |   |   |   |   |
+     counts for pending, approved, and rejected           |   |   |   |   |
+     projects along with total budget.                    |   |   |   |   |
+                                                          |   |   |   |   |
+6.   Announcements are displayed clearly with proper      |   |   |   |   |
+     categories (Urgent, General, Update) and             |   |   |   |   |
+     pagination controls.                                 |   |   |   |   |
+
+--- PROJECT APPROVAL WORKFLOW (Items 7-11) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+7.   I can review full project details including          |   |   |   |   |
+     budget breakdown, beneficiaries, and timeline.       |   |   |   |   |
+                                                          |   |   |   |   |
+8.   I can approve, reject, or request revision on        |   |   |   |   |
+     projects submitted by SK Officials.                  |   |   |   |   |
+                                                          |   |   |   |   |
+9.   The system requires a reason/comment when            |   |   |   |   |
+     rejecting a project or requesting a revision.        |   |   |   |   |
+                                                          |   |   |   |   |
+10.  A confirmation dialog appears before finalizing      |   |   |   |   |
+     an approval, rejection, or revision request.         |   |   |   |   |
+                                                          |   |   |   |   |
+11.  A clear success or error toast message is            |   |   |   |   |
+     displayed after completing an action.                |   |   |   |   |
+
+--- NOTIFICATIONS (Items 12-14) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+12.  I receive notifications when new projects are        |   |   |   |   |
+     submitted for my approval.                           |   |   |   |   |
+                                                          |   |   |   |   |
+13.  The notification bell displays the correct           |   |   |   |   |
+     unread count and I can mark notifications            |   |   |   |   |
+     as read.                                             |   |   |   |   |
+                                                          |   |   |   |   |
+14.  Clicking a notification navigates me to the          |   |   |   |   |
+     relevant project or section.                         |   |   |   |   |
+
+--- ARCHIVES & HISTORY (Items 15-16) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+15.  I can view approved, rejected, and revision-         |   |   |   |   |
+     requested projects in their respective tabs          |   |   |   |   |
+     with status and timestamps.                          |   |   |   |   |
+                                                          |   |   |   |   |
+16.  I can access archived projects and archived          |   |   |   |   |
+     files in the Archives section.                       |   |   |   |   |
+
+--- PROFILE & USABILITY (Items 17-18) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+17.  I can update my profile information and change       |   |   |   |   |
+     my password from the dashboard.                      |   |   |   |   |
+                                                          |   |   |   |   |
+18.  Buttons, labels, icons, and overall navigation       |   |   |   |   |
+     are intuitive and easy to understand.                |   |   |   |   |
+
+----------------------------------------------------------------------
+ADDITIONAL COMMENTS / SUGGESTIONS
+----------------------------------------------------------------------
+Please share any additional feedback, issues encountered, or
+suggestions for improvement:
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+----------------------------------------------------------------------
+Thank you for participating in this User Acceptance Testing.
+Your feedback is valuable in improving the BIMS.
+----------------------------------------------------------------------

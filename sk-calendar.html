@@ -312,6 +312,9 @@
           // Load user profile data into ProfileModal component
           await profileModal.loadUserData(currentUser, currentUserData);
 
+          // Load notifications for badge count
+          await notificationModal.loadNotifications();
+
           // Load calendar events from database
           await loadEventsFromDatabase();
 
@@ -456,7 +459,7 @@
           events = [...projectEvents, ...announcementEvents];
 
         } catch (error) {
-          console.error("[SK CALENDAR] Error loading events:", error);
+          console.error("[SK CALENDAR] Error loading events");
           events = [];
         }
       }

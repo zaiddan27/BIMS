@@ -1,0 +1,205 @@
+======================================================================
+              USER ACCEPTANCE TESTING (UAT) QUESTIONNAIRE
+              Barangay Information Management System (BIMS)
+======================================================================
+
+Project:       SK Malanday BIMS
+Group:         4 - 3ITA
+Course:        ICS 26011 - Software Engineering 2
+Institution:   University of Santo Tomas (UST CICS)
+
+PURPOSE:
+This User Acceptance Testing (UAT) questionnaire is conducted by
+Group 4-3ITA as part of the fulfillment of course requirements for
+ICS 26011 - Software Engineering 2 at the University of Santo Tomas,
+College of Information and Computing Sciences (UST CICS).
+
+The purpose of this evaluation is to assess the Barangay Information
+Management System (BIMS) developed for SK Barangay Malanday,
+Marikina City, focusing on its usability, reliability, performance,
+and overall functionality from the end-user perspective.
+
+The information collected through this questionnaire will be used
+solely for system improvement and academic purposes. Your responses
+will help identify areas for enhancement and ensure the BIMS meets
+the operational needs of SK Barangay Malanday. All feedback is
+confidential and will be handled in accordance with data privacy
+standards.
+
+----------------------------------------------------------------------
+USER PROFILING
+----------------------------------------------------------------------
+Name (Optional): _____________________________________________________
+Email (Optional): ____________________________________________________
+
+Internet Connectivity:
+[ ] Wifi
+[ ] Mobile Data
+
+Device Used:
+[ ] PC/Laptop
+[ ] Tablet
+[ ] Mobile Phone
+
+How long have you been using computer systems or web-based
+applications?
+[ ] Less than 1 year
+[ ] 1-3 years
+[ ] 3-5 years
+[ ] More than 5 years
+
+Do you have prior experience managing or administering a website
+or web-based system?
+[ ] Yes
+[ ] No
+
+If yes, how would you rate your experience level in website or
+system administration?
+[ ] Beginner
+[ ] Intermediate
+[ ] Advanced
+
+----------------------------------------------------------------------
+INSTRUCTIONS
+----------------------------------------------------------------------
+This questionnaire evaluates the Barangay Information Management
+System's usability, reliability, and performance from the end-user
+perspective. Please answer each question based on your actual
+experience testing the system.
+
+Rating Scale:
+4 = Strongly Agree
+3 = Agree
+2 = Disagree
+1 = Strongly Disagree
+
+======================================================================
+SUPERADMIN USER EVALUATION (25 Items)
+======================================================================
+
+--- AUTHENTICATION & ACCESS (Items 1-2) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+1.   I can log in with valid credentials and am           |   |   |   |   |
+     redirected to the Superadmin Dashboard.              |   |   |   |   |
+                                                          |   |   |   |   |
+2.   The system masks my password during login and        |   |   |   |   |
+     locks the account after multiple failed attempts.    |   |   |   |   |
+
+--- DASHBOARD & SYSTEM OVERVIEW (Items 3-6) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+3.   The dashboard displays accurate system statistics    |   |   |   |   |
+     (total users, active users, pending accounts,        |   |   |   |   |
+     deactivated users).                                  |   |   |   |   |
+                                                          |   |   |   |   |
+4.   The dashboard displays secondary statistics          |   |   |   |   |
+     (total projects, applications, today's activity,     |   |   |   |   |
+     total logs) correctly.                               |   |   |   |   |
+                                                          |   |   |   |   |
+5.   The system health indicator accurately shows         |   |   |   |   |
+     the database connection status and latency.          |   |   |   |   |
+                                                          |   |   |   |   |
+6.   The Captain term expiration alert displays           |   |   |   |   |
+     warnings when the term is near or past expiry.       |   |   |   |   |
+
+--- USER MANAGEMENT (Items 7-14) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+7.   I can view the complete list of all registered       |   |   |   |   |
+     users with their roles, status, and joined date.     |   |   |   |   |
+                                                          |   |   |   |   |
+8.   I can search users by name or email and filter       |   |   |   |   |
+     by role and account status.                          |   |   |   |   |
+                                                          |   |   |   |   |
+9.   I can promote a Youth Volunteer to SK Official       |   |   |   |   |
+     by selecting a position and setting term dates.      |   |   |   |   |
+                                                          |   |   |   |   |
+10.  I can promote a user to Barangay Captain, with       |   |   |   |   |
+     the system handling the existing Captain              |   |   |   |   |
+     succession properly.                                 |   |   |   |   |
+                                                          |   |   |   |   |
+11.  The system enforces position limits (one Chairman,   |   |   |   |   |
+     one Secretary, one Treasurer, max 7 Kagawads).       |   |   |   |   |
+                                                          |   |   |   |   |
+12.  I can demote an SK Official or Captain back to       |   |   |   |   |
+     Youth Volunteer with proper confirmation.            |   |   |   |   |
+                                                          |   |   |   |   |
+13.  I can deactivate user accounts with a reason         |   |   |   |   |
+     and the system blocks their access immediately.      |   |   |   |   |
+                                                          |   |   |   |   |
+14.  I can reactivate previously deactivated accounts     |   |   |   |   |
+     and access is restored successfully.                 |   |   |   |   |
+
+--- ACTIVITY LOGS & AUDIT (Items 15-19) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+15.  I can view all activity logs with user details       |   |   |   |   |
+     and timestamps, filtered by date.                    |   |   |   |   |
+                                                          |   |   |   |   |
+16.  The audit trail tab shows critical changes           |   |   |   |   |
+     (role changes, status changes, promotions)           |   |   |   |   |
+     clearly.                                             |   |   |   |   |
+                                                          |   |   |   |   |
+17.  The database stats tab displays accurate record      |   |   |   |   |
+     counts for all system tables.                        |   |   |   |   |
+                                                          |   |   |   |   |
+18.  The storage buckets section lists all configured     |   |   |   |   |
+     public and private buckets correctly.                |   |   |   |   |
+                                                          |   |   |   |   |
+19.  The recent audit events and activity feed on the     |   |   |   |   |
+     dashboard reflect the latest system actions.         |   |   |   |   |
+
+--- ROLE & ACCOUNT PROTECTION (Items 20-21) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+20.  Superadmin accounts are protected and cannot be      |   |   |   |   |
+     modified, demoted, or deactivated by other users.    |   |   |   |   |
+                                                          |   |   |   |   |
+21.  The users by role distribution widget accurately     |   |   |   |   |
+     shows the breakdown of active users per role.        |   |   |   |   |
+
+--- NOTIFICATIONS & USABILITY (Items 22-25) ---
+
+NO.  EVALUATION STATEMENT                                | 1 | 2 | 3 | 4 |
+---  ----------------------------------------------------|---|---|---|---|
+22.  I receive notifications for relevant system          |   |   |   |   |
+     events and can view them from the header bell.       |   |   |   |   |
+                                                          |   |   |   |   |
+23.  Confirmation dialogs with checkboxes appear          |   |   |   |   |
+     before critical actions (deactivation, demotion,     |   |   |   |   |
+     promotion).                                          |   |   |   |   |
+                                                          |   |   |   |   |
+24.  Pages and dashboards load quickly without            |   |   |   |   |
+     noticeable delays.                                   |   |   |   |   |
+                                                          |   |   |   |   |
+25.  Error messages, toast notifications, buttons,        |   |   |   |   |
+     and labels are clear, informative, and easy          |   |   |   |   |
+     to understand.                                       |   |   |   |   |
+
+----------------------------------------------------------------------
+COMMENTS OR SUGGESTIONS
+----------------------------------------------------------------------
+Please share any additional feedback, issues encountered, or
+suggestions for improvement:
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+__________________________________________________________________
+
+----------------------------------------------------------------------
+End of Questionnaire
+Thank you for participating in this User Acceptance Testing.
+Your feedback is valuable in improving the BIMS.
+----------------------------------------------------------------------

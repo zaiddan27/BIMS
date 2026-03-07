@@ -117,7 +117,7 @@ const SessionManager = {
             };
 
         } catch (error) {
-            console.error('Session init error:', error.message);
+            console.error('Session init error');
             return { success: false, error: error.message };
         }
     },
@@ -229,7 +229,7 @@ const SessionManager = {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
 
         if (error) {
-            console.error('Session error:', error.message);
+            console.error('Session error');
             return null;
         }
 
@@ -245,7 +245,7 @@ const SessionManager = {
             localStorage.clear();
             window.location.href = 'login.html';
         } catch (error) {
-            console.error('Session error:', error.message);
+            console.error('Session error');
             // Force redirect even if logout fails
             localStorage.clear();
             window.location.href = 'login.html';

@@ -321,6 +321,10 @@ export class NotificationModal {
         page: "youth-projects.html",
         projectId: referenceID,
       },
+      application_rejected: {
+        page: "youth-projects.html",
+        projectId: referenceID,
+      },
       inquiry_update: {
         page: "youth-projects.html",
         projectId: referenceID,
