@@ -474,7 +474,7 @@
           const { data, error } = await supabaseClient
             .from("Testimonies_Tbl")
             .select(`
-              testimonyID, message, rating, isFiltered, timeStamp, createdAt,
+              testimonyID, message, rating, isFiltered, createdAt,
               User_Tbl (
                 userID, firstName, lastName, imagePathURL
               )
@@ -497,7 +497,7 @@
             testimony: t.message || '',
             rating: t.rating || 0,
             featured: t.isFiltered || false,
-            dateSubmitted: formatDate(t.createdAt || t.timeStamp)
+            dateSubmitted: formatDate(t.createdAt)
           }));
 
           updateStats();

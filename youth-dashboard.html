@@ -1675,7 +1675,7 @@
                 message: testimony,
                 rating: rating, // Star rating (1-5)
                 isFiltered: false, // Will be reviewed by SK Officials
-                timeStamp: new Date().toISOString()
+                createdAt: new Date().toISOString()
               });
 
             if (insertError) throw insertError;

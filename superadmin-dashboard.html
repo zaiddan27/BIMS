@@ -511,7 +511,7 @@
                     supabaseClient.from('Pre_Project_Tbl').select('*', { count: 'exact', head: true }),
                     supabaseClient.from('Application_Tbl').select('*', { count: 'exact', head: true }),
                     supabaseClient.from('Logs_Tbl').select('*', { count: 'exact', head: true }),
-                    supabaseClient.from('Logs_Tbl').select('*', { count: 'exact', head: true }).gte('timeStamp', `${todayStr}T00:00:00`)
+                    supabaseClient.from('Logs_Tbl').select('*', { count: 'exact', head: true }).gte('createdAt', `${todayStr}T00:00:00`)
                 ]);
 
                 document.getElementById('statsUsers').textContent = users.count || 0;
@@ -593,9 +593,9 @@
             try {
                 const { data: auditLogs, error } = await supabaseClient
                     .from('Logs_Tbl')
-                    .select('action, timeStamp, User_Tbl(firstName, lastName)')
+                    .select('action, createdAt, User_Tbl(firstName, lastName)')
                     .ilike('action', '%[AUDIT]%')
-                    .order('timeStamp', { ascending: false })
+                    .order('createdAt', { ascending: false })
                     .limit(8);
 
                 if (error) throw error;
@@ -607,7 +607,7 @@
 
                 container.innerHTML = auditLogs.map(log => {
                     const action = (log.action || '').replace('[AUDIT]', '').trim();
-                    const timeAgo = getTimeAgo(new Date(log.timeStamp));
+                    const timeAgo = getTimeAgo(new Date(log.createdAt));
                     return `
                         <div class="flex items-start space-x-3 p-2.5 hover:bg-gray-50 rounded-lg transition">
                             <div class="flex-shrink-0 mt-0.5">
@@ -712,7 +712,7 @@
                         *,
                         User_Tbl (firstName, lastName)
                     `)
-                    .order('timeStamp', { ascending: false });
+                    .order('createdAt', { ascending: false });
 
                 if (error) throw error;
 
@@ -752,7 +752,7 @@
                         <p class="text-sm text-gray-800">${escapeHTML(log.action || 'Unknown action')}</p>
                         <p class="text-xs text-gray-500 mt-1">
                             by ${escapeHTML(log.User_Tbl?.firstName || '')} ${escapeHTML(log.User_Tbl?.lastName || '')} •
-                            ${log.timeStamp ? new Date(log.timeStamp).toLocaleString() : 'Unknown time'}
+                            ${log.createdAt ? new Date(log.createdAt).toLocaleString() : 'Unknown time'}
                         </p>
                     </div>
                 </div>

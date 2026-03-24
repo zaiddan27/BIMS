@@ -1156,7 +1156,7 @@
               )
             `)
             .eq('preProjectID', preProjectID)
-            .order('timeStamp', { ascending: false });
+            .order('createdAt', { ascending: false });
 
           if (error) {
             console.error('Error loading inquiries');
@@ -1170,7 +1170,7 @@
               id: inquiry.inquiryID,
               from: inquiry.User_Tbl ? `${inquiry.User_Tbl.firstName} ${inquiry.User_Tbl.lastName}` : 'Anonymous',
               message: inquiry.message,
-              time: formatTimeAgo(inquiry.timeStamp),
+              time: formatTimeAgo(inquiry.createdAt),
               replies: replies,
               userID: inquiry.userID
             };
@@ -1195,7 +1195,7 @@
               )
             `)
             .eq('inquiryID', inquiryID)
-            .order('timeStamp', { ascending: true });
+            .order('createdAt', { ascending: true });
 
           if (error) {
             console.error('Error loading replies');
@@ -1206,7 +1206,7 @@
             id: reply.replyID,
             text: reply.message,
             repliedBy: reply.User_Tbl ? `${reply.User_Tbl.firstName} ${reply.User_Tbl.lastName}` : 'SK Official',
-            repliedAt: formatTimeAgo(reply.timeStamp)
+            repliedAt: formatTimeAgo(reply.createdAt)
           }));
         } catch (err) {
           console.error('Load replies exception');
@@ -2120,7 +2120,7 @@
               userID: currentUser.id,
               message: message,
               isReplied: false,
-              timeStamp: new Date().toISOString(),
+              createdAt: new Date().toISOString(),
               createdAt: new Date().toISOString()
             })
             .select()
@@ -2182,7 +2182,7 @@
               inquiryID: inquiryId,
               userID: currentUser.id,
               message: replyText,
-              timeStamp: new Date().toISOString(),
+              createdAt: new Date().toISOString(),
               createdAt: new Date().toISOString()
             })
             .select()

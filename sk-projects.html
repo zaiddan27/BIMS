@@ -1870,13 +1870,13 @@
                 Evaluation_Tbl (
                   q1, q2, q3, q4, q5,
                   message,
-                  timeStamp
+                  createdAt
                 )
               ),
               Inquiry_Tbl (
                 inquiryID,
                 message,
-                timeStamp,
+                createdAt,
                 isReplied,
                 User_Tbl (
                   firstName,
@@ -1885,7 +1885,7 @@
                 Reply_Tbl (
                   replyID,
                   message,
-                  timeStamp,
+                  createdAt,
                   User_Tbl (
                     firstName,
                     lastName
@@ -1940,7 +1940,7 @@
                   userID: app.userID,
                   satisfactionScore: satisfactionScore,
                   feedbackMessage: eval_ ? eval_.message : null,
-                  feedbackDate: eval_ ? eval_.timeStamp : null,
+                  feedbackDate: eval_ ? eval_.createdAt : null,
                   feedbackScores: eval_ ? { q1: eval_.q1, q2: eval_.q2, q3: eval_.q3, q4: eval_.q4, q5: eval_.q5 } : null
                 };
               });
@@ -1950,13 +1950,13 @@
                 id: inq.inquiryID,
                 from: inq.User_Tbl ? `${inq.User_Tbl.firstName} ${inq.User_Tbl.lastName}`.trim() : 'Anonymous',
                 message: inq.message,
-                time: formatTimeAgo(inq.timeStamp),
+                time: formatTimeAgo(inq.createdAt),
                 isReplied: inq.isReplied,
                 replies: (inq.Reply_Tbl || []).map(reply => ({
                   id: reply.replyID,
                   text: reply.message,
                   repliedBy: reply.User_Tbl ? `${reply.User_Tbl.firstName} ${reply.User_Tbl.lastName}`.trim() : 'SK Official',
-                  repliedAt: formatTimeAgo(reply.timeStamp)
+                  repliedAt: formatTimeAgo(reply.createdAt)
                 }))
               }));
 
@@ -2071,7 +2071,7 @@
               Evaluation_Tbl (
                 q1, q2, q3, q4, q5,
                 message,
-                timeStamp
+                createdAt
               )
             `)
             .eq('preProjectID', preProjectID);
@@ -2110,7 +2110,7 @@
               userID: app.userID,
               satisfactionScore: satisfactionScore,
               feedbackMessage: eval_ ? eval_.message : null,
-              feedbackDate: eval_ ? eval_.timeStamp : null,
+              feedbackDate: eval_ ? eval_.createdAt : null,
               feedbackScores: eval_ ? { q1: eval_.q1, q2: eval_.q2, q3: eval_.q3, q4: eval_.q4, q5: eval_.q5 } : null
             };
           });
@@ -2124,7 +2124,7 @@
           const { data, error } = await supabaseClient
             .from('Inquiry_Tbl')
             .select(`
-              inquiryID, message, timeStamp, isReplied,
+              inquiryID, message, createdAt, isReplied,
               User_Tbl (
                 firstName,
                 lastName
@@ -2132,7 +2132,7 @@
               Reply_Tbl (
                 replyID,
                 message,
-                timeStamp,
+                createdAt,
                 User_Tbl (
                   firstName,
                   lastName
@@ -2140,7 +2140,7 @@
               )
             `)
             .eq('preProjectID', preProjectID)
-            .order('timeStamp', { ascending: false });
+            .order('createdAt', { ascending: false });
 
           if (error) {
             return [];
@@ -2150,13 +2150,13 @@
             id: inq.inquiryID,
             from: inq.User_Tbl ? `${inq.User_Tbl.firstName} ${inq.User_Tbl.lastName}`.trim() : 'Anonymous',
             message: inq.message,
-            time: formatTimeAgo(inq.timeStamp),
+            time: formatTimeAgo(inq.createdAt),
             isReplied: inq.isReplied,
             replies: (inq.Reply_Tbl || []).map(reply => ({
               id: reply.replyID,
               text: reply.message,
               repliedBy: reply.User_Tbl ? `${reply.User_Tbl.firstName} ${reply.User_Tbl.lastName}`.trim() : 'SK Official',
-              repliedAt: formatTimeAgo(reply.timeStamp)
+              repliedAt: formatTimeAgo(reply.createdAt)
             }))
           }));
         } catch (err) {
@@ -2775,7 +2775,7 @@
           const { data: evaluations, error } = await supabaseClient
             .from('Evaluation_Tbl')
             .select(`
-              evaluationID, q1, q2, q3, q4, q5, message, timeStamp,
+              evaluationID, q1, q2, q3, q4, q5, message, createdAt,
               Application_Tbl!inner (
                 applicationID,
                 preProjectID,
@@ -2816,7 +2816,7 @@
                 app.satisfactionScore = avg;
                 app.feedbackScores = { q1: ev.q1, q2: ev.q2, q3: ev.q3, q4: ev.q4, q5: ev.q5 };
                 app.feedbackMessage = ev.message || null;
-                app.feedbackDate = ev.timeStamp || null;
+                app.feedbackDate = ev.createdAt || null;
               }
             });
             // Re-render applicant cards so purple star badges appear
@@ -2846,7 +2846,7 @@
             const user = ev.Application_Tbl?.User_Tbl;
             const name = user ? `${user.firstName} ${user.lastName}`.trim() : 'Anonymous';
             const avg = ((ev.q1 + ev.q2 + ev.q3 + ev.q4 + ev.q5) / 5).toFixed(1);
-            const date = ev.timeStamp ? new Date(ev.timeStamp).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+            const date = ev.createdAt ? new Date(ev.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
             const labels = ['Overall', 'Skills', 'Teamwork', 'Impact', 'Recommend'];
             const scores = [ev.q1, ev.q2, ev.q3, ev.q4, ev.q5];
 
@@ -3939,7 +3939,7 @@
               inquiryID: inquiryId,
               userID: currentUser.id,
               message: replyText,
-              timeStamp: new Date().toISOString()
+              createdAt: new Date().toISOString()
             })
             .select();
 

@@ -1323,9 +1323,9 @@
         try {
           const { data: testimonies, error } = await supabaseClient
             .from('Testimonies_Tbl')
-            .select('testimonyID, message, rating, timeStamp, User_Tbl ( firstName, lastName, imagePathURL, role )')
+            .select('testimonyID, message, rating, createdAt, User_Tbl ( firstName, lastName, imagePathURL, role )')
             .eq('isFiltered', true)
-            .order('timeStamp', { ascending: false })
+            .order('createdAt', { ascending: false })
             .limit(12);
 
           if (error) throw error;

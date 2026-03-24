@@ -405,14 +405,14 @@
 
                 let query = supabaseClient
                     .from('Logs_Tbl')
-                    .select('logID, action, timeStamp, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
-                    .order('timeStamp', { ascending: false });
+                    .select('logID, action, createdAt, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
+                    .order('createdAt', { ascending: false });
 
                 const dateFilter = document.getElementById('logDateFilter')?.value;
                 if (dateFilter) {
                     query = query
-                        .gte('timeStamp', `${dateFilter}T00:00:00`)
-                        .lte('timeStamp', `${dateFilter}T23:59:59`);
+                        .gte('createdAt', `${dateFilter}T00:00:00`)
+                        .lte('createdAt', `${dateFilter}T23:59:59`);
                 }
 
                 const { data: logs, count, error } = await query.range(startIndex, endIndex);
@@ -446,7 +446,7 @@
                         <p class="text-sm text-gray-800">${escapeHTML(log.action || '')}</p>
                         <p class="text-xs text-gray-500 mt-1">
                             by ${escapeHTML(log.User_Tbl?.firstName || '')} ${escapeHTML(log.User_Tbl?.lastName || '')} (${escapeHTML(log.User_Tbl?.role || 'Unknown')}) •
-                            ${log.timeStamp ? new Date(log.timeStamp).toLocaleString() : '-'}
+                            ${log.createdAt ? new Date(log.createdAt).toLocaleString() : '-'}
                         </p>
                     </div>
                 </div>
@@ -514,9 +514,9 @@
 
                 const { data: logs, count, error } = await supabaseClient
                     .from('Logs_Tbl')
-                    .select('logID, action, timeStamp, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
+                    .select('logID, action, createdAt, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
                     .ilike('action', '%[AUDIT]%')
-                    .order('timeStamp', { ascending: false })
+                    .order('createdAt', { ascending: false })
                     .range(startIndex, endIndex);
 
                 if (error) throw error;
@@ -551,7 +551,7 @@
                             <p class="text-sm font-medium text-gray-900">${escapeHTML(log.action || '')}</p>
                             <p class="text-xs text-gray-600 mt-1">
                                 by ${escapeHTML(log.User_Tbl?.firstName || '')} ${escapeHTML(log.User_Tbl?.lastName || '')} (${escapeHTML(log.User_Tbl?.role || 'Unknown')}) •
-                                ${log.timeStamp ? new Date(log.timeStamp).toLocaleString() : '-'}
+                                ${log.createdAt ? new Date(log.createdAt).toLocaleString() : '-'}
                             </p>
                         </div>
                     </div>
