@@ -484,6 +484,17 @@
                 ></div>
               </div>
 
+              <!-- Download Report Button (shown for Completed projects) -->
+              <div id="detailsDownloadReportBtn" class="hidden mt-4">
+                <button onclick="openDownloadReportModal(currentProjectId)"
+                        class="w-full px-4 py-2.5 text-[#2f6e4e] border border-[#2f6e4e]/30 rounded-lg hover:bg-[#2f6e4e]/10 font-medium transition flex items-center justify-center gap-2">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  Download Report
+                </button>
+              </div>
+
               <!-- Captain's Decision Section -->
               <div id="captainDecisionSection" class="hidden mt-6">
                 <div class="border-t border-gray-200 pt-6">
@@ -2047,7 +2058,7 @@
           const { data, error } = await supabaseClient
             .from('Application_Tbl')
             .select(`
-              applicationID, preProjectID, userID, preferredRole, parentConsentFile, applicationStatus, appliedDate,
+              applicationID, preProjectID, userID, preferredRole, parentConsentFile, applicationStatus, appliedDate, attended,
               User_Tbl (
                 firstName,
                 lastName,
@@ -2093,6 +2104,7 @@
               address: user.address || '',
               preferredRole: app.preferredRole,
               parentalConsent: app.parentConsentFile,
+              attended: app.attended || false,
               status: (app.applicationStatus || 'pending').toLowerCase(),
               appliedDate: app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : '',
               userID: app.userID,
@@ -2466,7 +2478,7 @@
           <div class="p-5 flex flex-col h-full">
             <!-- Title -->
             <h3 class="text-lg font-bold text-gray-800 mb-3 line-clamp-2 min-h-[56px]">${
-              project.title
+              escapeHTML(project.title)
             }</h3>
             
             <!-- Status and Category badges -->
@@ -2474,16 +2486,16 @@
               <span class="px-2.5 py-1 ${
                 statusColors[project.status] || "bg-gray-100 text-gray-700"
               } text-xs rounded-md font-medium">
-                ${project.status}
+                ${escapeHTML(project.status)}
               </span>
               <span class="px-2.5 py-1 bg-gray-100 text-gray-700 text-xs rounded-md font-medium">
-                ${project.category}
+                ${escapeHTML(project.category)}
               </span>
             </div>
 
             <!-- Description -->
             <p class="text-sm text-gray-600 line-clamp-3 mb-4 flex-1">
-              ${project.description}
+              ${escapeHTML(project.description)}
             </p>
 
             <!-- Statistics Section -->
@@ -2525,6 +2537,21 @@
                   <div class="h-full bg-[#2f6e4e] rounded-full" style="width: ${project.successRate}%"></div>
                 </div>
               </div>
+            `
+                : ""
+            }
+
+            <!-- Download Report Button (for completed projects) -->
+            ${
+              project.status === "Completed"
+                ? `
+              <button onclick="event.stopPropagation(); openDownloadReportModal(${project.id})"
+                      class="w-full px-4 py-2.5 text-[#2f6e4e] border border-[#2f6e4e]/30 rounded-lg hover:bg-[#2f6e4e]/10 font-medium mb-3 transition flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Download Report
+              </button>
             `
                 : ""
             }
@@ -2648,6 +2675,12 @@
         ).textContent = `${startDateTime} - ${endDateTime}`;
         document.getElementById("detailsLocation").textContent =
           project.location;
+
+        // Show/hide Download Report button for Completed projects
+        const downloadReportBtn = document.getElementById('detailsDownloadReportBtn');
+        if (downloadReportBtn) {
+          downloadReportBtn.classList.toggle('hidden', project.status !== 'Completed');
+        }
 
         // Display captain's decision if available
         displayCaptainDecision(project);
@@ -2825,7 +2858,7 @@
                       <span class="text-sm font-bold text-purple-700">${name.charAt(0)}</span>
                     </div>
                     <div>
-                      <span class="text-sm font-semibold text-gray-800">${name}</span>
+                      <span class="text-sm font-semibold text-gray-800">${escapeHTML(name)}</span>
                       <p class="text-xs text-gray-400">${date}</p>
                     </div>
                   </div>
@@ -2842,7 +2875,7 @@
                 ${ev.message ? `
                 <div class="mt-3 pt-3 border-t border-gray-200">
                   <p class="text-xs font-medium text-gray-500 mb-1">Additional Feedback:</p>
-                  <p class="text-sm text-gray-700 bg-white rounded p-3 border border-gray-100 italic">"${ev.message}"</p>
+                  <p class="text-sm text-gray-700 bg-white rounded p-3 border border-gray-100 italic">"${escapeHTML(ev.message)}"</p>
                 </div>
                 ` : ''}
               </div>
@@ -2895,10 +2928,10 @@
               ` : ''}
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2">
-                  <h4 class="font-semibold text-gray-900 mb-0.5">${app.fullName}</h4>
+                  <h4 class="font-semibold text-gray-900 mb-0.5">${escapeHTML(app.fullName)}</h4>
                   ${app.satisfactionScore ? `<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-700 font-semibold" title="Survey submitted: ${app.satisfactionScore}/5">★ ${app.satisfactionScore}</span>` : ''}
                 </div>
-                <p class="text-sm text-gray-600">${app.preferredRole} • Age ${app.age}</p>
+                <p class="text-sm text-gray-600">${escapeHTML(app.preferredRole)} • Age ${app.age}</p>
               </div>
             </div>
 
@@ -2910,7 +2943,7 @@
                 </span>
               ` : '<div></div>'}
               <span class="inline-block px-3 py-1 ${statusColors[app.status]} text-xs rounded-full font-semibold uppercase tracking-wide shadow-sm flex-shrink-0" style="white-space: nowrap;">
-                ${app.status}
+                ${escapeHTML(app.status)}
               </span>
             </div>
           </div>
@@ -2997,14 +3030,14 @@
               <div class="mt-4 ml-16 pl-4 border-l-2 border-[#3d8b64]">
                 <div class="flex items-start gap-3">
                   <div class="w-10 h-10 bg-[#2f6e4e] rounded-full flex items-center justify-center font-semibold text-white flex-shrink-0 text-sm">
-                    ${replyInitials}
+                    ${escapeHTML(replyInitials)}
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between mb-1">
-                      <h5 class="font-semibold text-gray-900 text-sm">${reply.repliedBy}</h5>
+                      <h5 class="font-semibold text-gray-900 text-sm">${escapeHTML(reply.repliedBy)}</h5>
                       <span class="text-xs text-gray-500">${reply.repliedAt}</span>
                     </div>
-                    <p class="text-sm text-gray-700">${reply.text}</p>
+                    <p class="text-sm text-gray-700">${escapeHTML(reply.text)}</p>
                   </div>
                 </div>
               </div>
@@ -3015,13 +3048,13 @@
           card.innerHTML = `
           <div class="flex items-start gap-4">
             <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center font-semibold text-gray-700 flex-shrink-0">
-              ${initials}
+              ${escapeHTML(initials)}
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-start justify-between mb-2">
                 <div class="flex-1">
-                  <h4 class="font-semibold text-gray-900">${inquiry.from}</h4>
-                  <p class="text-sm text-gray-700 mt-1">${inquiry.message}</p>
+                  <h4 class="font-semibold text-gray-900">${escapeHTML(inquiry.from)}</h4>
+                  <p class="text-sm text-gray-700 mt-1">${escapeHTML(inquiry.message)}</p>
                 </div>
                 <span class="text-xs text-gray-500 ml-4">${inquiry.time}</span>
               </div>
@@ -3491,7 +3524,7 @@
               <input
                 type="text"
                 id="budgetItem_${item.id}_desc"
-                value="${item.description}"
+                value="${escapeHTML(item.description)}"
                 placeholder="e.g., Food and beverages"
                 oninput="updateBudgetItem(${item.id}, 'description', this.value)"
                 class="w-full px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#3d8b64] text-sm"
@@ -3579,8 +3612,8 @@
           pill.className =
             "pill flex items-center gap-1 bg-[#2f6e4e]/10 text-[#2f6e4e] px-2 py-1 rounded-full text-sm";
           pill.innerHTML = `
-          ${name}
-          <button onclick="removeHead('${name}')" class="ml-1">✕</button>
+          ${escapeHTML(name)}
+          <button onclick="removeHead('${escapeHTML(name)}')" class="ml-1">✕</button>
         `;
           container.insertBefore(pill, document.getElementById("headsSearch"));
         });
@@ -4253,7 +4286,7 @@
           return `
             <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
               <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-semibold text-gray-800">${v.fullName || (v.firstName + ' ' + v.lastName)}</span>
+                <span class="text-sm font-semibold text-gray-800">${escapeHTML(v.fullName || (v.firstName + ' ' + v.lastName))}</span>
                 <div class="flex items-center gap-2">
                   <span class="text-xs text-gray-500">${date}</span>
                   <span class="text-xs font-bold px-2 py-0.5 rounded-full ${v.satisfactionScore >= 4 ? 'bg-green-100 text-green-700' : v.satisfactionScore >= 3 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}">${v.satisfactionScore}/5</span>
@@ -4271,7 +4304,7 @@
               ${v.feedbackMessage ? `
               <div class="mt-2 pt-2 border-t border-gray-200">
                 <p class="text-xs text-gray-500 font-medium mb-1">Additional Feedback:</p>
-                <p class="text-sm text-gray-700 italic">"${v.feedbackMessage}"</p>
+                <p class="text-sm text-gray-700 italic">"${escapeHTML(v.feedbackMessage)}"</p>
               </div>` : ''}
             </div>
           `;
@@ -4346,7 +4379,7 @@
         suggestionsDiv.innerHTML = matches.slice(0, 8).map(template => `
           <div class="px-4 py-3 hover:bg-purple-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                onclick="selectAchievementSuggestion('${template.replace(/'/g, "\\'")}')">
-            <p class="text-sm text-gray-700">${template}</p>
+            <p class="text-sm text-gray-700">${escapeHTML(template)}</p>
           </div>
         `).join('');
 
@@ -4408,7 +4441,7 @@
             <div class="flex-shrink-0 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
               ${index + 1}
             </div>
-            <p class="flex-1 text-sm text-gray-700 leading-relaxed">${achievement}</p>
+            <p class="flex-1 text-sm text-gray-700 leading-relaxed">${escapeHTML(achievement)}</p>
             <button onclick="removeAchievement(${index})"
                     class="flex-shrink-0 text-red-600 hover:text-red-800 transition">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4474,7 +4507,7 @@
           row.className = 'border-b border-gray-200 hover:bg-gray-50';
           row.innerHTML = `
             <td class="px-3 py-3">
-              <input type="text" value="${item.description}" oninput="updateActualBreakdownDescription(${index}, this.value)"
+              <input type="text" value="${escapeHTML(item.description)}" oninput="updateActualBreakdownDescription(${index}, this.value)"
                      class="w-full px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-[#3d8b64] text-sm" />
             </td>
             <td class="px-3 py-3 text-gray-600">₱${item.plannedCost.toLocaleString()}</td>
@@ -4920,12 +4953,12 @@
 
           // Build HTML content as array and join
           const htmlParts = [];
-          htmlParts.push('<html><head><title>' + project.title + ' Report<\/title><\/head>');
+          htmlParts.push('<html><head><title>' + escapeHTML(project.title) + ' Report<\/title><\/head>');
           htmlParts.push('<body style="font-family: Arial; padding: 20px;">');
-          htmlParts.push('<h1>' + project.title + '<\/h1>');
+          htmlParts.push('<h1>' + escapeHTML(project.title) + '<\/h1>');
           htmlParts.push('<p><strong>Success Rate:<\/strong> ' + (project.successRate || 'N/A') + '%<\/p>');
-          htmlParts.push('<p><strong>Category:<\/strong> ' + project.category + '<\/p>');
-          htmlParts.push('<p><strong>Status:<\/strong> ' + project.status + '<\/p>');
+          htmlParts.push('<p><strong>Category:<\/strong> ' + escapeHTML(project.category) + '<\/p>');
+          htmlParts.push('<p><strong>Status:<\/strong> ' + escapeHTML(project.status) + '<\/p>');
           if (project.evaluation) {
             htmlParts.push('<h2>Evaluation Metrics<\/h2>');
             htmlParts.push('<p><strong>Budget:<\/strong> ₱' + project.evaluation.budgetActual.toLocaleString() + ' / ₱' + project.evaluation.budgetPlanned.toLocaleString() + '<\/p>');
@@ -4935,7 +4968,7 @@
           htmlParts.push('<h2>Volunteers (' + volunteers.length + ')<\/h2>');
           htmlParts.push('<table border="1" style="width:100%; border-collapse: collapse;"><tr><th>Name<\/th><th>Age<\/th><th>Contact<\/th><\/tr>');
           volunteers.forEach(v => {
-            htmlParts.push('<tr><td>' + (v.fullName || v.firstName + ' ' + v.lastName) + '<\/td><td>' + v.age + '<\/td><td>' + (v.contact || 'N/A') + '<\/td><\/tr>');
+            htmlParts.push('<tr><td>' + escapeHTML(v.fullName || v.firstName + ' ' + v.lastName) + '<\/td><td>' + v.age + '<\/td><td>' + escapeHTML(v.contact || 'N/A') + '<\/td><\/tr>');
           });
           htmlParts.push('<\/table>');
           htmlParts.push('<\/body><\/html>');

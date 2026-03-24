@@ -1695,7 +1695,7 @@
             .order('updatedAt', { ascending: false });
 
           if (error) {
-            console.error('Error loading archived projects');
+            console.error('Error loading archived projects', error);
             showToast('Failed to load archived projects.', 'error');
             archivedProjects = [];
             return;
@@ -1779,7 +1779,7 @@
               'Significantly_Delayed': 40
             };
             const timelineScore = postProject
-              ? (timelineMap[postProject.timelineAdherence] || 0)
+              ? (timelineMap[postProject?.timelineAdherence] || 0)
               : 0;
 
             // 4. Community Impact (20%)
@@ -1794,7 +1794,7 @@
             let feedbackScore = 0;
             let avgSatisfaction = 0;
             if (allEvals.length > 0) {
-              const evalAverages = allEvals.map(ev => (ev.q1 + ev.q2 + ev.q3 + ev.q4 + ev.q5) / 5);
+              const evalAverages = allEvals.map(ev => ((ev?.q1 || 0) + (ev?.q2 || 0) + (ev?.q3 || 0) + (ev?.q4 || 0) + (ev?.q5 || 0)) / 5);
               avgSatisfaction = parseFloat((evalAverages.reduce((a, b) => a + b, 0) / evalAverages.length).toFixed(1));
               feedbackScore = Math.round((avgSatisfaction / 5) * 100);
             }
@@ -1857,7 +1857,7 @@
 
           filteredProjects = [...archivedProjects];
         } catch (err) {
-          console.error('Exception loading archived projects');
+          console.error('Exception loading archived projects', err);
           showToast('An error occurred while loading archived projects.', 'error');
           archivedProjects = [];
         }
@@ -1956,7 +1956,7 @@
                             <div class="flex-1">
                                 <div class="flex items-center space-x-3 mb-2">
                                     <h3 class="text-lg font-bold text-gray-800">${
-                                      project.name
+                                      escapeHTML(project.name)
                                     }</h3>
                                     <span class="px-3 py-1 text-xs font-semibold rounded-full ${getSuccessBadgeClass(
                                       project.successRate,
@@ -1966,10 +1966,10 @@
                                 </div>
                                 <div class="flex items-center space-x-4 text-sm text-gray-500">
                                     <span><svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>${
-                                      project.period
+                                      escapeHTML(project.period)
                                     }</span>
                                     <span><svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>${
-                                      project.quarter
+                                      escapeHTML(project.quarter)
                                     } ${project.year}</span>
                                 </div>
                             </div>
@@ -2296,7 +2296,7 @@
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                         <td class="py-2 px-3 text-gray-700">${index + 1}</td>
                         <td class="py-2 px-3 text-gray-800 font-medium">${
-                          item.description
+                          escapeHTML(item.description)
                         }</td>
                         <td class="py-2 px-3 text-gray-700 text-right">₱${item.cost.toLocaleString(
                           "en-US",
@@ -2373,13 +2373,13 @@
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                         <td class="py-2 px-3 text-gray-700">${index + 1}</td>
                         <td class="py-2 px-3 text-gray-800 font-medium">${
-                          volunteer.name
+                          escapeHTML(volunteer.name)
                         }</td>
                         <td class="py-2 px-3 text-gray-700">${
                           volunteer.age
                         }</td>
                         <td class="py-2 px-3 text-gray-700">${
-                          volunteer.contact
+                          escapeHTML(volunteer.contact)
                         }</td>
                     </tr>
                 `,
@@ -3602,8 +3602,8 @@
         if (!file) return;
 
         // Validate file type
-        if (!file.type.startsWith("image/")) {
-          showToast("Please upload an image file", "error");
+        if (!['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+          showToast("Please upload an image file (JPEG, PNG, GIF, or WebP)", "error");
           return;
         }
 
@@ -4346,7 +4346,7 @@
                     <p class="text-sm font-semibold text-gray-800 truncate ${
                       !notif.read ? "font-bold" : ""
                     }">
-                      ${notif.title}
+                      ${escapeHTML(notif.title)}
                     </p>
                     ${
                       !notif.read
@@ -4354,7 +4354,7 @@
                         : ""
                     }
                   </div>
-                  <p class="text-xs text-gray-600 mt-1">${notif.message}</p>
+                  <p class="text-xs text-gray-600 mt-1">${escapeHTML(notif.message)}</p>
                   <p class="text-xs text-gray-400 mt-2">${notif.time}</p>
                 </div>
               </div>

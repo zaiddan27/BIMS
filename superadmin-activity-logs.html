@@ -405,14 +405,14 @@
 
                 let query = supabaseClient
                     .from('Logs_Tbl')
-                    .select('logID, action, timestamp, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
-                    .order('timestamp', { ascending: false });
+                    .select('logID, action, timeStamp, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
+                    .order('timeStamp', { ascending: false });
 
                 const dateFilter = document.getElementById('logDateFilter')?.value;
                 if (dateFilter) {
                     query = query
-                        .gte('timestamp', `${dateFilter}T00:00:00`)
-                        .lte('timestamp', `${dateFilter}T23:59:59`);
+                        .gte('timeStamp', `${dateFilter}T00:00:00`)
+                        .lte('timeStamp', `${dateFilter}T23:59:59`);
                 }
 
                 const { data: logs, count, error } = await query.range(startIndex, endIndex);
@@ -443,10 +443,10 @@
                 <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition">
                     <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                     <div class="flex-1">
-                        <p class="text-sm text-gray-800">${log.action || ''}</p>
+                        <p class="text-sm text-gray-800">${escapeHTML(log.action || '')}</p>
                         <p class="text-xs text-gray-500 mt-1">
-                            by ${log.User_Tbl?.firstName || ''} ${log.User_Tbl?.lastName || ''} (${log.User_Tbl?.role || 'Unknown'}) •
-                            ${log.timestamp ? new Date(log.timestamp).toLocaleString() : '-'}
+                            by ${escapeHTML(log.User_Tbl?.firstName || '')} ${escapeHTML(log.User_Tbl?.lastName || '')} (${escapeHTML(log.User_Tbl?.role || 'Unknown')}) •
+                            ${log.timeStamp ? new Date(log.timeStamp).toLocaleString() : '-'}
                         </p>
                     </div>
                 </div>
@@ -514,9 +514,9 @@
 
                 const { data: logs, count, error } = await supabaseClient
                     .from('Logs_Tbl')
-                    .select('logID, action, timestamp, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
+                    .select('logID, action, timeStamp, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
                     .ilike('action', '%[AUDIT]%')
-                    .order('timestamp', { ascending: false })
+                    .order('timeStamp', { ascending: false })
                     .range(startIndex, endIndex);
 
                 if (error) throw error;
@@ -548,10 +548,10 @@
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
                         </svg>
                         <div class="ml-3 flex-1">
-                            <p class="text-sm font-medium text-gray-900">${log.action || ''}</p>
+                            <p class="text-sm font-medium text-gray-900">${escapeHTML(log.action || '')}</p>
                             <p class="text-xs text-gray-600 mt-1">
-                                by ${log.User_Tbl?.firstName || ''} ${log.User_Tbl?.lastName || ''} (${log.User_Tbl?.role || 'Unknown'}) •
-                                ${log.timestamp ? new Date(log.timestamp).toLocaleString() : '-'}
+                                by ${escapeHTML(log.User_Tbl?.firstName || '')} ${escapeHTML(log.User_Tbl?.lastName || '')} (${escapeHTML(log.User_Tbl?.role || 'Unknown')}) •
+                                ${log.timeStamp ? new Date(log.timeStamp).toLocaleString() : '-'}
                             </p>
                         </div>
                     </div>

@@ -1390,22 +1390,22 @@
 
           <div class="p-5 flex flex-col h-full">
             <h3 class="text-lg font-bold text-gray-800 mb-3 line-clamp-2 min-h-[56px]">${
-              project.title
+              escapeHTML(project.title)
             }</h3>
-            
+
             <div class="flex items-center gap-2 mb-4">
               <span class="px-2.5 py-1 ${
                 statusColors[project.status]
               } text-xs rounded-md font-medium">
-                ${project.status}
+                ${escapeHTML(project.status)}
               </span>
               <span class="px-2.5 py-1 bg-gray-100 text-gray-700 text-xs rounded-md font-medium">
-                ${project.category}
+                ${escapeHTML(project.category)}
               </span>
             </div>
 
             <p class="text-sm text-gray-600 line-clamp-3 mb-4 flex-1">
-              ${project.description}
+              ${escapeHTML(project.description)}
             </p>
 
             <div class="mb-4">
@@ -1414,7 +1414,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
-                ${project.location}
+                ${escapeHTML(project.location)}
               </div>
             </div>
 
@@ -1568,10 +1568,10 @@
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between mb-1">
-                      <h5 class="font-semibold text-gray-900 text-sm">${reply.repliedBy}</h5>
+                      <h5 class="font-semibold text-gray-900 text-sm">${escapeHTML(reply.repliedBy)}</h5>
                       <span class="text-xs text-gray-500">${reply.repliedAt}</span>
                     </div>
-                    <p class="text-sm text-gray-700">${reply.text}</p>
+                    <p class="text-sm text-gray-700">${escapeHTML(reply.text)}</p>
                   </div>
                 </div>
               </div>
@@ -1587,8 +1587,8 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-start justify-between mb-2">
                 <div class="flex-1">
-                  <h4 class="font-semibold text-gray-900">${inquiry.from}</h4>
-                  <p class="text-sm text-gray-700 mt-1">${inquiry.message}</p>
+                  <h4 class="font-semibold text-gray-900">${escapeHTML(inquiry.from)}</h4>
+                  <p class="text-sm text-gray-700 mt-1">${escapeHTML(inquiry.message)}</p>
                 </div>
                 <span class="text-xs text-gray-500 ml-4">${inquiry.time}</span>
               </div>
@@ -1771,6 +1771,12 @@
             showToast("Parental consent is required for applicants under 18", "warning");
             return;
           }
+          // Validate file type (PDF, JPG, PNG only)
+          const allowedConsentTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+          if (!allowedConsentTypes.includes(consentFile.type)) {
+            showToast("Parental consent must be a PDF, JPG, or PNG file", "warning");
+            return;
+          }
           // Validate file size (max 5MB)
           if (consentFile.size > 5 * 1024 * 1024) {
             showToast("Parental consent file must be under 5MB", "warning");
@@ -1879,43 +1885,6 @@
             parentConsentFile: consentFilePath || null,
           });
 
-          // Notify project head(s) about new application
-          try {
-            const { data: projData } = await supabaseClient
-              .from('Pre_Project_Tbl')
-              .select('skID, userID, SK_Tbl ( userID )')
-              .eq('preProjectID', applyingToProjectId)
-              .single();
-
-            if (projData) {
-              const notifiedIds = new Set();
-              const applicantName = `${firstName} ${lastName}`;
-
-              // Notify the project head (SK official via skID)
-              if (projData.SK_Tbl?.userID) {
-                notifiedIds.add(projData.SK_Tbl.userID);
-                await supabaseClient.rpc('create_notification', {
-                  p_user_id: projData.SK_Tbl.userID,
-                  p_notification_type: 'new_application',
-                  p_title: `New volunteer application from ${applicantName} for "${project.title}"`,
-                  p_reference_id: applyingToProjectId
-                });
-              }
-
-              // Also notify the project creator if different from head
-              if (projData.userID && !notifiedIds.has(projData.userID)) {
-                await supabaseClient.rpc('create_notification', {
-                  p_user_id: projData.userID,
-                  p_notification_type: 'new_application',
-                  p_title: `New volunteer application from ${applicantName} for "${project.title}"`,
-                  p_reference_id: applyingToProjectId
-                });
-              }
-            }
-          } catch (notifErr) {
-            console.error('Notification error (non-critical)');
-          }
-
           showToast("Application submitted successfully!", "success");
           closeApplyModal();
           renderProjects(currentFilteredProjects.length > 0 ? currentFilteredProjects : projects);
@@ -1976,9 +1945,8 @@
         if (existingConsentInfo) existingConsentInfo.remove();
 
         if (app.parentConsentFile) {
-          // Extract and display the filename from the stored path
-          const storedFileName = app.parentConsentFile.split('/').pop();
-          consentNameSpan.textContent = storedFileName;
+          // Display a friendly label instead of the raw storage path
+          consentNameSpan.textContent = "Parental consent uploaded";
           consentNameSpan.classList.remove("text-gray-500");
           consentNameSpan.classList.add("text-gray-800");
 
@@ -2050,6 +2018,13 @@
           if (editConsentFile) {
             const age = calculateAge(app.birthday);
             if (age < 18) {
+              // Validate file type (PDF, JPG, PNG only)
+              const allowedEditConsentTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+              if (!allowedEditConsentTypes.includes(editConsentFile.type)) {
+                showToast("Parental consent must be a PDF, JPG, or PNG file", "warning");
+                if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Changes'; }
+                return;
+              }
               if (editConsentFile.size > 5 * 1024 * 1024) {
                 showToast("Parental consent file must be under 5MB", "warning");
                 if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Changes'; }
@@ -2168,43 +2143,6 @@
             replies: [],
             userID: currentUser.id
           });
-
-          // Notify SK project head(s) about the new inquiry
-          try {
-            const { data: projData } = await supabaseClient
-              .from('Pre_Project_Tbl')
-              .select('skID, userID, SK_Tbl ( userID )')
-              .eq('preProjectID', inquiryToProjectId)
-              .single();
-
-            if (projData) {
-              const notifiedIds = new Set();
-              const inquirerName = currentUserData
-                ? `${currentUserData.firstName} ${currentUserData.lastName}`.trim()
-                : 'A volunteer';
-
-              if (projData.SK_Tbl?.userID) {
-                notifiedIds.add(projData.SK_Tbl.userID);
-                await supabaseClient.rpc('create_notification', {
-                  p_user_id: projData.SK_Tbl.userID,
-                  p_notification_type: 'new_inquiry',
-                  p_title: `New inquiry from ${inquirerName} on "${project.title}"`,
-                  p_reference_id: inquiryToProjectId
-                });
-              }
-
-              if (projData.userID && !notifiedIds.has(projData.userID)) {
-                await supabaseClient.rpc('create_notification', {
-                  p_user_id: projData.userID,
-                  p_notification_type: 'new_inquiry',
-                  p_title: `New inquiry from ${inquirerName} on "${project.title}"`,
-                  p_reference_id: inquiryToProjectId
-                });
-              }
-            }
-          } catch (notifErr) {
-            console.error('Inquiry notification error (non-critical)');
-          }
 
           showToast("Inquiry sent successfully!", "success");
           closeInquiryModal();
@@ -2365,9 +2303,9 @@
                   <div class="flex items-start justify-between mb-1">
                     <div>
                       <h4 class="font-semibold text-gray-900">${
-                        latestReply.repliedBy
+                        escapeHTML(latestReply.repliedBy)
                       } replied to your inquiry</h4>
-                      <p class="text-sm text-gray-600">${project.title}</p>
+                      <p class="text-sm text-gray-600">${escapeHTML(project.title)}</p>
                     </div>
                     <span class="text-xs text-gray-500">${
                       latestReply.repliedAt
@@ -2375,10 +2313,10 @@
                   </div>
                   <div class="mt-2 bg-gray-50 p-3 rounded-lg">
                     <p class="text-sm text-gray-600 mb-2"><strong>Your question:</strong> ${
-                      inquiry.message
+                      escapeHTML(inquiry.message)
                     }</p>
                     <p class="text-sm text-gray-900"><strong>Reply:</strong> ${
-                      latestReply.text
+                      escapeHTML(latestReply.text)
                     }</p>
                   </div>
                   <div class="mt-2 text-sm text-blue-600 font-medium">
@@ -2470,12 +2408,12 @@
                 }
               </div>
               <div class="flex-1">
-                <h3 class="text-lg font-bold ${isArchived ? 'text-gray-500' : 'text-gray-800'} mb-1">${app.projectTitle}</h3>
+                <h3 class="text-lg font-bold ${isArchived ? 'text-gray-500' : 'text-gray-800'} mb-1">${escapeHTML(app.projectTitle)}</h3>
                 ${isArchived ? '<p class="text-xs text-orange-600 font-medium mb-1">This project has been archived</p>' : ''}
                 <p class="text-sm text-gray-600 mb-2">Applied on: ${new Date(
                   app.appliedDate
                 ).toLocaleDateString()}</p>
-                <p class="text-sm text-gray-700">Role: ${app.role}</p>
+                <p class="text-sm text-gray-700">Role: ${escapeHTML(app.role)}</p>
               </div>
             </div>
             <div class="text-right">
@@ -2539,7 +2477,7 @@
               ${isArchived ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>' : status.icon}
             </div>
             <div class="flex-1 min-w-0">
-              <h4 class="font-semibold ${isArchived ? 'text-gray-500' : 'text-gray-900'} mb-1">${app.projectTitle}</h4>
+              <h4 class="font-semibold ${isArchived ? 'text-gray-500' : 'text-gray-900'} mb-1">${escapeHTML(app.projectTitle)}</h4>
               ${isArchived ? '<p class="text-xs text-orange-600 font-medium mb-1">This project has been archived</p>' : ''}
               <p class="text-xs text-gray-600 mb-1">Applied on: ${new Date(
                 app.appliedDate
@@ -2548,7 +2486,7 @@
                 day: "numeric",
                 year: "numeric",
               })}</p>
-              <p class="text-sm text-gray-700">Role: ${app.role}</p>
+              <p class="text-sm text-gray-700">Role: ${escapeHTML(app.role)}</p>
             </div>
             <div class="text-right flex flex-col items-end gap-2">
               <span class="px-3 py-1 ${isArchived ? 'bg-gray-100 text-gray-500' : status.bg + ' ' + status.text} text-xs rounded-md font-medium whitespace-nowrap">

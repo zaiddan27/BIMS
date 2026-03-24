@@ -229,6 +229,19 @@ const AuthService = {
                 return { success: false, error: 'Password must be at least 8 characters long' };
             }
 
+            if (!/[A-Z]/.test(newPassword)) {
+                return { success: false, error: 'Password must contain at least one uppercase letter' };
+            }
+            if (!/[a-z]/.test(newPassword)) {
+                return { success: false, error: 'Password must contain at least one lowercase letter' };
+            }
+            if (!/[0-9]/.test(newPassword)) {
+                return { success: false, error: 'Password must contain at least one number' };
+            }
+            if (!/[!@#$%^&*()_+\-=\[\]{}|;:'",.<>\/?\\`~]/.test(newPassword)) {
+                return { success: false, error: 'Password must contain at least one special character' };
+            }
+
             const { data, error } = await supabaseClient.auth.updateUser({
                 password: newPassword
             });

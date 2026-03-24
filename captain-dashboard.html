@@ -1177,8 +1177,8 @@
             if (!file) return;
 
             // Validate file type
-            if (!file.type.startsWith('image/')) {
-                showToast('Please upload an image file', 'error');
+            if (!['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+                showToast('Please upload an image file (JPEG, PNG, GIF, or WebP)', 'error');
                 return;
             }
 
@@ -1688,7 +1688,7 @@
                         <tbody>
                             ${budgetBreakdown.map(item => `
                                 <tr class="border-b border-gray-100">
-                                    <td class="py-2 px-3 text-sm text-gray-700">${item.description || 'N/A'}</td>
+                                    <td class="py-2 px-3 text-sm text-gray-700">${escapeHTML(item.description || 'N/A')}</td>
                                     <td class="py-2 px-3 text-sm text-gray-700 text-right">₱${parseFloat(item.cost || 0).toLocaleString()}</td>
                                 </tr>
                             `).join('')}
@@ -2466,11 +2466,91 @@
                             <p>Created by: ${escapeHTML(project.SK_Tbl?.User_Tbl?.firstName || '')} ${escapeHTML(project.SK_Tbl?.User_Tbl?.lastName || '')}</p>
                             <p>Archived: ${project.updatedAt ? new Date(project.updatedAt).toLocaleDateString() : 'N/A'}</p>
                         </div>
+                        <div class="flex gap-2 mt-3">
+                            <button onclick="unarchiveProject(${project.preProjectID}, '${escapeHTML(project.title).replace(/'/g, "\\'")}')"
+                                    class="flex-1 px-3 py-1.5 text-xs font-medium text-yellow-700 bg-yellow-100 rounded-lg hover:bg-yellow-200 transition">
+                                Unarchive
+                            </button>
+                            <button onclick="permanentDeleteProject(${project.preProjectID}, '${escapeHTML(project.title).replace(/'/g, "\\'")}')"
+                                    class="flex-1 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-lg hover:bg-red-200 transition">
+                                Permanent Delete
+                            </button>
+                        </div>
                     </div>
                 `).join('');
             } catch (error) {
                 console.error('Error loading archived projects');
                 showToast('Error loading archived projects', 'error');
+            }
+        }
+
+        async function unarchiveProject(projectId, projectTitle) {
+            if (!confirm(`Are you sure you want to unarchive "${projectTitle}"?\n\nThis will restore the project back to the SK Projects page.`)) return;
+            try {
+                const { data: updated, error } = await supabaseClient
+                    .from('Pre_Project_Tbl')
+                    .update({ status: 'COMPLETED', updatedAt: new Date().toISOString() })
+                    .eq('preProjectID', projectId)
+                    .select();
+
+                if (error) {
+                    console.error('Error unarchiving project', error);
+                    showToast('Failed to unarchive project.', 'error');
+                    return;
+                }
+
+                if (!updated || updated.length === 0) {
+                    console.error('Unarchive update affected 0 rows — possible RLS policy issue');
+                    showToast('Failed to unarchive project. You may not have permission.', 'error');
+                    return;
+                }
+
+                showToast(`"${projectTitle}" has been unarchived and restored.`, 'success');
+                loadArchivedProjects();
+            } catch (err) {
+                console.error('Unarchive exception', err);
+                showToast('An error occurred while unarchiving.', 'error');
+            }
+        }
+
+        async function permanentDeleteProject(projectId, projectTitle) {
+            const confirmText = prompt(`To permanently delete "${projectTitle}", type DELETE to confirm:`);
+            if (confirmText !== 'DELETE') {
+                if (confirmText !== null) showToast('Deletion cancelled. You must type "DELETE" to confirm.', 'error');
+                return;
+            }
+            try {
+                // Delete related records first, then the project
+                await supabaseClient.from('Expenses_Tbl')
+                    .delete()
+                    .in('breakdownID',
+                        (await supabaseClient.from('BudgetBreakdown_Tbl').select('breakdownID').eq('preProjectID', projectId)).data?.map(b => b.breakdownID) || []
+                    );
+                await supabaseClient.from('BudgetBreakdown_Tbl').delete().eq('preProjectID', projectId);
+                await supabaseClient.from('Evaluation_Tbl')
+                    .delete()
+                    .in('applicationID',
+                        (await supabaseClient.from('Application_Tbl').select('applicationID').eq('preProjectID', projectId)).data?.map(a => a.applicationID) || []
+                    );
+                await supabaseClient.from('Application_Tbl').delete().eq('preProjectID', projectId);
+                await supabaseClient.from('Post_Project_Tbl').delete().eq('preProjectID', projectId);
+
+                const { error } = await supabaseClient
+                    .from('Pre_Project_Tbl')
+                    .delete()
+                    .eq('preProjectID', projectId);
+
+                if (error) {
+                    console.error('Error permanently deleting project', error);
+                    showToast('Failed to delete project permanently.', 'error');
+                    return;
+                }
+
+                showToast(`"${projectTitle}" has been permanently deleted.`, 'success');
+                loadArchivedProjects();
+            } catch (err) {
+                console.error('Permanent delete exception', err);
+                showToast('An error occurred while deleting the project.', 'error');
             }
         }
 

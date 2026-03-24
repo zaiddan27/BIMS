@@ -907,8 +907,8 @@
         if (!file) return;
 
         // Validate file type
-        if (!file.type.startsWith('image/')) {
-          showToast('Please upload an image file', 'error');
+        if (!['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+          showToast('Please upload an image file (JPEG, PNG, GIF, or WebP)', 'error');
           return;
         }
 

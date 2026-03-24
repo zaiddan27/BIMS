@@ -164,6 +164,7 @@ export class ProfileModal {
                     <div>
                       <label class="block text-sm font-medium text-gray-700 mb-1">Birthday *</label>
                       <input type="date" id="profileBirthday" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" />
+                      <p id="birthdayLocked" class="hidden text-xs text-gray-500 mt-1">Birthday cannot be changed once set</p>
                       <p id="birthdayError" class="hidden text-xs text-red-600 mt-1"></p>
                     </div>
                   </div>
@@ -305,6 +306,9 @@ export class ProfileModal {
       this.setFieldsState(false);
       this.clearAllErrors();
       this.toggleButtons(false);
+      // Hide birthday locked message
+      const birthdayLocked = document.getElementById('birthdayLocked');
+      if (birthdayLocked) birthdayLocked.classList.add('hidden');
     }
   }
 
@@ -322,6 +326,14 @@ export class ProfileModal {
       const lastInitial = this.userProfile.lastName ? this.userProfile.lastName.charAt(0).toUpperCase() : '-';
       previewDiv.innerHTML = `<span class="text-white font-bold text-2xl">${firstInitial}${lastInitial}</span>`;
     }
+  }
+
+  /**
+   * Check if user already has a valid (non-placeholder) birthday saved
+   */
+  hasSavedBirthday() {
+    const birthday = this.userProfile.birthday;
+    return birthday && birthday !== '' && birthday !== '2000-01-01';
   }
 
   /**
@@ -343,6 +355,21 @@ export class ProfileModal {
     this.setFieldsState(true);
     this.clearAllErrors();
     this.toggleButtons(true);
+
+    // Lock birthday field if already saved — birthday cannot be changed once set
+    const birthdayLocked = document.getElementById('birthdayLocked');
+    if (this.hasSavedBirthday()) {
+      const birthdayField = document.getElementById('profileBirthday');
+      if (birthdayField) {
+        birthdayField.disabled = true;
+        birthdayField.classList.add('bg-gray-50', 'cursor-not-allowed');
+        birthdayField.classList.remove('bg-white');
+        birthdayField.title = 'Birthday cannot be changed once set';
+      }
+      if (birthdayLocked) birthdayLocked.classList.remove('hidden');
+    } else {
+      if (birthdayLocked) birthdayLocked.classList.add('hidden');
+    }
 
     // Show profile picture upload button
     const uploadBtn = document.getElementById('profilePictureUploadBtn');
@@ -366,6 +393,10 @@ export class ProfileModal {
     this.setFieldsState(false);
     this.clearAllErrors();
     this.toggleButtons(false);
+
+    // Hide birthday locked message
+    const birthdayLocked = document.getElementById('birthdayLocked');
+    if (birthdayLocked) birthdayLocked.classList.add('hidden');
 
     // Hide profile picture upload button
     const uploadBtn = document.getElementById('profilePictureUploadBtn');
@@ -713,9 +744,11 @@ export class ProfileModal {
       this.setFieldsState(false);
       this.toggleButtons(false);
 
-      // Hide profile picture upload button
+      // Hide profile picture upload button and birthday locked message
       const uploadBtn = document.getElementById('profilePictureUploadBtn');
       if (uploadBtn) uploadBtn.classList.add('hidden');
+      const birthdayLockedMsg = document.getElementById('birthdayLocked');
+      if (birthdayLockedMsg) birthdayLockedMsg.classList.add('hidden');
 
       this.showToast('Profile updated successfully!', 'success');
 
