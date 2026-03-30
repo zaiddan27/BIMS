@@ -2,6 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="SK Testimonies - Manage volunteer testimonies and feedback">
     <title>BIMS - Manage Testimonies</title>
@@ -22,6 +25,7 @@
     <script src="js/auth/session.js"></script>
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
+    <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
 
     <style>
@@ -797,6 +801,7 @@
               renderTestimonies();
               closeViewModal();
               showToast('Testimony has been permanently deleted.', 'success');
+              logAction('Rejected testimony');
             } catch (err) {
               console.error('[SK TESTIMONIES] Delete error');
               showToast('Failed to delete testimony', 'error');
@@ -824,6 +829,7 @@
             updateStats();
             renderTestimonies();
             showToast('Testimony has been removed from homepage!');
+            logAction('Unfeatured testimony');
             document.getElementById('featureBtnText').textContent = 'Feature';
             document.getElementById('viewStatusBadge').innerHTML = '';
           } catch (err) {
@@ -864,6 +870,7 @@
             updateStats();
             renderTestimonies();
             showToast('Testimony has been featured on homepage!');
+            logAction('Featured testimony');
             document.getElementById('featureBtnText').textContent = 'Unfeature';
             // Update badge in modal
             const featuredBadge = '<span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full flex items-center space-x-1"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><span>Featured on Homepage</span></span>';
@@ -979,6 +986,7 @@
       // Logout handler
       async function handleLogout() {
         try {
+          await logAction('User logged out');
           await SessionManager.logout();
         } catch (error) {
           console.error('Logout error');

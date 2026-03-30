@@ -19,6 +19,7 @@ const supabaseClient = window.supabase.createClient(
             persistSession: true,
             detectSessionInUrl: true,
             storage: window.localStorage,
+            flowType: 'pkce', // PKCE flow for better CSRF protection
         },
         global: {
             headers: {

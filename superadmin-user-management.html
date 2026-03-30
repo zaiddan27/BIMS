@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="description" content="User Management - Manage BIMS user accounts and roles">
     <title>User Management - BIMS Superadmin</title>
     <link href="css/tailwind.min.css" rel="stylesheet">
@@ -63,6 +66,7 @@
     <script src="js/auth/session.js"></script>
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
+    <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
 </head>
 <body class="bg-gray-50">
@@ -688,6 +692,7 @@
          */
         async function handleLogout() {
             try {
+                await logAction('User logged out');
 
                 // Sign out from Supabase
                 const { error } = await supabaseClient.auth.signOut();
@@ -1059,23 +1064,21 @@
 
         async function promoteToCaptain() {
             try {
-                // Check if there's an existing active Captain
-                const { data: existingCaptain, error: checkError } = await supabaseClient
+                // Find ALL existing active Captains (not .single() which fails on 2+ rows)
+                const { data: existingCaptains, error: checkError } = await supabaseClient
                     .from('User_Tbl')
                     .select('userID, firstName, lastName')
                     .eq('role', 'CAPTAIN')
                     .eq('accountStatus', 'ACTIVE')
-                    .single();
+                    .neq('userID', currentModalUserId);
 
-                if (checkError && checkError.code !== 'PGRST116') {
-                    throw checkError;
-                }
+                if (checkError) throw checkError;
 
-                if (existingCaptain) {
-                    // Ask for confirmation to replace existing Captain
+                if (existingCaptains && existingCaptains.length > 0) {
+                    const names = existingCaptains.map(c => `${c.firstName} ${c.lastName}`).join(', ');
                     const confirmed = confirm(
-                        `There is already an active Captain: ${existingCaptain.firstName} ${existingCaptain.lastName}.\n\n` +
-                        `Promoting ${currentModalUserName} will deactivate the current Captain.\n\n` +
+                        `There ${existingCaptains.length === 1 ? 'is' : 'are'} ${existingCaptains.length} active Captain(s): ${names}.\n\n` +
+                        `Promoting ${currentModalUserName} will deactivate ${existingCaptains.length === 1 ? 'the current' : 'all existing'} Captain(s).\n\n` +
                         `Do you want to proceed?`
                     );
 
@@ -1084,15 +1087,18 @@
                         return;
                     }
 
-                    // Deactivate existing Captain
-                    const { error: deactivateError } = await supabaseClient
-                        .from('User_Tbl')
-                        .update({ accountStatus: 'INACTIVE' })
-                        .eq('userID', existingCaptain.userID);
+                    // Deactivate ALL existing Captains
+                    for (const captain of existingCaptains) {
+                        const { error: deactivateError } = await supabaseClient
+                            .from('User_Tbl')
+                            .update({ accountStatus: 'INACTIVE', role: 'YOUTH_VOLUNTEER' })
+                            .eq('userID', captain.userID);
 
-                    if (deactivateError) throw deactivateError;
+                        if (deactivateError) throw deactivateError;
+                        logAction(`[AUDIT] Deactivated previous Captain: ${captain.firstName} ${captain.lastName}`);
+                    }
 
-                    showToast(`${existingCaptain.firstName} ${existingCaptain.lastName} has been deactivated`, 'info');
+                    showToast(`${existingCaptains.length} previous Captain(s) deactivated`, 'info');
                 }
 
                 // Promote user to Captain
@@ -1102,6 +1108,7 @@
                     .eq('userID', currentModalUserId);
 
                 if (promoteError) throw promoteError;
+                logAction('[AUDIT] Promoted user to CAPTAIN');
 
                 showToast(`${currentModalUserName} promoted to Barangay Captain`, 'success');
                 closePromotionTypeModal();
@@ -1198,6 +1205,7 @@
                             .eq('userID', existingUser.userID);
 
                         if (deactivateError) throw deactivateError;
+                        logAction('[AUDIT] Deactivated previous SK position holder');
 
                         showToast(`${existingUser.firstName} ${existingUser.lastName} has been deactivated`, 'info');
                     }
@@ -1246,6 +1254,7 @@
                     });
 
                 if (skError) throw skError;
+                logAction('[AUDIT] Promoted user to SK_OFFICIAL');
 
                 showToast(`${currentModalUserName} promoted to ${position.replace(/_/g, ' ')}`, 'success');
                 closePromoteModal();
@@ -1332,6 +1341,7 @@
                     .eq('userID', currentModalUserId);
 
                 if (roleError) throw roleError;
+                logAction('[AUDIT] Demoted SK_OFFICIAL to YOUTH_VOLUNTEER');
 
                 showToast(`${currentModalUserName} demoted to Youth Volunteer`, 'success');
                 closeDemoteModal();
@@ -1385,9 +1395,7 @@
                     .eq('userID', currentModalUserId);
 
                 if (error) throw error;
-
-                // Log the action
-                const logMessage = `User ${currentModalUserName} deactivated. Reason: ${reason}${notes ? '. Notes: ' + notes : ''}`;
+                logAction('[AUDIT] Deactivated user account');
 
                 showToast(`${currentModalUserName} has been deactivated`, 'success');
                 closeDeactivateModal();
@@ -1409,6 +1417,7 @@
                     .eq('userID', userId);
 
                 if (error) throw error;
+                logAction('[AUDIT] Activated user account');
 
                 showToast(`${userName} has been reactivated`, 'success');
                 loadUsers();

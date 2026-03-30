@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="description" content="Activity Logs - Monitor system activity and user actions">
     <title>Activity Logs - BIMS Superadmin</title>
     <link href="css/tailwind.min.css" rel="stylesheet">
@@ -59,6 +62,7 @@
     <script src="js/auth/session.js"></script>
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
+    <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
 </head>
 <body class="bg-gray-50">
@@ -322,6 +326,7 @@
          */
         async function handleLogout() {
             try {
+                await logAction('User logged out');
 
                 // Sign out from Supabase
                 const { error } = await supabaseClient.auth.signOut();
@@ -405,7 +410,7 @@
 
                 let query = supabaseClient
                     .from('Logs_Tbl')
-                    .select('logID, action, createdAt, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
+                    .select('logID, action, createdAt, category, severity, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
                     .order('createdAt', { ascending: false });
 
                 const dateFilter = document.getElementById('logDateFilter')?.value;
@@ -439,18 +444,26 @@
 
             updateLogsPagination(totalLogsCount);
 
-            container.innerHTML = logs.map(log => `
+            container.innerHTML = logs.map(log => {
+                const sevColor = { CRITICAL: 'bg-red-500', ERROR: 'bg-red-400', WARN: 'bg-yellow-500', INFO: 'bg-blue-500' }[log.severity] || 'bg-blue-500';
+                const sevBadge = log.severity && log.severity !== 'INFO'
+                    ? `<span class="text-xs font-medium px-1.5 py-0.5 rounded ${log.severity === 'CRITICAL' ? 'bg-red-100 text-red-700' : log.severity === 'ERROR' ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-700'}">${escapeHTML(log.severity)}</span>`
+                    : '';
+                const catLabel = log.category && log.category !== 'general'
+                    ? `<span class="text-xs text-gray-400 ml-1">[${escapeHTML(log.category)}]</span>`
+                    : '';
+                return `
                 <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition">
-                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                    <div class="w-2 h-2 ${sevColor} rounded-full mt-2 flex-shrink-0"></div>
                     <div class="flex-1">
-                        <p class="text-sm text-gray-800">${escapeHTML(log.action || '')}</p>
+                        <p class="text-sm text-gray-800">${sevBadge} ${escapeHTML(log.action || '')}${catLabel}</p>
                         <p class="text-xs text-gray-500 mt-1">
                             by ${escapeHTML(log.User_Tbl?.firstName || '')} ${escapeHTML(log.User_Tbl?.lastName || '')} (${escapeHTML(log.User_Tbl?.role || 'Unknown')}) •
                             ${log.createdAt ? new Date(log.createdAt).toLocaleString() : '-'}
                         </p>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
         function updateLogsPagination(totalLogs) {
@@ -514,8 +527,8 @@
 
                 const { data: logs, count, error } = await supabaseClient
                     .from('Logs_Tbl')
-                    .select('logID, action, createdAt, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
-                    .ilike('action', '%[AUDIT]%')
+                    .select('logID, action, createdAt, category, severity, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
+                    .eq('category', 'audit')
                     .order('createdAt', { ascending: false })
                     .range(startIndex, endIndex);
 
@@ -541,10 +554,14 @@
 
             updateAuditPagination(totalAuditCount);
 
-            container.innerHTML = logs.map(log => `
-                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
+            container.innerHTML = logs.map(log => {
+                const borderColor = log.severity === 'CRITICAL' ? 'border-red-500' : log.severity === 'ERROR' ? 'border-red-400' : 'border-yellow-500';
+                const bgColor = log.severity === 'CRITICAL' ? 'bg-red-50' : log.severity === 'ERROR' ? 'bg-red-50' : 'bg-yellow-50';
+                const iconColor = log.severity === 'CRITICAL' ? 'text-red-600' : log.severity === 'ERROR' ? 'text-red-500' : 'text-yellow-600';
+                return `
+                <div class="${bgColor} border-l-4 ${borderColor} p-4 rounded-lg">
                     <div class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-5 h-5 ${iconColor} mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
                         </svg>
                         <div class="ml-3 flex-1">
@@ -555,8 +572,8 @@
                             </p>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
         function updateAuditPagination(totalAudits) {

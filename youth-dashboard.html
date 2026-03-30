@@ -582,6 +582,7 @@
     <script src="js/auth/session.js"></script>
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
+    <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
 
     <script type="module">
@@ -991,6 +992,7 @@
           updateProfilePicture();
 
           showToast('Profile picture uploaded successfully!', 'success');
+          logAction('Updated profile picture');
 
         } catch (error) {
           console.error('Profile picture upload failed');
@@ -1156,6 +1158,7 @@
           updateProfileUI();
 
           showToast('Profile updated successfully!', 'success');
+          logAction('Updated profile');
           closeProfileModal();
 
         } catch (error) {
@@ -1682,6 +1685,7 @@
 
             // Show success message
             showToast("Thank you for sharing your experience! Your testimony has been submitted for review.", "success");
+            logAction('Submitted testimony');
 
             // Reset form
             resetTestimonyForm();
@@ -1747,6 +1751,7 @@
       // Logout function
       async function handleLogout() {
         try {
+          await logAction('User logged out');
           await SessionManager.logout();
         } catch (error) {
           console.error('Logout error');

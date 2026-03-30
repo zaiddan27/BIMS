@@ -43,9 +43,21 @@ const AuthService = {
                 }
             }
 
-            // Validate password length (min 8 chars as per settings)
+            // Validate password complexity (same rules as password reset)
             if (userData.password.length < 8) {
                 return { success: false, error: 'Password must be at least 8 characters long' };
+            }
+            if (!/[A-Z]/.test(userData.password)) {
+                return { success: false, error: 'Password must contain at least one uppercase letter' };
+            }
+            if (!/[a-z]/.test(userData.password)) {
+                return { success: false, error: 'Password must contain at least one lowercase letter' };
+            }
+            if (!/[0-9]/.test(userData.password)) {
+                return { success: false, error: 'Password must contain at least one number' };
+            }
+            if (!/[!@#$%^&*()_+\-=\[\]{}|;:'",.<>\/?\\`~]/.test(userData.password)) {
+                return { success: false, error: 'Password must contain at least one special character' };
             }
 
             // Validate terms acceptance
@@ -125,9 +137,14 @@ const AuthService = {
      */
     async login(email, password) {
         try {
-            // Check login attempts before proceeding
-            const attemptCheck = this.checkLoginAttempts(email);
-            if (!attemptCheck.allowed) {
+            // Check login attempts (server-side) before proceeding
+            const { data: attemptCheck, error: attemptError } = await supabaseClient
+                .rpc('check_login_allowed', { p_email: email });
+
+            if (attemptError) {
+                console.error('Login check error');
+                // Fall through — don't block login if RPC fails
+            } else if (attemptCheck && !attemptCheck.allowed) {
                 return {
                     success: false,
                     error: attemptCheck.error,
@@ -141,14 +158,14 @@ const AuthService = {
             });
 
             if (error) {
-                // Track failed attempt
-                this.recordFailedAttempt(email);
+                // Track failed attempt (server-side)
+                await supabaseClient.rpc('record_failed_login', { p_email: email });
 
                 return { success: false, error: error.message };
             }
 
-            // Clear login attempts on successful login
-            this.clearLoginAttempts(email);
+            // Clear login attempts on successful login (server-side)
+            await supabaseClient.rpc('clear_login_attempts', { p_email: email });
 
             // Check if user email is confirmed
             if (data.user && !data.user.email_confirmed_at) {
@@ -316,61 +333,12 @@ const AuthService = {
     },
 
     /**
-     * Track failed login attempts (5 attempts max, 15-min lockout)
-     * Local storage based tracking
+     * Legacy localStorage login attempt methods removed.
+     * Login lockout is now enforced server-side via DB RPCs:
+     *   - check_login_allowed(p_email)
+     *   - record_failed_login(p_email)
+     *   - clear_login_attempts(p_email)
      */
-    recordFailedAttempt(email) {
-        const key = `login_attempts_${email}`;
-        const attempts = JSON.parse(localStorage.getItem(key) || '[]');
-
-        attempts.push(Date.now());
-
-        localStorage.setItem(key, JSON.stringify(attempts));
-    },
-
-    /**
-     * Check if user has exceeded login attempts
-     *
-     * @param {string} email - User email
-     * @returns {Object} - {allowed: boolean, error?: string, minutesRemaining?: number}
-     */
-    checkLoginAttempts(email) {
-        const key = `login_attempts_${email}`;
-        const attempts = JSON.parse(localStorage.getItem(key) || '[]');
-        const now = Date.now();
-        const fifteenMinutes = 15 * 60 * 1000; // 15 minutes in milliseconds
-
-        // Filter out attempts older than 15 minutes
-        const recentAttempts = attempts.filter(timestamp => now - timestamp < fifteenMinutes);
-
-        // Update storage with only recent attempts
-        localStorage.setItem(key, JSON.stringify(recentAttempts));
-
-        // Check if user has 5 or more failed attempts in last 15 minutes
-        if (recentAttempts.length >= 5) {
-            const oldestAttempt = Math.min(...recentAttempts);
-            const lockoutEnd = oldestAttempt + fifteenMinutes;
-            const minutesRemaining = Math.ceil((lockoutEnd - now) / 60000);
-
-            return {
-                allowed: false,
-                error: `Too many failed login attempts. Please try again in ${minutesRemaining} minute(s).`,
-                minutesRemaining: minutesRemaining
-            };
-        }
-
-        return { allowed: true };
-    },
-
-    /**
-     * Clear login attempts after successful login
-     *
-     * @param {string} email - User email
-     */
-    clearLoginAttempts(email) {
-        const key = `login_attempts_${email}`;
-        localStorage.removeItem(key);
-    }
 };
 
 // Export for use in other modules

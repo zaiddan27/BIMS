@@ -22,6 +22,7 @@
     <script src="js/auth/session.js"></script>
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
+    <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
 
     <style>
@@ -2619,6 +2620,7 @@
         // =========================================
         async function handleLogout() {
             try {
+                await logAction('User logged out');
                 await SessionManager.logout();
             } catch (error) {
                 console.error('[CAPTAIN DASHBOARD] Logout error');

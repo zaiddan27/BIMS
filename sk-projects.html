@@ -25,6 +25,7 @@
     <script src="js/auth/session.js"></script>
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
+    <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
 
     <style>
@@ -2989,6 +2990,7 @@
         // Reload the applicants list to reflect the change
         loadApplicants(project);
 
+        logAction('Marked attendance');
         showToast(attended ?
           `${applicant.fullName} marked as attended` :
           `${applicant.fullName} attendance removed`
@@ -3249,6 +3251,7 @@
           // Update local state
           appRef.status = newStatus;
           showToast(`Application status updated to ${newStatus}`);
+          logAction('[AUDIT] Updated application status');
           closeApplicantModal();
 
           // Refresh the view
@@ -3467,6 +3470,7 @@
           }
 
           showToast("Project approval request has been canceled.", "success");
+          logAction('Cancelled project');
           closeCancelApprovalModal();
           closeProjectModal();
           await loadProjects();
@@ -3813,6 +3817,7 @@
                 await createCaptainNotification(editingProjectId, title);
               }
               showToast(resubmitted ? "Project resubmitted for Barangay Captain approval!" : "Project updated successfully");
+              logAction('Updated project');
             } else {
               // Create new project
               const { data: newProject, error } = await supabaseClient
@@ -3859,6 +3864,7 @@
               }
 
               showToast("Project submitted for Barangay Captain approval!");
+              logAction('Created project');
             }
 
             closeProjectModal();
@@ -4118,6 +4124,7 @@
       // =========================================
       async function handleLogout() {
         try {
+          await logAction('User logged out');
           await SessionManager.logout();
           // SessionManager handles redirect to login page
         } catch (error) {
@@ -4807,6 +4814,7 @@
           }
 
           showToast(`Project marked as complete with ${successRate}% success rate!`);
+          logAction('Marked project as completed');
           closeEvaluationModal();
           await loadProjects(); // Reload projects to reflect changes
 
@@ -4840,6 +4848,7 @@
               }
 
               showToast('Project is now Ongoing!');
+              logAction('Started project');
               await loadProjects();
             } catch (err) {
               showToast('An error occurred. Please try again.', 'error');

@@ -26,8 +26,9 @@ const SessionManager = {
      */
     async init(allowedRoles = []) {
         try {
-            // Listen for auth state changes
+            // Listen for auth state changes and setup idle timeout
             this.setupAuthListener();
+            this.setupIdleTimeout();
 
             // Check if user is authenticated
             const sessionResult = await AuthService.getSession();
@@ -123,6 +124,27 @@ const SessionManager = {
     },
 
     /**
+     * Setup idle timeout - auto-logout after 30 minutes of inactivity
+     */
+    setupIdleTimeout() {
+        const IDLE_LIMIT = 30 * 60 * 1000; // 30 minutes
+        let idleTimer;
+
+        const resetTimer = () => {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => {
+                this.logout();
+            }, IDLE_LIMIT);
+        };
+
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+            document.addEventListener(evt, resetTimer, { passive: true });
+        });
+
+        resetTimer();
+    },
+
+    /**
      * Setup auth state change listener
      * Handles automatic session refresh and logout
      */
@@ -175,9 +197,16 @@ const SessionManager = {
             loginUrl.searchParams.set('message', message);
         }
 
-        // Store current page for redirect after login
+        // Store current page for redirect after login (validated against allowlist)
         const currentPath = window.location.pathname;
-        if (!currentPath.includes('login.html') && !currentPath.includes('signup.html')) {
+        const allowedRedirects = [
+            'superadmin-dashboard.html', 'superadmin-user-management.html', 'superadmin-activity-logs.html',
+            'sk-dashboard.html', 'sk-projects.html', 'sk-files.html', 'sk-testimonies.html',
+            'sk-archive.html', 'sk-calendar.html', 'captain-dashboard.html',
+            'youth-dashboard.html', 'youth-projects.html', 'youth-files.html',
+            'youth-certificates.html', 'youth-calendar.html'
+        ];
+        if (allowedRedirects.some(page => currentPath.endsWith(page))) {
             loginUrl.searchParams.set('redirect', currentPath);
         }
 

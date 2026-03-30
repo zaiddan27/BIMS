@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="description" content="System Administrator Dashboard - BIMS system overview">
     <title>BIMS - System Administrator Dashboard</title>
     <link href="css/tailwind.min.css" rel="stylesheet">
@@ -80,6 +83,7 @@
     <script src="js/auth/session.js"></script>
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
+    <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
 </head>
 <body class="bg-gray-50">
@@ -329,21 +333,8 @@
                             <p class="text-gray-500 text-center py-4">Loading...</p>
                         </div>
 
-                        <!-- Pagination Dots (Center) -->
-                        <div id="activityPaginationDots" class="flex justify-center gap-2 mt-6 mb-4 hidden">
-                            <!-- Dots will be inserted here -->
-                        </div>
-
-                        <!-- Pagination Controls (Bottom Right) -->
-                        <div class="flex justify-end mt-4">
-                            <nav id="activityPaginationNav" class="hidden inline-flex rounded-md shadow-sm" role="navigation" aria-label="Pagination">
-                                <button id="prevPageActivity" onclick="navigateActivity(-1)" class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium">
-                                    Prev
-                                </button>
-                                <button id="nextPageActivity" onclick="navigateActivity(1)" class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium">
-                                    Next
-                                </button>
-                            </nav>
+                        <div class="flex justify-end mt-3">
+                            <a href="superadmin-activity-logs.html" class="text-sm text-[#2f6e4e] hover:underline font-medium">View all logs</a>
                         </div>
                     </div>
                 </div>
@@ -399,39 +390,20 @@
     <script>
         // ==================== AUTH GUARD ====================
         /**
-         * SECURITY: Independent authentication check for Dashboard page
+         * SECURITY: Uses SessionManager for auth + role check (single DB query)
+         * Returns user data for header update
          */
         async function checkAuth() {
-
-            const { data: { session } } = await supabaseClient.auth.getSession();
-
-            if (!session) {
-                console.error('No session found');
-                window.location.href = 'login.html';
+            try {
+                const result = await SessionManager.requireAuth(['SUPERADMIN']);
+                // Update header with user data from the same query
+                const ud = result.userData;
+                document.getElementById('headerUserName').textContent = `${ud.firstName} ${ud.lastName}`;
+                document.getElementById('headerAvatar').textContent = `${ud.firstName[0]}${ud.lastName[0]}`;
+                return true;
+            } catch {
                 return false;
             }
-
-            // Verify SUPERADMIN role
-            const { data: user, error } = await supabaseClient
-                .from('User_Tbl')
-                .select('userID, role, firstName, lastName')
-                .eq('userID', session.user.id)
-                .single();
-
-            if (error || !user || user.role !== 'SUPERADMIN') {
-                console.error('Access denied. SUPERADMIN role required.');
-                showToast('Access denied. SUPERADMIN role required.', 'error');
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
-                return false;
-            }
-
-            // Update header
-            document.getElementById('headerUserName').textContent = `${user.firstName} ${user.lastName}`;
-            document.getElementById('headerAvatar').textContent = `${user.firstName[0]}${user.lastName[0]}`;
-
-            return true;
         }
 
         // ==================== LOGOUT ====================
@@ -440,6 +412,7 @@
          */
         async function handleLogout() {
             try {
+                await logAction('User logged out');
 
                 // Sign out from Supabase
                 const { error } = await supabaseClient.auth.signOut();
@@ -504,14 +477,14 @@
 
                 // Get all stats in parallel
                 const [users, activeUsers, pendingUsers, deactivatedUsers, projects, applications, logs, todayLogs] = await Promise.all([
-                    supabaseClient.from('User_Tbl').select('*', { count: 'exact', head: true }),
-                    supabaseClient.from('User_Tbl').select('*', { count: 'exact', head: true }).eq('accountStatus', 'ACTIVE'),
-                    supabaseClient.from('User_Tbl').select('*', { count: 'exact', head: true }).eq('accountStatus', 'PENDING'),
-                    supabaseClient.from('User_Tbl').select('*', { count: 'exact', head: true }).eq('accountStatus', 'DEACTIVATED'),
-                    supabaseClient.from('Pre_Project_Tbl').select('*', { count: 'exact', head: true }),
-                    supabaseClient.from('Application_Tbl').select('*', { count: 'exact', head: true }),
-                    supabaseClient.from('Logs_Tbl').select('*', { count: 'exact', head: true }),
-                    supabaseClient.from('Logs_Tbl').select('*', { count: 'exact', head: true }).gte('createdAt', `${todayStr}T00:00:00`)
+                    supabaseClient.from('User_Tbl').select('userID', { count: 'exact', head: true }),
+                    supabaseClient.from('User_Tbl').select('userID', { count: 'exact', head: true }).eq('accountStatus', 'ACTIVE'),
+                    supabaseClient.from('User_Tbl').select('userID', { count: 'exact', head: true }).eq('accountStatus', 'PENDING'),
+                    supabaseClient.from('User_Tbl').select('userID', { count: 'exact', head: true }).eq('accountStatus', 'INACTIVE'),
+                    supabaseClient.from('Pre_Project_Tbl').select('preProjectID', { count: 'exact', head: true }),
+                    supabaseClient.from('Application_Tbl').select('applicationID', { count: 'exact', head: true }),
+                    supabaseClient.from('Logs_Tbl').select('logID', { count: 'exact', head: true }),
+                    supabaseClient.from('Logs_Tbl').select('logID', { count: 'exact', head: true }).gte('createdAt', `${todayStr}T00:00:00`)
                 ]);
 
                 document.getElementById('statsUsers').textContent = users.count || 0;
@@ -540,27 +513,24 @@
         async function loadUsersByRole() {
             const container = document.getElementById('usersByRole');
             try {
-                const { data: users, error } = await supabaseClient
-                    .from('User_Tbl')
-                    .select('role, accountStatus');
-
-                if (error) throw error;
-
-                // Count by role (active only)
-                const activeUsers = users.filter(u => u.accountStatus === 'ACTIVE');
+                // Count active users per role using parallel count queries (no row data transferred)
+                const roles = ['SUPERADMIN', 'CAPTAIN', 'SK_OFFICIAL', 'YOUTH_VOLUNTEER'];
+                const counts = await Promise.all(
+                    roles.map(role =>
+                        supabaseClient.from('User_Tbl').select('userID', { count: 'exact', head: true })
+                            .eq('accountStatus', 'ACTIVE').eq('role', role)
+                    )
+                );
                 const roleCounts = {};
-                activeUsers.forEach(u => {
-                    roleCounts[u.role] = (roleCounts[u.role] || 0) + 1;
-                });
+                roles.forEach((role, i) => { roleCounts[role] = counts[i].count || 0; });
+                const totalActive = Object.values(roleCounts).reduce((a, b) => a + b, 0) || 1;
 
                 const roleConfig = {
-                    'SUPERADMIN': { label: 'System Admin', color: 'purple' },
-                    'CAPTAIN': { label: 'Captain', color: 'red' },
-                    'SK_OFFICIAL': { label: 'SK Officials', color: 'blue' },
-                    'YOUTH_VOLUNTEER': { label: 'Youth Volunteers', color: 'green' }
+                    'SUPERADMIN': { label: 'System Admin', dot: 'bg-purple-600', bar: 'bg-purple-600' },
+                    'CAPTAIN': { label: 'Captain', dot: 'bg-red-500', bar: 'bg-red-500' },
+                    'SK_OFFICIAL': { label: 'SK Officials', dot: 'bg-blue-500', bar: 'bg-blue-500' },
+                    'YOUTH_VOLUNTEER': { label: 'Youth Volunteers', dot: 'bg-green-500', bar: 'bg-green-500' }
                 };
-
-                const totalActive = activeUsers.length || 1;
 
                 container.innerHTML = Object.entries(roleConfig).map(([role, config]) => {
                     const count = roleCounts[role] || 0;
@@ -568,12 +538,12 @@
                     return `
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3 flex-1">
-                                <div class="w-3 h-3 rounded-full bg-${config.color}-500 flex-shrink-0"></div>
+                                <div class="w-3 h-3 rounded-full ${config.dot} flex-shrink-0"></div>
                                 <span class="text-sm text-gray-700">${config.label}</span>
                             </div>
                             <div class="flex items-center gap-3">
                                 <div class="w-24 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-${config.color}-500 h-2 rounded-full" style="width: ${pct}%"></div>
+                                    <div class="${config.bar} h-2 rounded-full" style="width: ${pct}%"></div>
                                 </div>
                                 <span class="text-sm font-semibold text-gray-800 w-8 text-right">${count}</span>
                             </div>
@@ -594,9 +564,9 @@
                 const { data: auditLogs, error } = await supabaseClient
                     .from('Logs_Tbl')
                     .select('action, createdAt, User_Tbl(firstName, lastName)')
-                    .ilike('action', '%[AUDIT]%')
+                    .eq('category', 'audit')
                     .order('createdAt', { ascending: false })
-                    .limit(8);
+                    .limit(3);
 
                 if (error) throw error;
 
@@ -687,10 +657,10 @@
 
                         if (hasExpired) {
                             document.getElementById('captainTermMessage').innerHTML =
-                                `<strong>🚨 CRITICAL:</strong> Captain's term has EXPIRED! A new Captain must be designated immediately.`;
+                                `<strong>CRITICAL:</strong> Captain's term has EXPIRED! A new Captain must be designated immediately.`;
                         } else {
                             document.getElementById('captainTermMessage').innerHTML =
-                                `<strong>⚠️ WARNING:</strong> Captain's term expires in <strong>${daysRemaining} days</strong>. Plan succession now!`;
+                                `<strong>WARNING:</strong> Captain's term expires in <strong>${parseInt(daysRemaining, 10)} days</strong>. Plan succession now!`;
                         }
                     }
                 }
@@ -699,26 +669,18 @@
             }
         }
 
-        // Load recent activity
-        let recentActivityData = [];
-        let currentActivityPage = 0;
-        const activityPerPage = 10;
-
+        // Load recent activity (5 most recent)
         async function loadRecentActivity() {
             try {
                 const { data: logs, error } = await supabaseClient
                     .from('Logs_Tbl')
-                    .select(`
-                        *,
-                        User_Tbl (firstName, lastName)
-                    `)
-                    .order('createdAt', { ascending: false });
+                    .select('action, createdAt, User_Tbl(firstName, lastName)')
+                    .order('createdAt', { ascending: false })
+                    .limit(5);
 
                 if (error) throw error;
 
-                recentActivityData = logs || [];
-                currentActivityPage = 0;
-                renderRecentActivity();
+                renderRecentActivitySimple(logs || []);
             } catch (error) {
                 // non-critical - recent activity unavailable
                 document.getElementById('recentActivity').innerHTML =
@@ -726,26 +688,15 @@
             }
         }
 
-        function renderRecentActivity() {
+        function renderRecentActivitySimple(logs) {
             const container = document.getElementById('recentActivity');
-            const logs = recentActivityData;
 
             if (!logs || logs.length === 0) {
                 container.innerHTML = '<p class="text-gray-500 text-center py-4">No recent activity</p>';
-                document.getElementById('activityPaginationNav').classList.add('hidden');
-                document.getElementById('activityPaginationDots').classList.add('hidden');
                 return;
             }
 
-            // Calculate pagination
-            const startIndex = currentActivityPage * activityPerPage;
-            const endIndex = startIndex + activityPerPage;
-            const logsToShow = logs.slice(startIndex, endIndex);
-
-            // Update pagination controls
-            updateActivityPagination(logs.length);
-
-            container.innerHTML = logsToShow.map(log => `
+            container.innerHTML = logs.map(log => `
                 <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition">
                     <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                     <div class="flex-1">
@@ -758,47 +709,6 @@
                 </div>
             `).join('');
         }
-
-        function updateActivityPagination(totalActivity) {
-            const totalPages = Math.ceil(totalActivity / activityPerPage);
-            const dotsContainer = document.getElementById('activityPaginationDots');
-            const navContainer = document.getElementById('activityPaginationNav');
-
-            if (totalPages <= 1) {
-                dotsContainer.classList.add('hidden');
-                navContainer.classList.add('hidden');
-                return;
-            }
-
-            dotsContainer.classList.remove('hidden');
-            navContainer.classList.remove('hidden');
-
-            // Create pagination dots
-            dotsContainer.innerHTML = Array.from({ length: totalPages }, (_, i) => `
-                <button
-                    onclick="goToActivityPage(${i})"
-                    class="h-2 rounded-full transition-all duration-300 ${i === currentActivityPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2'}"
-                    style="min-height: 8px; flex-shrink: 0; cursor: pointer;"
-                    aria-label="Go to page ${i + 1}"
-                ></button>
-            `).join('');
-        }
-
-        window.navigateActivity = function(direction) {
-            const totalPages = Math.ceil(recentActivityData.length / activityPerPage);
-            currentActivityPage += direction;
-
-            // Wrap around
-            if (currentActivityPage < 0) currentActivityPage = totalPages - 1;
-            if (currentActivityPage >= totalPages) currentActivityPage = 0;
-
-            renderRecentActivity();
-        };
-
-        window.goToActivityPage = function(pageIndex) {
-            currentActivityPage = pageIndex;
-            renderRecentActivity();
-        };
 
         // ==================== UTILITIES ====================
 

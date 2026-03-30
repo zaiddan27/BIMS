@@ -22,6 +22,7 @@
     <script src="js/auth/session.js"></script>
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
+    <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
     <style>
       /* Enhanced Icon System */
@@ -1886,6 +1887,7 @@
           });
 
           showToast("Application submitted successfully!", "success");
+          logAction('Submitted project application');
           closeApplyModal();
           renderProjects(currentFilteredProjects.length > 0 ? currentFilteredProjects : projects);
           renderMyApplicationsGrid();
@@ -2057,6 +2059,7 @@
 
           const consentMsg = (editConsentFile && consentFilePath) ? " Parental consent uploaded." : "";
           showToast(`Application updated successfully!${consentMsg}`);
+          logAction('Updated project application');
           closeEditApplicationModal();
           renderMyApplicationsGrid();
         } catch (err) {
@@ -2145,6 +2148,7 @@
           });
 
           showToast("Inquiry sent successfully!", "success");
+          logAction('Submitted project inquiry');
           closeInquiryModal();
 
         } catch (err) {
@@ -2216,6 +2220,7 @@
               document.getElementById(`replyText_${inquiryId}`).value = '';
 
               showToast("Reply sent successfully", "success");
+              logAction('Replied to inquiry');
               loadInquiries(project);
             }
           }
@@ -2629,6 +2634,7 @@
       // =========================================
       async function handleLogout() {
         try {
+          await logAction('User logged out');
           await SessionManager.logout();
           // SessionManager handles redirect to login page
         } catch (error) {
