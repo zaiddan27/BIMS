@@ -1521,9 +1521,35 @@
                 id="deleteArchivedFileName"
               ></p>
             </div>
-            <p class="text-sm text-red-600 font-medium">
-              ⚠️ This file will be permanently deleted and cannot be recovered.
+            <p class="text-sm text-red-600 font-medium mb-4">
+              This file will be permanently deleted and cannot be recovered.
             </p>
+
+            <!-- Type DELETE confirmation -->
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-3 text-center">
+                To confirm, type <span class="text-red-600 font-mono font-bold">DELETE</span> in capital letters:
+              </label>
+              <div class="flex justify-center gap-2 mb-3">
+                <input type="text" maxlength="1" id="fileDeleteChar0" data-index="0" class="file-delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+                <input type="text" maxlength="1" id="fileDeleteChar1" data-index="1" class="file-delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+                <input type="text" maxlength="1" id="fileDeleteChar2" data-index="2" class="file-delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+                <input type="text" maxlength="1" id="fileDeleteChar3" data-index="3" class="file-delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+                <input type="text" maxlength="1" id="fileDeleteChar4" data-index="4" class="file-delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+                <input type="text" maxlength="1" id="fileDeleteChar5" data-index="5" class="file-delete-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+              </div>
+              <div class="flex justify-center gap-2 mb-3">
+                <div class="w-12 text-center text-xs text-gray-400 font-mono">D</div>
+                <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+                <div class="w-12 text-center text-xs text-gray-400 font-mono">L</div>
+                <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+                <div class="w-12 text-center text-xs text-gray-400 font-mono">T</div>
+                <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+              </div>
+              <p id="fileDeleteErrorMsg" class="hidden text-sm text-red-600 mt-2 text-center">
+                Please type "DELETE" exactly to confirm
+              </p>
+            </div>
           </div>
 
           <!-- Footer -->
@@ -1535,8 +1561,10 @@
               Cancel
             </button>
             <button
+              id="fileDeleteSubmitBtn"
               onclick="confirmDeleteArchivedFile()"
-              class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+              disabled
+              class="px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium"
             >
               <svg
                 class="w-5 h-5 inline mr-2"
@@ -4113,9 +4141,25 @@
         pendingDeleteFileId = fileId;
         document.getElementById("deleteArchivedFileName").textContent =
           escapeHTML(file.name);
+
+        // Reset DELETE confirmation inputs
+        for (let i = 0; i < 6; i++) {
+          const inp = document.getElementById(`fileDeleteChar${i}`);
+          if (inp) inp.value = '';
+        }
+        const submitBtn = document.getElementById('fileDeleteSubmitBtn');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.className = 'px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium';
+        }
+        document.getElementById('fileDeleteErrorMsg').classList.add('hidden');
+
         document
           .getElementById("deleteArchivedFileModal")
           .classList.remove("hidden");
+
+        // Focus first input
+        setTimeout(() => { const first = document.getElementById('fileDeleteChar0'); if (first) first.focus(); }, 100);
       }
 
       function closeDeleteArchivedFileModal() {
@@ -4125,8 +4169,78 @@
         pendingDeleteFileId = null;
       }
 
+      // File delete confirmation input handlers
+      function setupFileDeleteInputs() {
+        const inputs = document.querySelectorAll('.file-delete-input');
+        inputs.forEach(input => {
+          input.addEventListener('input', (e) => {
+            const val = e.target.value.toUpperCase();
+            e.target.value = val;
+            const idx = parseInt(e.target.dataset.index);
+            if (val && idx < 5) {
+              document.getElementById(`fileDeleteChar${idx + 1}`).focus();
+            }
+            checkFileDeleteWord();
+          });
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value) {
+              const idx = parseInt(e.target.dataset.index);
+              if (idx > 0) {
+                const prev = document.getElementById(`fileDeleteChar${idx - 1}`);
+                prev.value = '';
+                prev.focus();
+              }
+            }
+          });
+          input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasted = (e.clipboardData.getData('text') || '').toUpperCase().replace(/[^A-Z]/g, '');
+            for (let i = 0; i < Math.min(pasted.length, 6); i++) {
+              const inp = document.getElementById(`fileDeleteChar${i}`);
+              if (inp) inp.value = pasted[i];
+            }
+            checkFileDeleteWord();
+          });
+        });
+      }
+
+      function checkFileDeleteWord() {
+        let word = '';
+        for (let i = 0; i < 6; i++) {
+          word += (document.getElementById(`fileDeleteChar${i}`)?.value || '');
+        }
+        const submitBtn = document.getElementById('fileDeleteSubmitBtn');
+        const errorMsg = document.getElementById('fileDeleteErrorMsg');
+        if (word === 'DELETE') {
+          submitBtn.disabled = false;
+          submitBtn.className = 'px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium';
+          errorMsg.classList.add('hidden');
+        } else {
+          submitBtn.disabled = true;
+          submitBtn.className = 'px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium';
+          if (word.length === 6) {
+            errorMsg.classList.remove('hidden');
+          } else {
+            errorMsg.classList.add('hidden');
+          }
+        }
+      }
+
+      // Initialize on DOM load
+      document.addEventListener('DOMContentLoaded', () => { setupFileDeleteInputs(); });
+
       async function confirmDeleteArchivedFile() {
         if (!pendingDeleteFileId || isDeletingFile) return;
+
+        // Verify DELETE was typed
+        let word = '';
+        for (let i = 0; i < 6; i++) {
+          word += (document.getElementById(`fileDeleteChar${i}`)?.value || '');
+        }
+        if (word !== 'DELETE') {
+          document.getElementById('fileDeleteErrorMsg').classList.remove('hidden');
+          return;
+        }
 
         isDeletingFile = true;
         try {

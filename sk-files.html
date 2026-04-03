@@ -529,44 +529,75 @@
       role="dialog" aria-modal="true" aria-labelledby="deleteFileModalTitle"
     >
       <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+        <!-- Header -->
+        <div class="bg-red-600 p-6 rounded-t-xl">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 id="deleteFileModalTitle" class="text-xl font-bold text-white">Permanent Delete</h3>
+              <p class="text-red-100 text-sm">This action cannot be undone!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content -->
         <div class="p-6">
-          <div
-            class="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4"
-          >
-            <svg
-              class="w-6 h-6 text-red-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              ></path>
-            </svg>
-          </div>
-          <h3 id="deleteFileModalTitle" class="text-xl font-bold text-gray-800 text-center mb-2">
-            Delete File?
-          </h3>
-          <p id="deleteFileName" class="text-gray-600 text-center mb-6">
-            This action cannot be undone. Are you sure?
+          <p class="text-gray-700 mb-4">
+            Are you sure you want to <strong>permanently delete</strong> this file?
           </p>
-          <div class="flex space-x-3">
-            <button
-              onclick="closeDeleteFileModal()"
-              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium"
-            >
-              Cancel
-            </button>
-            <button
-              id="confirmDeleteFileBtn"
-              class="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-medium"
-            >
-              Delete
-            </button>
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
+            <p id="deleteFileName" class="font-semibold text-gray-900"></p>
           </div>
+          <p class="text-sm text-red-600 font-medium mb-4">
+            This file will be permanently removed from storage and cannot be recovered.
+          </p>
+
+          <!-- Type DELETE confirmation -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-3 text-center">
+              To confirm, type <span class="text-red-600 font-mono font-bold">DELETE</span> in capital letters:
+            </label>
+            <div class="flex justify-center gap-2 mb-3">
+              <input type="text" maxlength="1" id="activeFileDelChar0" data-index="0" class="active-file-del-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+              <input type="text" maxlength="1" id="activeFileDelChar1" data-index="1" class="active-file-del-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+              <input type="text" maxlength="1" id="activeFileDelChar2" data-index="2" class="active-file-del-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+              <input type="text" maxlength="1" id="activeFileDelChar3" data-index="3" class="active-file-del-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+              <input type="text" maxlength="1" id="activeFileDelChar4" data-index="4" class="active-file-del-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+              <input type="text" maxlength="1" id="activeFileDelChar5" data-index="5" class="active-file-del-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 uppercase" autocomplete="off" />
+            </div>
+            <div class="flex justify-center gap-2 mb-3">
+              <div class="w-12 text-center text-xs text-gray-400 font-mono">D</div>
+              <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+              <div class="w-12 text-center text-xs text-gray-400 font-mono">L</div>
+              <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+              <div class="w-12 text-center text-xs text-gray-400 font-mono">T</div>
+              <div class="w-12 text-center text-xs text-gray-400 font-mono">E</div>
+            </div>
+            <p id="activeFileDelError" class="hidden text-sm text-red-600 mt-2 text-center">
+              Please type "DELETE" exactly to confirm
+            </p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-50 px-6 py-4 rounded-b-xl flex justify-end gap-3">
+          <button
+            onclick="closeDeleteFileModal()"
+            class="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            id="confirmDeleteFileBtn"
+            disabled
+            class="px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium"
+          >
+            Delete Permanently
+          </button>
         </div>
       </div>
     </div>
@@ -1571,8 +1602,19 @@
         const file = fileStore.find((f) => f.id === fileId);
         if (!file) return;
         deleteTargetId = fileId;
-        document.getElementById("deleteFileName").textContent = `Delete "${escapeHTML(file.name)}"? This action cannot be undone.`;
+        document.getElementById("deleteFileName").textContent = escapeHTML(file.name);
+        // Reset DELETE confirmation inputs
+        for (let i = 0; i < 6; i++) {
+          const inp = document.getElementById(`activeFileDelChar${i}`);
+          if (inp) inp.value = '';
+        }
+        const submitBtn = document.getElementById('confirmDeleteFileBtn');
+        submitBtn.disabled = true;
+        submitBtn.className = 'px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium';
+        submitBtn.textContent = 'Delete Permanently';
+        document.getElementById('activeFileDelError').classList.add('hidden');
         document.getElementById("deleteFileModal").classList.remove("hidden");
+        setTimeout(() => { const first = document.getElementById('activeFileDelChar0'); if (first) first.focus(); }, 100);
       }
 
       function closeDeleteFileModal() {
@@ -1580,8 +1622,74 @@
         document.getElementById("deleteFileModal").classList.add("hidden");
       }
 
+      // Setup DELETE confirmation inputs for active files
+      function setupActiveFileDeleteInputs() {
+        const inputs = document.querySelectorAll('.active-file-del-input');
+        inputs.forEach(input => {
+          input.addEventListener('input', (e) => {
+            const val = e.target.value.toUpperCase();
+            e.target.value = val;
+            const idx = parseInt(e.target.dataset.index);
+            if (val && idx < 5) {
+              document.getElementById(`activeFileDelChar${idx + 1}`).focus();
+            }
+            checkActiveFileDeleteWord();
+          });
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value) {
+              const idx = parseInt(e.target.dataset.index);
+              if (idx > 0) {
+                const prev = document.getElementById(`activeFileDelChar${idx - 1}`);
+                prev.value = '';
+                prev.focus();
+              }
+            }
+          });
+          input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasted = (e.clipboardData.getData('text') || '').toUpperCase().replace(/[^A-Z]/g, '');
+            for (let i = 0; i < Math.min(pasted.length, 6); i++) {
+              const inp = document.getElementById(`activeFileDelChar${i}`);
+              if (inp) inp.value = pasted[i];
+            }
+            checkActiveFileDeleteWord();
+          });
+        });
+      }
+
+      function checkActiveFileDeleteWord() {
+        let word = '';
+        for (let i = 0; i < 6; i++) {
+          word += (document.getElementById(`activeFileDelChar${i}`)?.value || '');
+        }
+        const submitBtn = document.getElementById('confirmDeleteFileBtn');
+        const errorMsg = document.getElementById('activeFileDelError');
+        if (word === 'DELETE') {
+          submitBtn.disabled = false;
+          submitBtn.className = 'px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium';
+          errorMsg.classList.add('hidden');
+        } else {
+          submitBtn.disabled = true;
+          submitBtn.className = 'px-6 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium';
+          if (word.length === 6) errorMsg.classList.remove('hidden');
+          else errorMsg.classList.add('hidden');
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => { setupActiveFileDeleteInputs(); });
+
       document.getElementById("confirmDeleteFileBtn").addEventListener("click", async () => {
         if (!deleteTargetId || isLoading) return;
+
+        // Verify DELETE was typed
+        let word = '';
+        for (let i = 0; i < 6; i++) {
+          word += (document.getElementById(`activeFileDelChar${i}`)?.value || '');
+        }
+        if (word !== 'DELETE') {
+          document.getElementById('activeFileDelError').classList.remove('hidden');
+          return;
+        }
 
         isLoading = true;
         const btn = document.getElementById('confirmDeleteFileBtn');
