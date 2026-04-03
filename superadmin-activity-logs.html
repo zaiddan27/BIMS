@@ -178,9 +178,13 @@
                 <!-- Audit Trail Tab -->
                 <div id="tabAudit" class="tab-content hidden">
                     <div class="bg-white rounded-lg shadow">
-                        <div class="p-6 border-b">
-                            <h3 class="text-lg font-bold text-gray-800">Audit Trail - Critical Changes</h3>
-                            <p class="text-sm text-gray-600 mt-2">Role changes, account status changes, email modifications, and promotions</p>
+                        <div class="p-6 border-b flex justify-between items-center">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">Audit Trail - Critical Changes</h3>
+                                <p class="text-sm text-gray-600 mt-1">Role changes, account status changes, email modifications, and promotions</p>
+                            </div>
+                            <input type="date" id="auditDateFilter" onchange="filterAuditByDate()"
+                                   class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
                         </div>
                         <div class="p-6">
                             <div id="auditLogs" class="space-y-3">
@@ -525,11 +529,20 @@
             try {
                 const startIndex = currentAuditPage * logsPerPage;
                 const endIndex = startIndex + logsPerPage - 1;
+                const dateFilter = document.getElementById('auditDateFilter').value;
 
-                const { data: logs, count, error } = await supabaseClient
+                let query = supabaseClient
                     .from('Logs_Tbl')
                     .select('logID, action, createdAt, category, severity, userID, User_Tbl(firstName, lastName, role)', { count: 'exact' })
-                    .eq('category', 'audit')
+                    .eq('category', 'audit');
+
+                if (dateFilter) {
+                    query = query
+                        .gte('createdAt', `${dateFilter}T00:00:00`)
+                        .lte('createdAt', `${dateFilter}T23:59:59`);
+                }
+
+                const { data: logs, count, error } = await query
                     .order('createdAt', { ascending: false })
                     .range(startIndex, endIndex);
 
@@ -542,6 +555,11 @@
                 container.innerHTML = '<p class="text-red-500 text-center py-4">Error loading audit trail</p>';
             }
         }
+
+        window.filterAuditByDate = function() {
+            currentAuditPage = 0;
+            loadAuditTrail();
+        };
 
         function renderAudit(logs) {
             const container = document.getElementById('auditLogs');
