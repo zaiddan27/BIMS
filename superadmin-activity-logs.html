@@ -142,13 +142,25 @@
                 <!-- Logs Tab -->
                 <div id="tabLogs" class="tab-content">
                     <div class="bg-white rounded-lg shadow">
-                        <div class="p-6 border-b flex justify-between items-center">
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-800">All Activity Logs</h3>
-                                <p class="text-sm text-gray-600 mt-1">Complete system activity history</p>
+                        <div class="p-6 border-b">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800">All Activity Logs</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Complete system activity history</p>
+                                </div>
+                                <input type="date" id="logDateFilter" onchange="loadAllLogs()"
+                                       class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
                             </div>
-                            <input type="date" id="logDateFilter" onchange="loadAllLogs()"
-                                   class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
+                            <!-- Export Controls -->
+                            <div class="flex flex-wrap items-center gap-3 bg-gray-50 rounded-lg p-3">
+                                <span class="text-sm font-medium text-gray-700">Export:</span>
+                                <input type="date" id="logsExportFrom" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2f6e4e] outline-none" />
+                                <span class="text-sm text-gray-500">to</span>
+                                <input type="date" id="logsExportTo" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2f6e4e] outline-none" />
+                                <button onclick="exportLogs('all', 'csv')" class="px-3 py-1.5 bg-[#2f6e4e] text-white rounded-lg text-sm font-medium hover:bg-[#245a3e] transition">CSV</button>
+                                <button onclick="exportLogs('all', 'json')" class="px-3 py-1.5 border border-[#2f6e4e] text-[#2f6e4e] rounded-lg text-sm font-medium hover:bg-[#2f6e4e]/10 transition">JSON</button>
+                                <button onclick="exportLogs('all', 'txt')" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 transition">Text</button>
+                            </div>
                         </div>
                         <div class="p-6">
                             <div id="allLogs" class="space-y-2">
@@ -178,13 +190,25 @@
                 <!-- Audit Trail Tab -->
                 <div id="tabAudit" class="tab-content hidden">
                     <div class="bg-white rounded-lg shadow">
-                        <div class="p-6 border-b flex justify-between items-center">
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-800">Audit Trail - Critical Changes</h3>
-                                <p class="text-sm text-gray-600 mt-1">Role changes, account status changes, email modifications, and promotions</p>
+                        <div class="p-6 border-b">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800">Audit Trail - Critical Changes</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Role changes, account status changes, email modifications, and promotions</p>
+                                </div>
+                                <input type="date" id="auditDateFilter" onchange="filterAuditByDate()"
+                                       class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
                             </div>
-                            <input type="date" id="auditDateFilter" onchange="filterAuditByDate()"
-                                   class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] outline-none">
+                            <!-- Export Controls -->
+                            <div class="flex flex-wrap items-center gap-3 bg-gray-50 rounded-lg p-3">
+                                <span class="text-sm font-medium text-gray-700">Export:</span>
+                                <input type="date" id="auditExportFrom" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2f6e4e] outline-none" />
+                                <span class="text-sm text-gray-500">to</span>
+                                <input type="date" id="auditExportTo" class="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2f6e4e] outline-none" />
+                                <button onclick="exportLogs('audit', 'csv')" class="px-3 py-1.5 bg-[#2f6e4e] text-white rounded-lg text-sm font-medium hover:bg-[#245a3e] transition">CSV</button>
+                                <button onclick="exportLogs('audit', 'json')" class="px-3 py-1.5 border border-[#2f6e4e] text-[#2f6e4e] rounded-lg text-sm font-medium hover:bg-[#2f6e4e]/10 transition">JSON</button>
+                                <button onclick="exportLogs('audit', 'txt')" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 transition">Text</button>
+                            </div>
                         </div>
                         <div class="p-6">
                             <div id="auditLogs" class="space-y-3">
@@ -633,6 +657,137 @@
             currentAuditPage = pageIndex;
             loadAuditTrail();
         };
+
+        // ==================== EXPORT LOGS ====================
+        window.exportLogs = async function(type, format) {
+            const fromId = type === 'audit' ? 'auditExportFrom' : 'logsExportFrom';
+            const toId = type === 'audit' ? 'auditExportTo' : 'logsExportTo';
+            const fromDate = document.getElementById(fromId).value;
+            const toDate = document.getElementById(toId).value;
+
+            if (!fromDate || !toDate) {
+                showToast('Please select both start and end dates for export.', 'warning');
+                return;
+            }
+            if (new Date(fromDate) > new Date(toDate)) {
+                showToast('Start date must be before end date.', 'error');
+                return;
+            }
+
+            showToast('Fetching logs for export...', 'info');
+
+            try {
+                // Fetch ALL matching logs (no pagination limit)
+                let query = supabaseClient
+                    .from('Logs_Tbl')
+                    .select('logID, action, category, severity, createdAt, ipAddress, userAgent, metadata, User_Tbl(firstName, lastName, role)')
+                    .gte('createdAt', `${fromDate}T00:00:00`)
+                    .lte('createdAt', `${toDate}T23:59:59`)
+                    .order('createdAt', { ascending: true })
+                    .limit(10000);
+
+                if (type === 'audit') {
+                    query = query.eq('category', 'audit');
+                }
+
+                const { data: logs, error } = await query;
+
+                if (error) throw error;
+
+                if (!logs || logs.length === 0) {
+                    showToast('No logs found in the selected date range.', 'warning');
+                    return;
+                }
+
+                const label = type === 'audit' ? 'Audit_Trail' : 'Activity_Logs';
+                const filename = `BIMS_${label}_${fromDate}_to_${toDate}`;
+
+                if (format === 'csv') {
+                    exportAsCSV(logs, filename);
+                } else if (format === 'json') {
+                    exportAsJSON(logs, filename);
+                } else {
+                    exportAsText(logs, filename, type);
+                }
+
+                showToast(`Exported ${logs.length} ${type === 'audit' ? 'audit' : ''} log entries as ${format.toUpperCase()}.`, 'success');
+                logAction(`Exported ${logs.length} ${type} logs (${fromDate} to ${toDate}) as ${format}`);
+            } catch (error) {
+                console.error('Export error');
+                showToast('Failed to export logs. Please try again.', 'error');
+            }
+        };
+
+        function exportAsCSV(logs, filename) {
+            const headers = ['Log ID', 'Date/Time', 'Category', 'Severity', 'Action', 'User', 'Role', 'IP Address'];
+            const rows = logs.map(log => [
+                log.logID,
+                log.createdAt ? new Date(log.createdAt).toLocaleString() : '',
+                log.category || '',
+                log.severity || '',
+                `"${(log.action || '').replace(/"/g, '""')}"`,
+                `${log.User_Tbl?.firstName || ''} ${log.User_Tbl?.lastName || ''}`.trim(),
+                log.User_Tbl?.role || '',
+                log.ipAddress || ''
+            ]);
+
+            const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+            downloadFile(csv, `${filename}.csv`, 'text/csv');
+        }
+
+        function exportAsJSON(logs, filename) {
+            const data = logs.map(log => ({
+                id: log.logID,
+                timestamp: log.createdAt,
+                category: log.category,
+                severity: log.severity,
+                action: log.action,
+                user: `${log.User_Tbl?.firstName || ''} ${log.User_Tbl?.lastName || ''}`.trim(),
+                role: log.User_Tbl?.role || '',
+                ipAddress: log.ipAddress || '',
+                metadata: log.metadata || null
+            }));
+
+            const json = JSON.stringify({ exported: new Date().toISOString(), count: data.length, logs: data }, null, 2);
+            downloadFile(json, `${filename}.json`, 'application/json');
+        }
+
+        function exportAsText(logs, filename, type) {
+            const title = type === 'audit' ? 'BIMS AUDIT TRAIL REPORT' : 'BIMS ACTIVITY LOGS REPORT';
+            const separator = '='.repeat(80);
+            const lines = [
+                separator,
+                title,
+                `Generated: ${new Date().toLocaleString()}`,
+                `Total Entries: ${logs.length}`,
+                separator,
+                ''
+            ];
+
+            logs.forEach((log, i) => {
+                const user = `${log.User_Tbl?.firstName || ''} ${log.User_Tbl?.lastName || ''}`.trim() || 'System';
+                lines.push(`[${i + 1}] ${log.createdAt ? new Date(log.createdAt).toLocaleString() : 'N/A'}`);
+                lines.push(`    Category: ${log.category || 'N/A'}  |  Severity: ${log.severity || 'N/A'}`);
+                lines.push(`    User: ${user} (${log.User_Tbl?.role || 'Unknown'})`);
+                lines.push(`    Action: ${log.action || 'N/A'}`);
+                if (log.ipAddress) lines.push(`    IP: ${log.ipAddress}`);
+                lines.push('-'.repeat(80));
+            });
+
+            downloadFile(lines.join('\n'), `${filename}.txt`, 'text/plain');
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
 
         async function loadDatabaseStats() {
             try {
