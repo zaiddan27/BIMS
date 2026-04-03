@@ -1109,6 +1109,14 @@
         await uploadFile(selectedFile, fileName, category);
       });
 
+      // Compute SHA-256 hash of file content for duplicate detection
+      async function computeFileHash(file) {
+        const buffer = await file.arrayBuffer();
+        const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
       async function uploadFile(file, fileName, category) {
         isLoading = true;
         const uploadBtn = document.getElementById('confirmUploadBtn');
@@ -1121,9 +1129,80 @@
         try {
           // Show loading state
           uploadBtn.disabled = true;
-          uploadBtnText.textContent = 'Uploading...';
+          uploadBtnText.textContent = 'Checking for duplicates...';
           uploadBtnSpinner.classList.remove('hidden');
           progressContainer.classList.remove('hidden');
+
+          // Compute file hash for duplicate detection
+          const fileHash = await computeFileHash(file);
+          const fileSize = file.size;
+
+          // Check if an identical file already exists (same hash)
+          const { data: existing, error: hashCheckError } = await supabaseClient
+            .from('File_Tbl')
+            .select('fileID, fileName, filePath, fileCategory, fileStatus')
+            .eq('fileHash', fileHash)
+            .limit(1)
+            .maybeSingle();
+
+          if (existing) {
+            // Duplicate file found
+            const existingStatus = existing.fileStatus === 'ACTIVE' ? 'active' : 'archived';
+            const reuse = confirm(
+              `This file already exists in the system as "${existing.fileName}" (${existingStatus}, category: ${existing.fileCategory}).\n\n` +
+              `Do you want to create a new reference with your filename "${fileName}" pointing to the same file?\n\n` +
+              `Click OK to reuse the existing file (saves storage), or Cancel to abort.`
+            );
+
+            if (!reuse) {
+              uploadBtnText.textContent = 'Upload';
+              uploadBtnSpinner.classList.add('hidden');
+              progressContainer.classList.add('hidden');
+              uploadBtn.disabled = false;
+              isLoading = false;
+              return;
+            }
+
+            // Reuse existing file path — just create a new DB record
+            const ext = file.name.split('.').pop().toLowerCase();
+            const fileTypeMap = {
+              'pdf': 'PDF', 'xlsx': 'XLSX', 'xls': 'XLSX', 'csv': 'XLSX',
+              'jpg': 'JPG', 'jpeg': 'JPG', 'png': 'PNG', 'gif': 'PNG', 'webp': 'PNG',
+              'doc': 'DOC', 'docx': 'DOC', 'txt': 'DOC', 'rtf': 'DOC'
+            };
+            const dbFileType = fileTypeMap[ext] || 'DOC';
+            const categoryUpper = category.toUpperCase();
+
+            const { error: dbError } = await supabaseClient
+              .from('File_Tbl')
+              .insert({
+                userID: currentUser.id,
+                fileName: fileName,
+                fileType: dbFileType,
+                fileStatus: 'ACTIVE',
+                filePath: existing.filePath,
+                fileCategory: categoryUpper,
+                fileHash: fileHash,
+                fileSize: fileSize,
+                dateUploaded: new Date().toISOString()
+              })
+              .select()
+              .single();
+
+            if (dbError) throw new Error(`Database insert failed: ${dbError.message}`);
+
+            progressBar.style.width = '100%';
+            progressPercent.textContent = '100%';
+            showToast(`File saved! Reused existing storage (duplicate of "${existing.fileName}").`, 'success');
+            logAction('Uploaded file (duplicate detected, storage reused)');
+            await loadFiles();
+            setTimeout(() => { closeUploadModal(); resetUploadForm(); }, 500);
+            isLoading = false;
+            return;
+          }
+
+          // No duplicate — proceed with normal upload
+          uploadBtnText.textContent = 'Uploading...';
 
           // Simulate progress (Supabase doesn't provide upload progress)
           let progress = 0;
@@ -1175,7 +1254,7 @@
 
           const publicUrl = urlData?.publicUrl || '';
 
-          // 3. Insert metadata into File_Tbl
+          // 3. Insert metadata into File_Tbl (with hash and size for future dedup)
           const { data: dbData, error: dbError } = await supabaseClient
             .from('File_Tbl')
             .insert({
@@ -1185,6 +1264,8 @@
               fileStatus: 'ACTIVE',
               filePath: publicUrl,
               fileCategory: categoryUpper,
+              fileHash: fileHash,
+              fileSize: fileSize,
               dateUploaded: new Date().toISOString()
             })
             .select()
