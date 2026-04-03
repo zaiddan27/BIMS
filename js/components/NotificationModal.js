@@ -183,7 +183,7 @@ export class NotificationModal {
           ${this.getNotificationIcon(notif.notificationType)}
           <div class="flex-1 min-w-0">
             <div class="flex items-start justify-between gap-2">
-              <p class="font-medium text-gray-800 text-sm line-clamp-2">
+              <p class="font-medium text-gray-800 text-sm">
                 ${this.escapeHtml(notif.title)}
               </p>
               ${
@@ -229,6 +229,20 @@ export class NotificationModal {
         <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
           <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      `,
+      application_rejected: `
+        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+      `,
+      application_pending: `
+        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
         </div>
       `,

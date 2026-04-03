@@ -1940,15 +1940,15 @@
 
                 if (decision === 'approved') {
                     notificationType = 'project_approved';
-                    title = `Project Approved: ${project.name}`;
+                    title = `Your project "${project.name}" has been approved by the Barangay Captain. You may now proceed with the project.`;
                 } else if (decision === 'rejected') {
                     notificationType = 'project_rejected';
-                    title = `Project Rejected: ${project.name}`;
+                    title = `Your project "${project.name}" was not approved by the Barangay Captain. Please review the feedback and consider resubmitting.`;
                 } else if (decision === 'revision-requested') {
                     notificationType = 'revision_requested';
                     title = comments
-                        ? `Revision Requested: ${project.name} — ${comments}`
-                        : `Revision Requested: ${project.name}`;
+                        ? `Your project "${project.name}" requires revision. Captain's remarks: "${comments}"`
+                        : `Your project "${project.name}" requires revision. Please check the project details and resubmit.`;
                 }
 
                 // Use create_notification() RPC (SECURITY DEFINER, bypasses RLS)
@@ -1986,14 +1986,14 @@
 
             // Set title and message based on decision
             if (decision === 'approved') {
-                notification.title = `Project Approved: ${project.name}`;
-                notification.message = 'Your project has been approved by the Barangay Captain';
+                notification.title = `Your project "${project.name}" has been approved by the Barangay Captain.`;
+                notification.message = 'You may now proceed with the project.';
             } else if (decision === 'rejected') {
-                notification.title = `Project Rejected: ${project.name}`;
-                notification.message = 'Your project has been rejected by the Barangay Captain';
+                notification.title = `Your project "${project.name}" was not approved by the Barangay Captain.`;
+                notification.message = 'Please review the feedback and consider resubmitting.';
             } else if (decision === 'revision-requested') {
-                notification.title = `Revision Requested: ${project.name}`;
-                notification.message = 'The Barangay Captain has requested revisions to your project';
+                notification.title = `Your project "${project.name}" requires revision.`;
+                notification.message = 'Please check the captain\'s remarks and resubmit.';
             }
 
             // Add to beginning of array

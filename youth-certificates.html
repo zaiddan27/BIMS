@@ -1182,10 +1182,18 @@
           const canvas = await html2canvas(certificateElement, {
             scale: 2,
             useCORS: true,
-            backgroundColor: '#ffffff',
+            allowTaint: true,
+            backgroundColor: '#faf8f3',
             logging: false,
             width: certificateElement.offsetWidth,
-            height: certificateElement.offsetHeight
+            height: certificateElement.offsetHeight,
+            onclone: function(clonedDoc) {
+              const el = clonedDoc.getElementById('certificatePreview');
+              if (el) {
+                el.style.width = certificateElement.offsetWidth + 'px';
+                el.style.height = certificateElement.offsetHeight + 'px';
+              }
+            }
           });
 
           const { jsPDF } = window.jspdf;

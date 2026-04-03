@@ -1092,10 +1092,17 @@
               // Load inquiries for this project
               const inquiries = await loadProjectInquiries(project.preProjectID);
 
-              // Get project head name
-              const headName = project.SK_Tbl?.User_Tbl
-                ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
-                : 'SK Official';
+              // Get project heads - from projectHeads JSON column, fallback to SK relationship
+              let headsArray = [];
+              try {
+                headsArray = project.projectHeads ? JSON.parse(project.projectHeads) : [];
+              } catch (e) { headsArray = []; }
+              if (!headsArray.length) {
+                const headName = project.SK_Tbl?.User_Tbl
+                  ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
+                  : 'SK Official';
+                headsArray = [headName];
+              }
 
               // Determine display status
               let displayStatus = 'Ongoing';
@@ -1112,7 +1119,7 @@
                 title: project.title,
                 category: project.category,
                 status: displayStatus,
-                heads: [headName],
+                heads: headsArray,
                 startDate: project.startDateTime ? new Date(project.startDateTime).toISOString().split('T')[0] : '',
                 endDate: project.endDateTime ? new Date(project.endDateTime).toISOString().split('T')[0] : '',
                 location: project.location,
@@ -1264,6 +1271,7 @@
                 email: user.email || currentUser?.email || '',
                 address: user.address || '',
                 role: app.preferredRole || '',
+                assignedRole: app.assignedRole || null,
                 status: app.applicationStatus?.toLowerCase() || 'pending',
                 parentConsentFile: app.parentConsentFile || null
               };
@@ -2422,6 +2430,7 @@
                   app.appliedDate
                 ).toLocaleDateString()}</p>
                 <p class="text-sm text-gray-700">Role: ${escapeHTML(app.role)}</p>
+                ${app.assignedRole && app.status === 'approved' ? `<p class="text-sm text-[#2f6e4e] font-medium mt-0.5">Assigned Role: ${escapeHTML(app.assignedRole)}</p>` : ''}
               </div>
             </div>
             <div class="text-right">
@@ -2495,6 +2504,7 @@
                 year: "numeric",
               })}</p>
               <p class="text-sm text-gray-700">Role: ${escapeHTML(app.role)}</p>
+              ${app.assignedRole && app.status === 'approved' ? `<p class="text-sm text-[#2f6e4e] font-medium mt-0.5">Assigned Role: ${escapeHTML(app.assignedRole)}</p>` : ''}
             </div>
             <div class="text-right flex flex-col items-end gap-2">
               <span class="px-3 py-1 ${isArchived ? 'bg-gray-100 text-gray-500' : status.bg + ' ' + status.text} text-xs rounded-md font-medium whitespace-nowrap">

@@ -1097,6 +1097,11 @@
                   <label class="text-xs text-gray-600">Preferred Role</label>
                   <p id="appRole" class="font-medium"></p>
                 </div>
+                <div>
+                  <label class="text-xs text-gray-600">Assigned Role <span class="text-gray-400">(editable by SK)</span></label>
+                  <input id="appAssignedRole" type="text" placeholder="Enter role to assign (defaults to preferred role)"
+                    class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] outline-none" />
+                </div>
                 <div id="appParentalConsentSection" class="hidden">
                   <label class="text-xs text-gray-600"
                     >Parental Consent (Minor Applicant)</label
@@ -1720,6 +1725,14 @@
           // Load SK Officials list
           await loadSKOfficials();
 
+          // Subscribe to realtime application changes (new applicants, status changes)
+          supabaseClient
+            .channel('application-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'Application_Tbl' }, async () => {
+              await loadProjects();
+            })
+            .subscribe();
+
           // Update current date
           updateCurrentDate();
 
@@ -1846,7 +1859,7 @@
             .select(`
               preProjectID, title, category, status, approvalStatus, skID,
               startDateTime, endDateTime, location, description, budget,
-              volunteers, beneficiaries, createdAt,
+              volunteers, beneficiaries, createdAt, projectHeads,
               SK_Tbl (
                 User_Tbl (
                   firstName,
@@ -1858,6 +1871,7 @@
                 preProjectID,
                 userID,
                 preferredRole,
+                assignedRole,
                 parentConsentFile,
                 applicationStatus,
                 attended,
@@ -1937,6 +1951,7 @@
                   email: user.email || '',
                   address: user.address || '',
                   preferredRole: app.preferredRole,
+                  assignedRole: app.assignedRole || null,
                   parentalConsent: app.parentConsentFile,
                   status: (app.applicationStatus || 'pending').toLowerCase(),
                   attended: app.attended || false,
@@ -1971,10 +1986,17 @@
                 cost: item.cost
               }));
 
-              // Get project head name
-              const headName = project.SK_Tbl?.User_Tbl
-                ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
-                : 'Unknown';
+              // Get project heads - from projectHeads JSON column, fallback to SK relationship
+              let headsArray = [];
+              try {
+                headsArray = project.projectHeads ? JSON.parse(project.projectHeads) : [];
+              } catch (e) { headsArray = []; }
+              if (!headsArray.length) {
+                const headName = project.SK_Tbl?.User_Tbl
+                  ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
+                  : 'Unknown';
+                headsArray = [headName];
+              }
 
               // Map status for display
               const statusMap = {
@@ -2009,7 +2031,7 @@
                 status: displayStatus,
                 dbStatus: project.status,
                 approvalStatus: project.approvalStatus,
-                heads: [headName],
+                heads: headsArray,
                 skID: project.skID,
                 startDate: project.startDateTime ? new Date(project.startDateTime).toISOString().split('T')[0] : '',
                 endDate: project.endDateTime ? new Date(project.endDateTime).toISOString().split('T')[0] : '',
@@ -2062,7 +2084,7 @@
           const { data, error } = await supabaseClient
             .from('Application_Tbl')
             .select(`
-              applicationID, preProjectID, userID, preferredRole, parentConsentFile, applicationStatus, appliedDate, attended,
+              applicationID, preProjectID, userID, preferredRole, assignedRole, parentConsentFile, applicationStatus, appliedDate, attended,
               User_Tbl (
                 firstName,
                 lastName,
@@ -2107,6 +2129,7 @@
               email: user.email || '',
               address: user.address || '',
               preferredRole: app.preferredRole,
+              assignedRole: app.assignedRole || null,
               parentalConsent: app.parentConsentFile,
               attended: app.attended || false,
               status: (app.applicationStatus || 'pending').toLowerCase(),
@@ -2935,7 +2958,7 @@
                   <h4 class="font-semibold text-gray-900 mb-0.5">${escapeHTML(app.fullName)}</h4>
                   ${app.satisfactionScore ? `<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-700 font-semibold" title="Survey submitted: ${app.satisfactionScore}/5">★ ${app.satisfactionScore}</span>` : ''}
                 </div>
-                <p class="text-sm text-gray-600">${escapeHTML(app.preferredRole)} • Age ${app.age}</p>
+                <p class="text-sm text-gray-600">${app.assignedRole && app.status === 'approved' ? escapeHTML(app.assignedRole) : escapeHTML(app.preferredRole)} • Age ${app.age}</p>
               </div>
             </div>
 
@@ -3113,6 +3136,7 @@
         document.getElementById("appEmail").textContent = app.email || "";
         document.getElementById("appAddress").textContent = app.address;
         document.getElementById("appRole").textContent = app.preferredRole;
+        document.getElementById("appAssignedRole").value = app.assignedRole || app.preferredRole || '';
 
         // Show parental consent section if applicant is under 18
         const consentSection = document.getElementById(
@@ -3232,17 +3256,22 @@
 
         // Save reference before closing modal (closeApplicantModal sets currentApp to null)
         const appRef = currentApp;
+        const assignedRole = document.getElementById("appAssignedRole").value.trim();
 
         try {
           // Map status to database format
           const dbStatus = newStatus.toUpperCase();
 
+          // Build update data - include assigned role
+          const updateData = { applicationStatus: dbStatus };
+          if (assignedRole) {
+            updateData.assignedRole = assignedRole;
+          }
+
           // Update application status in database
           const { error } = await supabaseClient
             .from('Application_Tbl')
-            .update({
-              applicationStatus: dbStatus
-            })
+            .update(updateData)
             .eq('applicationID', appRef.id);
 
           if (error) {
@@ -3253,6 +3282,7 @@
 
           // Update local state
           appRef.status = newStatus;
+          appRef.assignedRole = assignedRole || appRef.assignedRole;
           showToast(`Application status updated to ${newStatus}`);
           logAction('[AUDIT] Updated application status');
           closeApplicantModal();
@@ -3267,12 +3297,22 @@
             const projectTitle = project ? project.title : 'a project';
             const notifType = newStatus === 'approved' ? 'application_approved'
               : newStatus === 'rejected' ? 'application_rejected'
-              : `application_${newStatus}`;
-            const statusLabel = newStatus === 'approved' ? 'approved' : newStatus === 'rejected' ? 'rejected' : newStatus;
+              : 'application_pending';
+            let notifTitle = '';
+            if (newStatus === 'approved') {
+              notifTitle = `Congratulations! Your application for "${projectTitle}" has been approved.`;
+              if (assignedRole) {
+                notifTitle += ` You have been assigned the role: ${assignedRole}.`;
+              }
+            } else if (newStatus === 'rejected') {
+              notifTitle = `Your application for "${projectTitle}" was not approved. Please contact the project head for more details.`;
+            } else {
+              notifTitle = `Your application for "${projectTitle}" has been set back to pending review.`;
+            }
             await supabaseClient.rpc('create_notification', {
               p_user_id: appRef.userID,
               p_notification_type: notifType,
-              p_title: `Your application for "${projectTitle}" has been ${statusLabel}`,
+              p_title: notifTitle,
               p_reference_id: appRef.projectId
             });
           } catch (notifErr) {
@@ -3783,6 +3823,7 @@
                   startDateTime,
                   endDateTime,
                   location,
+                  projectHeads: JSON.stringify(selectedHeads),
                   updatedAt: new Date().toISOString()
               };
               if (bannerImageUrl) {
@@ -3839,6 +3880,7 @@
                   endDateTime,
                   location,
                   imagePathURL: bannerImageUrl,
+                  projectHeads: JSON.stringify(selectedHeads),
                   approvalStatus: 'PENDING',
                   submittedDate: new Date().toISOString()
                 })
@@ -3920,7 +3962,7 @@
             await supabaseClient.rpc('create_notification', {
               p_user_id: captainData.userID,
               p_notification_type: 'project_awaiting_approval',
-              p_title: `New project awaiting approval: ${projectTitle}`,
+              p_title: `A new project "${projectTitle}" has been submitted and is awaiting your approval.`,
               p_reference_id: preProjectID
             });
           }
