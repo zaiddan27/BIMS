@@ -103,6 +103,25 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
+-- FIX 4b: Allow all SK officials to update/delete announcements
+-- Current: only the creator (userID = auth.uid()) can edit/delete
+-- Fix: any SK official or Captain can edit/delete any announcement
+-- =====================================================
+
+DROP POLICY IF EXISTS "auth_update_announcements" ON "Announcement_Tbl";
+CREATE POLICY "auth_update_announcements"
+ON "Announcement_Tbl" FOR UPDATE
+TO authenticated
+USING (is_sk_official_or_captain())
+WITH CHECK (is_sk_official_or_captain());
+
+DROP POLICY IF EXISTS "auth_delete_announcements" ON "Announcement_Tbl";
+CREATE POLICY "auth_delete_announcements"
+ON "Announcement_Tbl" FOR DELETE
+TO authenticated
+USING (is_sk_official_or_captain());
+
+-- =====================================================
 -- FIX 5: Remove duplicate project approval trigger
 -- The captain-dashboard.html JS creates professional
 -- notifications. The DB trigger creates duplicates.
