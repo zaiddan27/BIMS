@@ -375,17 +375,34 @@
             <p id="viewFileDate" class="text-sm text-gray-600">Nov 19, 2025</p>
           </div>
 
-          <div class="flex justify-end">
+          <!-- Edit Filename Section -->
+          <div id="editFileSection" class="hidden border-t pt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Edit Filename</label>
+            <div class="flex gap-2">
+              <input id="editFileNameInput" type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] outline-none" />
+              <button onclick="saveFileName()" class="px-4 py-2 bg-[#2f6e4e] text-white rounded-lg text-sm font-medium hover:bg-[#245a3e] transition">Save</button>
+              <button onclick="cancelEditFileName()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition">Cancel</button>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2">
+            <button
+              id="editFileBtn"
+              onclick="startEditFileName()"
+              class="px-4 py-2 border border-[#2f6e4e] text-[#2f6e4e] rounded-lg hover:bg-[#2f6e4e]/10 transition text-sm font-medium"
+            >
+              Edit
+            </button>
             <a
               id="downloadLink"
               href="#"
               download
-              class="px-4 py-2 border border-gray-300 rounded-lg mr-3"
+              class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium"
               >Download</a
             >
             <button
               onclick="closeFileModal()"
-              class="px-4 py-2 bg-[#2f6e4e] text-white rounded-lg"
+              class="px-4 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#245a3e] transition text-sm font-medium"
             >
               Close
             </button>
@@ -936,6 +953,7 @@
             </div>
             <div class="flex justify-between mt-4 gap-2">
               <button class="flex-1 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition text-sm font-medium" onclick="viewFile('${file.id}')">View</button>
+              <button class="flex-1 px-4 py-2 text-[#2f6e4e] hover:bg-[#2f6e4e]/10 rounded-lg transition text-sm font-medium" onclick="openEditFileModal('${file.id}')">Edit</button>
               <button class="flex-1 px-4 py-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition text-sm font-medium" onclick="archiveFile('${file.id}')">Archive</button>
             </div>
           `;
@@ -1322,10 +1340,88 @@
 
       function closeFileModal() {
         document.getElementById("viewFileModal").classList.add("hidden");
+        document.getElementById("editFileSection").classList.add("hidden");
         // Reset PDF canvas
         const canvas = document.getElementById("pdfCanvas");
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // =========================================
+      // EDIT FILE (RENAME)
+      // =========================================
+      let editingFileId = null;
+
+      function openEditFileModal(id) {
+        viewFile(id);
+        setTimeout(() => startEditFileName(), 100);
+      }
+
+      function startEditFileName() {
+        const currentName = document.getElementById("viewFilename").textContent;
+        document.getElementById("editFileNameInput").value = currentName;
+        document.getElementById("editFileSection").classList.remove("hidden");
+        document.getElementById("editFileBtn").classList.add("hidden");
+        document.getElementById("editFileNameInput").focus();
+        // Store the file ID from the current view
+        const name = currentName.trim();
+        const file = fileStore.find(f => f.name === name);
+        if (file) editingFileId = file.id;
+      }
+
+      function cancelEditFileName() {
+        document.getElementById("editFileSection").classList.add("hidden");
+        document.getElementById("editFileBtn").classList.remove("hidden");
+        editingFileId = null;
+      }
+
+      async function saveFileName() {
+        const newName = document.getElementById("editFileNameInput").value.trim();
+        if (!newName) {
+          showToast("Filename cannot be empty.", "error");
+          return;
+        }
+
+        if (!editingFileId) {
+          // Fallback: find by current displayed name
+          const currentName = document.getElementById("viewFilename").textContent.trim();
+          const file = fileStore.find(f => f.name === currentName);
+          if (file) editingFileId = file.id;
+        }
+
+        if (!editingFileId) {
+          showToast("Could not identify file to rename.", "error");
+          return;
+        }
+
+        try {
+          const { error } = await supabaseClient
+            .from('File_Tbl')
+            .update({ fileName: newName })
+            .eq('fileID', editingFileId);
+
+          if (error) {
+            console.error('Error renaming file');
+            showToast('Failed to rename file. Please try again.', 'error');
+            return;
+          }
+
+          // Update local store
+          const file = fileStore.find(f => f.id === editingFileId);
+          if (file) file.name = newName;
+
+          // Update modal display
+          document.getElementById("viewFilename").textContent = newName;
+          document.getElementById("viewFileModalTitle").textContent = newName;
+
+          cancelEditFileName();
+          renderFiles(fileStore);
+          showToast("File renamed successfully!", "success");
+          logAction('Renamed file');
+        } catch (err) {
+          console.error('Rename file exception');
+          showToast('An error occurred. Please try again.', 'error');
+        }
       }
 
       // =========================================
