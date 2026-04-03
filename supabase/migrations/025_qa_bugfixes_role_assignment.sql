@@ -112,14 +112,14 @@ DROP POLICY IF EXISTS "auth_update_announcements" ON "Announcement_Tbl";
 CREATE POLICY "auth_update_announcements"
 ON "Announcement_Tbl" FOR UPDATE
 TO authenticated
-USING (is_sk_official_or_captain())
-WITH CHECK (is_sk_official_or_captain());
+USING (is_sk_official())
+WITH CHECK (is_sk_official());
 
 DROP POLICY IF EXISTS "auth_delete_announcements" ON "Announcement_Tbl";
 CREATE POLICY "auth_delete_announcements"
 ON "Announcement_Tbl" FOR DELETE
 TO authenticated
-USING (is_sk_official_or_captain());
+USING (is_sk_official());
 
 -- =====================================================
 -- FIX 5: Remove duplicate project approval trigger
