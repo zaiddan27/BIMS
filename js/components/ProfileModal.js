@@ -169,6 +169,37 @@ export class ProfileModal {
                     </div>
                   </div>
                 </div>
+                <!-- Change Password -->
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    Change Password
+                  </h3>
+                  <div id="changePasswordSection" class="space-y-3">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Current Password *</label>
+                      <input type="password" id="profileCurrentPassword" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" placeholder="Enter current password" />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">New Password *</label>
+                      <input type="password" id="profileNewPassword" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" placeholder="Min 8 chars, uppercase, lowercase, number, special" />
+                      <p id="newPasswordError" class="hidden text-xs text-red-600 mt-1"></p>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password *</label>
+                      <input type="password" id="profileConfirmPassword" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" placeholder="Re-enter new password" />
+                      <p id="confirmPasswordError" class="hidden text-xs text-red-600 mt-1"></p>
+                    </div>
+                    <button type="button" id="profileChangePasswordBtn" onclick="window.profileModal.changePassword()" class="w-full px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-medium transition flex items-center justify-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                      </svg>
+                      Update Password
+                    </button>
+                  </div>
+                </div>
               </form>
             </div>
 
@@ -306,6 +337,7 @@ export class ProfileModal {
       this.setFieldsState(false);
       this.clearAllErrors();
       this.toggleButtons(false);
+      this.clearPasswordFields();
       // Hide birthday locked message
       const birthdayLocked = document.getElementById('birthdayLocked');
       if (birthdayLocked) birthdayLocked.classList.add('hidden');
@@ -760,6 +792,86 @@ export class ProfileModal {
       console.error("[ProfileModal] Save error");
       this.showToast('Failed to update profile. Please try again.', 'error');
     }
+  }
+
+  /**
+   * Change password
+   */
+  async changePassword() {
+    const currentPassword = document.getElementById('profileCurrentPassword').value;
+    const newPassword = document.getElementById('profileNewPassword').value;
+    const confirmPassword = document.getElementById('profileConfirmPassword').value;
+
+    // Clear previous errors
+    this.clearFieldError('profileNewPassword', 'newPasswordError');
+    this.clearFieldError('profileConfirmPassword', 'confirmPasswordError');
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      this.showToast('All password fields are required.', 'error');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      this.showFieldError('profileConfirmPassword', 'confirmPasswordError', 'Passwords do not match');
+      return;
+    }
+
+    // Verify current password
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      this.showToast('Session error. Please log in again.', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('profileChangePasswordBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Updating...';
+
+    try {
+      const { error: signInError } = await supabaseClient.auth.signInWithPassword({
+        email: userEmail,
+        password: currentPassword
+      });
+
+      if (signInError) {
+        this.showToast('Current password is incorrect.', 'error');
+        return;
+      }
+
+      // Update via AuthService
+      const result = await AuthService.updatePassword(newPassword);
+
+      if (!result.success) {
+        this.showFieldError('profileNewPassword', 'newPasswordError', result.error);
+        return;
+      }
+
+      // Clear fields
+      document.getElementById('profileCurrentPassword').value = '';
+      document.getElementById('profileNewPassword').value = '';
+      document.getElementById('profileConfirmPassword').value = '';
+
+      if (typeof logAction === 'function') logAction('User changed password');
+      this.showToast('Password updated successfully!', 'success');
+    } catch (error) {
+      this.showToast('Failed to update password. Please try again.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg> Update Password';
+    }
+  }
+
+  /**
+   * Clear password fields
+   */
+  clearPasswordFields() {
+    const fields = ['profileCurrentPassword', 'profileNewPassword', 'profileConfirmPassword'];
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    this.clearFieldError('profileNewPassword', 'newPasswordError');
+    this.clearFieldError('profileConfirmPassword', 'confirmPasswordError');
   }
 
   /**
