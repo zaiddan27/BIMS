@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; form-action 'self'; base-uri 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1225,7 +1225,7 @@
             progressBar.style.width = '100%';
             progressPercent.textContent = '100%';
             showToast(`File saved! Reused existing storage (duplicate of "${existing.fileName}").`, 'success');
-            logAction('Uploaded file (duplicate detected, storage reused)');
+            logAction('Uploaded file (duplicate detected, storage reused)', { metadata: { fileName } });
             await loadFiles();
             setTimeout(() => { closeUploadModal(); resetUploadForm(); }, 500);
             isLoading = false;
@@ -1316,7 +1316,7 @@
 
           // Success
           showToast('File uploaded successfully!', 'success');
-          logAction('Uploaded file');
+          logAction('Uploaded file', { fileId: dbData?.fileID, metadata: { fileName } });
 
           // Refresh file list
           await loadFiles();
@@ -1529,7 +1529,7 @@
           cancelEditFileName();
           renderFiles(fileStore);
           showToast("File renamed successfully!", "success");
-          logAction('Renamed file');
+          logAction('Renamed file', { fileId: editingFileId });
         } catch (err) {
           console.error('Rename file exception');
           showToast('An error occurred. Please try again.', 'error');
@@ -1578,7 +1578,7 @@
           }
 
           showToast('File archived successfully!', 'success');
-          logAction('Archived file');
+          logAction('Archived file', { fileId: archiveTargetId });
           closeArchiveFileModal();
           await loadFiles();
 
@@ -1721,7 +1721,7 @@
           }
 
           showToast('File deleted permanently.', 'success');
-          logAction('Deleted file');
+          logAction('Deleted file', { fileId: deleteTargetId });
           closeDeleteFileModal();
           await loadFiles();
 
@@ -1780,7 +1780,7 @@
           if (error) throw new Error(error.message);
 
           showToast('File published to homepage!', 'success');
-          logAction('Published file');
+          logAction('Published file', { fileId: publishTargetId });
           closePublishModal();
           await loadFiles();
         } catch (error) {
@@ -1806,7 +1806,7 @@
           if (error) throw new Error(error.message);
 
           showToast('File removed from homepage.', 'info');
-          logAction('Unpublished file');
+          logAction('Unpublished file', { fileId: fileId });
           await loadFiles();
         } catch (error) {
           console.error('Unpublish error');

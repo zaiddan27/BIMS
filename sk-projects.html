@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; form-action 'self'; base-uri 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="description" content="SK Project Monitoring - Track and manage barangay projects">
@@ -3016,7 +3016,7 @@
         // Reload the applicants list to reflect the change
         loadApplicants(project);
 
-        logAction('Marked attendance');
+        logAction('Marked attendance', { applicationId: applicantId });
         showToast(attended ?
           `${applicant.fullName} marked as attended` :
           `${applicant.fullName} attendance removed`
@@ -3284,7 +3284,7 @@
           appRef.status = newStatus;
           appRef.assignedRole = assignedRole || appRef.assignedRole;
           showToast(`Application status updated to ${newStatus}`);
-          logAction('[AUDIT] Updated application status');
+          logAction('[AUDIT] Updated application status', { applicationId: appRef.id });
           closeApplicantModal();
 
           // Refresh the view
@@ -3513,7 +3513,7 @@
           }
 
           showToast("Project approval request has been canceled.", "success");
-          logAction('Cancelled project');
+          logAction('Cancelled project', { postProjectId: project.id });
           closeCancelApprovalModal();
           closeProjectModal();
           await loadProjects();
@@ -3861,7 +3861,7 @@
                 await createCaptainNotification(editingProjectId, title);
               }
               showToast(resubmitted ? "Project resubmitted for Barangay Captain approval!" : "Project updated successfully");
-              logAction('Updated project');
+              logAction('Updated project', { postProjectId: editingProjectId });
             } else {
               // Create new project
               const { data: newProject, error } = await supabaseClient
@@ -3909,7 +3909,7 @@
               }
 
               showToast("Project submitted for Barangay Captain approval!");
-              logAction('Created project');
+              logAction('Created project', { postProjectId: newProject?.preProjectID });
             }
 
             closeProjectModal();
@@ -4859,7 +4859,7 @@
           }
 
           showToast(`Project marked as complete with ${successRate}% success rate!`);
-          logAction('Marked project as completed');
+          logAction('Marked project as completed', { postProjectId: currentProjectId });
           closeEvaluationModal();
           await loadProjects(); // Reload projects to reflect changes
 
@@ -4893,7 +4893,7 @@
               }
 
               showToast('Project is now Ongoing!');
-              logAction('Started project');
+              logAction('Started project', { postProjectId: projectId });
               await loadProjects();
             } catch (err) {
               showToast('An error occurred. Please try again.', 'error');

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; form-action 'self'; base-uri 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -2531,7 +2531,7 @@
               `Project "${projectName}" has been permanently deleted.`,
               "success",
             );
-            logAction('Permanently deleted project');
+            logAction('Permanently deleted project', { postProjectId: projectId });
           } catch (err) {
             console.error('Delete exception');
             showToast('An error occurred while deleting.', 'error');
@@ -2607,7 +2607,7 @@
               applyFilters();
 
               showToast(`"${projectName}" has been unarchived and restored to SK Projects.`, 'success');
-              logAction('Restored project from archive');
+              logAction('Restored project from archive', { postProjectId: project.id });
             } catch (err) {
               console.error('Unarchive exception');
               showToast('An error occurred while unarchiving.', 'error');
@@ -4118,7 +4118,7 @@
           }
 
           showToast("File restored successfully!", "success");
-          logAction('Restored file from archive');
+          logAction('Restored file from archive', { fileId: pendingRestoreFileId });
           closeRestoreFileModal();
           await loadArchivedFiles();
         } catch (error) {
@@ -4267,7 +4267,7 @@
           }
 
           showToast("File deleted permanently", "success");
-          logAction('Permanently deleted file');
+          logAction('Permanently deleted file', { fileId: pendingDeleteFileId });
           closeDeleteArchivedFileModal();
           await loadArchivedFiles();
         } catch (error) {

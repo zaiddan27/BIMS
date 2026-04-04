@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; form-action 'self'; base-uri 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="description" content="User Management - Manage BIMS user accounts and roles">
@@ -1096,7 +1096,7 @@
                             .eq('userID', captain.userID);
 
                         if (deactivateError) throw deactivateError;
-                        logAction(`[AUDIT] Deactivated previous Captain: ${captain.firstName} ${captain.lastName}`);
+                        logAction(`[AUDIT] Deactivated previous Captain: ${captain.firstName} ${captain.lastName}`, { metadata: { targetUserID: captain.userID } });
                     }
 
                     showToast(`${existingCaptains.length} previous Captain(s) deactivated`, 'info');
@@ -1109,7 +1109,7 @@
                     .eq('userID', currentModalUserId);
 
                 if (promoteError) throw promoteError;
-                logAction('[AUDIT] Promoted user to CAPTAIN');
+                logAction('[AUDIT] Promoted user to CAPTAIN', { metadata: { targetUserID: currentModalUserId } });
 
                 showToast(`${currentModalUserName} promoted to Barangay Captain`, 'success');
                 closePromotionTypeModal();
@@ -1206,7 +1206,7 @@
                             .eq('userID', existingUser.userID);
 
                         if (deactivateError) throw deactivateError;
-                        logAction('[AUDIT] Deactivated previous SK position holder');
+                        logAction('[AUDIT] Deactivated previous SK position holder', { metadata: { targetUserID: existingUser.userID } });
 
                         showToast(`${existingUser.firstName} ${existingUser.lastName} has been deactivated`, 'info');
                     }
@@ -1255,7 +1255,7 @@
                     });
 
                 if (skError) throw skError;
-                logAction('[AUDIT] Promoted user to SK_OFFICIAL');
+                logAction('[AUDIT] Promoted user to SK_OFFICIAL', { metadata: { targetUserID: currentModalUserId, position } });
 
                 showToast(`${currentModalUserName} promoted to ${position.replace(/_/g, ' ')}`, 'success');
                 closePromoteModal();
@@ -1342,7 +1342,7 @@
                     .eq('userID', currentModalUserId);
 
                 if (roleError) throw roleError;
-                logAction('[AUDIT] Demoted SK_OFFICIAL to YOUTH_VOLUNTEER');
+                logAction('[AUDIT] Demoted SK_OFFICIAL to YOUTH_VOLUNTEER', { metadata: { targetUserID: currentModalUserId } });
 
                 showToast(`${currentModalUserName} demoted to Youth Volunteer`, 'success');
                 closeDemoteModal();
@@ -1396,7 +1396,7 @@
                     .eq('userID', currentModalUserId);
 
                 if (error) throw error;
-                logAction('[AUDIT] Deactivated user account');
+                logAction('[AUDIT] Deactivated user account', { metadata: { targetUserID: currentModalUserId, reason } });
 
                 showToast(`${currentModalUserName} has been deactivated`, 'success');
                 closeDeactivateModal();
@@ -1418,7 +1418,7 @@
                     .eq('userID', userId);
 
                 if (error) throw error;
-                logAction('[AUDIT] Activated user account');
+                logAction('[AUDIT] Activated user account', { metadata: { targetUserID: userId } });
 
                 showToast(`${userName} has been reactivated`, 'success');
                 loadUsers();

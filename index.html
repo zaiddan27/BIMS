@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; form-action 'self'; base-uri 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,89 +12,263 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/responsive.css?v=2" />
     <link href="css/toast.css" rel="stylesheet">
+    <!-- AOS Scroll Animations -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <style>
+      :root {
+        --bg-primary: #06080d;
+        --bg-surface: #0c0e15;
+        --bg-card: #12151e;
+        --bg-card-hover: #181c27;
+        --accent: #34d399;
+        --accent-dim: #2f6e4e;
+        --accent-glow: rgba(52, 211, 153, 0.15);
+        --text-primary: #f0f2f5;
+        --text-secondary: #8891a4;
+        --border-subtle: rgba(255, 255, 255, 0.06);
+        --border-accent: rgba(52, 211, 153, 0.2);
+      }
+
       * {
         font-family: "Inter", system-ui, sans-serif;
       }
+
+      h1, h2, h3, .heading-font {
+        font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+      }
+
       html {
         scroll-behavior: smooth;
       }
+
+      /* Missing Tailwind utilities (not in pre-built tailwind.min.css) */
+      .py-24 { padding-top: 6rem; padding-bottom: 6rem; }
+      .py-28 { padding-top: 7rem; padding-bottom: 7rem; }
+      .py-32 { padding-top: 8rem; padding-bottom: 8rem; }
+      .pb-24 { padding-bottom: 6rem; }
+      .pb-32 { padding-bottom: 8rem; }
+      .pt-44 { padding-top: 11rem; }
+      .pt-52 { padding-top: 13rem; }
+      .mb-20 { margin-bottom: 5rem; }
+      @media (min-width: 768px) {
+        .md\:py-32 { padding-top: 8rem; padding-bottom: 8rem; }
+        .md\:pb-24 { padding-bottom: 6rem; }
+        .md\:pb-32 { padding-bottom: 8rem; }
+        .md\:pt-52 { padding-top: 13rem; }
+      }
+
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: var(--bg-primary); }
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, var(--accent-dim), var(--accent));
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+      /* Gradient Utilities */
       .gradient-bg {
-        background: linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%) !important;
+        background: linear-gradient(135deg, #2f6e4e 0%, #34d399 100%) !important;
       }
-      .hero-pattern {
-        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+
+      .gradient-text {
+        background: linear-gradient(135deg, #34d399, #6ee7b7, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
+
+      .gradient-text-white {
+        background: linear-gradient(135deg, #ffffff, #d1d5db);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Glass Card */
+      .glass-card {
+        background: rgba(18, 21, 30, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-subtle);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .glass-card:hover {
+        background: rgba(24, 28, 39, 0.8);
+        border-color: var(--border-accent);
+        box-shadow: 0 8px 40px rgba(52, 211, 153, 0.08), 0 0 0 1px rgba(52, 211, 153, 0.1);
+        transform: translateY(-4px);
+      }
+
+      /* Gradient Border Card */
+      .gradient-border-card {
+        position: relative;
+        background: var(--bg-card);
+        border-radius: 1.25rem;
+        overflow: hidden;
+      }
+
+      .gradient-border-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 1.25rem;
+        padding: 1px;
+        background: linear-gradient(135deg, rgba(52, 211, 153, 0.3), transparent 50%, rgba(52, 211, 153, 0.1));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      /* Grain Texture Overlay */
+      .grain-overlay::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        opacity: 0.4;
+        pointer-events: none;
+        z-index: 9998;
+      }
+
+      /* Hero Section */
+      .hero-gradient-mesh {
+        background:
+          radial-gradient(ellipse at 20% 50%, rgba(47, 110, 78, 0.5) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 20%, rgba(52, 211, 153, 0.2) 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
+      }
+
       .hero-text-shadow {
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), 0 4px 20px rgba(0, 0, 0, 0.2);
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5), 0 4px 40px rgba(0, 0, 0, 0.3);
       }
-      .hero-content-bg {
-        background: linear-gradient(to right, rgba(47, 110, 78, 0.7), rgba(61, 139, 100, 0.5));
-        backdrop-filter: blur(8px);
+
+      /* Hero Staggered Animations */
+      @keyframes heroFadeIn {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes heroSlideIn {
+        0% { opacity: 0; transform: translateX(-30px); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+
+      .hero-fade-in-1 { animation: heroFadeIn 0.8s ease-out 0.2s both; }
+      .hero-fade-in-2 { animation: heroFadeIn 0.8s ease-out 0.4s both; }
+      .hero-fade-in-3 { animation: heroFadeIn 0.8s ease-out 0.6s both; }
+      .hero-fade-in-4 { animation: heroFadeIn 0.8s ease-out 0.8s both; }
+      .hero-fade-in-5 { animation: heroFadeIn 0.8s ease-out 1s both; }
+      .hero-fade-in-6 { animation: heroSlideIn 0.8s ease-out 1.2s both; }
+
+      /* Marquee */
+      @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+
+      .marquee-track {
+        animation: marquee 30s linear infinite;
+      }
+
+      .marquee-track:hover {
+        animation-play-state: paused;
+      }
+
+      /* Animated Gradient Orbs */
+      @keyframes float-slow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(30px, -30px) scale(1.05); }
+        66% { transform: translate(-20px, 20px) scale(0.95); }
+      }
+
+      @keyframes float-slower {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(-40px, 20px) scale(1.1); }
+        66% { transform: translate(30px, -40px) scale(0.9); }
+      }
+
+      .floating-orb-1 { animation: float-slow 12s ease-in-out infinite; }
+      .floating-orb-2 { animation: float-slower 16s ease-in-out infinite; }
+      .floating-orb-3 { animation: float-slow 20s ease-in-out infinite reverse; }
+
+      /* Section Divider Glow */
+      .section-glow {
+        position: relative;
+        border-top: 1px solid var(--border-subtle);
       }
 
       /* Transparency Section Animations */
       @keyframes slideInFromLeft {
-        0% {
-          opacity: 0;
-          transform: translateX(-30px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateX(0);
-        }
+        0% { opacity: 0; transform: translateX(-30px); }
+        100% { opacity: 1; transform: translateX(0); }
       }
 
       @keyframes fadeInUp {
-        0% {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
       }
 
-      /* Hero Section Staggered Animations */
-      @keyframes heroFadeIn {
-        0% {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      /* Button Glow */
+      .btn-primary {
+        background: linear-gradient(135deg, #2f6e4e, #34d399);
+        color: white;
+        font-weight: 700;
+        border-radius: 0.75rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
       }
 
-      .hero-fade-in-1 {
-        animation: heroFadeIn 0.8s ease-out 0.2s both;
+      .btn-primary::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #34d399, #6ee7b7);
+        opacity: 0;
+        transition: opacity 0.3s;
       }
 
-      .hero-fade-in-2 {
-        animation: heroFadeIn 0.8s ease-out 0.4s both;
+      .btn-primary:hover::before {
+        opacity: 1;
       }
 
-      .hero-fade-in-3 {
-        animation: heroFadeIn 0.8s ease-out 0.6s both;
+      .btn-primary:hover {
+        box-shadow: 0 0 30px rgba(52, 211, 153, 0.4), 0 0 60px rgba(52, 211, 153, 0.1);
+        transform: translateY(-2px);
       }
 
-      .hero-fade-in-4 {
-        animation: heroFadeIn 0.8s ease-out 0.8s both;
+      .btn-primary span {
+        position: relative;
+        z-index: 1;
       }
 
-      .hero-fade-in-5 {
-        animation: heroFadeIn 0.8s ease-out 1s both;
+      .btn-ghost {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        font-weight: 700;
+        border-radius: 0.75rem;
+        backdrop-filter: blur(8px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
-      .hero-fade-in-6 {
-        animation: heroFadeIn 0.8s ease-out 1.2s both;
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        background: rgba(52, 211, 153, 0.1);
+        box-shadow: 0 0 20px rgba(52, 211, 153, 0.15);
+        transform: translateY(-2px);
       }
 
       /* Testimonial Card Text Clamp */
@@ -123,37 +297,103 @@
         transform: scale(1) translateY(0);
         opacity: 1;
       }
+
+      /* Icon glow on hover */
+      .icon-box {
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .group:hover .icon-box {
+        box-shadow: 0 0 25px rgba(52, 211, 153, 0.3);
+        transform: scale(1.1) rotate(-3deg);
+      }
+
+      /* Stats counter styling */
+      .stat-value {
+        background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Custom dot separator */
+      .dot-sep::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        background: var(--accent);
+        border-radius: 50%;
+        margin: 0 16px;
+        vertical-align: middle;
+      }
+
+      /* Pulsing accent ring */
+      @keyframes pulse-ring {
+        0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+      }
+
+      .pulse-accent {
+        animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      /* Section label pill */
+      .section-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 16px;
+        background: rgba(52, 211, 153, 0.1);
+        border: 1px solid rgba(52, 211, 153, 0.2);
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .section-label::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+      }
     </style>
   </head>
-  <body class="bg-white">
+  <body class="grain-overlay">
     <!-- Navigation Header -->
-    <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" id="mainNav" style="background: rgba(6, 8, 13, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.04);">
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
           <!-- Logo -->
           <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center flex-shrink-0 shadow-lg overflow-hidden">
+            <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden" style="border: 1px solid rgba(255,255,255,0.1);">
               <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
             </div>
             <div>
-              <h1 class="text-2xl font-black text-gray-800">BIMS</h1>
-              <p class="text-sm text-gray-600 font-medium">SK Malanday</p>
+              <h1 class="text-xl font-extrabold text-white tracking-tight heading-font">BIMS</h1>
+              <p class="text-xs text-white/50 font-medium">SK Malanday</p>
             </div>
           </div>
 
           <!-- Navigation Links -->
           <div class="hidden md:flex items-center space-x-8">
-            <a href="#home" class="text-gray-700 hover:text-[#2f6e4e] font-medium transition">Home</a>
-            <a href="#features" class="text-gray-700 hover:text-[#2f6e4e] font-medium transition">Features</a>
-            <a href="#projects" class="text-gray-700 hover:text-[#2f6e4e] font-medium transition">Projects</a>
-            <a href="#testimonials" class="text-gray-700 hover:text-[#2f6e4e] font-medium transition">Testimonials</a>
-            <a href="#transparency" class="text-gray-700 hover:text-[#2f6e4e] font-medium transition">Transparency</a>
+            <a href="#home" class="text-sm text-white/60 hover:text-white font-medium transition-colors duration-300">Home</a>
+            <a href="#features" class="text-sm text-white/60 hover:text-white font-medium transition-colors duration-300">Features</a>
+            <a href="#projects" class="text-sm text-white/60 hover:text-white font-medium transition-colors duration-300">Projects</a>
+            <a href="#testimonials" class="text-sm text-white/60 hover:text-white font-medium transition-colors duration-300">Testimonials</a>
+            <a href="#transparency" class="text-sm text-white/60 hover:text-white font-medium transition-colors duration-300">Transparency</a>
           </div>
 
           <!-- CTA Buttons -->
           <div class="flex items-center space-x-3">
-            <a href="login.html" class="px-5 py-2.5 text-[#2f6e4e] hover:text-[#3d8b64] font-semibold transition">Login</a>
-            <a href="signup.html" class="px-6 py-2.5 gradient-bg text-white font-semibold rounded-lg hover:shadow-lg transition duration-200">Sign Up</a>
+            <a href="login.html" class="px-5 py-2.5 text-white/70 hover:text-white font-semibold transition-colors duration-300 text-sm">Login</a>
+            <a href="signup.html" class="btn-primary px-6 py-2.5 text-sm"><span>Sign Up</span></a>
           </div>
         </div>
       </div>
@@ -162,107 +402,144 @@
     <!-- Hero Section -->
     <section
       id="home"
-      class="pt-40 pb-24 md:pt-44 md:pb-28 text-white overflow-hidden relative min-h-[85vh] md:min-h-[90vh] flex items-center"
-      style="background-image: url('asset/hero.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;"
+      class="pb-16 md:pb-24 text-white overflow-hidden relative min-h-screen"
+      style="padding-top: 160px; background-image: url('asset/hero.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;"
     >
-      <!-- Green Transparent Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-r from-[#2f6e4e]/65 to-[#3d8b64]/55 hero-pattern"></div>
+      <!-- Dark Overlay + Gradient Mesh -->
+      <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(6,8,13,0.7) 0%, rgba(6,8,13,0.5) 40%, rgba(6,8,13,0.85) 100%);"></div>
+      <div class="absolute inset-0 hero-gradient-mesh"></div>
 
-      <!-- Content Container with relative positioning to stay above overlay -->
+      <!-- Floating Orbs -->
+      <div class="absolute top-20 left-10 w-72 h-72 rounded-full floating-orb-1 opacity-30" style="background: radial-gradient(circle, rgba(52,211,153,0.2), transparent 70%);"></div>
+      <div class="absolute bottom-20 right-10 w-96 h-96 rounded-full floating-orb-2 opacity-20" style="background: radial-gradient(circle, rgba(47,110,78,0.3), transparent 70%);"></div>
+
+      <!-- Content Container -->
       <div class="relative z-10 w-full">
-      <div class="max-w-7xl mx-auto px-6 md:px-8">
-        <div class="flex flex-col items-start">
-          <!-- Content -->
-          <div class="max-w-4xl">
-            <!-- Badge with animation -->
-            <div class="hero-fade-in-1 mb-6">
-              <div class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold hero-text-shadow border border-white/20">
-                <span class="text-lg">&#x1F31F;</span>
-                <span class="tracking-wide">Open to All Youth of Barangay Malanday</span>
-              </div>
-            </div>
-
-            <!-- Main Headline -->
-            <div class="hero-fade-in-2 mb-8">
-              <h1 class="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-[1.1] tracking-tight hero-text-shadow">
-                <span class="block">Be the Change.</span>
-                <span class="block mt-2">Volunteer Today.</span>
-              </h1>
-            </div>
-
-            <!-- Subtitle -->
-            <div class="hero-fade-in-3 mb-8">
-              <p class="text-xl md:text-2xl lg:text-3xl text-white/95 leading-relaxed max-w-3xl font-medium hero-text-shadow" style="line-height: 1.5;">
-                Join SK Malanday's Youth Volunteer Program and make a real impact in our community
-              </p>
-            </div>
-
-            <!-- Description -->
-            <div class="hero-fade-in-4 mb-10">
-              <p class="text-base md:text-lg text-white/90 leading-relaxed max-w-2xl hero-text-shadow" style="line-height: 1.75;">
-                Discover volunteer opportunities, view ongoing projects, see where funds are spent, and connect with fellow youth volunteers. Full transparency, open to everyone.
-              </p>
-            </div>
-
-            <!-- CTA Buttons -->
-            <div class="hero-fade-in-5 flex flex-col sm:flex-row gap-4 mb-12">
-              <a
-                href="signup.html"
-                class="group px-8 py-4 bg-white text-[#2f6e4e] font-bold rounded-xl hover:shadow-[0_8px_30px_rgba(255,255,255,0.3)] transition-all duration-300 text-center text-lg hover:scale-105 hover:bg-white/95"
-              >
-                <span class="flex items-center justify-center gap-2">
-                  Join as Volunteer
-                  <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                  </svg>
-                </span>
-              </a>
-              <a
-                href="#projects"
-                class="group px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/80 text-white font-bold rounded-xl hover:bg-white/20 hover:border-white transition-all duration-300 text-center text-lg hover:scale-105"
-              >
-                Browse Projects
-              </a>
-            </div>
-
-            <!-- Stats -->
-            <div class="hero-fade-in-6 grid grid-cols-3 gap-6 md:gap-8 pt-8 border-t border-white/20">
-              <div class="group">
-                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;"><span id="heroVolunteers">328</span><span class="text-3xl md:text-4xl lg:text-5xl">+</span></div>
-                <div class="text-white/95 text-xs md:text-sm font-semibold uppercase tracking-wider hero-text-shadow">
-                  Active Volunteers
+        <div class="max-w-7xl mx-auto px-6 md:px-8">
+          <div class="flex flex-col items-start">
+            <div class="max-w-4xl">
+              <!-- Badge -->
+              <div class="hero-fade-in-1 mb-8">
+                <div class="section-label" style="background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.15);">
+                  Open to All Youth of Barangay Malanday
                 </div>
               </div>
-              <div class="group">
-                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;"><span id="heroProjects">42</span></div>
-                <div class="text-white/95 text-xs md:text-sm font-semibold uppercase tracking-wider hero-text-shadow">
-                  Community Projects
-                </div>
+
+              <!-- Main Headline -->
+              <div class="hero-fade-in-2 mb-8">
+                <h1 class="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-extrabold leading-[0.95] tracking-tight heading-font" style="letter-spacing: -0.03em;">
+                  <span class="block text-white">Be the Change.</span>
+                  <span class="block mt-3 gradient-text">Volunteer Today.</span>
+                </h1>
               </div>
-              <div class="group">
-                <div class="text-4xl md:text-5xl lg:text-6xl font-black hero-text-shadow mb-2 group-hover:scale-110 transition-transform duration-300" style="letter-spacing: -0.02em;"><span id="heroSuccessRate">89</span><span class="text-3xl md:text-4xl lg:text-5xl">%</span></div>
-                <div class="text-white/95 text-xs md:text-sm font-semibold uppercase tracking-wider hero-text-shadow">
-                  Avg Success Rate
+
+              <!-- Subtitle -->
+              <div class="hero-fade-in-3 mb-8">
+                <p class="text-xl md:text-2xl lg:text-3xl text-white/80 leading-relaxed max-w-3xl font-medium" style="line-height: 1.5;">
+                  Join SK Malanday's Youth Volunteer Program and make a real impact in our community
+                </p>
+              </div>
+
+              <!-- Description -->
+              <div class="hero-fade-in-4 mb-12">
+                <p class="text-base md:text-lg text-white/50 leading-relaxed max-w-2xl" style="line-height: 1.75;">
+                  Discover volunteer opportunities, view ongoing projects, see where funds are spent, and connect with fellow youth volunteers. Full transparency, open to everyone.
+                </p>
+              </div>
+
+              <!-- CTA Buttons -->
+              <div class="hero-fade-in-5 flex flex-col sm:flex-row gap-4 mb-10">
+                <a href="signup.html" class="btn-primary px-10 py-4 text-center text-lg">
+                  <span class="flex items-center justify-center gap-3">
+                    Join as Volunteer
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                  </span>
+                </a>
+                <a href="#projects" class="btn-ghost px-10 py-4 text-center text-lg">
+                  Browse Projects
+                </a>
+              </div>
+
+              <!-- Stats -->
+              <div class="hero-fade-in-6 flex flex-wrap gap-8 md:gap-12 pt-8" style="border-top: 1px solid rgba(255,255,255,0.08);">
+                <div class="group cursor-default">
+                  <div class="stat-value text-4xl md:text-5xl lg:text-6xl font-extrabold mb-1 group-hover:scale-105 transition-transform duration-300 heading-font" style="letter-spacing: -0.03em;"><span id="heroVolunteers">328</span><span class="text-2xl md:text-3xl">+</span></div>
+                  <div class="text-white/40 text-xs font-semibold uppercase tracking-widest">
+                    Active Volunteers
+                  </div>
+                </div>
+                <div class="group cursor-default">
+                  <div class="stat-value text-4xl md:text-5xl lg:text-6xl font-extrabold mb-1 group-hover:scale-105 transition-transform duration-300 heading-font" style="letter-spacing: -0.03em;"><span id="heroProjects">42</span></div>
+                  <div class="text-white/40 text-xs font-semibold uppercase tracking-widest">
+                    Community Projects
+                  </div>
+                </div>
+                <div class="group cursor-default">
+                  <div class="stat-value text-4xl md:text-5xl lg:text-6xl font-extrabold mb-1 group-hover:scale-105 transition-transform duration-300 heading-font" style="letter-spacing: -0.03em;"><span id="heroSuccessRate">89</span><span class="text-2xl md:text-3xl">%</span></div>
+                  <div class="text-white/40 text-xs font-semibold uppercase tracking-widest">
+                    Avg Success Rate
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      </div>
+
+      <!-- Bottom Fade -->
+      <div class="absolute bottom-0 left-0 right-0 h-32" style="background: linear-gradient(to top, var(--bg-primary), transparent);"></div>
     </section>
 
+    <!-- Scrolling Marquee Banner -->
+    <div class="relative overflow-hidden" style="background: var(--bg-surface); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); padding: 1.5rem 0; margin-top: 2.5rem;">
+      <div class="marquee-track flex items-center whitespace-nowrap" style="width: max-content;">
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Community Projects</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Youth Empowerment</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Full Transparency</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Barangay Malanday</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">SK Marikina</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Volunteer Today</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Open for Everyone</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <!-- Duplicate for seamless loop -->
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Community Projects</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Youth Empowerment</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Full Transparency</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Barangay Malanday</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">SK Marikina</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Volunteer Today</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+        <span class="text-sm font-semibold text-white/30 tracking-widest uppercase mx-8">Open for Everyone</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mx-4"></span>
+      </div>
+    </div>
+
     <!-- Features Section -->
-    <section id="features" class="py-20 bg-gray-50">
+    <section id="features" class="pb-24 md:pb-32 section-glow relative overflow-hidden" style="background: var(--bg-primary); padding-top: 5rem;">
+      <!-- Background Orbs -->
+      <div class="absolute top-40 right-0 w-96 h-96 rounded-full floating-orb-3 opacity-10" style="background: radial-gradient(circle, rgba(52,211,153,0.3), transparent 70%);"></div>
+
       <div class="max-w-7xl mx-auto px-6">
         <!-- Section Header -->
-        <div class="text-center mb-16">
-          <h2
-            class="text-4xl md:text-5xl font-black text-gray-800 mb-4"
-          >
-            Why Join Our Community?
+        <div class="text-center mb-20" data-aos="fade-up">
+          <div class="section-label mb-6 mx-auto w-fit">Features</div>
+          <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 heading-font" style="letter-spacing: -0.03em;">
+            Why Join Our <span class="gradient-text">Community?</span>
           </h2>
-          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p class="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
             See what's happening in your barangay - all projects, budgets, and opportunities are open for everyone to view
           </p>
         </div>
@@ -270,203 +547,115 @@
         <!-- Feature Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           <!-- Feature 1 -->
-          <div class="group">
-            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
-              <!-- Icon Container -->
+          <div class="group" data-aos="fade-up" data-aos-delay="0">
+            <div class="glass-card rounded-2xl p-8 h-full">
               <div class="mb-6">
-                <div class="relative inline-block">
-                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg
-                      class="w-7 h-7 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                      ></path>
-                    </svg>
-                  </div>
+                <div class="icon-box w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(52,211,153,0.05)); border: 1px solid rgba(52,211,153,0.2);">
+                  <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
                 </div>
               </div>
-              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors heading-font">
                 View All Projects
               </h3>
-              <p class="text-gray-600 text-[15px] leading-relaxed">
+              <p class="text-white/40 text-[15px] leading-relaxed">
                 Browse ongoing and completed projects in your barangay. See what's happening and where you can help as a volunteer.
               </p>
             </div>
           </div>
 
           <!-- Feature 2 -->
-          <div class="group">
-            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
-              <!-- Icon Container -->
+          <div class="group" data-aos="fade-up" data-aos-delay="100">
+            <div class="glass-card rounded-2xl p-8 h-full">
               <div class="mb-6">
-                <div class="relative inline-block">
-                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg
-                      class="w-7 h-7 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                      ></path>
-                    </svg>
-                  </div>
+                <div class="icon-box w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(52,211,153,0.05)); border: 1px solid rgba(52,211,153,0.2);">
+                  <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                  </svg>
                 </div>
               </div>
-              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors heading-font">
                 Easy Volunteering
               </h3>
-              <p class="text-gray-600 text-[15px] leading-relaxed">
+              <p class="text-white/40 text-[15px] leading-relaxed">
                 Sign up once and apply to any project that interests you. Simple application process with instant notifications.
               </p>
             </div>
           </div>
 
           <!-- Feature 3 -->
-          <div class="group">
-            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
-              <!-- Icon Container -->
+          <div class="group" data-aos="fade-up" data-aos-delay="200">
+            <div class="glass-card rounded-2xl p-8 h-full">
               <div class="mb-6">
-                <div class="relative inline-block">
-                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg
-                      class="w-7 h-7 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                      ></path>
-                    </svg>
-                  </div>
+                <div class="icon-box w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(52,211,153,0.05)); border: 1px solid rgba(52,211,153,0.2);">
+                  <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                  </svg>
                 </div>
               </div>
-              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors heading-font">
                 Stay Updated
               </h3>
-              <p class="text-gray-600 text-[15px] leading-relaxed">
+              <p class="text-white/40 text-[15px] leading-relaxed">
                 Get notified about new volunteer opportunities, upcoming events, and updates on projects you care about.
               </p>
             </div>
           </div>
 
           <!-- Feature 4 -->
-          <div class="group">
-            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
-              <!-- Icon Container -->
+          <div class="group" data-aos="fade-up" data-aos-delay="0">
+            <div class="glass-card rounded-2xl p-8 h-full">
               <div class="mb-6">
-                <div class="relative inline-block">
-                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg
-                      class="w-7 h-7 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                      ></path>
-                    </svg>
-                  </div>
+                <div class="icon-box w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(52,211,153,0.05)); border: 1px solid rgba(52,211,153,0.2);">
+                  <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                  </svg>
                 </div>
               </div>
-              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors heading-font">
                 Full Transparency
               </h3>
-              <p class="text-gray-600 text-[15px] leading-relaxed">
+              <p class="text-white/40 text-[15px] leading-relaxed">
                 View detailed reports on budgets, project outcomes, and how your barangay funds are being used - open for everyone to see.
               </p>
             </div>
           </div>
 
           <!-- Feature 5 -->
-          <div class="group">
-            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
-              <!-- Icon Container -->
+          <div class="group" data-aos="fade-up" data-aos-delay="100">
+            <div class="glass-card rounded-2xl p-8 h-full">
               <div class="mb-6">
-                <div class="relative inline-block">
-                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg
-                      class="w-7 h-7 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                      ></path>
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                      ></path>
-                    </svg>
-                  </div>
+                <div class="icon-box w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(52,211,153,0.05)); border: 1px solid rgba(52,211,153,0.2);">
+                  <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
                 </div>
               </div>
-              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors heading-font">
                 See the Impact
               </h3>
-              <p class="text-gray-600 text-[15px] leading-relaxed">
+              <p class="text-white/40 text-[15px] leading-relaxed">
                 View photos and testimonials from past events. See the real impact volunteers are making in our community.
               </p>
             </div>
           </div>
 
           <!-- Feature 6 -->
-          <div class="group">
-            <div class="bg-white p-8 rounded-2xl transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full">
-              <!-- Icon Container -->
+          <div class="group" data-aos="fade-up" data-aos-delay="200">
+            <div class="glass-card rounded-2xl p-8 h-full">
               <div class="mb-6">
-                <div class="relative inline-block">
-                  <div class="absolute inset-0 gradient-bg rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                  <div class="relative w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg
-                      class="w-7 h-7 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      ></path>
-                    </svg>
-                  </div>
+                <div class="icon-box w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(52,211,153,0.15), rgba(52,211,153,0.05)); border: 1px solid rgba(52,211,153,0.2);">
+                  <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                  </svg>
                 </div>
               </div>
-              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#2f6e4e] transition-colors">
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors heading-font">
                 Safe & Secure
               </h3>
-              <p class="text-gray-600 text-[15px] leading-relaxed">
+              <p class="text-white/40 text-[15px] leading-relaxed">
                 Your personal information is protected. Parental consent required for volunteers under 18 years old.
               </p>
             </div>
@@ -476,43 +665,47 @@
     </section>
 
     <!-- Public Projects Section -->
-    <section id="projects" class="py-20 bg-white">
+    <section id="projects" class="py-24 md:py-32 section-glow relative overflow-hidden" style="background: var(--bg-surface);">
+      <!-- Background Orbs -->
+      <div class="absolute bottom-20 left-10 w-80 h-80 rounded-full floating-orb-1 opacity-10" style="background: radial-gradient(circle, rgba(52,211,153,0.3), transparent 70%);"></div>
+
       <div class="max-w-7xl mx-auto px-6">
         <!-- Section Header -->
-        <div class="text-center mb-16">
-          <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4">
-            Community Projects
+        <div class="text-center mb-16" data-aos="fade-up">
+          <div class="section-label mb-6 mx-auto w-fit">Projects</div>
+          <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 heading-font" style="letter-spacing: -0.03em;">
+            Community <span class="gradient-text">Projects</span>
           </h2>
-          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p class="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
             Browse ongoing and completed projects - open for all youth to view and join
           </p>
         </div>
 
         <!-- Project Filter -->
-        <div class="flex justify-center mb-12">
+        <div class="flex justify-center mb-12" data-aos="fade-up" data-aos-delay="100">
           <div
             class="inline-flex rounded-xl p-1.5 gap-1.5"
             role="group"
-            style="background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);"
+            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);"
           >
             <button
               onclick="filterProjects('all')"
-              class="filter-btn active px-6 py-3 rounded-lg font-semibold transition-all duration-200"
-              style="color: #6b7280;"
+              class="filter-btn active px-6 py-3 rounded-lg font-semibold transition-all duration-200 text-sm"
+              style="color: rgba(255,255,255,0.5);"
             >
               All Projects
             </button>
             <button
               onclick="filterProjects('ongoing')"
-              class="filter-btn px-6 py-3 rounded-lg font-semibold transition-all duration-200"
-              style="color: #6b7280;"
+              class="filter-btn px-6 py-3 rounded-lg font-semibold transition-all duration-200 text-sm"
+              style="color: rgba(255,255,255,0.5);"
             >
               Ongoing
             </button>
             <button
               onclick="filterProjects('completed')"
-              class="filter-btn px-6 py-3 rounded-lg font-semibold transition-all duration-200"
-              style="color: #6b7280;"
+              class="filter-btn px-6 py-3 rounded-lg font-semibold transition-all duration-200 text-sm"
+              style="color: rgba(255,255,255,0.5);"
             >
               Completed
             </button>
@@ -522,8 +715,8 @@
         <!-- Projects Grid (Dynamic from Supabase) -->
         <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div class="col-span-full text-center py-12">
-            <div class="inline-block w-8 h-8 border-4 border-[#2f6e4e] border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p class="text-gray-500">Loading projects...</p>
+            <div class="inline-block w-8 h-8 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p class="text-white/40">Loading projects...</p>
           </div>
         </div>
 
@@ -531,40 +724,38 @@
         <div class="flex items-center justify-between mt-8">
           <div></div>
           <div id="projectPaginationDots" class="flex justify-center gap-2 hidden"></div>
-          <nav id="projectPaginationNav" class="hidden inline-flex rounded-md shadow-sm" role="navigation" aria-label="Projects pagination">
-            <button onclick="navigateProjectPage(-1)" class="px-3 py-2 border border-gray-200 rounded-l-md hover:bg-gray-50 transition text-gray-700 font-medium">Prev</button>
-            <button onclick="navigateProjectPage(1)" class="px-3 py-2 border-t border-b border-r border-gray-200 rounded-r-md hover:bg-gray-50 transition text-gray-700 font-medium">Next</button>
+          <nav id="projectPaginationNav" class="hidden inline-flex rounded-md" role="navigation" aria-label="Projects pagination" style="border: 1px solid var(--border-subtle);">
+            <button onclick="navigateProjectPage(-1)" class="px-4 py-2 rounded-l-md hover:bg-white/5 transition text-white/60 font-medium text-sm" style="border-right: 1px solid var(--border-subtle);">Prev</button>
+            <button onclick="navigateProjectPage(1)" class="px-4 py-2 rounded-r-md hover:bg-white/5 transition text-white/60 font-medium text-sm">Next</button>
           </nav>
         </div>
 
         <!-- View All Button -->
-        <div class="text-center mt-12">
-          <a
-            href="signup.html"
-            class="inline-block px-8 py-4 gradient-bg text-white font-bold rounded-lg hover:shadow-xl transition duration-200"
-          >
-            Sign Up to Apply as Volunteer
+        <div class="text-center mt-16" data-aos="fade-up">
+          <a href="signup.html" class="btn-primary inline-block px-10 py-4 text-lg">
+            <span>Sign Up to Apply as Volunteer</span>
           </a>
-          <p class="text-gray-500 mt-4 text-sm">Free for all youth of Barangay Malanday</p>
+          <p class="text-white/30 mt-4 text-sm">Free for all youth of Barangay Malanday</p>
         </div>
       </div>
     </section>
 
     <!-- Testimonials Section -->
-    <section id="testimonials" class="py-20 bg-gray-50">
+    <section id="testimonials" class="py-24 md:py-32 section-glow relative overflow-hidden" style="background: var(--bg-primary);">
       <div class="max-w-7xl mx-auto px-6 pb-8">
         <!-- Section Header -->
-        <div class="text-center mb-16">
-          <h2 class="text-4xl md:text-5xl font-black text-gray-800 mb-4">
-            What Our Community Says
+        <div class="text-center mb-16" data-aos="fade-up">
+          <div class="section-label mb-6 mx-auto w-fit">Testimonials</div>
+          <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 heading-font" style="letter-spacing: -0.03em;">
+            What Our Community <span class="gradient-text">Says</span>
           </h2>
-          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p class="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
             Real experiences from volunteers and participants
           </p>
         </div>
 
         <!-- Testimonials Carousel Container -->
-        <div class="relative">
+        <div class="relative" data-aos="fade-up" data-aos-delay="100">
           <!-- Carousel Wrapper -->
           <div class="overflow-hidden px-1 pb-4">
             <div id="testimonialsCarousel" class="flex transition-transform duration-500 ease-out py-2">
@@ -575,19 +766,21 @@
           <!-- Navigation Arrows -->
           <button
             onclick="prevTestimonial()"
-            class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center text-gray-800 hover:bg-gray-50 transition z-10"
+            class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 rounded-full flex items-center justify-center text-white/70 hover:text-white transition z-10"
+            style="background: rgba(18,21,30,0.8); backdrop-filter: blur(10px); border: 1px solid var(--border-subtle);"
             aria-label="Previous testimonial"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
           </button>
           <button
             onclick="nextTestimonial()"
-            class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg hover:shadow-xl flex items-center justify-center text-gray-800 hover:bg-gray-50 transition z-10"
+            class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 rounded-full flex items-center justify-center text-white/70 hover:text-white transition z-10"
+            style="background: rgba(18,21,30,0.8); backdrop-filter: blur(10px); border: 1px solid var(--border-subtle);"
             aria-label="Next testimonial"
           >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
           </button>
@@ -601,23 +794,19 @@
     </section>
 
     <!-- Transparency Report Section -->
-    <section id="transparency" class="py-20 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden">
+    <section id="transparency" class="py-24 md:py-32 section-glow relative overflow-hidden" style="background: var(--bg-surface);">
       <!-- Background Decoration -->
-      <div class="absolute inset-0 opacity-5">
-        <div class="absolute top-0 left-0 w-96 h-96 bg-[#2f6e4e] rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-[#3d8b64] rounded-full blur-3xl"></div>
-      </div>
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full floating-orb-2 opacity-10" style="background: radial-gradient(circle, rgba(52,211,153,0.3), transparent 70%);"></div>
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full floating-orb-1 opacity-10" style="background: radial-gradient(circle, rgba(47,110,78,0.3), transparent 70%);"></div>
 
       <div class="max-w-7xl mx-auto px-6 relative z-10">
         <!-- Section Header -->
-        <div class="text-center mb-16">
-          <div class="inline-block mb-4">
-            <span class="text-sm font-bold tracking-widest text-[#2f6e4e] uppercase">Financial Transparency</span>
-          </div>
-          <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4" style="letter-spacing: -0.02em;">
-            Budget & Performance
+        <div class="text-center mb-16" data-aos="fade-up">
+          <div class="section-label mb-6 mx-auto w-fit">Financial Transparency</div>
+          <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 heading-font" style="letter-spacing: -0.03em;">
+            Budget & <span class="gradient-text">Performance</span>
           </h2>
-          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p class="text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
             Complete visibility into fund allocation and project outcomes
           </p>
         </div>
@@ -625,19 +814,17 @@
         <!-- Reports Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 lg:items-stretch">
           <!-- Budget Overview Card -->
-          <div class="group relative flex flex-col">
-            <!-- Card Background with Depth -->
-            <div class="absolute inset-0 bg-gradient-to-br from-[#2f6e4e]/5 via-white to-[#3d8b64]/5 rounded-3xl transform transition-transform group-hover:scale-[1.02] duration-300"></div>
-            <div class="relative bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200/50 p-8 transition-shadow group-hover:shadow-2xl flex-1 flex flex-col">
+          <div class="group relative flex flex-col" data-aos="fade-up" data-aos-delay="0">
+            <div class="gradient-border-card p-8 flex-1 flex flex-col" style="background: var(--bg-card);">
               <!-- Header -->
               <div class="mb-8">
                 <div class="flex items-start justify-between mb-2">
                   <div>
-                    <h3 id="budgetYearTitle" class="text-2xl font-bold text-gray-900">
+                    <h3 id="budgetYearTitle" class="text-2xl font-bold text-white heading-font">
                       2025 Budget Allocation
                     </h3>
                   </div>
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] flex items-center justify-center shadow-lg">
+                  <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #2f6e4e, #34d399); box-shadow: 0 0 20px rgba(52,211,153,0.2);">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -651,16 +838,16 @@
                 <div class="budget-item" style="animation: slideInFromLeft 0.5s ease-out 0.1s both;">
                   <div class="flex justify-between items-baseline mb-3">
                     <div class="flex items-center gap-2">
-                      <div class="w-2 h-2 rounded-full bg-[#2f6e4e]"></div>
-                      <span class="text-sm font-semibold text-gray-700">Youth Development Programs</span>
+                      <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                      <span class="text-sm font-semibold text-white/70">Youth Development Programs</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="text-xs text-gray-500">45%</span>
-                      <span id="youthBudgetDisplay" class="text-lg font-bold text-gray-900">&#8369;450,000</span>
+                      <span class="text-xs text-white/40">45%</span>
+                      <span id="youthBudgetDisplay" class="text-lg font-bold text-white">&#8369;450,000</span>
                     </div>
                   </div>
-                  <div class="relative h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div id="youthBudgetBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64] rounded-full transition-all duration-1000 ease-out shadow-lg" style="width: 45%; box-shadow: 0 0 10px rgba(47, 110, 78, 0.5);"></div>
+                  <div class="relative h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.06);">
+                    <div id="youthBudgetBar" class="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out" style="width: 45%; background: linear-gradient(to right, #2f6e4e, #34d399); box-shadow: 0 0 15px rgba(52, 211, 153, 0.4);"></div>
                   </div>
                 </div>
 
@@ -668,16 +855,16 @@
                 <div class="budget-item" style="animation: slideInFromLeft 0.5s ease-out 0.2s both;">
                   <div class="flex justify-between items-baseline mb-3">
                     <div class="flex items-center gap-2">
-                      <div class="w-2 h-2 rounded-full bg-[#4a9d72]"></div>
-                      <span class="text-sm font-semibold text-gray-700">Community Events</span>
+                      <div class="w-2 h-2 rounded-full bg-emerald-300"></div>
+                      <span class="text-sm font-semibold text-white/70">Community Events</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="text-xs text-gray-500">30%</span>
-                      <span id="communityBudgetDisplay" class="text-lg font-bold text-gray-900">&#8369;300,000</span>
+                      <span class="text-xs text-white/40">30%</span>
+                      <span id="communityBudgetDisplay" class="text-lg font-bold text-white">&#8369;300,000</span>
                     </div>
                   </div>
-                  <div class="relative h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div id="communityBudgetBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#4a9d72] to-[#5fb88a] rounded-full transition-all duration-1000 ease-out shadow-lg" style="width: 30%; animation-delay: 0.2s; box-shadow: 0 0 10px rgba(74, 157, 114, 0.5);"></div>
+                  <div class="relative h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.06);">
+                    <div id="communityBudgetBar" class="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out" style="width: 30%; background: linear-gradient(to right, #4a9d72, #6ee7b7); box-shadow: 0 0 15px rgba(110, 231, 183, 0.3);"></div>
                   </div>
                 </div>
 
@@ -685,45 +872,43 @@
                 <div class="budget-item" style="animation: slideInFromLeft 0.5s ease-out 0.3s both;">
                   <div class="flex justify-between items-baseline mb-3">
                     <div class="flex items-center gap-2">
-                      <div class="w-2 h-2 rounded-full bg-[#65c399]"></div>
-                      <span class="text-sm font-semibold text-gray-700">Infrastructure Projects</span>
+                      <div class="w-2 h-2 rounded-full bg-teal-300"></div>
+                      <span class="text-sm font-semibold text-white/70">Infrastructure Projects</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="text-xs text-gray-500">25%</span>
-                      <span id="infrastructureBudgetDisplay" class="text-lg font-bold text-gray-900">&#8369;250,000</span>
+                      <span class="text-xs text-white/40">25%</span>
+                      <span id="infrastructureBudgetDisplay" class="text-lg font-bold text-white">&#8369;250,000</span>
                     </div>
                   </div>
-                  <div class="relative h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div id="infrastructureBudgetBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#65c399] to-[#7ed4ad] rounded-full transition-all duration-1000 ease-out shadow-lg" style="width: 25%; animation-delay: 0.3s; box-shadow: 0 0 10px rgba(101, 195, 153, 0.5);"></div>
+                  <div class="relative h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.06);">
+                    <div id="infrastructureBudgetBar" class="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out" style="width: 25%; background: linear-gradient(to right, #5eead4, #99f6e4); box-shadow: 0 0 15px rgba(94, 234, 212, 0.3);"></div>
                   </div>
                 </div>
               </div>
 
               <!-- Total Budget -->
-              <div class="mt-8 pt-6 border-t-2 border-gray-200">
+              <div class="mt-8 pt-6" style="border-top: 1px solid var(--border-subtle);">
                 <div class="flex justify-between items-center">
-                  <span class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Allocated</span>
-                  <span id="totalBudgetDisplay" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#2f6e4e] to-[#3d8b64]">&#8369;1,000,000</span>
+                  <span class="text-sm font-semibold text-white/40 uppercase tracking-wide">Total Allocated</span>
+                  <span id="totalBudgetDisplay" class="text-3xl font-extrabold gradient-text heading-font">&#8369;1,000,000</span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Project Success Metrics Card -->
-          <div class="group relative flex flex-col">
-            <!-- Card Background with Depth -->
-            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-white to-green-500/5 rounded-3xl transform transition-transform group-hover:scale-[1.02] duration-300"></div>
-            <div class="relative bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200/50 p-8 transition-shadow group-hover:shadow-2xl flex-1 flex flex-col">
+          <div class="group relative flex flex-col" data-aos="fade-up" data-aos-delay="100">
+            <div class="gradient-border-card p-8 flex-1 flex flex-col" style="background: var(--bg-card);">
               <!-- Header -->
               <div class="mb-6">
                 <div class="flex items-start justify-between mb-2">
                   <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-1">
+                    <h3 class="text-2xl font-bold text-white mb-1 heading-font">
                       Project Success Metrics
                     </h3>
-                    <p id="metricsSubtitle" class="text-sm text-gray-500">5-factor evaluation</p>
+                    <p id="metricsSubtitle" class="text-sm text-white/40">5-factor evaluation</p>
                   </div>
-                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg">
+                  <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #059669, #34d399); box-shadow: 0 0 20px rgba(52,211,153,0.2);">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
@@ -734,13 +919,13 @@
               <!-- Metrics Grid -->
               <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 mb-6 flex-1 content-start">
                 <!-- Total Projects -->
-                <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 hover:shadow-md transition-all" style="animation: fadeInUp 0.5s ease-out 0.1s both;">
+                <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl transition-all" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); animation: fadeInUp 0.5s ease-out 0.1s both;">
                   <div class="flex flex-col items-center justify-center h-full">
-                    <div id="metricTotal" class="text-3xl sm:text-4xl font-black text-gray-900 mb-1">42</div>
-                    <div class="text-xs font-semibold text-gray-600 uppercase tracking-wide text-center leading-tight">Total<br class="sm:hidden" /><span class="sm:ml-1">Projects</span></div>
+                    <div id="metricTotal" class="text-3xl sm:text-4xl font-extrabold text-white mb-1 heading-font">42</div>
+                    <div class="text-xs font-semibold text-white/40 uppercase tracking-wide text-center leading-tight">Total<br class="sm:hidden" /><span class="sm:ml-1">Projects</span></div>
                   </div>
-                  <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-gray-200/50 flex items-center justify-center">
-                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                  <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.05);">
+                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-white/30" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                       <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
                     </svg>
@@ -748,39 +933,39 @@
                 </div>
 
                 <!-- Completed -->
-                <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-100 hover:shadow-md transition-all" style="animation: fadeInUp 0.5s ease-out 0.2s both;">
+                <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl transition-all" style="background: rgba(52,211,153,0.05); border: 1px solid rgba(52,211,153,0.15); animation: fadeInUp 0.5s ease-out 0.2s both;">
                   <div class="flex flex-col items-center justify-center h-full">
-                    <div id="metricCompleted" class="text-3xl sm:text-4xl font-black text-emerald-600 mb-1">38</div>
-                    <div class="text-xs font-semibold text-emerald-700 uppercase tracking-wide text-center">Completed</div>
+                    <div id="metricCompleted" class="text-3xl sm:text-4xl font-extrabold text-emerald-400 mb-1 heading-font">38</div>
+                    <div class="text-xs font-semibold text-emerald-400/70 uppercase tracking-wide text-center">Completed</div>
                   </div>
-                  <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-emerald-200/50 flex items-center justify-center">
-                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style="background: rgba(52,211,153,0.1);">
+                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                   </div>
                 </div>
 
                 <!-- Ongoing -->
-                <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 border border-amber-100 hover:shadow-md transition-all" style="animation: fadeInUp 0.5s ease-out 0.3s both;">
+                <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl transition-all" style="background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.15); animation: fadeInUp 0.5s ease-out 0.3s both;">
                   <div class="flex flex-col items-center justify-center h-full">
-                    <div id="metricOngoing" class="text-3xl sm:text-4xl font-black text-amber-600 mb-1">4</div>
-                    <div class="text-xs font-semibold text-amber-700 uppercase tracking-wide text-center">Ongoing</div>
+                    <div id="metricOngoing" class="text-3xl sm:text-4xl font-extrabold text-amber-400 mb-1 heading-font">4</div>
+                    <div class="text-xs font-semibold text-amber-400/70 uppercase tracking-wide text-center">Ongoing</div>
                   </div>
-                  <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-amber-200/50 flex items-center justify-center">
-                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style="background: rgba(251,191,36,0.1);">
+                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                   </div>
                 </div>
 
                 <!-- Success Rate -->
-                <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#2f6e4e]/10 to-[#3d8b64]/10 border border-[#2f6e4e]/20 hover:shadow-md transition-all" style="animation: fadeInUp 0.5s ease-out 0.4s both;">
+                <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl transition-all" style="background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); animation: fadeInUp 0.5s ease-out 0.4s both;">
                   <div class="flex flex-col items-center justify-center h-full">
-                    <div id="metricSuccessRate" class="text-3xl sm:text-4xl font-black text-[#2f6e4e] mb-1">89%</div>
-                    <div class="text-xs font-semibold text-[#2f6e4e] uppercase tracking-wide text-center leading-tight">Success<br class="sm:hidden" /><span class="sm:ml-1">Rate</span></div>
+                    <div id="metricSuccessRate" class="text-3xl sm:text-4xl font-extrabold gradient-text mb-1 heading-font">89%</div>
+                    <div class="text-xs font-semibold text-emerald-400/60 uppercase tracking-wide text-center leading-tight">Success<br class="sm:hidden" /><span class="sm:ml-1">Rate</span></div>
                   </div>
-                  <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-[#2f6e4e]/20 flex items-center justify-center">
-                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="absolute top-2 right-2 w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style="background: rgba(52,211,153,0.1);">
+                    <svg class="w-3 h-3 sm:w-4 sm:h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                     </svg>
                   </div>
@@ -788,28 +973,28 @@
               </div>
 
               <!-- Success Rate Breakdown -->
-              <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-100">
-                <p class="text-xs font-bold text-gray-700 mb-2 sm:mb-3 uppercase tracking-widest">Evaluation Factors</p>
+              <div class="relative p-4 sm:p-5 rounded-xl sm:rounded-2xl" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle);">
+                <p class="text-xs font-bold text-white/50 mb-2 sm:mb-3 uppercase tracking-widest">Evaluation Factors</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-3 sm:gap-x-4 gap-y-1.5 sm:gap-y-2">
                   <div class="flex items-center gap-2">
-                    <div class="w-1.5 h-1.5 rounded-full bg-[#2f6e4e] flex-shrink-0"></div>
-                    <span class="text-xs text-gray-600">Budget Efficiency (25%)</span>
+                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0"></div>
+                    <span class="text-xs text-white/40">Budget Efficiency (25%)</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <div class="w-1.5 h-1.5 rounded-full bg-[#4a9d72] flex-shrink-0"></div>
-                    <span class="text-xs text-gray-600">Timeline Adherence (20%)</span>
+                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-300 flex-shrink-0"></div>
+                    <span class="text-xs text-white/40">Timeline Adherence (20%)</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <div class="w-1.5 h-1.5 rounded-full bg-[#5fb88a] flex-shrink-0"></div>
-                    <span class="text-xs text-gray-600">Volunteer Participation (20%)</span>
+                    <div class="w-1.5 h-1.5 rounded-full bg-teal-300 flex-shrink-0"></div>
+                    <span class="text-xs text-white/40">Volunteer Participation (20%)</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <div class="w-1.5 h-1.5 rounded-full bg-[#74c89f] flex-shrink-0"></div>
-                    <span class="text-xs text-gray-600">Volunteer Feedback (15%)</span>
+                    <div class="w-1.5 h-1.5 rounded-full bg-teal-400 flex-shrink-0"></div>
+                    <span class="text-xs text-white/40">Volunteer Feedback (15%)</span>
                   </div>
                   <div class="flex items-center gap-2 sm:col-span-2">
-                    <div class="w-1.5 h-1.5 rounded-full bg-[#89d7b4] flex-shrink-0"></div>
-                    <span class="text-xs text-gray-600">Community Impact (20%)</span>
+                    <div class="w-1.5 h-1.5 rounded-full bg-green-300 flex-shrink-0"></div>
+                    <span class="text-xs text-white/40">Community Impact (20%)</span>
                   </div>
                 </div>
               </div>
@@ -818,58 +1003,57 @@
         </div>
 
         <!-- Downloadable Reports -->
-        <div class="bg-gray-50 p-8 rounded-2xl">
-          <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+        <div class="rounded-2xl p-8" data-aos="fade-up" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+          <h3 class="text-2xl font-bold text-white mb-6 text-center heading-font">
             Download Public Files
           </h3>
           <div id="publishedFilesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Published files will be dynamically loaded here -->
           </div>
           <div id="noPublishedFiles" class="hidden text-center py-8">
-            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-16 h-16 mx-auto text-white/10 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
-            <p class="text-gray-500 font-medium">No published files yet</p>
-            <p class="text-sm text-gray-400 mt-1">Files published by SK officials will appear here</p>
+            <p class="text-white/40 font-medium">No published files yet</p>
+            <p class="text-sm text-white/20 mt-1">Files published by SK officials will appear here</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 gradient-bg hero-pattern">
-      <div class="max-w-4xl mx-auto px-6 text-center">
-        <h2 class="text-4xl md:text-5xl font-black text-white mb-6">
-          Ready to Serve Your Community?
+    <section class="py-24 md:py-32 relative overflow-hidden" style="background: var(--bg-primary);">
+      <!-- Background Gradient -->
+      <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 50%, rgba(52,211,153,0.08) 0%, transparent 70%);"></div>
+      <!-- Glow Line Top -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px" style="background: linear-gradient(90deg, transparent, rgba(52,211,153,0.3), transparent);"></div>
+
+      <div class="max-w-4xl mx-auto px-6 text-center relative z-10" data-aos="fade-up">
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 heading-font" style="letter-spacing: -0.03em;">
+          Ready to Serve Your <span class="gradient-text">Community?</span>
         </h2>
-        <p class="text-xl text-white/90 mb-10 leading-relaxed">
+        <p class="text-xl text-white/50 mb-12 leading-relaxed max-w-2xl mx-auto">
           Join 328+ youth volunteers making real positive changes in Barangay Malanday. Create your free account and start volunteering today!
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="signup.html"
-            class="px-10 py-4 bg-white text-[#2f6e4e] font-bold rounded-lg hover:shadow-2xl transition duration-200 text-lg"
-          >
-            Join as Volunteer
+          <a href="signup.html" class="btn-primary px-12 py-4 text-lg">
+            <span>Join as Volunteer</span>
           </a>
-          <a
-            href="#transparency"
-            class="px-10 py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white font-bold rounded-lg hover:bg-white/20 transition duration-200 text-lg"
-          >
+          <a href="#transparency" class="btn-ghost px-12 py-4 text-lg">
             View Transparency Report
           </a>
         </div>
-        <p class="text-white/70 mt-6 text-sm">
-          Already have an account? <a href="login.html" class="underline font-semibold hover:text-white">Sign In</a>
+        <p class="text-white/30 mt-8 text-sm">
+          Already have an account? <a href="login.html" class="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">Sign In</a>
         </p>
       </div>
     </section>
 
     <!-- Testimonial Detail Modal -->
-    <div id="testimonyModal" class="testimony-modal-overlay hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeTestimonyModal()">
-      <div class="testimony-modal-card bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+    <div id="testimonyModal" class="testimony-modal-overlay hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(6,8,13,0.85); backdrop-filter: blur(8px);" onclick="closeTestimonyModal()">
+      <div class="testimony-modal-card max-w-lg w-full max-h-[85vh] overflow-hidden flex flex-col rounded-2xl" style="background: var(--bg-card); border: 1px solid var(--border-subtle); box-shadow: 0 25px 50px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
         <!-- Modal Header -->
-        <div class="gradient-bg p-6 flex items-center justify-between flex-shrink-0">
+        <div class="p-6 flex items-center justify-between flex-shrink-0" style="background: linear-gradient(135deg, #2f6e4e, #34d399);">
           <div class="flex items-center gap-4">
             <div id="modalAvatar" class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white font-bold text-xl overflow-hidden flex-shrink-0">
               --
@@ -888,26 +1072,24 @@
         <!-- Modal Body -->
         <div class="p-6 overflow-y-auto">
           <div id="modalStars" class="flex mb-4"></div>
-          <p id="modalTestimony" class="text-gray-700 leading-relaxed text-base italic" style="overflow-wrap: break-word; word-break: break-word;"></p>
+          <p id="modalTestimony" class="text-white/70 leading-relaxed text-base italic" style="overflow-wrap: break-word; word-break: break-word;"></p>
         </div>
       </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-      <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <footer class="relative overflow-hidden" style="background: var(--bg-surface); border-top: 1px solid var(--border-subtle);">
+      <div class="max-w-7xl mx-auto px-6 pt-16 pb-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <!-- About -->
           <div>
-            <div class="flex items-center space-x-3 mb-4">
-              <div
-                class="w-16 h-16 bg-white rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden"
-              >
+            <div class="flex items-center space-x-3 mb-5">
+              <div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden" style="border: 1px solid var(--border-subtle);">
                 <img src="asset/logo.svg" alt="BIMS Logo" class="w-full h-full object-contain p-1">
               </div>
-              <span class="text-lg font-bold">BIMS</span>
+              <span class="text-lg font-extrabold text-white heading-font">BIMS</span>
             </div>
-            <p class="text-gray-400 text-sm leading-relaxed">
+            <p class="text-white/30 text-sm leading-relaxed">
               Empowering youth through transparent community engagement and
               project management.
             </p>
@@ -915,56 +1097,30 @@
 
           <!-- Quick Links -->
           <div>
-            <h3 class="font-bold text-lg mb-4">Quick Links</h3>
-            <ul class="space-y-2 text-gray-400">
-              <li>
-                <a href="#home" class="hover:text-white transition">Home</a>
-              </li>
-              <li>
-                <a href="#features" class="hover:text-white transition"
-                  >Features</a
-                >
-              </li>
-              <li>
-                <a href="#projects" class="hover:text-white transition"
-                  >Projects</a
-                >
-              </li>
-              <li>
-                <a href="#testimonials" class="hover:text-white transition"
-                  >Testimonials</a
-                >
-              </li>
+            <h3 class="font-bold text-sm text-white/60 mb-5 uppercase tracking-widest">Quick Links</h3>
+            <ul class="space-y-3">
+              <li><a href="#home" class="text-white/30 hover:text-emerald-400 transition-colors text-sm">Home</a></li>
+              <li><a href="#features" class="text-white/30 hover:text-emerald-400 transition-colors text-sm">Features</a></li>
+              <li><a href="#projects" class="text-white/30 hover:text-emerald-400 transition-colors text-sm">Projects</a></li>
+              <li><a href="#testimonials" class="text-white/30 hover:text-emerald-400 transition-colors text-sm">Testimonials</a></li>
             </ul>
           </div>
 
           <!-- Support -->
           <div>
-            <h3 class="font-bold text-lg mb-4">Support</h3>
-            <ul class="space-y-2 text-gray-400">
-              <li>
-                <a href="#" class="hover:text-white transition">Help Center</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition"
-                  >Terms of Service</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition"
-                  >Privacy Policy</a
-                >
-              </li>
-              <li>
-                <a href="#" class="hover:text-white transition">Contact Us</a>
-              </li>
+            <h3 class="font-bold text-sm text-white/60 mb-5 uppercase tracking-widest">Support</h3>
+            <ul class="space-y-3">
+              <li><a href="#" class="text-white/30 hover:text-emerald-400 transition-colors text-sm">Help Center</a></li>
+              <li><a href="#" class="text-white/30 hover:text-emerald-400 transition-colors text-sm">Terms of Service</a></li>
+              <li><a href="#" class="text-white/30 hover:text-emerald-400 transition-colors text-sm">Privacy Policy</a></li>
+              <li><a href="#" class="text-white/30 hover:text-emerald-400 transition-colors text-sm">Contact Us</a></li>
             </ul>
           </div>
 
           <!-- Contact -->
           <div>
-            <h3 class="font-bold text-lg mb-4">Contact</h3>
-            <ul class="space-y-2 text-gray-400 text-sm">
+            <h3 class="font-bold text-sm text-white/60 mb-5 uppercase tracking-widest">Contact</h3>
+            <ul class="space-y-3 text-white/30 text-sm">
               <li>Barangay Malanday</li>
               <li>Marikina City, Philippines</li>
               <li>Email: info@malandaybims.ph</li>
@@ -974,10 +1130,8 @@
         </div>
 
         <!-- Bottom Bar -->
-        <div
-          class="pt-8 border-t border-gray-800 text-center text-gray-400 text-sm"
-        >
-          <p>&copy; 2026 BIMS - Barangay Information Management System. All rights reserved.</p>
+        <div class="pt-8 text-center text-sm" style="border-top: 1px solid var(--border-subtle);">
+          <p class="text-white/20">&copy; 2026 BIMS - Barangay Information Management System. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -989,8 +1143,30 @@
     <script src="js/utils/sanitize.js"></script>
     <script src="js/utils/toast.js"></script>
     <script src="js/utils/focus-trap.js"></script>
+    <!-- AOS Animation Library -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.min.js"></script>
 
     <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 80,
+      });
+
+      // Nav scroll effect
+      window.addEventListener('scroll', function() {
+        var nav = document.getElementById('mainNav');
+        if (window.scrollY > 50) {
+          nav.style.background = 'rgba(6, 8, 13, 0.95)';
+          nav.style.borderBottomColor = 'rgba(255,255,255,0.06)';
+        } else {
+          nav.style.background = 'rgba(6, 8, 13, 0.6)';
+          nav.style.borderBottomColor = 'rgba(255,255,255,0.04)';
+        }
+      });
+
       function sanitizeImageURL(url) {
         if (!url) return null;
         try {
@@ -1019,15 +1195,15 @@
         buttons.forEach(btn => {
           btn.classList.remove('active');
           btn.style.background = 'transparent';
-          btn.style.color = '#6b7280';
+          btn.style.color = 'rgba(255,255,255,0.5)';
           btn.style.boxShadow = 'none';
           btn.style.fontWeight = '600';
         });
 
         event.target.classList.add('active');
-        event.target.style.background = 'linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%)';
+        event.target.style.background = 'linear-gradient(135deg, #2f6e4e 0%, #34d399 100%)';
         event.target.style.color = 'white';
-        event.target.style.boxShadow = '0 3px 8px rgba(47, 110, 78, 0.35), 0 1px 3px rgba(0, 0, 0, 0.12)';
+        event.target.style.boxShadow = '0 3px 15px rgba(52, 211, 153, 0.3)';
         event.target.style.fontWeight = '700';
 
         if (status === 'all') {
@@ -1070,7 +1246,7 @@
           if (error) throw error;
 
           if (!projects || projects.length === 0) {
-            grid.innerHTML = '<p class="text-center text-gray-500 col-span-full py-12">No projects available yet.</p>';
+            grid.innerHTML = '<p class="text-center text-white/40 col-span-full py-12">No projects available yet.</p>';
             return;
           }
 
@@ -1080,7 +1256,7 @@
           renderProjectPage();
         } catch (err) {
           console.error('[BIMS] Failed to load projects');
-          grid.innerHTML = '<p class="text-center text-gray-500 col-span-full py-12">Unable to load projects.</p>';
+          grid.innerHTML = '<p class="text-center text-white/40 col-span-full py-12">Unable to load projects.</p>';
         }
       }
 
@@ -1091,7 +1267,7 @@
         const projectsToShow = filteredProjectsData.slice(startIndex, endIndex);
 
         if (projectsToShow.length === 0) {
-          grid.innerHTML = '<p class="text-center text-gray-500 col-span-full py-12">No projects found.</p>';
+          grid.innerHTML = '<p class="text-center text-white/40 col-span-full py-12">No projects found.</p>';
         } else {
           grid.innerHTML = projectsToShow.map(p => createProjectCard(p)).join('');
         }
@@ -1114,7 +1290,7 @@
 
         dotsContainer.innerHTML = Array.from({ length: totalPages }, function(_, i) {
           return '<button onclick="goToProjectPage(' + i + ')" class="h-2 rounded-full transition-all duration-300 ' +
-            (i === projectCurrentPage ? 'bg-[#2f6e4e] w-8' : 'bg-gray-300 hover:bg-gray-400 w-2') +
+            (i === projectCurrentPage ? 'bg-emerald-400 w-8' : 'bg-white/20 hover:bg-white/30 w-2') +
             '" style="min-height: 8px; flex-shrink: 0; cursor: pointer;" aria-label="Go to page ' + (i + 1) + '"></button>';
         }).join('');
       }
@@ -1135,9 +1311,9 @@
       function createProjectCard(project) {
         const statusLower = (project.status || 'ONGOING').toLowerCase();
         const config = {
-          ongoing: { badge: 'text-amber-600', dot: 'bg-amber-500', bg: 'bg-gradient-to-br from-blue-500 to-blue-600', pulse: ' animate-pulse' },
-          completed: { badge: 'text-emerald-600', dot: 'bg-emerald-500', bg: 'gradient-bg', pulse: '' },
-          cancelled: { badge: 'text-red-600', dot: 'bg-red-500', bg: 'bg-gradient-to-br from-red-500 to-red-600', pulse: '' }
+          ongoing: { badge: 'color: #fbbf24;', dot: 'background: #fbbf24;', bg: 'background: linear-gradient(135deg, #1e40af, #3b82f6);', pulse: ' animate-pulse' },
+          completed: { badge: 'color: #34d399;', dot: 'background: #34d399;', bg: 'background: linear-gradient(135deg, #2f6e4e, #34d399);', pulse: '' },
+          cancelled: { badge: 'color: #f87171;', dot: 'background: #f87171;', bg: 'background: linear-gradient(135deg, #991b1b, #ef4444);', pulse: '' }
         };
         const s = config[statusLower] || config.ongoing;
 
@@ -1151,26 +1327,26 @@
           : '';
 
         return '<div class="project-card group cursor-pointer" data-status="' + statusLower + '">' +
-          '<div class="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08),0_4px_8px_rgba(0,0,0,0.06)] hover:-translate-y-1 h-full flex flex-col">' +
-            '<div class="relative h-44 ' + s.bg + ' flex items-center justify-center overflow-hidden">' +
+          '<div class="rounded-2xl overflow-hidden transition-all duration-400 h-full flex flex-col" style="background: var(--bg-card); border: 1px solid var(--border-subtle);" onmouseover="this.style.borderColor=\'rgba(52,211,153,0.2)\';this.style.transform=\'translateY(-4px)\';this.style.boxShadow=\'0 8px 40px rgba(52,211,153,0.08)\';" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.06)\';this.style.transform=\'translateY(0)\';this.style.boxShadow=\'none\';">' +
+            '<div class="relative h-44 flex items-center justify-center overflow-hidden" style="' + s.bg + '">' +
               imgEl +
-              '<div class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>' +
-              '<svg class="relative w-16 h-16 text-white/90 group-hover:scale-110 transition-transform duration-300' + (imgURL ? ' hidden' : '') + '" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">' +
+              '<div class="absolute inset-0" style="background: linear-gradient(to top, rgba(18,21,30,0.3), transparent);"></div>' +
+              '<svg class="relative w-16 h-16 text-white/70 group-hover:scale-110 transition-transform duration-300' + (imgURL ? ' hidden' : '') + '" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">' +
                 '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>' +
               '</svg>' +
               '<div class="absolute top-3 right-3">' +
-                '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full text-[10px] font-semibold tracking-wide ' + s.badge + ' shadow-sm">' +
-                  '<span class="w-1.5 h-1.5 ' + s.dot + ' rounded-full' + s.pulse + '"></span>' +
+                '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide shadow-sm" style="background: rgba(6,8,13,0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); ' + s.badge + '">' +
+                  '<span class="w-1.5 h-1.5 rounded-full' + s.pulse + '" style="' + s.dot + '"></span>' +
                   escapeHTML(project.status) +
                 '</span>' +
               '</div>' +
             '</div>' +
             '<div class="p-7 flex flex-col flex-1">' +
-              '<h3 class="text-xl font-bold text-gray-900 mb-2.5 group-hover:text-[#2f6e4e] transition-colors">' + escapeHTML(project.title) + '</h3>' +
-              '<p class="text-gray-600 text-[15px] leading-relaxed mb-5 line-clamp-2 flex-1">' + escapeHTML(project.description) + '</p>' +
-              '<div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">' +
-                '<span class="text-sm text-gray-500 font-medium">' + escapeHTML(dateText) + '</span>' +
-                '<span class="text-sm font-semibold text-[#2f6e4e] flex items-center gap-1.5">' +
+              '<h3 class="text-xl font-bold text-white mb-2.5 group-hover:text-emerald-400 transition-colors heading-font">' + escapeHTML(project.title) + '</h3>' +
+              '<p class="text-white/40 text-[15px] leading-relaxed mb-5 line-clamp-2 flex-1">' + escapeHTML(project.description) + '</p>' +
+              '<div class="flex items-center justify-between pt-4 mt-auto" style="border-top: 1px solid var(--border-subtle);">' +
+                '<span class="text-sm text-white/30 font-medium">' + escapeHTML(dateText) + '</span>' +
+                '<span class="text-sm font-semibold text-emerald-400 flex items-center gap-1.5">' +
                   '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>' +
                   (project.volunteers || 0) +
                 '</span>' +
@@ -1202,21 +1378,20 @@
           ? '<img src="' + escapeHTML(t.imageURL) + '" alt="" class="w-full h-full object-cover rounded-full" loading="lazy" onerror="this.parentElement.textContent=\'' + escapeHTML(t.initials) + '\'">'
           : escapeHTML(t.initials);
 
-        // Store data as JSON-safe attributes for the modal
         const safeId = t.id || 0;
 
-        return '<div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition h-full flex flex-col overflow-hidden cursor-pointer group" onclick="openTestimonyModal(' + safeId + ')">' +
+        return '<div class="glass-card p-8 rounded-2xl h-full flex flex-col overflow-hidden cursor-pointer group" onclick="openTestimonyModal(' + safeId + ')">' +
           '<div class="flex items-center mb-6">' +
-            '<div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 overflow-hidden">' + avatarHTML + '</div>' +
+            '<div class="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-xl flex-shrink-0 overflow-hidden" style="background: linear-gradient(135deg, #2f6e4e, #34d399);">' + avatarHTML + '</div>' +
             '<div class="ml-4 overflow-hidden">' +
-              '<h4 class="font-bold text-gray-800 text-lg truncate group-hover:text-[#2f6e4e] transition-colors">' + escapeHTML(t.name) + '</h4>' +
-              '<p class="text-sm text-gray-500 truncate">' + escapeHTML(t.role) + '</p>' +
+              '<h4 class="font-bold text-white text-lg truncate group-hover:text-emerald-400 transition-colors heading-font">' + escapeHTML(t.name) + '</h4>' +
+              '<p class="text-sm text-white/40 truncate">' + escapeHTML(t.role) + '</p>' +
             '</div>' +
           '</div>' +
           '<div class="flex mb-4">' + generateStars(t.rating) + '</div>' +
-          '<p class="text-gray-600 leading-relaxed italic flex-1 testimony-text-clamp" style="overflow-wrap: break-word; word-break: break-word;">&ldquo;' + escapeHTML(t.testimony) + '&rdquo;</p>' +
-          '<div class="mt-4 pt-3 border-t border-gray-100 text-center">' +
-            '<span class="text-sm font-medium text-[#2f6e4e] group-hover:text-[#3d8b64] transition-colors">Read full testimonial &rarr;</span>' +
+          '<p class="text-white/50 leading-relaxed italic flex-1 testimony-text-clamp" style="overflow-wrap: break-word; word-break: break-word;">&ldquo;' + escapeHTML(t.testimony) + '&rdquo;</p>' +
+          '<div class="mt-4 pt-3 text-center" style="border-top: 1px solid var(--border-subtle);">' +
+            '<span class="text-sm font-medium text-emerald-400 group-hover:text-emerald-300 transition-colors">Read full testimonial &rarr;</span>' +
           '</div>' +
         '</div>';
       }
@@ -1228,7 +1403,6 @@
 
         const modal = document.getElementById('testimonyModal');
 
-        // Populate modal
         const avatarEl = document.getElementById('modalAvatar');
         if (t.imageURL) {
           avatarEl.innerHTML = '<img src="' + escapeHTML(t.imageURL) + '" alt="" class="w-full h-full object-cover rounded-full" onerror="this.parentElement.textContent=\'' + escapeHTML(t.initials) + '\'">';
@@ -1241,13 +1415,11 @@
         document.getElementById('modalStars').innerHTML = generateStars(t.rating);
         document.getElementById('modalTestimony').innerHTML = '&ldquo;' + escapeHTML(t.testimony) + '&rdquo;';
 
-        // Show modal with animation
         modal.classList.remove('hidden');
         requestAnimationFrame(function() {
           modal.classList.add('active');
         });
 
-        // Pause carousel auto-slide
         clearInterval(autoSlideInterval);
       }
 
@@ -1258,11 +1430,9 @@
           modal.classList.add('hidden');
         }, 300);
 
-        // Resume carousel auto-slide
         startAutoSlide();
       }
 
-      // Close on Escape key
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
           var modal = document.getElementById('testimonyModal');
@@ -1292,7 +1462,7 @@
 
         for (let i = 0; i < totalSlides; i++) {
           const dot = document.createElement('button');
-          dot.className = i === 0 ? 'w-8 h-2 rounded-full bg-[#2f6e4e] transition-all duration-300' : 'w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300';
+          dot.className = i === 0 ? 'w-8 h-2 rounded-full bg-emerald-400 transition-all duration-300' : 'w-2 h-2 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-300';
           dot.onclick = () => goToSlide(i);
           dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
           dotsContainer.appendChild(dot);
@@ -1311,8 +1481,8 @@
         const dots = document.getElementById('testimonialDots').children;
         Array.from(dots).forEach((dot, i) => {
           dot.className = i === currentSlide
-            ? 'w-8 h-2 rounded-full bg-[#2f6e4e] transition-all duration-300'
-            : 'w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-all duration-300';
+            ? 'w-8 h-2 rounded-full bg-emerald-400 transition-all duration-300'
+            : 'w-2 h-2 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-300';
         });
         resetAutoSlide();
       }
@@ -1335,7 +1505,7 @@
 
           if (!testimonies || testimonies.length === 0) {
             document.getElementById('testimonialsCarousel').innerHTML =
-              '<div class="min-w-full flex items-center justify-center py-12"><p class="text-gray-500">No testimonials yet. Be the first to share your experience!</p></div>';
+              '<div class="min-w-full flex items-center justify-center py-12"><p class="text-white/40">No testimonials yet. Be the first to share your experience!</p></div>';
             return;
           }
 
@@ -1359,9 +1529,44 @@
         } catch (err) {
           console.error('[BIMS] Failed to load testimonials');
           document.getElementById('testimonialsCarousel').innerHTML =
-            '<div class="min-w-full flex items-center justify-center py-12"><p class="text-gray-500">Unable to load testimonials.</p></div>';
+            '<div class="min-w-full flex items-center justify-center py-12"><p class="text-white/40">Unable to load testimonials.</p></div>';
         }
       }
+
+      // === CountUp Animation ===
+      function animateCountUp(el, target, duration, suffix) {
+        if (!el || isNaN(target)) return;
+        suffix = suffix || '';
+        var startTime = null;
+        var easeOutQuart = function(t) { return 1 - Math.pow(1 - t, 4); };
+        function step(timestamp) {
+          if (!startTime) startTime = timestamp;
+          var progress = Math.min((timestamp - startTime) / duration, 1);
+          var easedProgress = easeOutQuart(progress);
+          el.textContent = Math.floor(easedProgress * target).toLocaleString() + suffix;
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            el.textContent = target.toLocaleString() + suffix;
+          }
+        }
+        requestAnimationFrame(step);
+      }
+
+      // Trigger countUp when element scrolls into view
+      var countUpObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var el = entry.target;
+            var target = parseInt(el.getAttribute('data-countup-target'), 10);
+            var suffix = el.getAttribute('data-countup-suffix') || '';
+            if (!isNaN(target)) {
+              animateCountUp(el, target, 2000, suffix);
+            }
+            countUpObserver.unobserve(el);
+          }
+        });
+      }, { threshold: 0.3 });
 
       // === Budget Data from Supabase ===
       async function loadBudgetData() {
@@ -1378,11 +1583,11 @@
 
           const total = items.reduce((sum, item) => sum + (Number(item.budget) || 0), 0);
           const colors = [
-            { dot: 'bg-[#2f6e4e]', from: '#2f6e4e', to: '#3d8b64', shadow: 'rgba(47, 110, 78, 0.5)' },
-            { dot: 'bg-[#4a9d72]', from: '#4a9d72', to: '#5fb88a', shadow: 'rgba(74, 157, 114, 0.5)' },
-            { dot: 'bg-[#65c399]', from: '#65c399', to: '#7ed4ad', shadow: 'rgba(101, 195, 153, 0.5)' },
-            { dot: 'bg-[#89d7b4]', from: '#89d7b4', to: '#a0e3c6', shadow: 'rgba(137, 215, 180, 0.5)' },
-            { dot: 'bg-[#a8e6cf]', from: '#a8e6cf', to: '#c0f0dd', shadow: 'rgba(168, 230, 207, 0.5)' }
+            { dot: 'bg-emerald-400', from: '#2f6e4e', to: '#34d399', shadow: 'rgba(52, 211, 153, 0.4)' },
+            { dot: 'bg-emerald-300', from: '#4a9d72', to: '#6ee7b7', shadow: 'rgba(110, 231, 183, 0.3)' },
+            { dot: 'bg-teal-300', from: '#5eead4', to: '#99f6e4', shadow: 'rgba(94, 234, 212, 0.3)' },
+            { dot: 'bg-teal-400', from: '#2dd4bf', to: '#5eead4', shadow: 'rgba(45, 212, 191, 0.3)' },
+            { dot: 'bg-green-300', from: '#86efac', to: '#bbf7d0', shadow: 'rgba(134, 239, 172, 0.3)' }
           ];
 
           const container = document.getElementById('budgetItemsContainer');
@@ -1394,15 +1599,15 @@
                 '<div class="flex justify-between items-baseline mb-3">' +
                   '<div class="flex items-center gap-2">' +
                     '<div class="w-2 h-2 rounded-full ' + c.dot + '"></div>' +
-                    '<span class="text-sm font-semibold text-gray-700">' + escapeHTML(item.expenseCategory) + '</span>' +
+                    '<span class="text-sm font-semibold text-white/70">' + escapeHTML(item.expenseCategory) + '</span>' +
                   '</div>' +
                   '<div class="flex items-center gap-2">' +
-                    '<span class="text-xs text-gray-500">' + pct + '%</span>' +
-                    '<span class="text-lg font-bold text-gray-900">' + formatCurrency(item.budget) + '</span>' +
+                    '<span class="text-xs text-white/40">' + pct + '%</span>' +
+                    '<span class="text-lg font-bold text-white">' + formatCurrency(item.budget) + '</span>' +
                   '</div>' +
                 '</div>' +
-                '<div class="relative h-2 bg-gray-100 rounded-full overflow-hidden">' +
-                  '<div class="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out shadow-lg" style="width: ' + pct + '%; background: linear-gradient(to right, ' + c.from + ', ' + c.to + '); box-shadow: 0 0 10px ' + c.shadow + ';"></div>' +
+                '<div class="relative h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.06);">' +
+                  '<div class="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out" style="width: ' + pct + '%; background: linear-gradient(to right, ' + c.from + ', ' + c.to + '); box-shadow: 0 0 15px ' + c.shadow + ';"></div>' +
                 '</div>' +
               '</div>';
             }).join('');
@@ -1435,18 +1640,34 @@
           const totalVolunteers = projects.reduce((sum, p) => sum + (p.volunteers || 0), 0);
           const successRate = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-          // Update metrics card
-          const els = { metricTotal: total, metricCompleted: completed, metricOngoing: ongoing, metricSuccessRate: successRate + '%' };
-          Object.entries(els).forEach(([id, val]) => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = val;
+          // Update metrics card (with countUp)
+          var metricsMap = { metricTotal: total, metricCompleted: completed, metricOngoing: ongoing };
+          Object.entries(metricsMap).forEach(([id, val]) => {
+            var el = document.getElementById(id);
+            if (el) {
+              el.textContent = '0';
+              el.setAttribute('data-countup-target', val);
+              countUpObserver.observe(el);
+            }
           });
+          // Success rate with % suffix
+          var srEl = document.getElementById('metricSuccessRate');
+          if (srEl) {
+            srEl.textContent = '0%';
+            srEl.setAttribute('data-countup-target', successRate);
+            srEl.setAttribute('data-countup-suffix', '%');
+            countUpObserver.observe(srEl);
+          }
 
-          // Update hero stats
-          const heroEls = { heroVolunteers: totalVolunteers, heroProjects: total, heroSuccessRate: successRate };
-          Object.entries(heroEls).forEach(([id, val]) => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = val;
+          // Update hero stats (with countUp)
+          var heroMap = { heroVolunteers: totalVolunteers, heroProjects: total, heroSuccessRate: successRate };
+          Object.entries(heroMap).forEach(([id, val]) => {
+            var el = document.getElementById(id);
+            if (el) {
+              el.textContent = '0';
+              el.setAttribute('data-countup-target', val);
+              countUpObserver.observe(el);
+            }
           });
         } catch (err) {
           console.error('[BIMS] Failed to load project metrics');
@@ -1478,22 +1699,22 @@
           noFilesDiv.classList.add('hidden');
 
           function getFileIconColor(type) {
-            var colors = { PDF: 'bg-red-100 text-red-600', XLSX: 'bg-[#2f6e4e]/20 text-[#2f6e4e]', PNG: 'bg-blue-100 text-blue-600', JPG: 'bg-blue-100 text-blue-600', DOC: 'bg-indigo-100 text-indigo-600' };
-            return colors[type] || 'bg-gray-100 text-gray-700';
+            var colors = { PDF: 'background: rgba(239,68,68,0.1); color: #f87171;', XLSX: 'background: rgba(52,211,153,0.1); color: #34d399;', PNG: 'background: rgba(59,130,246,0.1); color: #60a5fa;', JPG: 'background: rgba(59,130,246,0.1); color: #60a5fa;', DOC: 'background: rgba(99,102,241,0.1); color: #818cf8;' };
+            return colors[type] || 'background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.5);';
           }
 
           grid.innerHTML = files.map(file => {
             const uploadDate = formatDate(file.dateUploaded);
             return '<button onclick="downloadFile(\'' + escapeHTML(file.filePath) + '\', \'' + escapeHTML(file.fileName) + '\')" ' +
-              'class="flex items-center justify-between p-6 bg-white rounded-xl shadow hover:shadow-lg transition group cursor-pointer">' +
+              'class="flex items-center justify-between p-5 rounded-xl transition group cursor-pointer" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle);" onmouseover="this.style.borderColor=\'rgba(52,211,153,0.2)\';this.style.background=\'rgba(52,211,153,0.03)\';" onmouseout="this.style.borderColor=\'rgba(255,255,255,0.06)\';this.style.background=\'rgba(255,255,255,0.03)\';">' +
               '<div class="flex items-center space-x-4">' +
-                '<div class="w-10 h-10 ' + getFileIconColor(file.fileType) + ' rounded-lg flex items-center justify-center font-bold text-xs">' + escapeHTML(file.fileType || 'FILE') + '</div>' +
+                '<div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xs" style="' + getFileIconColor(file.fileType) + '">' + escapeHTML(file.fileType || 'FILE') + '</div>' +
                 '<div class="text-left">' +
-                  '<div class="font-bold text-gray-800 line-clamp-1">' + escapeHTML(file.fileName) + '</div>' +
-                  '<div class="text-sm text-gray-500">' + escapeHTML(uploadDate) + '</div>' +
+                  '<div class="font-bold text-white line-clamp-1 text-sm">' + escapeHTML(file.fileName) + '</div>' +
+                  '<div class="text-sm text-white/30">' + escapeHTML(uploadDate) + '</div>' +
                 '</div>' +
               '</div>' +
-              '<svg class="w-6 h-6 text-gray-400 group-hover:text-[#2f6e4e] transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+              '<svg class="w-5 h-5 text-white/20 group-hover:text-emerald-400 transition flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
                 '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>' +
               '</svg></button>';
           }).join('');
@@ -1527,9 +1748,9 @@
         // Style active filter button
         var activeBtn = document.querySelector('.filter-btn.active');
         if (activeBtn) {
-          activeBtn.style.background = 'linear-gradient(135deg, #2f6e4e 0%, #3d8b64 100%)';
+          activeBtn.style.background = 'linear-gradient(135deg, #2f6e4e 0%, #34d399 100%)';
           activeBtn.style.color = 'white';
-          activeBtn.style.boxShadow = '0 3px 8px rgba(47, 110, 78, 0.35), 0 1px 3px rgba(0, 0, 0, 0.12)';
+          activeBtn.style.boxShadow = '0 3px 15px rgba(52, 211, 153, 0.3)';
           activeBtn.style.fontWeight = '700';
         }
 
