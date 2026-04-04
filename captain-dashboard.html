@@ -1308,7 +1308,7 @@
             document.getElementById('confirmPassword').value = '';
         }
 
-        function updatePassword() {
+        async function updatePassword() {
             const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
@@ -1319,18 +1319,37 @@
                 return;
             }
 
-            if (newPassword.length < 8) {
-                showToast('New password must be at least 8 characters long.', 'error');
-                return;
-            }
-
             if (newPassword !== confirmPassword) {
                 showToast('New password and confirmation do not match.', 'error');
                 return;
             }
 
-            // In production, this would validate current password and update via API
+            // Verify current password by re-authenticating
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) {
+                showToast('Session error. Please log in again.', 'error');
+                return;
+            }
 
+            const { error: signInError } = await supabaseClient.auth.signInWithPassword({
+                email: userEmail,
+                password: currentPassword
+            });
+
+            if (signInError) {
+                showToast('Current password is incorrect.', 'error');
+                return;
+            }
+
+            // Update password via AuthService
+            const result = await AuthService.updatePassword(newPassword);
+
+            if (!result.success) {
+                showToast(result.error, 'error');
+                return;
+            }
+
+            logAction('User changed password');
             showToast('Password updated successfully!', 'success');
             closeChangePasswordModal();
         }
