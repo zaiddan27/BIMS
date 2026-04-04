@@ -665,22 +665,51 @@
         </div>
         <h3 id="publishInfoModalTitle" class="text-xl font-bold text-gray-900 text-center mb-2">Publish to Homepage</h3>
         <p id="publishFileName" class="text-sm text-gray-600 text-center mb-4"></p>
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-5">
           <div class="flex gap-3">
             <div class="flex-shrink-0">
-              <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              <svg class="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
               </svg>
             </div>
             <div class="flex-1">
-              <p class="text-sm font-medium text-blue-900 mb-1">This will make the file visible to the public</p>
-              <p class="text-xs text-blue-700">The file will appear in the Transparency section on the homepage where all barangay residents can view and download it.</p>
+              <p class="text-sm font-medium text-amber-900 mb-1">This will make the file visible to the public</p>
+              <p class="text-xs text-amber-700">The file will appear in the Transparency section on the homepage where all barangay residents can view and download it. Anyone can access this file.</p>
             </div>
           </div>
         </div>
+
+        <!-- Type PUBLISH confirmation -->
+        <div class="mb-5">
+          <label class="block text-sm font-semibold text-gray-700 mb-3 text-center">
+            To confirm, type <span class="text-[#2f6e4e] font-mono font-bold">PUBLISH</span> in capital letters:
+          </label>
+          <div class="flex justify-center gap-2 mb-3">
+            <input type="text" maxlength="1" id="pubChar0" data-index="0" class="pub-confirm-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] uppercase" autocomplete="off" />
+            <input type="text" maxlength="1" id="pubChar1" data-index="1" class="pub-confirm-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] uppercase" autocomplete="off" />
+            <input type="text" maxlength="1" id="pubChar2" data-index="2" class="pub-confirm-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] uppercase" autocomplete="off" />
+            <input type="text" maxlength="1" id="pubChar3" data-index="3" class="pub-confirm-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] uppercase" autocomplete="off" />
+            <input type="text" maxlength="1" id="pubChar4" data-index="4" class="pub-confirm-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] uppercase" autocomplete="off" />
+            <input type="text" maxlength="1" id="pubChar5" data-index="5" class="pub-confirm-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] uppercase" autocomplete="off" />
+            <input type="text" maxlength="1" id="pubChar6" data-index="6" class="pub-confirm-input w-12 h-14 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] uppercase" autocomplete="off" />
+          </div>
+          <div class="flex justify-center gap-2 mb-3">
+            <div class="w-12 text-center text-xs text-gray-400 font-mono">P</div>
+            <div class="w-12 text-center text-xs text-gray-400 font-mono">U</div>
+            <div class="w-12 text-center text-xs text-gray-400 font-mono">B</div>
+            <div class="w-12 text-center text-xs text-gray-400 font-mono">L</div>
+            <div class="w-12 text-center text-xs text-gray-400 font-mono">I</div>
+            <div class="w-12 text-center text-xs text-gray-400 font-mono">S</div>
+            <div class="w-12 text-center text-xs text-gray-400 font-mono">H</div>
+          </div>
+          <p id="pubConfirmError" class="hidden text-sm text-red-600 mt-2 text-center">
+            Please type "PUBLISH" exactly to confirm
+          </p>
+        </div>
+
         <div class="flex gap-3">
           <button id="cancelPublish" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">Cancel</button>
-          <button id="confirmPublish" class="flex-1 px-4 py-2.5 bg-[#2f6e4e] hover:bg-[#2f6e4e]/90 text-white rounded-lg transition font-medium">Publish</button>
+          <button id="confirmPublish" disabled class="flex-1 px-4 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium">Publish</button>
         </div>
       </div>
     </div>
@@ -1759,12 +1788,87 @@
       function closePublishModal() {
         publishTargetId = null;
         document.getElementById('publishInfoModal').classList.add('hidden');
+        // Reset PUBLISH confirmation inputs
+        for (let i = 0; i < 7; i++) {
+          const inp = document.getElementById(`pubChar${i}`);
+          if (inp) inp.value = '';
+        }
+        const btn = document.getElementById('confirmPublish');
+        btn.disabled = true;
+        btn.className = 'flex-1 px-4 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium';
+        document.getElementById('pubConfirmError').classList.add('hidden');
       }
+
+      // Setup PUBLISH confirmation inputs
+      function setupPublishConfirmInputs() {
+        const inputs = document.querySelectorAll('.pub-confirm-input');
+        inputs.forEach(input => {
+          input.addEventListener('input', (e) => {
+            const val = e.target.value.toUpperCase();
+            e.target.value = val;
+            const idx = parseInt(e.target.dataset.index);
+            if (val && idx < 6) {
+              document.getElementById(`pubChar${idx + 1}`).focus();
+            }
+            checkPublishWord();
+          });
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value) {
+              const idx = parseInt(e.target.dataset.index);
+              if (idx > 0) {
+                const prev = document.getElementById(`pubChar${idx - 1}`);
+                prev.value = '';
+                prev.focus();
+              }
+            }
+          });
+          input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasted = (e.clipboardData.getData('text') || '').toUpperCase().replace(/[^A-Z]/g, '');
+            for (let i = 0; i < Math.min(pasted.length, 7); i++) {
+              const inp = document.getElementById(`pubChar${i}`);
+              if (inp) inp.value = pasted[i];
+            }
+            checkPublishWord();
+          });
+        });
+      }
+
+      function checkPublishWord() {
+        let word = '';
+        for (let i = 0; i < 7; i++) {
+          word += (document.getElementById(`pubChar${i}`)?.value || '');
+        }
+        const submitBtn = document.getElementById('confirmPublish');
+        const errorMsg = document.getElementById('pubConfirmError');
+        if (word === 'PUBLISH') {
+          submitBtn.disabled = false;
+          submitBtn.className = 'flex-1 px-4 py-2.5 bg-[#2f6e4e] hover:bg-[#2f6e4e]/90 text-white rounded-lg transition font-medium';
+          errorMsg.classList.add('hidden');
+        } else {
+          submitBtn.disabled = true;
+          submitBtn.className = 'flex-1 px-4 py-2.5 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed transition font-medium';
+          if (word.length === 7) errorMsg.classList.remove('hidden');
+          else errorMsg.classList.add('hidden');
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => { setupPublishConfirmInputs(); });
 
       document.getElementById('cancelPublish').addEventListener('click', closePublishModal);
 
       document.getElementById('confirmPublish').addEventListener('click', async () => {
         if (!publishTargetId || isLoading) return;
+
+        // Verify PUBLISH was typed
+        let word = '';
+        for (let i = 0; i < 7; i++) {
+          word += (document.getElementById(`pubChar${i}`)?.value || '');
+        }
+        if (word !== 'PUBLISH') {
+          document.getElementById('pubConfirmError').classList.remove('hidden');
+          return;
+        }
 
         isLoading = true;
         const btn = document.getElementById('confirmPublish');
