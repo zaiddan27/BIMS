@@ -169,15 +169,20 @@ export class ProfileModal {
                     </div>
                   </div>
                 </div>
-                <!-- Change Password -->
-                <div>
-                  <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                <!-- Change Password (Collapsible) -->
+                <div class="border border-gray-200 rounded-lg">
+                  <button type="button" onclick="window.profileModal.togglePasswordSection()" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition rounded-lg">
+                    <span class="flex items-center gap-2 text-lg font-semibold text-gray-800">
+                      <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                      </svg>
+                      Change Password
+                    </span>
+                    <svg id="passwordChevron" class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
-                    Change Password
-                  </h3>
-                  <div id="changePasswordSection" class="space-y-3">
+                  </button>
+                  <div id="changePasswordSection" class="hidden px-4 pb-4 space-y-3">
                     <div>
                       <label class="block text-sm font-medium text-gray-700 mb-1">Current Password *</label>
                       <input type="password" id="profileCurrentPassword" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent" placeholder="Enter current password" />
@@ -791,6 +796,22 @@ export class ProfileModal {
     } catch (error) {
       console.error("[ProfileModal] Save error");
       this.showToast('Failed to update profile. Please try again.', 'error');
+    }
+  }
+
+  /**
+   * Toggle change password section visibility
+   */
+  togglePasswordSection() {
+    const section = document.getElementById('changePasswordSection');
+    const chevron = document.getElementById('passwordChevron');
+    if (section.classList.contains('hidden')) {
+      section.classList.remove('hidden');
+      chevron.style.transform = 'rotate(180deg)';
+    } else {
+      section.classList.add('hidden');
+      chevron.style.transform = 'rotate(0deg)';
+      this.clearPasswordFields();
     }
   }
 
