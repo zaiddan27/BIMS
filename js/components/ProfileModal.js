@@ -169,8 +169,18 @@ export class ProfileModal {
                     </div>
                   </div>
                 </div>
-                <!-- Change Password (Collapsible) -->
-                <div class="border border-gray-200 rounded-lg">
+                <!-- Google Account Notice - Shown only for Google users -->
+                <div id="googlePasswordNotice" class="hidden border border-blue-200 bg-blue-50 rounded-lg px-4 py-3 flex items-start gap-3">
+                  <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <div>
+                    <p class="text-sm font-semibold text-blue-800">Signed in with Google</p>
+                    <p class="text-xs text-blue-600 mt-0.5">Password management is handled by your Google account. To change your password, visit your <a href="https://myaccount.google.com/security" target="_blank" rel="noopener noreferrer" class="underline font-medium hover:text-blue-800">Google Account settings</a>.</p>
+                  </div>
+                </div>
+                <!-- Change Password (Collapsible) - Hidden for Google users -->
+                <div id="changePasswordContainer" class="border border-gray-200 rounded-lg">
                   <button type="button" onclick="window.profileModal.togglePasswordSection()" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition rounded-lg">
                     <span class="flex items-center gap-2 text-lg font-semibold text-gray-800">
                       <svg class="w-5 h-5 text-[#2f6e4e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -320,6 +330,17 @@ export class ProfileModal {
 
     // Load profile picture preview
     this.updateProfilePicturePreview();
+
+    // Hide change password for Google OAuth users, show info notice instead
+    const isGoogleUser = this.currentUser?.app_metadata?.provider === 'google';
+    const changePasswordContainer = document.getElementById('changePasswordContainer');
+    const googleNotice = document.getElementById('googlePasswordNotice');
+    if (changePasswordContainer) {
+      changePasswordContainer.style.display = isGoogleUser ? 'none' : '';
+    }
+    if (googleNotice) {
+      googleNotice.style.display = isGoogleUser ? 'flex' : 'none';
+    }
 
     // Always start in view mode
     this.isEditMode = false;

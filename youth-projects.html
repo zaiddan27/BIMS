@@ -1397,8 +1397,12 @@
             Completed: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
           };
 
+          const projImgUrl = project.imagePathURL || '';
+          const projHasImage = projImgUrl && projImgUrl.startsWith('https://');
           card.innerHTML = `
-          <div class="h-40 bg-gradient-to-br from-[#2f6e4e]/20 to-[#2f6e4e]/10"></div>
+          <div class="h-40 bg-gradient-to-br from-[#2f6e4e]/20 to-[#2f6e4e]/10 relative overflow-hidden">
+            ${projHasImage ? `<img src="${escapeHTML(projImgUrl)}" alt="${escapeHTML(project.title)}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'">` : ''}
+          </div>
 
           <div class="p-5 flex flex-col h-full">
             <h3 class="text-lg font-bold text-gray-800 mb-3 line-clamp-2 min-h-[56px]">${
