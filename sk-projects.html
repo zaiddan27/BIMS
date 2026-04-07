@@ -18,7 +18,7 @@
     <link href="css/toast.css" rel="stylesheet">
 
     <!-- CropperJS for banner image cropping -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" integrity="sha384-bIZwBJVRN3oUqJdMGFdPn4K7MJLwjJzwEHIw6amZiLA8ZSB+kDSl+qMFHzTqJY2" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" integrity="sha384-1arqhTHsGLPVJdhZo8SAycbI+y5k+G7khi5bTZ4BxHJIpCfvWoeSDgXEXXRxB/9G" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" integrity="sha384-P65gU1u4/dZpqRQ0AVqW+DHPwXmNAR84Qk31dC95hjk0WatF1GsVF1zRm/0uB+o0" crossorigin="anonymous" defer></script>
 
     <!-- jsPDF for PDF generation -->
@@ -927,12 +927,12 @@
               <input
                 id="projBanner"
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                 class="w-full"
                 onchange="openProjectCropperModal(event)"
               />
               <p class="text-xs text-gray-500 mt-1">
-                You can upload a banner image to display on the card. Image will be cropped to 16:9. (Max 5MB)
+                Accepted formats: JPG, JPEG, PNG, WebP. Image will be cropped to 16:9. (Max 5MB)
               </p>
               <div id="projBannerPreview" class="hidden mt-2">
                 <img id="projBannerPreviewImg" src="" alt="Banner preview" class="w-full h-32 object-cover rounded-lg border border-gray-200" />
@@ -1866,7 +1866,7 @@
           const { data: projectsData, error } = await supabaseClient
             .from('Pre_Project_Tbl')
             .select(`
-              preProjectID, title, category, status, approvalStatus, skID,
+              preProjectID, title, category, status, approvalStatus, approvalNotes, approvalDate, skID,
               startDateTime, endDateTime, location, description, budget,
               volunteers, beneficiaries, createdAt, projectHeads, imagePathURL,
               SK_Tbl (
@@ -2701,16 +2701,14 @@
           statusColors[project.status]
         }`;
 
+        const startDateDisplay = project.startDate ? new Date(project.startDate).toLocaleDateString() : 'TBD';
         const startDateTime = project.startTime
-          ? `${new Date(project.startDate).toLocaleDateString()} ${
-              project.startTime
-            }`
-          : new Date(project.startDate).toLocaleDateString();
+          ? `${startDateDisplay} ${project.startTime}`
+          : startDateDisplay;
+        const endDateDisplay = project.endDate ? new Date(project.endDate).toLocaleDateString() : 'TBD';
         const endDateTime = project.endTime
-          ? `${new Date(project.endDate).toLocaleDateString()} ${
-              project.endTime
-            }`
-          : new Date(project.endDate).toLocaleDateString();
+          ? `${endDateDisplay} ${project.endTime}`
+          : endDateDisplay;
         document.getElementById(
           "detailsDuration"
         ).textContent = `${startDateTime} - ${endDateTime}`;
@@ -3378,10 +3376,10 @@
         document.getElementById("projVolunteers").value = project.expectedVolunteers || 0;
         document.getElementById("projStartDate").value = project.startDate;
         document.getElementById("projStartTime").value =
-          project.startTime || "08:00";
+          project.startTime || "";
         document.getElementById("projEndDate").value = project.endDate;
         document.getElementById("projEndTime").value =
-          project.endTime || "17:00";
+          project.endTime || "";
         document.getElementById("projLocation").value = project.location;
         document.getElementById("projDesc").value = project.description;
         document.getElementById("projBeneficiaries").value = project.beneficiaries || "";
@@ -3436,7 +3434,13 @@
         .getElementById("createProjectBtn")
         .addEventListener("click", () => {
           editingProjectId = null;
-          selectedHeads = [];
+          // Auto-add creator as first project head
+          if (currentUserData) {
+            const creatorName = `${currentUserData.firstName} ${currentUserData.lastName}`.trim();
+            selectedHeads = creatorName ? [creatorName] : [];
+          } else {
+            selectedHeads = [];
+          }
           document.getElementById("projectModalTitle").textContent =
             "Create Project";
           document.getElementById("projTitle").value = "";
@@ -3445,7 +3449,9 @@
           document.getElementById("projBudget").value = "";
           document.getElementById("projVolunteers").value = "";
           document.getElementById("projStartDate").value = "";
+          document.getElementById("projStartTime").value = "";
           document.getElementById("projEndDate").value = "";
+          document.getElementById("projEndTime").value = "";
           document.getElementById("projLocation").value = "";
           document.getElementById("projDesc").value = "";
           document.getElementById("projBeneficiaries").value = "";
@@ -3837,10 +3843,11 @@
                 updateData.imagePathURL = bannerImageUrl;
               }
 
-              // If project was in REVISION status, resubmit for captain approval
+              // If project was in REVISION status, auto-approve after SK edits
               if (editingProject && editingProject.approvalStatus === 'REVISION') {
-                updateData.approvalStatus = 'PENDING';
-                updateData.submittedDate = new Date().toISOString();
+                updateData.approvalStatus = 'APPROVED';
+                updateData.approvalNotes = 'Auto-approved after revision.';
+                updateData.approvalDate = new Date().toISOString();
               }
 
               const { data, error } = await supabaseClient
@@ -3863,11 +3870,8 @@
               // Update budget breakdown items
               await updateBudgetBreakdownItems(editingProjectId);
 
-              const resubmitted = editingProject && editingProject.approvalStatus === 'REVISION';
-              if (resubmitted) {
-                await createCaptainNotification(editingProjectId, title);
-              }
-              showToast(resubmitted ? "Project resubmitted for Barangay Captain approval!" : "Project updated successfully");
+              const wasRevision = editingProject && editingProject.approvalStatus === 'REVISION';
+              showToast(wasRevision ? "Project revised and approved!" : "Project updated successfully");
               logAction('Updated project', { postProjectId: editingProjectId });
             } else {
               // Create new project
@@ -4119,7 +4123,7 @@
         const commentsEl = document.getElementById('decisionComments');
 
         // Check if project has approval status and notes from captain
-        if (project.approvalStatus && project.notes) {
+        if (project.approvalStatus && project.approvalStatus !== 'PENDING' && project.approvalNotes) {
           section.classList.remove('hidden');
 
           let iconText = '';
@@ -4128,24 +4132,24 @@
           let statusText = '';
           let dateText = '';
 
-          if (project.approvalStatus === 'approved') {
+          if (project.approvalStatus === 'APPROVED') {
             iconText = '✓';
             iconBg = 'bg-green-100 text-green-600';
             borderColor = 'border-green-500';
             statusText = 'Project Approved';
             dateText = project.approvalDate ? `Approved on ${project.approvalDate}` : 'Recently approved';
-          } else if (project.approvalStatus === 'rejected') {
+          } else if (project.approvalStatus === 'REJECTED') {
             iconText = '✗';
             iconBg = 'bg-red-100 text-red-600';
             borderColor = 'border-red-500';
             statusText = 'Project Rejected';
-            dateText = project.rejectionDate ? `Rejected on ${project.rejectionDate}` : 'Recently rejected';
-          } else if (project.approvalStatus === 'revision-requested') {
+            dateText = project.approvalDate ? `Rejected on ${project.approvalDate}` : 'Recently rejected';
+          } else if (project.approvalStatus === 'REVISION') {
             iconText = '✎';
             iconBg = 'bg-yellow-100 text-yellow-600';
             borderColor = 'border-yellow-500';
             statusText = 'Revision Requested';
-            dateText = project.revisionRequestDate ? `Requested on ${project.revisionRequestDate}` : 'Recently requested';
+            dateText = project.approvalDate ? `Requested on ${project.approvalDate}` : 'Recently requested';
           }
 
           icon.className = `w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold ${iconBg}`;
@@ -4153,7 +4157,7 @@
 
           statusEl.textContent = statusText;
           dateEl.textContent = dateText;
-          commentsEl.textContent = project.notes || 'No comments provided.';
+          commentsEl.textContent = project.approvalNotes || 'No comments provided.';
 
           content.className = `bg-gray-50 rounded-lg p-5 border-l-4 ${borderColor}`;
         } else {

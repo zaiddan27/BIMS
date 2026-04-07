@@ -1122,6 +1122,8 @@
                 heads: headsArray,
                 startDate: project.startDateTime ? new Date(project.startDateTime).toISOString().split('T')[0] : '',
                 endDate: project.endDateTime ? new Date(project.endDateTime).toISOString().split('T')[0] : '',
+                startTime: project.startDateTime ? new Date(project.startDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : '',
+                endTime: project.endDateTime ? new Date(project.endDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) : '',
                 location: project.location,
                 description: project.description,
                 budget: project.budget,
@@ -1498,11 +1500,10 @@
           statusColors[project.status]
         }`;
 
-        document.getElementById("detailsDuration").textContent = `${new Date(
-          project.startDate
-        ).toLocaleDateString()} - ${new Date(
-          project.endDate
-        ).toLocaleDateString()}`;
+        const startDateStr = project.startDate ? new Date(project.startDate).toLocaleDateString() : 'TBD';
+        const endDateStr = project.endDate ? new Date(project.endDate).toLocaleDateString() : 'TBD';
+        const timeStr = project.startTime && project.endTime ? ` (${project.startTime} - ${project.endTime})` : '';
+        document.getElementById("detailsDuration").textContent = `${startDateStr} - ${endDateStr}${timeStr}`;
         document.getElementById("detailsLocation").textContent =
           project.location;
         document.getElementById("detailsHeads").textContent =

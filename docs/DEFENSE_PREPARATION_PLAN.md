@@ -385,61 +385,197 @@ While the 4 devs focus on their module presentations (Apr 3-4), the QA team and 
 
 | Laptop | Person | What's open | Connection |
 |--------|--------|------------|------------|
-| **Laptop 1 (HDMI to TV)** | **Jerome (PM)** | Chrome: Superadmin tab. Firefox/Edge: Captain tab. | HDMI to TV — panelists watch this |
-| **Laptop 2** | **Elijah** | Chrome: SK Official (logged in). Incognito: for live signup. Firefox/Edge: Youth Volunteer (logged in). | Sits beside Jerome, swaps HDMI when needed |
+| **Laptop 1 (HDMI to TV)** | **Jerome (PM)** | Chrome: Superadmin. Firefox/Edge: Captain. Incognito: Login demo page. | HDMI to TV — panelists watch this |
+| **Laptop 2** | **Elijah** | Chrome: SK Official (logged in). Incognito: live signup. Firefox/Edge: Youth Volunteer (logged in). | Sits beside Jerome, shares screen via Google Meet when it's his turn |
 
-Jerome controls Superadmin + Captain. Elijah controls SK Official + Youth Volunteer + does the signup.
-Each member stands and **narrates their section** while Jerome or Elijah clicks.
+Jerome controls Superadmin + Captain + Login demo. Elijah controls SK Official + Youth Volunteer + does the live signup.
+Each assigned member stands and **narrates their section** while Jerome or Elijah clicks.
+To avoid swapping HDMI cables: Jerome hosts Google Meet on his laptop (HDMI to TV), Elijah joins and shares screen when it's his turn. Panelists see everything on the TV regardless of which laptop is active.
 
-### Demo Story (follows a real workflow — panelists see the full lifecycle)
+### Demo Flow — 15 Minutes, 5 Phases
 
-The demo tells one continuous story: a new user signs up, gets promoted, creates a project, it gets approved, a youth applies, and everything flows through the system.
+The demo walks through each portal **one at a time**: Public → Auth → SK Official → Captain → Youth → Superadmin. Each portal is shown completely before moving to the next.
 
-| Min | What happens | Laptop | Who narrates | What panelists see |
-|-----|-------------|--------|-------------|-------------------|
-| 0-1 | **Public homepage** — show landing page, featured projects, transparency section | L1 (Jerome) | **Santos** | index.html — the public face of BIMS |
-| 1-2.5 | **New user signs up** — fill out form, receive OTP, verify email, complete profile | L2 (Elijah - incognito) | **Elijah** | signup.html → verify-otp.html → complete-profile.html |
-| 2.5-3.5 | **Superadmin promotes user** — go to User Management, promote the new user to SK Official | L1 (Jerome) | **Jerome** | superadmin-user-management.html — role change in action |
-| 3.5-5 | **SK Official dashboard** — show what SK sees after login: announcements, calendar, sidebar | L2 (Elijah - SK account) | **Santos** | sk-dashboard.html — first look at the SK interface |
-| 5-6.5 | **SK creates announcement** — create, edit, show it appears on homepage | L2 (Elijah - SK) | **Santos** | sk-dashboard.html → index.html |
-| 6.5-8 | **SK creates project** — fill out project form, set budget, submit for Captain approval | L2 (Elijah - SK) | **Kyleen** | sk-projects.html — project creation flow |
-| 8-9 | **Captain approves project** — Captain logs in, sees pending project, approves it | L1 (Jerome - Captain tab) | **Andrea** | captain-dashboard.html — approval in action |
-| 9-10 | **SK uploads files** — upload a document, publish it, show file management | L2 (Elijah - SK) | **Sergio** | sk-files.html — file lifecycle |
-| 10-11 | **Youth Volunteer browses** — sees the approved project, views announcement, downloads file | L2 (Elijah - Youth tab) | **Kyleen** | youth-dashboard.html → youth-projects.html → youth-files.html |
-| 11-12 | **Youth applies to project** — submit application, send inquiry about the project | L2 (Elijah - Youth) | **Kyleen** | youth-projects.html — application + inquiry |
-| 12-13 | **SK accepts application** — go back to SK, approve the application, reply to inquiry | L2 (Elijah - SK) | **Kyleen** | sk-projects.html — the other side of the workflow |
-| 13-14 | **Superadmin dashboard** — show stats updated from all actions, user management, notification bell | L1 (Jerome) | **Jerome** | superadmin-dashboard.html — everything reflected |
-| 14-15 | **Activity logs** — show all actions that were just performed, audit trail with severity/category | L1 (Jerome) | **Sergio** | superadmin-activity-logs.html — proof everything is logged |
+> **Timing principle:** Project lifecycle (Kyleen) and Login security (Jerome) get the most time — these are what Prof. Estrella and Mr. Ollanda will scrutinize. Testimonies, Calendar, and Certificates are shown quickly (10-15s each) as supplementary features.
 
-### Laptop Swap Plan
+---
+
+#### Phase 1: Public + Authentication (0:00–3:00) — 3 min
+
+| # | Time | Dur | What happens | Laptop | Narrator | Pages shown |
+|---|------|-----|-------------|--------|----------|-------------|
+| 1 | 0:00–0:30 | 30s | **Homepage** — landing page, featured announcements, transparency section | L1 | **Pelias** | `index.html` |
+| 2 | 0:30–2:00 | **90s** | **Login** — show login form, explain PKCE flow, attempt wrong password to trigger lockout warning, explain idle timeout. **Security-heavy: take your time.** | L1 (incognito) | **Jerome** | `login.html` |
+| 3 | 2:00–3:00 | 60s | **Sign Up** — live signup with fresh email, receive OTP, verify, complete profile | L2 (incognito) | **Elijah** | `signup.html` → `verify-otp.html` → `complete-profile.html` |
+
+**Security notes for Mr. Ollanda (Phase 1):**
+| Feature | Security mechanism |
+|---------|-------------------|
+| Homepage | CSP `frame-ancestors 'none'` (anti-clickjacking), SRI hashes on all CDN scripts, `X-Content-Type-Options: nosniff` |
+| Login | **PKCE flow** (prevents auth code interception), **5-attempt/15min server-side lockout** via `check_login_allowed` RPC (not localStorage — tamper-proof), **30-min idle timeout** with DB session check, JWT 1hr expiry with auto-refresh |
+| Sign Up | Email OTP verification (not magic link — harder to phish), rate-limited password reset, CHECK constraints on profile fields, Google OAuth as alternative |
+
+---
+
+#### Phase 2: SK Official Portal (3:00–7:15) — 4 min 15s
+
+*Switch to Elijah's laptop — SK Official account pre-logged in.*
+
+| # | Time | Dur | What happens | Laptop | Narrator | Pages shown |
+|---|------|-----|-------------|--------|----------|-------------|
+| 4 | 3:00–3:40 | 40s | **Announcement** — create announcement, show it on dashboard | L2 (SK) | **Gavin** | `sk-dashboard.html` |
+| 5 | 3:40–4:20 | 40s | **SK Files** — upload document, publish it, show file management | L2 (SK) | **Juliana** | `sk-files.html` |
+| 6 | 4:20–6:00 | **100s** | **Project** — create project proposal, set budget line items, manage volunteers, submit for Captain approval. **Key demo moment — show full project creation + management.** | L2 (SK) | **Kyleen** | `sk-projects.html` |
+| 7 | 6:00–6:15 | 15s | **Calendar** — quick view: events and project deadlines on calendar | L2 (SK) | **Kyleen** | `sk-calendar.html` |
+| 8 | 6:15–6:30 | 15s | **Testimonies** — quick view: manage panel (approve/feature/reject) | L2 (SK) | **Gavin** | `sk-testimonies.html` |
+| 9 | 6:30–7:15 | 45s | **Archive** — archived projects (Kyleen narrates, 25s) + archived files (Juliana narrates, 20s) | L2 (SK) | **Kyleen + Juliana** | `sk-archive.html` |
+
+**Security notes for Mr. Ollanda (Phase 2):**
+| Feature | Security mechanism |
+|---------|-------------------|
+| Announcements | `escapeHTML()` sanitizes all dynamic content before rendering (XSS prevention), RLS: only `SK_OFFICIAL` role can INSERT/UPDATE/DELETE |
+| Files | Supabase Storage with **bucket-level RLS** (public vs private buckets), server-side file extension validation, file size limits, download activity logged |
+| Projects | RLS enforces per-role CRUD — Youth can't create projects, only SK can. FK constraints ensure data integrity. **Captain-only approval gate** enforced at DB level. Parameterized queries via Supabase SDK (SQL injection prevention) |
+| Calendar | Read-only display — data fetched through RLS-protected queries, no write access from calendar view |
+| Testimonies | RLS: SK can manage (approve/reject), Youth can only submit their own. `escapeHTML()` on all testimony content |
+| Archive | Soft-delete pattern (not permanent), 1-year shelf life policy, RLS restricts permanent delete to authorized roles only |
+
+---
+
+#### Phase 3: Captain Portal (7:15–8:25) — 1 min 10s
+
+*Switch to Jerome's laptop — Captain tab pre-logged in.*
+
+| # | Time | Dur | What happens | Laptop | Narrator | Pages shown |
+|---|------|-----|-------------|--------|----------|-------------|
+| 10 | 7:15–7:30 | 15s | **Announcement** — Captain's view of announcements | L1 (Captain) | **Gavin** | `captain-dashboard.html` |
+| 11 | 7:30–8:10 | 40s | **Project** — approve/reject the pending project, show approval flow | L1 (Captain) | **Kyleen** | `captain-dashboard.html` (projects tab) |
+| 12 | 8:10–8:25 | 15s | **Archive** — quick view: archived projects from Captain's perspective | L1 (Captain) | **Kyleen** | `captain-archive.html` |
+
+**Security notes for Mr. Ollanda (Phase 3):**
+| Feature | Security mechanism |
+|---------|-------------------|
+| Announcements | Role-based dashboard — session role verified from DB on every page load (not localStorage). If role changes mid-session, user is redirected. |
+| Project Approval | **Only CAPTAIN role can approve/reject** — enforced by RLS policy + `SECURITY DEFINER` function. DB triggers auto-notify SK Official of decision. Unique partial index ensures only 1 active Captain exists. |
+| Archive | Same RLS as SK archive, scoped to Captain's permissions |
+
+---
+
+#### Phase 4: Youth Volunteer Portal (8:25–10:50) — 2 min 25s
+
+*Switch to Elijah's laptop — Youth Volunteer tab pre-logged in.*
+
+| # | Time | Dur | What happens | Laptop | Narrator | Pages shown |
+|---|------|-----|-------------|--------|----------|-------------|
+| 13 | 8:25–8:40 | 15s | **Announcement** — Youth's view of announcements | L2 (Youth) | **Gavin** | `youth-dashboard.html` |
+| 14 | 8:40–9:05 | 25s | **Youth Files** — browse published files, download one | L2 (Youth) | **Juliana** | `youth-files.html` |
+| 15 | 9:05–10:25 | **80s** | **Project** — browse approved projects, submit application, send inquiry. **Key demo moment — show the Youth side of the project lifecycle.** | L2 (Youth) | **Kyleen** | `youth-projects.html` |
+| 16 | 10:25–10:35 | 10s | **Calendar** — quick view: events and project dates | L2 (Youth) | **Kyleen** | `youth-calendar.html` |
+| 17 | 10:35–10:50 | 15s | **Certificate** — quick view: show a pre-existing certificate, download | L2 (Youth) | **Kyleen** | `youth-certificates.html` |
+
+**Security notes for Mr. Ollanda (Phase 4):**
+| Feature | Security mechanism |
+|---------|-------------------|
+| Announcements | Read-only RLS — Youth has no write access. Notification data scoped to `userID` (can't see other users' notifications). |
+| Files | Only **published** files visible via RLS policy (unpublished/archived hidden). Download action logged via `logAction()`. |
+| Projects | RLS: Youth can only view **approved** projects, can only see **own** applications, can only edit **own** inquiries. Cannot apply twice to same project (DB unique constraint). |
+| Calendar | Read-only display, no direct data manipulation |
+| Certificate | Client-side PDF generation via jsPDF (no server storage of generated certs). Certificate data verified against `Evaluation_Tbl` records. |
+
+---
+
+#### Phase 5: Superadmin Portal (10:50–15:00) — 4 min 10s
+
+*Switch to Jerome's laptop — Superadmin account.*
+
+| # | Time | Dur | What happens | Laptop | Narrator | Pages shown |
+|---|------|-----|-------------|--------|----------|-------------|
+| 18 | 10:50–11:50 | 60s | **System Overview** — dashboard stats, charts, user counts, project metrics. Show everything updated from demo actions. | L1 (Superadmin) | **Jerome + Juliana** | `superadmin-dashboard.html` |
+| 19 | 11:50–12:50 | 60s | **User Management** — promote the signup from Phase 1 to SK Official, show role matrix, deactivation. Show unique Captain constraint. | L1 (Superadmin) | **Jerome + Juliana** | `superadmin-user-management.html` |
+| 20 | 12:50–14:20 | **90s** | **Activity Logs** — show ALL actions just performed during demo, filter by category (auth/audit/data_mutation), filter by severity, show audit trail for role change. **Key demo moment: proof that everything is logged.** | L1 (Superadmin) | **Jerome + Juliana** | `superadmin-activity-logs.html` |
+| 21 | 14:20–15:00 | 40s | **Wrap-up** — "As you saw, every action across all roles was captured in the audit trail." Transition to Q&A. | L1 | **Jerome** | — |
+
+**Security notes for Mr. Ollanda (Phase 5):**
+| Feature | Security mechanism |
+|---------|-------------------|
+| Dashboard | Superadmin-only RLS — no other role can access these views. Aggregated data (no PII exposed in stats). |
+| User Management | RBAC enforcement at DB level. **Unique partial index** ensures only 1 active Captain. Role changes trigger audit log entry (`category: 'audit'`). Deactivated users immediately kicked from active sessions via `session.js` check. |
+| Activity Logs | **56 `logAction()` calls across 19 pages** — fire-and-forget pattern (doesn't block UI). Severity levels: INFO/WARN/ERROR/CRITICAL. `Logs_Tbl` has **no DELETE policy** for authenticated users (tamper-proof). Auto-retention: general 90 days, audit 1 year (aligned with NIST SP 800-92 / PCI-DSS). Indexed by category (not string matching). |
+
+---
+
+### Time Budget Per Person
+
+| Member | Total time | Sections narrated | Priority features |
+|--------|-----------|-------------------|-------------------|
+| **Kyleen** | **~5 min** | SK Project (100s), SK Calendar (15s), SK Archive-projects (25s), Captain Project (40s), Captain Archive (15s), Youth Project (80s), Youth Calendar (10s), Youth Certificate (15s) | Project lifecycle is the **core feature** — gets most time across 3 portals |
+| **Jerome** | **~3 min 50s** | Login security (90s), SA Dashboard (shared 30s), SA User Mgmt (shared 30s), SA Activity Logs (shared 45s), Wrap-up (40s) | Login security emphasis for Mr. Ollanda + Superadmin overview |
+| **Juliana** | **~2 min 55s** | SK Files (40s), SK Archive-files (20s), Youth Files (25s), SA Dashboard (shared 30s), SA User Mgmt (shared 30s), SA Activity Logs (shared 45s) | File management + Superadmin co-narrator |
+| **Gavin** | **~1 min 25s** | SK Announcements (40s), SK Testimonies (15s), Captain Announcements (15s), Youth Announcements (15s) | Content management across all portals |
+| **Elijah** | **~1 min** | Sign Up + OTP (60s) — also operates L2 for all SK/Youth clicks | Auth flow |
+| **Pelias** | **~30s** | Homepage (30s) | Public-facing introduction |
+| **Ryan/JC/Brian** | — | Don't narrate during demo — ready for Q&A | QA answers testing questions from panelists |
+
+### Laptop Swap Sequence (by phase)
 ```
-L1 (Jerome/TV) → L2 (Elijah) → L1 → L2 → L2 → L2 → L1 → L2 → L2 → L2 → L2 → L1 → L1
+Phase 1:  L1 (Jerome — homepage + login) → L2 (Elijah — signup)
+Phase 2:  L2 (Elijah — SK Official)  — stays on L2 entire phase
+Phase 3:  L1 (Jerome — Captain tab)
+Phase 4:  L2 (Elijah — Youth tab)
+Phase 5:  L1 (Jerome — Superadmin)
 ```
-Only 4 swaps between laptops. To avoid swapping HDMI cables, use Google Meet: Jerome hosts on his laptop (HDMI to TV), Elijah joins and shares screen when it's his turn. Panelists see everything on the TV regardless of which laptop is active.
+**Only 4 screen swaps total** (L1→L2→L1→L2→L1). Google Meet screen share eliminates HDMI cable swapping.
 
-### Who Narrates What (matches their PPT section — first time presenting each area)
+### Project Lifecycle Thread (Kyleen's arc across portals)
 
-| Member | Narrates during demo | Their PPT section | Why it connects |
-|--------|---------------------|-------------------|----------------|
-| **Santos** | Homepage + SK dashboard + announcements | Use Case Diagrams | He knows content management + system overview |
-| **Elijah** | Signup + login (clicks everything on L2) | Swimlane Diagrams | He studied auth — he explains the flow |
-| **Kyleen** | Project creation + Youth applying + SK accepting | Class Diagram | She studied projects — she explains the lifecycle |
-| **Andrea** | Captain approval (1 min) | Project Intro + User Accounts | She explains roles — Captain is the simplest to narrate |
-| **Sergio** | File management + Activity logs | ER Diagram + Requirements | He studied files/logs — he explains storage + logging |
-| **Jerome** | Superadmin promote + dashboard + final logs | Purpose & Scope | He knows the whole system — opens and closes the demo |
-| **Ryan/JC/Brian** | Don't narrate — ready for Q&A | Test Methodology + Test Cases | They answer testing questions from panelists |
+Even though each portal is demoed separately, the project lifecycle connects across phases:
+
+```
+Phase 2 (4:20)  SK creates project + sets budget + submits for approval
+    ↓
+Phase 3 (7:30)  Captain approves the project
+    ↓
+Phase 4 (9:05)  Youth browses project, applies, sends inquiry
+```
+
+> **Tip for Kyleen:** When narrating Captain approval (Phase 3), say *"This is the project we just created."* When narrating Youth (Phase 4), say *"This is the same project, now from the Youth's perspective."* This connects the dots for panelists across portals.
+
+### Security Summary for Mr. Ollanda (quick reference)
+
+During Q&A, the team should be ready to map demo features to these security layers:
+
+| Layer | What it protects | Where shown in demo |
+|-------|-----------------|-------------------|
+| **CSP Headers** | XSS, clickjacking, script injection | All 22 pages (mentioned in Phase 1) |
+| **PKCE Auth Flow** | Authorization code interception | Login (Phase 1) |
+| **Server-side Login Lockout** | Brute force attacks | Login — 5 attempts/15min (Phase 1) |
+| **Idle Timeout (30 min)** | Unattended sessions | Login (Phase 1) |
+| **Row Level Security (50+ policies)** | Unauthorized data access | Every phase — each role sees only their data |
+| **`escapeHTML()` Sanitization** | XSS in user content | Announcements, testimonies, inquiries |
+| **Parameterized Queries** | SQL injection | All Supabase SDK calls |
+| **Storage Bucket RLS** | Unauthorized file access | SK Files (Phase 2), Youth Files (Phase 4) |
+| **Activity Logging (56 points)** | Audit trail, accountability | Activity Logs (Phase 5) |
+| **No DELETE on Logs_Tbl** | Log tampering | Activity Logs (Phase 5) |
+| **Auto-retention (90d/1yr)** | Compliance (NIST/PCI-DSS) | Activity Logs (Phase 5) |
+| **Unique Captain Constraint** | Privilege escalation | User Management (Phase 5) |
+| **Triple-layer Access Control** | Unauthorized page access | All pages: frontend guard + session role check + RLS |
 
 ### Demo Prep (do this April 6)
 - [ ] Create test accounts: Superadmin (pre-existing), Captain (pre-existing), 1 SK Official (pre-logged in), 1 Youth Volunteer (pre-logged in)
-- [ ] Pre-populate: at least 2 existing projects (1 approved, 1 completed), 3 announcements, 5 files — so the system doesn't look empty
+- [ ] Pre-populate: at least 2 existing projects (1 approved, 1 completed), 3 announcements, 5 files, 2 testimonies (1 approved, 1 pending) — so the system doesn't look empty
+- [ ] Pre-populate: 1 completed project with evaluation so Youth Certificate page has data to show
 - [ ] L2 incognito window ready for live signup (use a fresh email)
+- [ ] L1 incognito window ready for login security demo (wrong password attempts)
 - [ ] Both laptops: browser zoom 80-90%, disable notifications/popups
-- [ ] Test HDMI to TV (arrive 1 hr early)
+- [ ] Test HDMI to TV + Google Meet screen share (arrive 1 hr early)
 - [ ] Mobile hotspot ready as backup internet
+- [ ] Prepare a "wrong password" to type during login demo (to trigger lockout warning visually)
+
 ### If Demo Fails
 - Stay calm. Explain the issue briefly, refresh and retry.
 - If internet is down, switch to mobile hotspot.
 - If a specific feature breaks, skip it and move to the next step — address it during Q&A if asked.
+- **If running over 15 min:** Cut Youth Calendar, Youth Certificate, and Captain Archive first (saves ~40s). Never cut SK Projects, Activity Logs, or Login security.
 
 ---
 
