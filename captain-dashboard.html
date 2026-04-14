@@ -27,6 +27,7 @@
     <script src="js/utils/toast.js"></script>
     <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
+    <script src="js/utils/report-export.js"></script>
 
     <style>
       * {
@@ -209,6 +210,45 @@
 
                 <!-- Project Approvals Section -->
                 <div id="approvalsSection" class="hidden">
+                <!-- Export Report Toolbar -->
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">Approvals Overview</h2>
+                        <p class="text-xs text-gray-500">Download a snapshot of project approval metrics.</p>
+                    </div>
+                    <div class="relative" id="captainExportWrap">
+                        <button
+                            type="button"
+                            id="captainExportBtn"
+                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                            aria-haspopup="menu"
+                            aria-expanded="false"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M4 6h16M6 20h12a2 2 0 002-2v-8H4v8a2 2 0 002 2z"></path>
+                            </svg>
+                            Export Report
+                            <svg class="w-3 h-3 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div
+                            id="captainExportMenu"
+                            role="menu"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20 overflow-hidden"
+                        >
+                            <button type="button" data-format="csv" class="captain-export-format w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                <span class="font-semibold">CSV</span>
+                                <span class="text-xs text-gray-400">.csv</span>
+                            </button>
+                            <button type="button" data-format="xls" class="captain-export-format w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                <span class="font-semibold">Spreadsheet</span>
+                                <span class="text-xs text-gray-400">.xls</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Stats Overview -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
                     <!-- Pending Approval Card -->
@@ -603,9 +643,13 @@
                     </h3>
 
                     <div class="mb-4 sm:mb-5">
-                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Comments/Notes</label>
+                        <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
+                            Comments / Reason
+                            <span class="text-red-600 font-normal">(required when rejecting or requesting revision)</span>
+                        </label>
                         <textarea id="approvalNotes" rows="3" class="sm:rows-4 w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-[#3d8b64] transition"
-                            placeholder="Add any comments, requirements, or feedback..."></textarea>
+                            placeholder="For rejection: state the specific reason (e.g., incomplete budget, missing attachments, conflicts with barangay policy). For revision: list the changes needed. For approval: optional notes."></textarea>
+                        <p class="text-xs text-gray-500 mt-1">Rejection reasons are shown to the SK Official and stored in the project record.</p>
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
@@ -1190,9 +1234,96 @@
 
         // Initialize page on load
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializePage);
+            document.addEventListener('DOMContentLoaded', () => { initializePage(); initializeCaptainExport(); });
         } else {
             initializePage();
+            initializeCaptainExport();
+        }
+
+        // SE2 revision #7 — Export approvals overview as CSV / spreadsheet.
+        function initializeCaptainExport() {
+            const btn = document.getElementById('captainExportBtn');
+            const menu = document.getElementById('captainExportMenu');
+            if (!btn || !menu) return;
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = !menu.classList.contains('hidden');
+                menu.classList.toggle('hidden');
+                btn.setAttribute('aria-expanded', String(!isOpen));
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!menu.contains(e.target) && e.target !== btn) {
+                    menu.classList.add('hidden');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            menu.querySelectorAll('.captain-export-format').forEach((item) => {
+                item.addEventListener('click', async (e) => {
+                    const format = e.currentTarget.getAttribute('data-format') || 'csv';
+                    menu.classList.add('hidden');
+                    btn.setAttribute('aria-expanded', 'false');
+                    await runCaptainExport(format);
+                });
+            });
+        }
+
+        async function runCaptainExport(format) {
+            try {
+                const readText = (id, def = '0') => {
+                    const el = document.getElementById(id);
+                    return el ? (el.textContent || def).trim() : def;
+                };
+
+                const [pending, approved, rejected, revision, ongoing, completed] = await Promise.all([
+                    supabaseClient.from('Pre_Project_Tbl').select('*', { count: 'exact', head: true }).eq('approvalStatus', 'PENDING'),
+                    supabaseClient.from('Pre_Project_Tbl').select('*', { count: 'exact', head: true }).eq('approvalStatus', 'APPROVED'),
+                    supabaseClient.from('Pre_Project_Tbl').select('*', { count: 'exact', head: true }).eq('approvalStatus', 'REJECTED'),
+                    supabaseClient.from('Pre_Project_Tbl').select('*', { count: 'exact', head: true }).eq('approvalStatus', 'REVISION'),
+                    supabaseClient.from('Pre_Project_Tbl').select('*', { count: 'exact', head: true }).eq('approvalStatus', 'APPROVED').neq('status', 'COMPLETED'),
+                    supabaseClient.from('Pre_Project_Tbl').select('*', { count: 'exact', head: true }).eq('status', 'COMPLETED'),
+                ]);
+
+                const openCount = ongoing.count ?? 0;
+
+                const payload = {
+                    'Approvals Summary': [
+                        { label: 'Pending Approval', value: pending.count ?? 0 },
+                        { label: 'Approved', value: approved.count ?? 0 },
+                        { label: 'Rejected', value: rejected.count ?? 0 },
+                        { label: 'In Revision', value: revision.count ?? 0 },
+                        { label: 'Total Budget (displayed)', value: readText('totalBudget') },
+                    ],
+                    'Open Project Cap (SE2 rule)': [
+                        { label: 'Open Projects (approved, not completed)', value: openCount },
+                        { label: 'Completed Projects', value: completed.count ?? 0 },
+                        { label: 'Maximum Allowed Open', value: MAX_OPEN_PROJECTS },
+                        { label: 'Slots Remaining', value: Math.max(0, MAX_OPEN_PROJECTS - openCount) },
+                    ],
+                };
+
+                let generatedBy = 'Barangay Captain';
+                try {
+                    const sess = JSON.parse(localStorage.getItem('bims_session') || '{}');
+                    if (sess && sess.fullName) generatedBy = sess.fullName + ' (Barangay Captain)';
+                } catch (_) { /* ignore */ }
+
+                ReportExport.download('captain-approvals-report', payload, {
+                    format,
+                    title: 'BIMS — Barangay Captain Approvals Report',
+                    meta: { generatedBy, source: 'captain-dashboard.html' },
+                });
+
+                showToast('Report downloaded successfully', 'success');
+                if (typeof logAction === 'function') {
+                    logAction('Exported approvals report', { format });
+                }
+            } catch (err) {
+                console.error('Captain export failed', err);
+                showToast('Failed to export report. Please try again.', 'error');
+            }
         }
 
         // Profile Modal Functions
@@ -1829,8 +1960,35 @@
             document.getElementById('approvalNotes').value = currentProject.notes || '';
         }
 
+        // Maximum number of simultaneously open (approved, not completed) projects.
+        // Set during SE2 defense revision to prevent overlapping approvals.
+        const MAX_OPEN_PROJECTS = 3;
+
         async function approveProject() {
             const notes = document.getElementById('approvalNotes').value;
+
+            // Enforce open-project cap (SE2 revision item #11)
+            try {
+                const { data: openProjects, error: capError } = await supabaseClient
+                    .from('Pre_Project_Tbl')
+                    .select('preProjectID, projectName, status')
+                    .eq('approvalStatus', 'APPROVED')
+                    .neq('status', 'COMPLETED');
+
+                if (capError) throw capError;
+
+                if (openProjects && openProjects.length >= MAX_OPEN_PROJECTS) {
+                    showToast(
+                        `Cannot approve: ${openProjects.length} projects are still open. Complete at least one before approving a new project (limit: ${MAX_OPEN_PROJECTS}).`,
+                        'warning'
+                    );
+                    return;
+                }
+            } catch (e) {
+                console.error('Open-project cap check failed', e);
+                showToast('Unable to verify open-project count. Please try again.', 'error');
+                return;
+            }
 
             showConfirm(
                 'Approve Project',
@@ -1874,15 +2032,23 @@
 
         async function rejectProject() {
             const notes = document.getElementById('approvalNotes').value;
+            const trimmed = notes.trim();
 
-            if (!notes.trim()) {
+            // SE2 revision #8 — Rejection reason must be specific (not a single word).
+            if (!trimmed) {
                 showToast('Please provide a reason for rejection in the comments field.', 'warning');
+                document.getElementById('approvalNotes').focus();
+                return;
+            }
+            if (trimmed.length < 10) {
+                showToast('Rejection reason must be at least 10 characters. Please explain the specific issue.', 'warning');
+                document.getElementById('approvalNotes').focus();
                 return;
             }
 
             showConfirm(
                 'Reject Project',
-                `Are you sure you want to REJECT "${currentProject.name}"?`,
+                `Are you sure you want to REJECT "${currentProject.name}"?\n\nReason: "${trimmed}"`,
                 async () => {
                     try {
                         // Update project in Supabase
@@ -1891,7 +2057,7 @@
                             .from('Pre_Project_Tbl')
                             .update({
                                 approvalStatus: 'REJECTED',
-                                approvalNotes: notes,
+                                approvalNotes: trimmed,
                                 approvalDate: new Date().toISOString()
                             })
                             .eq('preProjectID', projectId);
@@ -1921,15 +2087,22 @@
 
         async function requestRevision() {
             const notes = document.getElementById('approvalNotes').value;
+            const trimmed = notes.trim();
 
-            if (!notes.trim()) {
+            if (!trimmed) {
                 showToast('Please specify what revisions are needed in the comments field.', 'warning');
+                document.getElementById('approvalNotes').focus();
+                return;
+            }
+            if (trimmed.length < 10) {
+                showToast('Revision notes must be at least 10 characters. Please explain the specific changes required.', 'warning');
+                document.getElementById('approvalNotes').focus();
                 return;
             }
 
             showConfirm(
                 'Request Revision',
-                `Send revision request for "${currentProject.name}"?`,
+                `Send revision request for "${currentProject.name}"?\n\nChanges: "${trimmed}"`,
                 async () => {
                     try {
                         // Update project in Supabase
@@ -1938,7 +2111,7 @@
                             .from('Pre_Project_Tbl')
                             .update({
                                 approvalStatus: 'REVISION',
-                                approvalNotes: notes,
+                                approvalNotes: trimmed,
                                 approvalDate: new Date().toISOString()
                             })
                             .eq('preProjectID', projectId);

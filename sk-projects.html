@@ -3843,8 +3843,31 @@
                 updateData.imagePathURL = bannerImageUrl;
               }
 
-              // If project was in REVISION status, auto-approve after SK edits
+              // If project was in REVISION status, auto-approve after SK edits —
+              // but enforce open-project cap (SE2 revision item #11, max 3 open)
               if (editingProject && editingProject.approvalStatus === 'REVISION') {
+                const { data: openProjects, error: capError } = await supabaseClient
+                  .from('Pre_Project_Tbl')
+                  .select('preProjectID')
+                  .eq('approvalStatus', 'APPROVED')
+                  .neq('status', 'COMPLETED');
+
+                if (capError) {
+                  console.error('Open-project cap check failed', capError);
+                  showToast('Unable to verify open-project count. Please try again.', 'error');
+                  reenableBtn();
+                  return;
+                }
+
+                if (openProjects && openProjects.length >= 3) {
+                  showToast(
+                    `Cannot auto-approve: ${openProjects.length} projects are already open. Complete one before finalizing this revision (limit: 3).`,
+                    'warning'
+                  );
+                  reenableBtn();
+                  return;
+                }
+
                 updateData.approvalStatus = 'APPROVED';
                 updateData.approvalNotes = 'Auto-approved after revision.';
                 updateData.approvalDate = new Date().toISOString();

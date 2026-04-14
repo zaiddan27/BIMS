@@ -86,6 +86,7 @@
     <script src="js/utils/toast.js"></script>
     <script src="js/utils/logger.js"></script>
     <script src="js/utils/focus-trap.js"></script>
+    <script src="js/utils/report-export.js"></script>
 </head>
 <body class="bg-gray-50">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-white focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-[#2f6e4e] focus:font-medium">Skip to content</a>
@@ -154,6 +155,45 @@
                         <div id="systemStatus" class="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
                             <div id="statusDot" class="w-3 h-3 rounded-full bg-gray-400 animate-pulse"></div>
                             <span id="statusText" class="text-sm font-medium text-gray-500">Checking...</span>
+                        </div>
+                    </div>
+
+                    <!-- Export Report Toolbar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-800">System Overview</h2>
+                            <p class="text-xs text-gray-500">Download a full snapshot of system statistics.</p>
+                        </div>
+                        <div class="relative" id="superAdminExportWrap">
+                            <button
+                                type="button"
+                                id="superAdminExportBtn"
+                                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-br from-[#2f6e4e] to-[#3d8b64] rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                                aria-haspopup="menu"
+                                aria-expanded="false"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M4 6h16M6 20h12a2 2 0 002-2v-8H4v8a2 2 0 002 2z"></path>
+                                </svg>
+                                Export Report
+                                <svg class="w-3 h-3 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div
+                                id="superAdminExportMenu"
+                                role="menu"
+                                class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20 overflow-hidden"
+                            >
+                                <button type="button" data-format="csv" class="sa-export-format w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                    <span class="font-semibold">CSV</span>
+                                    <span class="text-xs text-gray-400">.csv</span>
+                                </button>
+                                <button type="button" data-format="xls" class="sa-export-format w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                    <span class="font-semibold">Spreadsheet</span>
+                                    <span class="text-xs text-gray-400">.xls</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -764,9 +804,97 @@
 
             setCurrentDate();
             await loadDashboard();
-
-
+            initializeSuperAdminExport();
         });
+
+        // SE2 revision #7 — Export system overview as CSV / spreadsheet.
+        function initializeSuperAdminExport() {
+            const btn = document.getElementById('superAdminExportBtn');
+            const menu = document.getElementById('superAdminExportMenu');
+            if (!btn || !menu) return;
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = !menu.classList.contains('hidden');
+                menu.classList.toggle('hidden');
+                btn.setAttribute('aria-expanded', String(!isOpen));
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!menu.contains(e.target) && e.target !== btn) {
+                    menu.classList.add('hidden');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            menu.querySelectorAll('.sa-export-format').forEach((item) => {
+                item.addEventListener('click', (e) => {
+                    const format = e.currentTarget.getAttribute('data-format') || 'csv';
+                    menu.classList.add('hidden');
+                    btn.setAttribute('aria-expanded', 'false');
+                    runSuperAdminExport(format);
+                });
+            });
+        }
+
+        function runSuperAdminExport(format) {
+            try {
+                const readCount = (id) => {
+                    const el = document.getElementById(id);
+                    if (!el) return 0;
+                    const n = parseInt((el.textContent || '0').replace(/[^\d-]/g, ''), 10);
+                    return isNaN(n) ? 0 : n;
+                };
+
+                // Collect Records Distribution entries rendered on the page.
+                const distributionEntries = [];
+                const distEl = document.getElementById('usersByRole');
+                if (distEl) {
+                    distEl.querySelectorAll('[data-role-label]').forEach((row) => {
+                        distributionEntries.push({
+                            label: row.getAttribute('data-role-label'),
+                            value: row.getAttribute('data-role-count') || row.textContent.trim(),
+                        });
+                    });
+                }
+
+                const payload = {
+                    'User Accounts': [
+                        { label: 'Total Users', value: readCount('statsUsers') },
+                        { label: 'Active Users', value: readCount('statsActiveUsers') },
+                        { label: 'Pending Accounts', value: readCount('statsPendingUsers') },
+                        { label: 'Deactivated Accounts', value: readCount('statsDeactivatedUsers') },
+                    ],
+                    'Activity': [
+                        { label: 'Total Projects', value: readCount('statsProjects') },
+                        { label: 'Applications', value: readCount('statsApplications') },
+                        { label: "Today's Activity", value: readCount('statsTodayLogs') },
+                        { label: 'Total Logs', value: readCount('statsLogs') },
+                    ],
+                };
+
+                if (distributionEntries.length) {
+                    payload['Records Distribution'] = distributionEntries;
+                }
+
+                let generatedBy = 'System Administrator';
+                try {
+                    const sess = JSON.parse(localStorage.getItem('bims_session') || '{}');
+                    if (sess && sess.fullName) generatedBy = sess.fullName + ' (System Administrator)';
+                } catch (_) { /* ignore */ }
+
+                ReportExport.download('superadmin-system-report', payload, {
+                    format,
+                    title: 'BIMS — System Administrator Overview Report',
+                    meta: { generatedBy, source: 'superadmin-dashboard.html' },
+                });
+
+                showToast('Report downloaded successfully', 'success');
+            } catch (err) {
+                console.error('Superadmin export failed', err);
+                showToast('Failed to export report. Please try again.', 'error');
+            }
+        }
     </script>
 </body>
 </html>
