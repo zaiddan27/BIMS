@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; form-action 'self'; base-uri 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com; connect-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="description" content="SK Project Monitoring - Track and manage barangay projects">
@@ -16,10 +16,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/responsive.css" />
     <link href="css/toast.css" rel="stylesheet">
-
-    <!-- CropperJS for banner image cropping -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" integrity="sha384-1arqhTHsGLPVJdhZo8SAycbI+y5k+G7khi5bTZ4BxHJIpCfvWoeSDgXEXXRxB/9G" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" integrity="sha384-P65gU1u4/dZpqRQ0AVqW+DHPwXmNAR84Qk31dC95hjk0WatF1GsVF1zRm/0uB+o0" crossorigin="anonymous" defer></script>
 
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous" defer></script>
@@ -927,17 +923,12 @@
               <input
                 id="projBanner"
                 type="file"
-                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                accept="image/jpeg,image/png,image/webp"
                 class="w-full"
-                onchange="openProjectCropperModal(event)"
               />
               <p class="text-xs text-gray-500 mt-1">
-                Accepted formats: JPG, JPEG, PNG, WebP. Image will be cropped to 16:9. (Max 5MB)
+                You can upload a banner image to display on the card. (Max 5MB)
               </p>
-              <div id="projBannerPreview" class="hidden mt-2">
-                <img id="projBannerPreviewImg" src="" alt="Banner preview" class="w-full h-32 object-cover rounded-lg border border-gray-200" />
-                <p class="text-xs text-green-600 font-medium mt-1">Image cropped successfully</p>
-              </div>
             </div>
 
             <div>
@@ -1106,11 +1097,6 @@
                   <label class="text-xs text-gray-600">Preferred Role</label>
                   <p id="appRole" class="font-medium"></p>
                 </div>
-                <div>
-                  <label class="text-xs text-gray-600">Assigned Role <span class="text-gray-400">(editable by SK)</span></label>
-                  <input id="appAssignedRole" type="text" placeholder="Enter role to assign (defaults to preferred role)"
-                    class="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#2f6e4e] focus:border-[#2f6e4e] outline-none" />
-                </div>
                 <div id="appParentalConsentSection" class="hidden">
                   <label class="text-xs text-gray-600"
                     >Parental Consent (Minor Applicant)</label
@@ -1165,7 +1151,32 @@
                 </div>
               </div>
 
-              <div class="flex gap-2">
+              <!-- Notes Textarea (shown when Reject or Pending is clicked) -->
+              <div id="appStatusNotesWrapper" class="mt-4 hidden">
+                <label for="appStatusNotes" class="block text-sm font-semibold text-gray-700 mb-1">
+                  Notes <span class="text-red-500">*</span>
+                  <span id="appStatusNotesLabel" class="font-normal text-gray-500"></span>
+                </label>
+                <textarea
+                  id="appStatusNotes"
+                  rows="3"
+                  placeholder="Provide a reason or notes..."
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3d8b64] focus:border-transparent resize-none text-sm"
+                ></textarea>
+                <p id="appStatusNotesError" class="hidden text-xs text-red-500 mt-1">Notes are required for this action.</p>
+                <div class="flex gap-2 mt-2">
+                  <button id="appStatusNotesConfirmBtn" onclick="updateStatus(window._pendingAppStatus)"
+                    class="px-4 py-2 text-sm font-medium text-white rounded-lg transition">
+                    Confirm
+                  </button>
+                  <button onclick="cancelAppStatusNotes()"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex gap-2 mt-3">
                 <button
                   onclick="updateStatus('approved')"
                   class="px-4 py-2 bg-[#2f6e4e] text-white rounded-lg hover:bg-[#2f6e4e]"
@@ -1173,13 +1184,13 @@
                   Approve
                 </button>
                 <button
-                  onclick="updateStatus('rejected')"
+                  onclick="showAppStatusNotes('rejected')"
                   class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                 >
                   Reject
                 </button>
                 <button
-                  onclick="updateStatus('pending')"
+                  onclick="showAppStatusNotes('pending')"
                   class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
                 >
                   Pending
@@ -1716,7 +1727,7 @@
           currentUser = sessionResult.user;
           currentUserData = sessionResult.userData;
 
-          // Get SK data for the current user
+          // Get SK data for the current user (skID and position)
           await loadCurrentUserSKData();
 
           // Update header with user info
@@ -1728,24 +1739,16 @@
           // Load notifications for badge count
           await notificationModal.loadNotifications();
 
-          // Load projects from Supabase
+          // Load all projects from Supabase
           await loadProjects();
 
           // Load SK Officials list
           await loadSKOfficials();
 
-          // Subscribe to realtime application changes (new applicants, status changes)
-          supabaseClient
-            .channel('application-changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'Application_Tbl' }, async () => {
-              await loadProjects();
-            })
-            .subscribe();
-
-          // Update current date
+          // Update current date in the header
           updateCurrentDate();
 
-          // Handle URL parameters (e.g., from captain approval)
+          // Handle URL parameters (e.g., from captain approval) --> use to load project modal if loaded from the notifications
           handleURLParameters();
 
         } catch (error) {
@@ -1766,7 +1769,7 @@
                 lastName
               )
             `);
-
+          //if there is no error and there is data. get the skID and match it with the userID in the User_Tbl to get the firstName and lastName of the SK officials. then return an array of their full names. If there is unknown/unmatch sk, drop.
           if (!error && data) {
             skOfficials = data.map(sk => {
               const user = sk.User_Tbl;
@@ -1774,10 +1777,11 @@
             }).filter(name => name !== 'Unknown');
           }
         } catch (err) {
-          // non-critical - SK officials list unavailable
+          // non-critical - SK officials list unavailable (skipped this function)
         }
       }
 
+      //fetch data from the SK_tbl. get the skID, userID, and position that is equivalent to the login user. And only give me one row of data and not an array. else error.
       async function loadCurrentUserSKData() {
         try {
           const { data, error } = await supabaseClient
@@ -1794,6 +1798,7 @@
         }
       }
 
+      //update header
       function updateHeaderUserInfo(sessionResult) {
         const nameEl = document.querySelector('header .text-sm.font-medium');
         const roleEl = document.querySelector('header .text-xs.text-gray-500');
@@ -1859,16 +1864,16 @@
       // PROJECT LOADING FROM SUPABASE
       // =========================================
       async function loadProjects() {
-        showLoadingSkeleton(true);
+        showLoadingSkeleton(true); //gray boxes while loading
 
         try {
           // Query Pre_Project_Tbl for all projects (SK Officials can see all)
           const { data: projectsData, error } = await supabaseClient
             .from('Pre_Project_Tbl')
             .select(`
-              preProjectID, title, category, status, approvalStatus, approvalNotes, approvalDate, skID,
+              preProjectID, title, category, status, approvalStatus, skID,
               startDateTime, endDateTime, location, description, budget,
-              volunteers, beneficiaries, createdAt, projectHeads, imagePathURL,
+              volunteers, beneficiaries, createdAt,
               SK_Tbl (
                 User_Tbl (
                   firstName,
@@ -1880,7 +1885,6 @@
                 preProjectID,
                 userID,
                 preferredRole,
-                assignedRole,
                 parentConsentFile,
                 applicationStatus,
                 attended,
@@ -1925,27 +1929,32 @@
                 cost
               )
             `)
+            //only get the projects that have these status and must not be equal to cancelled. And arrange this project by the date they are created, the latest one will be on top. (for SK Officials)
             .in('approvalStatus', ['APPROVED', 'PENDING', 'REVISION'])
             .neq('status', 'CANCELLED')
             .order('createdAt', { ascending: false });
-
+          //if there are errors show the message that the projects failed to load.
           if (error) {
-            console.error('Load projects error');
             showToast('Failed to load projects. Please try again.', 'error');
             projects = [];
-          } else {
+          } 
+          //if there is no error all the data fetch must be placed in the structure of the frontend.
+          else {
             // Transform data to match our frontend structure
+            //if projectsData is null use an empty array so that it won't crash. ".map" is used to set the data into the frontend design.
             projects = (projectsData || []).map(project => {
               // Transform applications from embedded data
+              //for each application get the linked user and if there is none use undefine so that it won't crash.
               const applications = (project.Application_Tbl || []).map(app => {
                 const user = app.User_Tbl || {};
+                //calculate age from birthday if available, else set to null. if there is a birthday, convert it to a date object and calculate
                 const birthday = user.birthday ? new Date(user.birthday) : null;
                 const age = birthday ? Math.floor((new Date() - birthday) / (365.25 * 24 * 60 * 60 * 1000)) : null;
 
-                // Get evaluation data if volunteer submitted a survey
+                // Get evaluation data if volunteer submitted a survey(the first one)
                 const eval_ = (app.Evaluation_Tbl || [])[0] || null;
                 const satisfactionScore = eval_
-                  ? parseFloat(((eval_.q1 + eval_.q2 + eval_.q3 + eval_.q4 + eval_.q5) / 5).toFixed(1))
+                  ? parseFloat(((eval_.q1 + eval_.q2 + eval_.q3 + eval_.q4 + eval_.q5) / 5).toFixed(1))  //get the average
                   : null;
 
                 return {
@@ -1961,7 +1970,6 @@
                   email: user.email || '',
                   address: user.address || '',
                   preferredRole: app.preferredRole,
-                  assignedRole: app.assignedRole || null,
                   parentalConsent: app.parentConsentFile,
                   status: (app.applicationStatus || 'pending').toLowerCase(),
                   attended: app.attended || false,
@@ -1977,10 +1985,11 @@
               // Transform inquiries from embedded data
               const inquiries = (project.Inquiry_Tbl || []).map(inq => ({
                 id: inq.inquiryID,
-                from: inq.User_Tbl ? `${inq.User_Tbl.firstName} ${inq.User_Tbl.lastName}`.trim() : 'Anonymous',
+                from: inq.User_Tbl ? `${inq.User_Tbl.firstName} ${inq.User_Tbl.lastName}`.trim() : 'Anonymous', // who sent the inquiry
                 message: inq.message,
-                time: formatTimeAgo(inq.createdAt),
+                time: formatTimeAgo(inq.createdAt),// format the time to "x time ago"
                 isReplied: inq.isReplied,
+                //map the reply to the inquiry
                 replies: (inq.Reply_Tbl || []).map(reply => ({
                   id: reply.replyID,
                   text: reply.message,
@@ -1996,17 +2005,10 @@
                 cost: item.cost
               }));
 
-              // Get project heads - from projectHeads JSON column, fallback to SK relationship
-              let headsArray = [];
-              try {
-                headsArray = project.projectHeads ? JSON.parse(project.projectHeads) : [];
-              } catch (e) { headsArray = []; }
-              if (!headsArray.length) {
-                const headName = project.SK_Tbl?.User_Tbl
-                  ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
-                  : 'Unknown';
-                headsArray = [headName];
-              }
+              // Get project head name
+              const headName = project.SK_Tbl?.User_Tbl
+                ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
+                : 'Unknown';
 
               // Map status for display
               const statusMap = {
@@ -2017,7 +2019,7 @@
 
               const approvalStatusMap = {
                 'PENDING': 'Pending Approval',
-                'APPROVED': project.status === 'COMPLETED' ? 'Completed' : (new Date(project.startDateTime) > new Date() ? 'Upcoming' : 'Ongoing'),
+                'APPROVED': project.status === 'COMPLETED' ? 'Completed' : (new Date(project.startDateTime) > new Date() ? 'Upcoming' : 'Ongoing'), //if date is greater than now, then upcoming else ongoing
                 'REJECTED': 'Rejected',
                 'REVISION': 'Pending for Revision'
               };
@@ -2041,7 +2043,7 @@
                 status: displayStatus,
                 dbStatus: project.status,
                 approvalStatus: project.approvalStatus,
-                heads: headsArray,
+                heads: [headName],
                 skID: project.skID,
                 startDate: project.startDateTime ? new Date(project.startDateTime).toISOString().split('T')[0] : '',
                 endDate: project.endDateTime ? new Date(project.endDateTime).toISOString().split('T')[0] : '',
@@ -2063,8 +2065,8 @@
             });
           }
 
-          showLoadingSkeleton(false);
-          renderProjects(projects);
+          showLoadingSkeleton(false);//remove gray boxes after loading
+          renderProjects(projects);//render the projects to the frontend
 
         } catch (err) {
           showToast('An error occurred while loading projects.', 'error');
@@ -2078,9 +2080,12 @@
       }
 
       function populateCategoryFilter() {
+        //get the dropdown element
         const select = document.getElementById("categoryFilter");
+        //extract the category of each project. filter() is used to remove null. new Set() is used to get unique category and make it into an array. sort() is used to arrange alphabetically.
         const categories = [...new Set(projects.map(p => p.category).filter(Boolean))].sort();
-        select.length = 1;
+        select.length = 1;//deletes other options except the first one (All Categories)
+        //each category is one <option>
         categories.forEach(cat => {
           const option = document.createElement("option");
           option.value = cat;
@@ -2088,13 +2093,14 @@
           select.appendChild(option);
         });
       }
-
+      
+      //load applications for a specific project
       async function loadProjectApplications(preProjectID) {
         try {
           const { data, error } = await supabaseClient
             .from('Application_Tbl')
             .select(`
-              applicationID, preProjectID, userID, preferredRole, assignedRole, parentConsentFile, applicationStatus, appliedDate, attended,
+              applicationID, preProjectID, userID, preferredRole, parentConsentFile, applicationStatus, appliedDate, attended,
               User_Tbl (
                 firstName,
                 lastName,
@@ -2139,7 +2145,6 @@
               email: user.email || '',
               address: user.address || '',
               preferredRole: app.preferredRole,
-              assignedRole: app.assignedRole || null,
               parentalConsent: app.parentConsentFile,
               attended: app.attended || false,
               status: (app.applicationStatus || 'pending').toLowerCase(),
@@ -2156,6 +2161,7 @@
         }
       }
 
+      //load project inquiries for a specific project
       async function loadProjectInquiries(preProjectID) {
         try {
           const { data, error } = await supabaseClient
@@ -2201,6 +2207,7 @@
         }
       }
 
+      //load budget breakdown for a specific project
       async function loadProjectBudgetBreakdown(preProjectID) {
         try {
           const { data, error } = await supabaseClient
@@ -2222,6 +2229,7 @@
         }
       }
 
+      //how date is diaplsyed in the inquiries and replies (x time ago)
       function formatTimeAgo(timestamp) {
         if (!timestamp) return '';
         const now = new Date();
@@ -2235,6 +2243,7 @@
         return date.toLocaleDateString();
       }
 
+      //gray boxes while loading the projects
       function showLoadingSkeleton(show) {
         const grid = document.getElementById('projectsGrid');
         if (show) {
@@ -2305,6 +2314,7 @@
         }
 
         // Initialize jsPDF
+        //jsPDF is a 3rd party library for generating PDF
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
@@ -2422,13 +2432,14 @@
       let skOfficials = [];
 
       // Navigate through project pages
+      //infinite loop. last page goes to the 1st page
       function navigateProjects(direction) {
         const totalPages = Math.ceil(currentFilteredProjects.length / projectsPerPage);
         currentPage += direction;
 
         // Wrap around
-        if (currentPage < 0) currentPage = totalPages - 1;
-        if (currentPage >= totalPages) currentPage = 0;
+        if (currentPage < 0) currentPage = totalPages - 1; //next page
+        if (currentPage >= totalPages) currentPage = 0; // go back 
 
         renderProjects(currentFilteredProjects);
         updatePaginationDots();
@@ -2466,6 +2477,7 @@
       }
 
       // Render projects grid
+      //all those data that is fetched from the database will be placed in the frontend design. and also the pagination is here. it will only show 3 projects per page. if there are more than 3 projects, it will show the navigation buttons to navigate through the pages.
       function renderProjects(list) {
         currentFilteredProjects = list;
         const grid = document.getElementById("projectsGrid");
@@ -2507,13 +2519,9 @@
             Completed: "bg-[#2f6e4e]/20 text-[#2f6e4e]",
           };
 
-          const projImgUrl = project.imagePathURL || '';
-          const projHasImage = projImgUrl && projImgUrl.startsWith('https://');
           card.innerHTML = `
           <!-- Banner Image Area -->
-          <div class="h-40 bg-gradient-to-br from-[#2f6e4e]/20 to-[#2f6e4e]/10 relative overflow-hidden">
-            ${projHasImage ? `<img src="${escapeHTML(projImgUrl)}" alt="${escapeHTML(project.title)}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'">` : ''}
-          </div>
+          <div class="h-40 bg-gradient-to-br from-[#2f6e4e]/20 to-[#2f6e4e]/10"></div>
 
           <!-- Card Body -->
           <div class="p-5 flex flex-col h-full">
@@ -2669,7 +2677,7 @@
         });
       }
 
-      // View project details
+      // View project details --> opens a modal
       function viewProject(id) {
         currentProjectId = id;
         const project = projects.find((p) => p.id === id);
@@ -2701,14 +2709,16 @@
           statusColors[project.status]
         }`;
 
-        const startDateDisplay = project.startDate ? new Date(project.startDate).toLocaleDateString() : 'TBD';
         const startDateTime = project.startTime
-          ? `${startDateDisplay} ${project.startTime}`
-          : startDateDisplay;
-        const endDateDisplay = project.endDate ? new Date(project.endDate).toLocaleDateString() : 'TBD';
+          ? `${new Date(project.startDate).toLocaleDateString()} ${
+              project.startTime
+            }`
+          : new Date(project.startDate).toLocaleDateString();
         const endDateTime = project.endTime
-          ? `${endDateDisplay} ${project.endTime}`
-          : endDateDisplay;
+          ? `${new Date(project.endDate).toLocaleDateString()} ${
+              project.endTime
+            }`
+          : new Date(project.endDate).toLocaleDateString();
         document.getElementById(
           "detailsDuration"
         ).textContent = `${startDateTime} - ${endDateTime}`;
@@ -2750,10 +2760,13 @@
         loadInquiries(project);
 
         // Set feedback count from already-loaded data
+        //feedback tab
+        //.filter() keeps applications that have submitted a survey
         const feedbackCountFromData = project.applications.filter(a => a.satisfactionScore).length;
         document.getElementById("feedbackCount").textContent = feedbackCountFromData;
 
         // Reset feedback tab state
+        //keeps hidden if loadiing, empty, or results. only shows the tab content when data is loaded
         document.getElementById("feedbackLoading").classList.add("hidden");
         document.getElementById("feedbackEmpty").classList.add("hidden");
         document.getElementById("feedbackResults").classList.add("hidden");
@@ -2767,7 +2780,7 @@
           loadFeedbackTab(project.id);
         }
       }
-
+      //close view project modal
       function closeProjectView() {
         document.getElementById("projectViewModal").classList.add("hidden");
         currentProjectId = null;
@@ -2845,11 +2858,13 @@
 
           // Sync satisfaction scores back into in-memory application data so badges render
           const project = projects.find(p => p.id === projectId);
+          //proceed if project is found
           if (project) {
             evaluations.forEach(ev => {
               const appId = ev.Application_Tbl?.applicationID;
               if (!appId) return;
               const app = project.applications.find(a => a.id === appId);
+              //match evaluation to application and update the satisfaction score and feedback message so that it can be displayed in the applicant card and also in the feedback tab
               if (app) {
                 const avg = parseFloat(((ev.q1 + ev.q2 + ev.q3 + ev.q4 + ev.q5) / 5).toFixed(1));
                 app.satisfactionScore = avg;
@@ -2970,7 +2985,7 @@
                   <h4 class="font-semibold text-gray-900 mb-0.5">${escapeHTML(app.fullName)}</h4>
                   ${app.satisfactionScore ? `<span class="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-700 font-semibold" title="Survey submitted: ${app.satisfactionScore}/5">★ ${app.satisfactionScore}</span>` : ''}
                 </div>
-                <p class="text-sm text-gray-600">${app.assignedRole && app.status === 'approved' ? escapeHTML(app.assignedRole) : escapeHTML(app.preferredRole)} • Age ${app.age}</p>
+                <p class="text-sm text-gray-600">${escapeHTML(app.preferredRole)} • Age ${app.age}</p>
               </div>
             </div>
 
@@ -3028,7 +3043,7 @@
         // Reload the applicants list to reflect the change
         loadApplicants(project);
 
-        logAction('Marked attendance', { applicationId: applicantId });
+        logAction('Marked attendance');
         showToast(attended ?
           `${applicant.fullName} marked as attended` :
           `${applicant.fullName} attendance removed`
@@ -3148,7 +3163,6 @@
         document.getElementById("appEmail").textContent = app.email || "";
         document.getElementById("appAddress").textContent = app.address;
         document.getElementById("appRole").textContent = app.preferredRole;
-        document.getElementById("appAssignedRole").value = app.assignedRole || app.preferredRole || '';
 
         // Show parental consent section if applicant is under 18
         const consentSection = document.getElementById(
@@ -3261,29 +3275,75 @@
       function closeApplicantModal() {
         document.getElementById("applicantModal").classList.add("hidden");
         currentApp = null;
+        // Reset notes textarea
+        const _nw = document.getElementById('appStatusNotesWrapper');
+        const _nt = document.getElementById('appStatusNotes');
+        const _ne = document.getElementById('appStatusNotesError');
+        if (_nw) _nw.classList.add('hidden');
+        if (_nt) { _nt.value = ''; _nt.classList.remove('border-red-400'); }
+        if (_ne) _ne.classList.add('hidden');
+        window._pendingAppStatus = null;
+      }
+
+      function showAppStatusNotes(status) {
+        window._pendingAppStatus = status;
+        const nw = document.getElementById('appStatusNotesWrapper');
+        const nt = document.getElementById('appStatusNotes');
+        const nl = document.getElementById('appStatusNotesLabel');
+        const cb = document.getElementById('appStatusNotesConfirmBtn');
+        if (nw) nw.classList.remove('hidden');
+        if (nl) nl.textContent = status === 'rejected' ? '(required for rejection)' : '(required for pending)';
+        if (cb) {
+          cb.style.background = status === 'rejected' ? '#dc2626' : '#d97706';
+          cb.textContent = status === 'rejected' ? 'Confirm Rejection' : 'Confirm Pending';
+        }
+        if (nt) { nt.classList.remove('border-red-400'); nt.focus(); }
+        const ne = document.getElementById('appStatusNotesError');
+        if (ne) ne.classList.add('hidden');
+      }
+
+      function cancelAppStatusNotes() {
+        window._pendingAppStatus = null;
+        const nw = document.getElementById('appStatusNotesWrapper');
+        const nt = document.getElementById('appStatusNotes');
+        const ne = document.getElementById('appStatusNotesError');
+        if (nw) nw.classList.add('hidden');
+        if (nt) { nt.value = ''; nt.classList.remove('border-red-400'); }
+        if (ne) ne.classList.add('hidden');
       }
 
       async function updateStatus(newStatus) {
         if (!currentApp) return;
 
+        // Validate notes for rejected / pending
+        const requiresNotes = newStatus === 'rejected' || newStatus === 'pending';
+        const nt = document.getElementById('appStatusNotes');
+        const ne = document.getElementById('appStatusNotesError');
+        const statusNotes = nt ? nt.value.trim() : '';
+
+        if (requiresNotes && !statusNotes) {
+          if (ne) ne.classList.remove('hidden');
+          if (nt) { nt.classList.add('border-red-400'); nt.focus(); }
+          return;
+        }
+        if (ne) ne.classList.add('hidden');
+        if (nt) nt.classList.remove('border-red-400');
+
         // Save reference before closing modal (closeApplicantModal sets currentApp to null)
         const appRef = currentApp;
-        const assignedRole = document.getElementById("appAssignedRole").value.trim();
 
         try {
           // Map status to database format
           const dbStatus = newStatus.toUpperCase();
 
-          // Build update data - include assigned role
-          const updateData = { applicationStatus: dbStatus };
-          if (assignedRole) {
-            updateData.assignedRole = assignedRole;
-          }
+          // Build update payload — include notes if provided
+          const updatePayload = { applicationStatus: dbStatus };
+          if (statusNotes) updatePayload.applicationNotes = statusNotes;
 
           // Update application status in database
           const { error } = await supabaseClient
             .from('Application_Tbl')
-            .update(updateData)
+            .update(updatePayload)
             .eq('applicationID', appRef.id);
 
           if (error) {
@@ -3294,9 +3354,8 @@
 
           // Update local state
           appRef.status = newStatus;
-          appRef.assignedRole = assignedRole || appRef.assignedRole;
           showToast(`Application status updated to ${newStatus}`);
-          logAction('[AUDIT] Updated application status', { applicationId: appRef.id });
+          logAction('[AUDIT] Updated application status');
           closeApplicantModal();
 
           // Refresh the view
@@ -3309,22 +3368,12 @@
             const projectTitle = project ? project.title : 'a project';
             const notifType = newStatus === 'approved' ? 'application_approved'
               : newStatus === 'rejected' ? 'application_rejected'
-              : 'application_pending';
-            let notifTitle = '';
-            if (newStatus === 'approved') {
-              notifTitle = `Congratulations! Your application for "${projectTitle}" has been approved.`;
-              if (assignedRole) {
-                notifTitle += ` You have been assigned the role: ${assignedRole}.`;
-              }
-            } else if (newStatus === 'rejected') {
-              notifTitle = `Your application for "${projectTitle}" was not approved. Please contact the project head for more details.`;
-            } else {
-              notifTitle = `Your application for "${projectTitle}" has been set back to pending review.`;
-            }
+              : `application_${newStatus}`;
+            const statusLabel = newStatus === 'approved' ? 'approved' : newStatus === 'rejected' ? 'rejected' : newStatus;
             await supabaseClient.rpc('create_notification', {
               p_user_id: appRef.userID,
               p_notification_type: notifType,
-              p_title: notifTitle,
+              p_title: `Your application for "${projectTitle}" has been ${statusLabel}`,
               p_reference_id: appRef.projectId
             });
           } catch (notifErr) {
@@ -3376,10 +3425,10 @@
         document.getElementById("projVolunteers").value = project.expectedVolunteers || 0;
         document.getElementById("projStartDate").value = project.startDate;
         document.getElementById("projStartTime").value =
-          project.startTime || "";
+          project.startTime || "08:00";
         document.getElementById("projEndDate").value = project.endDate;
         document.getElementById("projEndTime").value =
-          project.endTime || "";
+          project.endTime || "17:00";
         document.getElementById("projLocation").value = project.location;
         document.getElementById("projDesc").value = project.description;
         document.getElementById("projBeneficiaries").value = project.beneficiaries || "";
@@ -3434,13 +3483,7 @@
         .getElementById("createProjectBtn")
         .addEventListener("click", () => {
           editingProjectId = null;
-          // Auto-add creator as first project head
-          if (currentUserData) {
-            const creatorName = `${currentUserData.firstName} ${currentUserData.lastName}`.trim();
-            selectedHeads = creatorName ? [creatorName] : [];
-          } else {
-            selectedHeads = [];
-          }
+          selectedHeads = [];
           document.getElementById("projectModalTitle").textContent =
             "Create Project";
           document.getElementById("projTitle").value = "";
@@ -3449,16 +3492,11 @@
           document.getElementById("projBudget").value = "";
           document.getElementById("projVolunteers").value = "";
           document.getElementById("projStartDate").value = "";
-          document.getElementById("projStartTime").value = "";
           document.getElementById("projEndDate").value = "";
-          document.getElementById("projEndTime").value = "";
           document.getElementById("projLocation").value = "";
           document.getElementById("projDesc").value = "";
           document.getElementById("projBeneficiaries").value = "";
           document.getElementById("projBanner").value = "";
-          window.croppedBannerBlob = null;
-          var bannerPreview = document.getElementById("projBannerPreview");
-          if (bannerPreview) bannerPreview.classList.add("hidden");
 
           clearBudgetBreakdown();
           renderHeadsPills();
@@ -3536,7 +3574,7 @@
           }
 
           showToast("Project approval request has been canceled.", "success");
-          logAction('Cancelled project', { postProjectId: project.id });
+          logAction('Cancelled project');
           closeCancelApprovalModal();
           closeProjectModal();
           await loadProjects();
@@ -3798,18 +3836,28 @@
             return;
           }
 
+          // Validate banner image size (max 5MB per SRS)
+          const bannerInput = document.getElementById("projBanner");
+          const bannerFile = bannerInput.files[0];
+          const MAX_BANNER_SIZE = 5 * 1024 * 1024; // 5MB
+          if (bannerFile && bannerFile.size > MAX_BANNER_SIZE) {
+            showToast(`Banner image (${(bannerFile.size / 1024 / 1024).toFixed(1)} MB) exceeds 5MB limit. Please upload a smaller image.`, "error");
+            reenableBtn();
+            return;
+          }
+
           try {
-            // Upload cropped banner image if provided
+            // Upload banner image if provided
             let bannerImageUrl = null;
-            var bannerBlob = window.croppedBannerBlob || null;
-            if (bannerBlob) {
-              const fileName = `project_${Date.now()}.jpeg`;
+            if (bannerFile) {
+              const fileExt = bannerFile.name.split('.').pop().toLowerCase();
+              const fileName = `project_${Date.now()}.${fileExt}`;
               const { data: uploadData, error: uploadError } = await supabaseClient.storage
                 .from('project-images')
-                .upload(fileName, bannerBlob, {
+                .upload(fileName, bannerFile, {
                   cacheControl: '3600',
                   upsert: false,
-                  contentType: 'image/jpeg',
+                  contentType: bannerFile.type,
                 });
               if (uploadError) {
                 console.error('Banner upload error');
@@ -3836,41 +3884,16 @@
                   startDateTime,
                   endDateTime,
                   location,
-                  projectHeads: JSON.stringify(selectedHeads),
                   updatedAt: new Date().toISOString()
               };
               if (bannerImageUrl) {
                 updateData.imagePathURL = bannerImageUrl;
               }
 
-              // If project was in REVISION status, auto-approve after SK edits —
-              // but enforce open-project cap (SE2 revision item #11, max 3 open)
+              // If project was in REVISION status, resubmit for captain approval
               if (editingProject && editingProject.approvalStatus === 'REVISION') {
-                const { data: openProjects, error: capError } = await supabaseClient
-                  .from('Pre_Project_Tbl')
-                  .select('preProjectID')
-                  .eq('approvalStatus', 'APPROVED')
-                  .neq('status', 'COMPLETED');
-
-                if (capError) {
-                  console.error('Open-project cap check failed', capError);
-                  showToast('Unable to verify open-project count. Please try again.', 'error');
-                  reenableBtn();
-                  return;
-                }
-
-                if (openProjects && openProjects.length >= 3) {
-                  showToast(
-                    `Cannot auto-approve: ${openProjects.length} projects are already open. Complete one before finalizing this revision (limit: 3).`,
-                    'warning'
-                  );
-                  reenableBtn();
-                  return;
-                }
-
-                updateData.approvalStatus = 'APPROVED';
-                updateData.approvalNotes = 'Auto-approved after revision.';
-                updateData.approvalDate = new Date().toISOString();
+                updateData.approvalStatus = 'PENDING';
+                updateData.submittedDate = new Date().toISOString();
               }
 
               const { data, error } = await supabaseClient
@@ -3893,9 +3916,12 @@
               // Update budget breakdown items
               await updateBudgetBreakdownItems(editingProjectId);
 
-              const wasRevision = editingProject && editingProject.approvalStatus === 'REVISION';
-              showToast(wasRevision ? "Project revised and approved!" : "Project updated successfully");
-              logAction('Updated project', { postProjectId: editingProjectId });
+              const resubmitted = editingProject && editingProject.approvalStatus === 'REVISION';
+              if (resubmitted) {
+                await createCaptainNotification(editingProjectId, title);
+              }
+              showToast(resubmitted ? "Project resubmitted for Barangay Captain approval!" : "Project updated successfully");
+              logAction('Updated project');
             } else {
               // Create new project
               const { data: newProject, error } = await supabaseClient
@@ -3914,10 +3940,10 @@
                   endDateTime,
                   location,
                   imagePathURL: bannerImageUrl,
-                  projectHeads: JSON.stringify(selectedHeads),
                   approvalStatus: 'PENDING',
                   submittedDate: new Date().toISOString()
                 })
+                //there is a need to return the preProjectID of the newly created project for inserting budget breakdown items and notify the captain about the new project pending approval
                 .select()
                 .single();
 
@@ -3943,7 +3969,7 @@
               }
 
               showToast("Project submitted for Barangay Captain approval!");
-              logAction('Created project', { postProjectId: newProject?.preProjectID });
+              logAction('Created project');
             }
 
             closeProjectModal();
@@ -3984,7 +4010,7 @@
 
       async function createCaptainNotification(preProjectID, projectTitle) {
         try {
-          // Find captain user
+          // Find captain user then create a notification
           const { data: captainData } = await supabaseClient
             .from('User_Tbl')
             .select('userID')
@@ -3992,11 +4018,12 @@
             .eq('accountStatus', 'ACTIVE')
             .single();
 
+            //rpc is a PostgreSQL function 
           if (captainData) {
             await supabaseClient.rpc('create_notification', {
               p_user_id: captainData.userID,
               p_notification_type: 'project_awaiting_approval',
-              p_title: `A new project "${projectTitle}" has been submitted and is awaiting your approval.`,
+              p_title: `New project awaiting approval: ${projectTitle}`,
               p_reference_id: preProjectID
             });
           }
@@ -4146,7 +4173,7 @@
         const commentsEl = document.getElementById('decisionComments');
 
         // Check if project has approval status and notes from captain
-        if (project.approvalStatus && project.approvalStatus !== 'PENDING' && project.approvalNotes) {
+        if (project.approvalStatus && project.notes) {
           section.classList.remove('hidden');
 
           let iconText = '';
@@ -4155,24 +4182,24 @@
           let statusText = '';
           let dateText = '';
 
-          if (project.approvalStatus === 'APPROVED') {
+          if (project.approvalStatus === 'approved') {
             iconText = '✓';
             iconBg = 'bg-green-100 text-green-600';
             borderColor = 'border-green-500';
             statusText = 'Project Approved';
             dateText = project.approvalDate ? `Approved on ${project.approvalDate}` : 'Recently approved';
-          } else if (project.approvalStatus === 'REJECTED') {
+          } else if (project.approvalStatus === 'rejected') {
             iconText = '✗';
             iconBg = 'bg-red-100 text-red-600';
             borderColor = 'border-red-500';
             statusText = 'Project Rejected';
-            dateText = project.approvalDate ? `Rejected on ${project.approvalDate}` : 'Recently rejected';
-          } else if (project.approvalStatus === 'REVISION') {
+            dateText = project.rejectionDate ? `Rejected on ${project.rejectionDate}` : 'Recently rejected';
+          } else if (project.approvalStatus === 'revision-requested') {
             iconText = '✎';
             iconBg = 'bg-yellow-100 text-yellow-600';
             borderColor = 'border-yellow-500';
             statusText = 'Revision Requested';
-            dateText = project.approvalDate ? `Requested on ${project.approvalDate}` : 'Recently requested';
+            dateText = project.revisionRequestDate ? `Requested on ${project.revisionRequestDate}` : 'Recently requested';
           }
 
           icon.className = `w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold ${iconBg}`;
@@ -4180,7 +4207,7 @@
 
           statusEl.textContent = statusText;
           dateEl.textContent = dateText;
-          commentsEl.textContent = project.approvalNotes || 'No comments provided.';
+          commentsEl.textContent = project.notes || 'No comments provided.';
 
           content.className = `bg-gray-50 rounded-lg p-5 border-l-4 ${borderColor}`;
         } else {
@@ -4225,6 +4252,8 @@
       window.closeApplicantModal = closeApplicantModal;
       window.viewApplicant = viewApplicant;
       window.updateStatus = updateStatus;
+      window.showAppStatusNotes = showAppStatusNotes;
+      window.cancelAppStatusNotes = cancelAppStatusNotes;
       window.removeHead = removeHead;
       window.openHeadsDropdown = openHeadsDropdown;
       window.filterApplicants = filterApplicants;
@@ -4893,7 +4922,7 @@
           }
 
           showToast(`Project marked as complete with ${successRate}% success rate!`);
-          logAction('Marked project as completed', { postProjectId: currentProjectId });
+          logAction('Marked project as completed');
           closeEvaluationModal();
           await loadProjects(); // Reload projects to reflect changes
 
@@ -4927,7 +4956,7 @@
               }
 
               showToast('Project is now Ongoing!');
-              logAction('Started project', { postProjectId: projectId });
+              logAction('Started project');
               await loadProjects();
             } catch (err) {
               showToast('An error occurred. Please try again.', 'error');
@@ -4989,7 +5018,7 @@
         );
       }
 
-      // Auto-archive completed projects after 3 months
+      // Auto-archiveF completed projects after 3 months
       function checkAutoArchive() {
         const threeMonthsAgo = new Date();
         threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
@@ -5104,102 +5133,5 @@
       });
     </script>
     <script src="js/mobile-nav.js"></script>
-
-    <!-- Project Banner Cropper Modal -->
-    <div id="projectCropperModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[10000] flex items-center justify-center p-4" role="dialog" aria-modal="true">
-      <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
-        <div class="p-6 border-b border-gray-200">
-          <h3 class="text-2xl font-bold text-gray-800">Crop Banner Image</h3>
-          <p class="text-sm text-gray-500 mt-1">Adjust the crop area to fit the 16:9 banner format</p>
-        </div>
-        <div class="p-6">
-          <div class="img-container max-h-[50vh]">
-            <img id="projectImageToCrop" src="" alt="Image to crop" />
-          </div>
-        </div>
-        <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
-          <button onclick="closeProjectCropperModal()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">Cancel</button>
-          <button onclick="cropProjectBanner()" class="px-6 py-3 bg-[#2f6e4e] hover:bg-[#3d8b64] text-white rounded-lg transition font-medium">Crop & Use</button>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      var projectCropper = null;
-      var croppedBannerBlob = null;
-
-      function openProjectCropperModal(event) {
-        var file = event.target.files[0];
-        if (!file) return;
-
-        if (file.size > 5 * 1024 * 1024) {
-          showToast('Banner image exceeds 5MB limit.', 'error');
-          event.target.value = '';
-          return;
-        }
-
-        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-          showToast('Please upload a JPEG, PNG, or WebP image.', 'error');
-          event.target.value = '';
-          return;
-        }
-
-        var reader = new FileReader();
-        reader.onload = function(e) {
-          var image = document.getElementById('projectImageToCrop');
-          image.src = e.target.result;
-          document.getElementById('projectCropperModal').classList.remove('hidden');
-
-          if (projectCropper) {
-            projectCropper.destroy();
-          }
-          projectCropper = new Cropper(image, {
-            aspectRatio: 16 / 9,
-            viewMode: 1,
-          });
-        };
-        reader.readAsDataURL(file);
-      }
-
-      function closeProjectCropperModal() {
-        document.getElementById('projectCropperModal').classList.add('hidden');
-        if (projectCropper) {
-          projectCropper.destroy();
-          projectCropper = null;
-        }
-        var bannerInput = document.getElementById('projBanner');
-        if (bannerInput && !croppedBannerBlob) bannerInput.value = '';
-      }
-
-      function cropProjectBanner() {
-        if (!projectCropper) return;
-
-        var canvas = projectCropper.getCroppedCanvas({
-          width: 1280,
-          height: 720,
-        });
-
-        canvas.toBlob(function(blob) {
-          croppedBannerBlob = blob;
-
-          // Show preview
-          var previewUrl = URL.createObjectURL(blob);
-          var previewContainer = document.getElementById('projBannerPreview');
-          var previewImg = document.getElementById('projBannerPreviewImg');
-          if (previewContainer && previewImg) {
-            previewImg.src = previewUrl;
-            previewContainer.classList.remove('hidden');
-          }
-
-          showToast('Banner image cropped successfully!', 'success');
-          closeProjectCropperModal();
-        }, 'image/jpeg', 0.9);
-      }
-
-      // Expose to window
-      window.openProjectCropperModal = openProjectCropperModal;
-      window.closeProjectCropperModal = closeProjectCropperModal;
-      window.cropProjectBanner = cropProjectBanner;
-    </script>
   </body>
 </html>
