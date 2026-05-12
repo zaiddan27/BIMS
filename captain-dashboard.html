@@ -1971,7 +1971,7 @@
             try {
                 const { data: openProjects, error: capError } = await supabaseClient
                     .from('Pre_Project_Tbl')
-                    .select('preProjectID, projectName, status')
+                    .select('preProjectID, title, status')
                     .eq('approvalStatus', 'APPROVED')
                     .neq('status', 'COMPLETED');
 
