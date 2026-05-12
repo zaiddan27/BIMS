@@ -399,7 +399,7 @@
                 <!-- Archives Section -->
                 <div id="archivesSection" class="hidden">
                     <h1 class="text-2xl font-bold text-gray-800 mb-6">Archives</h1>
-                    <p class="text-gray-600 mb-8">View archived projects and files (Read-only)</p>
+                    <p class="text-gray-600 mb-8">View archived projects and files. Open a project to unarchive or permanently delete it.</p>
 
                     <!-- Archive Tabs -->
                     <div class="bg-white rounded-lg shadow mb-6">
@@ -473,15 +473,15 @@
                 </div>
                 <!-- End Archives Section -->
 
-                <!-- Archive Project View Modal (Read-Only) -->
+                <!-- Archive Project View Modal -->
                 <div id="archiveProjectModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
                     <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
                         <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                            <div>
+                            <div class="flex items-center gap-3 flex-wrap">
                                 <h3 id="archiveModalProjectName" class="text-xl font-bold text-gray-800"></h3>
-                                <p class="text-sm text-gray-500 mt-1">Archived Project Report (Read-Only)</p>
+                                <span id="archiveModalSuccessBadge" class="px-3 py-1 text-xs font-semibold rounded-full"></span>
                             </div>
-                            <button onclick="closeArchiveProjectModal()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+                            <button onclick="closeArchiveProjectModal()" class="p-2 hover:bg-gray-100 rounded-lg transition flex-shrink-0">
                                 <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -547,6 +547,18 @@
                                     <p id="archiveModalImpact" class="font-semibold text-gray-800"></p>
                                 </div>
                             </div>
+                        </div>
+                        <!-- Modal Footer Actions -->
+                        <div class="flex flex-col sm:flex-row gap-2 sm:justify-end p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+                            <button onclick="closeArchiveProjectModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                                Close
+                            </button>
+                            <button onclick="unarchiveProject()" class="px-4 py-2 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg hover:bg-yellow-200 transition">
+                                Unarchive
+                            </button>
+                            <button onclick="permanentDeleteProject()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition">
+                                Permanently Delete
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2708,134 +2720,378 @@
             }
         }
 
+        // Archive state
+        let captainArchivedProjects = [];
+        let currentArchiveProject = null;
+
+        function getSuccessBadgeClass(rate) {
+            if (rate >= 90) return 'bg-green-100 text-green-700';
+            if (rate >= 80) return 'bg-blue-100 text-blue-700';
+            if (rate >= 70) return 'bg-yellow-100 text-yellow-700';
+            return 'bg-red-100 text-red-700';
+        }
+
+        function getSuccessBarClass(rate) {
+            if (rate >= 90) return 'bg-green-500';
+            if (rate >= 80) return 'bg-blue-500';
+            if (rate >= 70) return 'bg-yellow-500';
+            return 'bg-red-500';
+        }
+
+        function getSuccessTextClass(rate) {
+            if (rate >= 90) return 'text-green-600';
+            if (rate >= 80) return 'text-blue-600';
+            if (rate >= 70) return 'text-yellow-600';
+            return 'text-red-600';
+        }
+
         async function loadArchivedProjects() {
             try {
-                const { data: projects, error } = await supabaseClient
+                const { data: projectsData, error } = await supabaseClient
                     .from('Pre_Project_Tbl')
-                    .select('*, SK_Tbl (User_Tbl (firstName, lastName))')
+                    .select(`
+                        preProjectID, title, category, status, approvalStatus,
+                        startDateTime, endDateTime, location, description, budget,
+                        volunteers, beneficiaries, createdAt, updatedAt,
+                        SK_Tbl ( User_Tbl (firstName, lastName) ),
+                        Application_Tbl (
+                            applicationID, applicationStatus,
+                            Evaluation_Tbl (q1, q2, q3, q4, q5)
+                        ),
+                        BudgetBreakdown_Tbl (
+                            breakdownID, description, cost,
+                            Expenses_Tbl (actualCost)
+                        ),
+                        Post_Project_Tbl (
+                            timelineAdherence, beneficiariesReached, projectAchievement
+                        )
+                    `)
                     .eq('status', 'CANCELLED')
                     .order('updatedAt', { ascending: false });
 
-                if (error) throw error;
-
-                const grid = document.getElementById('archivedProjectsGrid');
-                const empty = document.getElementById('emptyArchivedProjects');
-                const count = document.getElementById('archivedProjectsCount');
-
-                count.textContent = `${projects?.length || 0} projects`;
-
-                if (!projects || projects.length === 0) {
-                    grid.classList.add('hidden');
-                    empty.classList.remove('hidden');
-                    return;
-                }
-
-                grid.classList.remove('hidden');
-                empty.classList.add('hidden');
-
-                grid.innerHTML = projects.map(project => `
-                    <div class="bg-gray-50 rounded-lg shadow p-6 opacity-75">
-                        ${project.imagePathURL ? `
-                            <img src="${escapeHTML(project.imagePathURL)}" alt="${escapeHTML(project.title)}"
-                                 class="w-full h-40 object-cover rounded-lg mb-4 grayscale" loading="lazy">
-                        ` : ''}
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-700">
-                                ARCHIVED
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-700 mb-2">${escapeHTML(project.title)}</h3>
-                        <p class="text-gray-600 text-sm mb-3 line-clamp-2">${escapeHTML(project.description || '')}</p>
-                        <div class="text-xs text-gray-500">
-                            <p>Created by: ${escapeHTML(project.SK_Tbl?.User_Tbl?.firstName || '')} ${escapeHTML(project.SK_Tbl?.User_Tbl?.lastName || '')}</p>
-                            <p>Archived: ${project.updatedAt ? new Date(project.updatedAt).toLocaleDateString() : 'N/A'}</p>
-                        </div>
-                        <div class="flex gap-2 mt-3">
-                            <button onclick="unarchiveProject(${project.preProjectID}, '${escapeHTML(project.title).replace(/'/g, "\\'")}')"
-                                    class="flex-1 px-3 py-1.5 text-xs font-medium text-yellow-700 bg-yellow-100 rounded-lg hover:bg-yellow-200 transition">
-                                Unarchive
-                            </button>
-                            <button onclick="permanentDeleteProject(${project.preProjectID}, '${escapeHTML(project.title).replace(/'/g, "\\'")}')"
-                                    class="flex-1 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 rounded-lg hover:bg-red-200 transition">
-                                Permanent Delete
-                            </button>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error loading archived projects');
-                showToast('Error loading archived projects', 'error');
-            }
-        }
-
-        async function unarchiveProject(projectId, projectTitle) {
-            if (!confirm(`Are you sure you want to unarchive "${projectTitle}"?\n\nThis will restore the project back to the SK Projects page.`)) return;
-            try {
-                const { data: updated, error } = await supabaseClient
-                    .from('Pre_Project_Tbl')
-                    .update({ status: 'COMPLETED', updatedAt: new Date().toISOString() })
-                    .eq('preProjectID', projectId)
-                    .select();
-
                 if (error) {
-                    console.error('Error unarchiving project', error);
-                    showToast('Failed to unarchive project.', 'error');
+                    console.error('Error loading archived projects', error);
+                    showToast('Error loading archived projects', 'error');
+                    captainArchivedProjects = [];
+                    renderArchivedProjects();
                     return;
                 }
 
-                if (!updated || updated.length === 0) {
-                    console.error('Unarchive update affected 0 rows — possible RLS policy issue');
-                    showToast('Failed to unarchive project. You may not have permission.', 'error');
-                    return;
-                }
+                captainArchivedProjects = (projectsData || []).map(project => {
+                    const startDate = project.startDateTime ? new Date(project.startDateTime) : null;
+                    const endDate = project.endDateTime ? new Date(project.endDateTime) : null;
+                    const refDate = startDate || new Date(project.createdAt);
+                    const year = refDate.getFullYear();
+                    const quarter = `Q${Math.floor(refDate.getMonth() / 3) + 1}`;
+                    const dateOpts = { month: 'short', day: 'numeric', year: 'numeric' };
+                    const period = startDate && endDate
+                        ? `${startDate.toLocaleDateString('en-US', dateOpts)} – ${endDate.toLocaleDateString('en-US', dateOpts)}`
+                        : startDate ? startDate.toLocaleDateString('en-US', dateOpts) : 'N/A';
 
-                showToast(`"${projectTitle}" has been unarchived and restored.`, 'success');
-                loadArchivedProjects();
+                    const headName = project.SK_Tbl?.User_Tbl
+                        ? `${project.SK_Tbl.User_Tbl.firstName} ${project.SK_Tbl.User_Tbl.lastName}`.trim()
+                        : 'Unknown';
+
+                    const applications = project.Application_Tbl || [];
+                    const totalApplicants = applications.length;
+                    const approvedVolunteers = applications.filter(a => a.applicationStatus === 'APPROVED').length;
+
+                    const totalPlanned = project.budget || 0;
+                    const totalSpent = (project.BudgetBreakdown_Tbl || []).reduce((sum, item) => {
+                        const expenses = item.Expenses_Tbl || [];
+                        return sum + expenses.reduce((s, e) => s + (parseFloat(e.actualCost) || 0), 0);
+                    }, 0);
+
+                    const postProject = Array.isArray(project.Post_Project_Tbl)
+                        ? project.Post_Project_Tbl[0]
+                        : project.Post_Project_Tbl;
+
+                    const budgetScore = totalPlanned > 0
+                        ? Math.round(Math.max(0, (1 - Math.abs(totalSpent - totalPlanned) / totalPlanned) * 100))
+                        : 0;
+                    const participationScore = totalApplicants > 0
+                        ? Math.round((approvedVolunteers / totalApplicants) * 100)
+                        : 0;
+                    const timelineMap = {
+                        'Completed_On_Time': 100,
+                        'Slightly_Delayed': 80,
+                        'Delayed': 60,
+                        'Significantly_Delayed': 40
+                    };
+                    const timelineScore = postProject ? (timelineMap[postProject?.timelineAdherence] || 0) : 0;
+                    const targetBeneficiaries = project.beneficiaries || 0;
+                    const actualBeneficiaries = postProject ? (postProject.beneficiariesReached || 0) : 0;
+                    const impactScore = targetBeneficiaries > 0
+                        ? Math.round(Math.min((actualBeneficiaries / targetBeneficiaries) * 100, 100))
+                        : 0;
+
+                    const allEvals = applications.flatMap(app => app.Evaluation_Tbl || []);
+                    let feedbackScore = 0;
+                    if (allEvals.length > 0) {
+                        const evalAverages = allEvals.map(ev => ((ev?.q1 || 0) + (ev?.q2 || 0) + (ev?.q3 || 0) + (ev?.q4 || 0) + (ev?.q5 || 0)) / 5);
+                        const avgSatisfaction = evalAverages.reduce((a, b) => a + b, 0) / evalAverages.length;
+                        feedbackScore = Math.round((avgSatisfaction / 5) * 100);
+                    }
+
+                    const successRate = Math.round(
+                        (budgetScore * 0.25) +
+                        (participationScore * 0.20) +
+                        (timelineScore * 0.20) +
+                        (impactScore * 0.20) +
+                        (feedbackScore * 0.15)
+                    );
+
+                    return {
+                        id: project.preProjectID,
+                        name: project.title,
+                        category: project.category || 'General',
+                        quarter, year, period,
+                        budget: totalPlanned,
+                        spent: totalSpent,
+                        volunteers: approvedVolunteers,
+                        totalApplicants,
+                        approvedVolunteers,
+                        successRate,
+                        budgetScore,
+                        participationScore,
+                        timelineScore,
+                        impactScore,
+                        feedbackScore,
+                        targetBeneficiaries,
+                        actualBeneficiaries,
+                        location: project.location || 'N/A',
+                        heads: [headName],
+                        description: project.description || '',
+                        approvalStatus: project.approvalStatus
+                    };
+                });
+
+                renderArchivedProjects();
             } catch (err) {
-                console.error('Unarchive exception', err);
-                showToast('An error occurred while unarchiving.', 'error');
+                console.error('Exception loading archived projects', err);
+                showToast('Error loading archived projects', 'error');
+                captainArchivedProjects = [];
+                renderArchivedProjects();
             }
         }
 
-        async function permanentDeleteProject(projectId, projectTitle) {
-            const confirmText = prompt(`To permanently delete "${projectTitle}", type DELETE to confirm:`);
-            if (confirmText !== 'DELETE') {
-                if (confirmText !== null) showToast('Deletion cancelled. You must type "DELETE" to confirm.', 'error');
+        function renderArchivedProjects() {
+            const grid = document.getElementById('archivedProjectsGrid');
+            const empty = document.getElementById('emptyArchivedProjects');
+            const count = document.getElementById('archivedProjectsCount');
+
+            const n = captainArchivedProjects.length;
+            count.textContent = `${n} project${n === 1 ? '' : 's'}`;
+
+            if (n === 0) {
+                grid.innerHTML = '';
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
                 return;
             }
-            try {
-                // Delete related records first, then the project
-                await supabaseClient.from('Expenses_Tbl')
-                    .delete()
-                    .in('breakdownID',
-                        (await supabaseClient.from('BudgetBreakdown_Tbl').select('breakdownID').eq('preProjectID', projectId)).data?.map(b => b.breakdownID) || []
-                    );
-                await supabaseClient.from('BudgetBreakdown_Tbl').delete().eq('preProjectID', projectId);
-                await supabaseClient.from('Evaluation_Tbl')
-                    .delete()
-                    .in('applicationID',
-                        (await supabaseClient.from('Application_Tbl').select('applicationID').eq('preProjectID', projectId)).data?.map(a => a.applicationID) || []
-                    );
-                await supabaseClient.from('Application_Tbl').delete().eq('preProjectID', projectId);
-                await supabaseClient.from('Post_Project_Tbl').delete().eq('preProjectID', projectId);
+            grid.classList.remove('hidden');
+            empty.classList.add('hidden');
 
-                const { error } = await supabaseClient
-                    .from('Pre_Project_Tbl')
-                    .delete()
-                    .eq('preProjectID', projectId);
+            grid.innerHTML = captainArchivedProjects.map(project => `
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-6 border border-gray-100">
+                    <div class="flex items-start justify-between mb-4 gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center flex-wrap gap-3 mb-2">
+                                <h3 class="text-lg font-bold text-gray-800">${escapeHTML(project.name)}</h3>
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full ${getSuccessBadgeClass(project.successRate)}">
+                                    ${project.successRate}% Success
+                                </span>
+                            </div>
+                            <div class="flex items-center flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+                                <span>${escapeHTML(project.period)}</span>
+                                <span>${escapeHTML(project.quarter)} ${project.year}</span>
+                                <span>${escapeHTML(project.category)}</span>
+                            </div>
+                        </div>
+                        <button onclick="openArchiveProjectModal(${project.id})" class="px-4 py-2 bg-[#2f6e4e] text-white text-sm rounded-lg hover:bg-[#245a3f] transition flex-shrink-0">
+                            View Details
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Budget</p>
+                            <p class="font-semibold text-gray-800">₱${project.budget.toLocaleString()}</p>
+                            <p class="text-xs text-gray-500">Spent: ₱${project.spent.toLocaleString()}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Volunteers</p>
+                            <p class="font-semibold text-gray-800">${project.volunteers}</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Budget Efficiency</p>
+                            <p class="font-semibold text-gray-800">${project.budgetScore}%</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">Impact Score</p>
+                            <p class="font-semibold text-gray-800">${project.impactScore}%</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-gray-600">Overall Success Rate</span>
+                            <span class="font-semibold text-gray-800">${project.successRate}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="h-2 rounded-full ${getSuccessBarClass(project.successRate)}" style="width: ${project.successRate}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-                if (error) {
-                    console.error('Error permanently deleting project', error);
-                    showToast('Failed to delete project permanently.', 'error');
-                    return;
-                }
+        function openArchiveProjectModal(id) {
+            const project = captainArchivedProjects.find(p => p.id === id);
+            if (!project) return;
+            currentArchiveProject = project;
 
-                showToast(`"${projectTitle}" has been permanently deleted.`, 'success');
-                loadArchivedProjects();
-            } catch (err) {
-                console.error('Permanent delete exception', err);
-                showToast('An error occurred while deleting the project.', 'error');
-            }
+            document.getElementById('archiveModalProjectName').textContent = project.name;
+
+            const badge = document.getElementById('archiveModalSuccessBadge');
+            badge.textContent = `${project.successRate}% Success`;
+            badge.className = `px-3 py-1 text-xs font-semibold rounded-full ${getSuccessBadgeClass(project.successRate)}`;
+
+            document.getElementById('archiveModalCategory').textContent = project.category;
+            document.getElementById('archiveModalPeriod').textContent = project.period;
+            document.getElementById('archiveModalLocation').textContent = project.location;
+            document.getElementById('archiveModalHeads').textContent = project.heads.join(', ');
+            document.getElementById('archiveModalDescription').textContent = project.description || 'No description provided.';
+
+            const metrics = [
+                { label: 'Budget Efficiency', score: project.budgetScore, weight: 25 },
+                { label: 'Volunteer Participation', score: project.participationScore, weight: 20 },
+                { label: 'Timeline Adherence', score: project.timelineScore, weight: 20 },
+                { label: 'Community Impact', score: project.impactScore, weight: 20 },
+                { label: 'Volunteer Feedback', score: project.feedbackScore, weight: 15 }
+            ];
+            document.getElementById('archiveModalMetrics').innerHTML = metrics.map(m => `
+                <div>
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span class="text-gray-600">${m.label} <span class="text-gray-400">(${m.weight}%)</span></span>
+                        <span class="font-semibold text-gray-800">${m.score}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5">
+                        <div class="h-1.5 rounded-full ${getSuccessBarClass(m.score)}" style="width: ${m.score}%"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            const srEl = document.getElementById('archiveModalSuccessRate');
+            srEl.textContent = `${project.successRate}%`;
+            srEl.className = `text-lg font-bold ${getSuccessTextClass(project.successRate)}`;
+
+            document.getElementById('archiveModalBudget').textContent = `₱${project.budget.toLocaleString()}`;
+            document.getElementById('archiveModalSpent').textContent = `₱${project.spent.toLocaleString()}`;
+            document.getElementById('archiveModalApplicants').textContent = project.totalApplicants;
+            document.getElementById('archiveModalVolunteers').textContent = project.approvedVolunteers;
+            document.getElementById('archiveModalImpact').textContent = `${project.impactScore}%`;
+
+            document.getElementById('archiveProjectModal').classList.remove('hidden');
+        }
+
+        function closeArchiveProjectModal() {
+            document.getElementById('archiveProjectModal').classList.add('hidden');
+            currentArchiveProject = null;
+        }
+
+        async function unarchiveProject() {
+            if (!currentArchiveProject) return;
+            const project = currentArchiveProject;
+
+            showConfirm(
+                'Unarchive Project',
+                `Are you sure you want to unarchive "${project.name}"? This will restore the project to the SK Projects page.`,
+                async () => {
+                    try {
+                        let restoredStatus = 'COMPLETED';
+                        if (project.approvalStatus === 'REJECTED' || project.approvalStatus === 'REVISION') {
+                            restoredStatus = 'ONGOING';
+                        }
+
+                        const { data: updated, error } = await supabaseClient
+                            .from('Pre_Project_Tbl')
+                            .update({ status: restoredStatus, updatedAt: new Date().toISOString() })
+                            .eq('preProjectID', project.id)
+                            .select();
+
+                        if (error) {
+                            console.error('Error unarchiving project', error);
+                            showToast('Failed to unarchive project.', 'error');
+                            return;
+                        }
+                        if (!updated || updated.length === 0) {
+                            console.error('Unarchive update affected 0 rows — possible RLS policy issue');
+                            showToast('Failed to unarchive. You may not have permission.', 'error');
+                            return;
+                        }
+
+                        showToast(`"${project.name}" has been restored.`, 'success');
+                        closeArchiveProjectModal();
+                        await loadArchivedProjects();
+                    } catch (err) {
+                        console.error('Unarchive exception', err);
+                        showToast('An error occurred while unarchiving.', 'error');
+                    }
+                },
+                'Unarchive',
+                'yellow'
+            );
+        }
+
+        async function permanentDeleteProject() {
+            if (!currentArchiveProject) return;
+            const project = currentArchiveProject;
+
+            showConfirm(
+                'Permanently Delete Project',
+                `This will permanently delete "${project.name}" and all related data (applications, budget breakdown, expenses, evaluations). This action cannot be undone.`,
+                async () => {
+                    try {
+                        const breakdownIds = (await supabaseClient
+                            .from('BudgetBreakdown_Tbl')
+                            .select('breakdownID')
+                            .eq('preProjectID', project.id)).data?.map(b => b.breakdownID) || [];
+                        if (breakdownIds.length > 0) {
+                            await supabaseClient.from('Expenses_Tbl').delete().in('breakdownID', breakdownIds);
+                        }
+                        await supabaseClient.from('BudgetBreakdown_Tbl').delete().eq('preProjectID', project.id);
+
+                        const applicationIds = (await supabaseClient
+                            .from('Application_Tbl')
+                            .select('applicationID')
+                            .eq('preProjectID', project.id)).data?.map(a => a.applicationID) || [];
+                        if (applicationIds.length > 0) {
+                            await supabaseClient.from('Evaluation_Tbl').delete().in('applicationID', applicationIds);
+                        }
+                        await supabaseClient.from('Application_Tbl').delete().eq('preProjectID', project.id);
+                        await supabaseClient.from('Post_Project_Tbl').delete().eq('preProjectID', project.id);
+
+                        const { error } = await supabaseClient
+                            .from('Pre_Project_Tbl')
+                            .delete()
+                            .eq('preProjectID', project.id);
+
+                        if (error) {
+                            console.error('Error permanently deleting project', error);
+                            showToast('Failed to delete project.', 'error');
+                            return;
+                        }
+
+                        showToast(`"${project.name}" has been permanently deleted.`, 'success');
+                        closeArchiveProjectModal();
+                        await loadArchivedProjects();
+                    } catch (err) {
+                        console.error('Permanent delete exception', err);
+                        showToast('Error deleting project.', 'error');
+                    }
+                },
+                'Delete Permanently',
+                'red'
+            );
         }
 
         async function loadArchivedFiles() {
@@ -2920,6 +3176,10 @@
         window.switchSection = switchSection;
         window.switchTab = switchTab;
         window.switchArchiveTab = switchArchiveTab;
+        window.openArchiveProjectModal = openArchiveProjectModal;
+        window.closeArchiveProjectModal = closeArchiveProjectModal;
+        window.unarchiveProject = unarchiveProject;
+        window.permanentDeleteProject = permanentDeleteProject;
         window.viewProjectDetails = viewProjectDetails;
         window.closeModal = closeModal;
         window.approveProject = approveProject;
